@@ -7,6 +7,9 @@ export async function bundle(target, ...options) {
         minify: options.includes('--prop'),
         devServer: options.includes('--run')
     });
+    config.onwarn = function (message){
+
+    }
     if (options.includes('--watch')) {
         const watcher = watch(config);
         watcher.on('event', (event) => {
