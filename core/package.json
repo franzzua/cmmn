@@ -2,6 +2,9 @@
   "name": "@cmmn/core",
   "version": "1.0.0",
   "description": "di, base extensions, useful functions",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "dist/index-cjs.js",
   "module": "dist/esm/index.js",
   "typings": "dist/typings",

@@ -2,6 +2,9 @@
   "name": "@cmmn/ui",
   "version": "1.0.0",
   "description": "",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "dist/index-cjs.js",
   "module": "dist/esm/index.js",
   "typings": "dist/typings",

@@ -4,6 +4,9 @@
   "description": "di, base extensions, useful functions",
   "main": "dist/rollup.config.js",
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {},
   "bin": {
     "cmmn": "bin.js"

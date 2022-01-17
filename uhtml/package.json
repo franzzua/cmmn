@@ -2,6 +2,9 @@
   "name": "@cmmn/uhtml",
   "version": "1.0.0",
   "description": "stealed from WebReflection/uhtml repository",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "index.js",
   "typings": "index.d.ts",
   "scripts": {
