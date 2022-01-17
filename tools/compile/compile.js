@@ -5,21 +5,22 @@ export function compile(target, options) {
         declaration: true,
         declarationDir: "dist/typings",
         experimentalDecorators: true,
-        lib: ["lib.es2019.d.ts", "lib.dom.d.ts"],
-        module: "ESNext",
-        noEmitHelpers: true,
+        emitDecoratorMetadata: true,
+        module: ts.ModuleKind.ES2020,
+        moduleResolution: ts.ModuleResolutionKind.NodeJs,
+        lib: ["lib.es2020.d.ts", "lib.dom.d.ts"],
+        noEmitHelpers: false,
         noImplicitAny: true,
         downlevelIteration: true,
         noImplicitOverride: true,
         noImplicitReturns: true,
         outDir: "dist/esm",
-        resolveJsonModule: true,
-        target: "ES6"
+        target: ts.ScriptTarget.ES2018
     }
     // Note that there is another overload for `createWatchCompilerHost` that takes
     // a set of root files.
     const host = ts.createWatchCompilerHost(
-        [target],
+        [ target ],
         config,
         ts.sys
     );

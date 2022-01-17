@@ -1,5 +1,5 @@
 import {ulid} from "ulid";
-import {Cell, cellx} from "cellx";
+import {Cell} from "cellx";
 
 export const Fn = {
     I<T>(x: T): T {
