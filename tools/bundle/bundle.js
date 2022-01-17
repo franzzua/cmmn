@@ -36,10 +36,12 @@ export async function bundle(target, ...options) {
                             console.log(`\tat: ${event.error.id}`);
                             console.log(`\tline: ${event.error.frame}`);
                             break;
+                        case 'UNRESOLVED_IMPORT':
+                            console.error(event.error.message);
+                            break;
                         default:
                             console.warn('Unknown error:', event.error.code);
-                            console.log(`\tat: ${event.error.id}`);
-                            console.log(`\tline: ${event.error.frame}`);
+                            console.error(event.error);
                             break;
                     }
                     break;

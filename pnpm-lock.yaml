@@ -23,7 +23,7 @@ specifiers:
   rollup-plugin-visualizer: ^5.5.4
   router5: ^8.0.1
   router5-plugin-browser: ^8.0.1
-  typescript: ^4.5.4
+  typescript: 4.4.3
   uarray: ^1.0.0
   udomdiff: ^1.1.0
   ulid: ^2.3.0
@@ -34,7 +34,7 @@ specifiers:
 dependencies:
   '@rollup/plugin-commonjs': 21.0.1_rollup@2.64.0
   '@rollup/plugin-node-resolve': 13.1.3_rollup@2.64.0
-  '@rollup/plugin-typescript': 8.3.0_rollup@2.64.0+typescript@4.5.4
+  '@rollup/plugin-typescript': 8.3.0_rollup@2.64.0+typescript@4.4.3
   '@types/luxon': 1.27.1
   '@types/node': 14.18.7
   '@ungap/create-content': 0.3.1
@@ -54,7 +54,7 @@ dependencies:
   rollup-plugin-visualizer: 5.5.4_rollup@2.64.0
   router5: 8.0.1
   router5-plugin-browser: 8.0.1_router5@8.0.1
-  typescript: 4.5.4
+  typescript: 4.4.3
   uarray: 1.0.0
   udomdiff: 1.1.0
   ulid: 2.3.0
@@ -1010,7 +1010,7 @@ packages:
       rollup: 2.64.0
     dev: false
 
-  /@rollup/plugin-typescript/8.3.0_rollup@2.64.0+typescript@4.5.4:
+  /@rollup/plugin-typescript/8.3.0_rollup@2.64.0+typescript@4.4.3:
     resolution: {integrity: sha512-I5FpSvLbtAdwJ+naznv+B4sjXZUcIvLLceYpITAn7wAP8W0wqc5noLdGIp9HGVntNhRWXctwPYrSSFQxtl0FPA==}
     engines: {node: '>=8.0.0'}
     peerDependencies:
@@ -1021,7 +1021,7 @@ packages:
       '@rollup/pluginutils': 3.1.0_rollup@2.64.0
       resolve: 1.21.0
       rollup: 2.64.0
-      typescript: 4.5.4
+      typescript: 4.4.3
     dev: false
 
   /@rollup/pluginutils/3.1.0_rollup@2.64.0:
@@ -4701,8 +4701,8 @@ packages:
     resolution: {integrity: sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=}
     dev: false
 
-  /typescript/4.5.4:
-    resolution: {integrity: sha512-VgYs2A2QIRuGphtzFV7aQJduJ2gyfTljngLzjpfW9FoYZF6xuw1W0vW9ghCKLfcWrCFxK81CSGRAvS1pn4fIUg==}
+  /typescript/4.4.3:
+    resolution: {integrity: sha512-4xfscpisVgqqDfPaJo5vkd+Qd/ItkoagnHpufr+i2QCHBsNYp+G7UAoyFl8aPtx879u38wPV65rZ8qbGZijalA==}
     engines: {node: '>=4.2.0'}
     hasBin: true
     dev: false

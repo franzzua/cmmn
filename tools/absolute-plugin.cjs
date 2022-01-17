@@ -25,10 +25,10 @@ const lessToStringTransformer = function (context) {
                 if (result)
                     return result;
             }
-            return ts.visitEachChild(node, visitor, context, visitor, visitor);
+            return ts.visitEachChild(node, visitor, context);
         }
 
-        return ts.visitEachChild(sourceFile, visitor, context, visitor, visitor);
+        return ts.visitEachChild(sourceFile, visitor, context);
     };
 };
 exports.default = function (program, pluginOptions) {
