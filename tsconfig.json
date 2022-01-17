@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "declarationDir": "dist/typings",
+    "experimentalDecorators": true,
+    "lib": [
+      "ES2019",
+      "DOM"
+    ],
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "downlevelIteration": true,
+    "noEmitHelpers": true,
+    "noImplicitAny": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "outDir": "dist/esm",
+    "preserveConstEnums": true,
+    "resolveJsonModule": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "target": "ES2017"
+  },
+  "files": [
+  ],
+  "references": [
+    {
+      "path": "core"
+    },
+    {
+      "path": "domain"
+    },
+    {
+      "path": "ui"
+    },
+    {
+      "path": "app"
+    }
+  ]
+}

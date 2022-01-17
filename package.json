@@ -1,0 +1,14 @@
+{
+  "name": "common",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "bootstrap": "lerna bootstrap --hoist"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "lerna": "^4.0.0"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "@cmmn/uhtml",
+  "version": "1.0.0",
+  "description": "stealed from WebReflection/uhtml repository",
+  "main": "index.js",
+  "typings": "index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@ungap/create-content": "^0.3.1",
+    "async-tag": "^0.2.0",
+    "jsx2tag": "^0.3.0",
+    "uarray": "^1.0.0",
+    "udomdiff": "^1.1.0",
+    "umap": "^1.0.2",
+    "uparser": "^0.2.1",
+    "uwire": "^1.1.0"
+  },
+  "author": "",
+  "license": "ISC"
+}

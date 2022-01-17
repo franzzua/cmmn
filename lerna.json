@@ -1,0 +1,11 @@
+{
+  "packages": [
+    "app",
+    "core",
+    "domain",
+    "tools",
+    "uhtml",
+    "ui"
+  ],
+  "version": "1.0.0"
+}

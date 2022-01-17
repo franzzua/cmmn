@@ -1,0 +1,27 @@
+{
+  "name": "@cmmn/tools",
+  "version": "1.0.0",
+  "description": "di, base extensions, useful functions",
+  "main": "dist/rollup.config.js",
+  "type": "module",
+  "scripts": {},
+  "bin": {
+    "cmmn": "bin.js"
+  },
+  "files": [
+    "bin.js",
+    "bundle/*"
+  ],
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^21",
+    "@rollup/plugin-node-resolve": "^13",
+    "@rollup/plugin-typescript": "^8",
+    "rollup": "^2",
+    "rollup-plugin-terser": "^7",
+    "rollup-plugin-visualizer": "^5.5.4",
+    "typescript": "^4.5.4"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}
