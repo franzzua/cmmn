@@ -22,5 +22,6 @@
     "router5-plugin-browser": "^8.0.1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "gitHead": "5309832cf3397001967465f0508d947cbab2540d"
 }

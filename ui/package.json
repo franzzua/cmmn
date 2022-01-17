@@ -20,5 +20,6 @@
     "@cmmn/uhtml": "^1.0.0"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "gitHead": "5309832cf3397001967465f0508d947cbab2540d"
 }
