@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "di, base extensions, useful functions",
   "publishConfig": {
     "access": "public"
@@ -13,7 +13,7 @@
     "bundle": "cmmn bundle ./dist/esm/index.js --watch"
   },
   "devDependencies": {
-    "@cmmn/tools": "^1.0.0",
+    "@cmmn/tools": "^1.0.1",
     "@types/luxon": "^1.25.0",
     "@types/node": "^14.14.14"
   },

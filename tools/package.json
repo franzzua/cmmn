@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/tools",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "di, base extensions, useful functions",
   "main": "dist/rollup.config.js",
   "type": "module",
