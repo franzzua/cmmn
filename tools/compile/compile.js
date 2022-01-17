@@ -13,7 +13,6 @@ export function compile(target, options) {
         noImplicitOverride: true,
         noImplicitReturns: true,
         outDir: "dist/esm",
-        preserveConstEnums: true,
         resolveJsonModule: true,
         target: "ES6"
     }
