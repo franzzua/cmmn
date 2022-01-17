@@ -10,10 +10,10 @@
     "build": "cmmn compile ./index.ts --watch"
   },
   "devDependencies": {
-    "@cmmn/tools": "1"
+    "@cmmn/tools": "^1.0.0"
   },
   "dependencies": {
-    "@cmmn/core": "1"
+    "@cmmn/core": "^1.0.0"
   },
   "author": "",
   "license": "ISC"
