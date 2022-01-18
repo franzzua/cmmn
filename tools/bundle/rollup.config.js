@@ -62,7 +62,6 @@ export const getConfig = ({minify, input, devServer}) => {
 
             }),
             less({
-               insert: true
             }),
             string({
                 include: /\.(html|svg)$/,

@@ -1,4 +1,4 @@
-import ts from "typescript";
+import ts from "ttypescript";
 import {readFileSync} from "fs";
 import {dirname, join, resolve} from 'path';
 import {fileURLToPath} from 'url';
@@ -21,6 +21,7 @@ export function compile(target, flags) {
         options.outDir = resolve(options.configFilePath, '../dist/esm');
         options.declarationDir = resolve(options.configFilePath, '../dist/typings');
         options.baseUrl = resolve(options.configFilePath, '../');
+        console.log('build', options.configFilePath);
         return ts.createEmitAndSemanticDiagnosticsBuilderProgram(
             rootNames, options, host, oldProgram, configFileParsingDiagnostics, projectReferences
         )
@@ -36,12 +37,12 @@ export function compile(target, flags) {
         incremental: true,
         dry: false
     }, {
+        excludeDirectories: ["node_modules", "dist"]
     });
-    builder.clean();
-    builder.buildReferences(rootDir, null, ts.sys.writeFile, project => {
-        console.log(project);
-        return [];
-    });
+    // builder.cleanReferences(rootDir);
+    // builder.buildReferences(rootDir);
+    builder.clean(rootDir);
+    builder.build(rootDir);
     return;
     // const host = ts.createWatchCompilerHost(
     //     join(rootDir, 'tsconfig.json'),
