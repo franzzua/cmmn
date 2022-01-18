@@ -1,0 +1,4 @@
+{
+  "extends": "@cmmn/tools/compile/tsconfig.json",
+  "exclude": ["dist", "node_modules"]
+}

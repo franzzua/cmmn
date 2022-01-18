@@ -1,6 +1,7 @@
 lockfileVersion: 5.3
 
 specifiers:
+  '@cmmn/tools': '1'
   '@rollup/plugin-commonjs': ^21
   '@rollup/plugin-node-resolve': ^13
   '@rollup/plugin-typescript': ^8
@@ -23,7 +24,9 @@ specifiers:
   rollup-plugin-visualizer: ^5.5.4
   router5: ^8.0.1
   router5-plugin-browser: ^8.0.1
+  ttypescript: 1.5.13
   typescript: 4.4.3
+  typescript-transform-paths: ^3.3.1
   uarray: ^1.0.0
   udomdiff: ^1.1.0
   ulid: ^2.3.0
@@ -32,6 +35,7 @@ specifiers:
   uwire: ^1.1.0
 
 dependencies:
+  '@cmmn/tools': 1.0.3
   '@rollup/plugin-commonjs': 21.0.1_rollup@2.64.0
   '@rollup/plugin-node-resolve': 13.1.3_rollup@2.64.0
   '@rollup/plugin-typescript': 8.3.0_rollup@2.64.0+typescript@4.4.3
@@ -54,7 +58,9 @@ dependencies:
   rollup-plugin-visualizer: 5.5.4_rollup@2.64.0
   router5: 8.0.1
   router5-plugin-browser: 8.0.1_router5@8.0.1
+  ttypescript: 1.5.13_typescript@4.4.3
   typescript: 4.4.3
+  typescript-transform-paths: 3.3.1_typescript@4.4.3
   uarray: 1.0.0
   udomdiff: 1.1.0
   ulid: 2.3.0
@@ -83,6 +89,25 @@ packages:
       '@babel/helper-validator-identifier': 7.16.7
       chalk: 2.4.2
       js-tokens: 4.0.0
+    dev: false
+
+  /@cmmn/tools/1.0.3:
+    resolution: {integrity: sha512-fO7vkAyho0ywzpWq8XN0FTgaYWFIKhJ5SnC592ADDrBz1vbCDSv9H54wSSV4MusmUiXb+KT/B7HOLPQMCX4cQg==}
+    hasBin: true
+    dependencies:
+      '@rollup/plugin-commonjs': 21.0.1_rollup@2.64.0
+      '@rollup/plugin-node-resolve': 13.1.3_rollup@2.64.0
+      '@rollup/plugin-typescript': 8.3.0_rollup@2.64.0+typescript@4.4.3
+      rollup: 2.64.0
+      rollup-plugin-less: 1.1.3
+      rollup-plugin-serve: 1.1.0
+      rollup-plugin-string: 3.0.0
+      rollup-plugin-terser: 7.0.2_rollup@2.64.0
+      rollup-plugin-visualizer: 5.5.4_rollup@2.64.0
+      typescript: 4.4.3
+    transitivePeerDependencies:
+      - acorn
+      - tslib
     dev: false
 
   /@gar/promisify/1.1.2:
@@ -4656,6 +4681,17 @@ packages:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
     dev: false
 
+  /ttypescript/1.5.13_typescript@4.4.3:
+    resolution: {integrity: sha512-KT/RBfGGlVJFqEI8cVvI3nMsmYcFvPSZh8bU0qX+pAwbi7/ABmYkzn7l/K8skw0xmYjVCoyaV6WLsBQxdadybQ==}
+    hasBin: true
+    peerDependencies:
+      ts-node: '>=8.0.2'
+      typescript: '>=3.2.2'
+    dependencies:
+      resolve: 1.21.0
+      typescript: 4.4.3
+    dev: false
+
   /tunnel-agent/0.6.0:
     resolution: {integrity: sha1-J6XeoGs2sEoKmWZ3SykIaPD8QP0=}
     dependencies:
@@ -4699,6 +4735,15 @@ packages:
 
   /typedarray/0.0.6:
     resolution: {integrity: sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=}
+    dev: false
+
+  /typescript-transform-paths/3.3.1_typescript@4.4.3:
+    resolution: {integrity: sha512-c+8Cqd2rsRtTU68rJI0NX/OtqgBDddNs1fIxm1nCNyhn0WpoyqtpUxc1w9Ke5c5kgE4/OT5xYbKf2cf694RYEg==}
+    peerDependencies:
+      typescript: '>=3.6.5'
+    dependencies:
+      minimatch: 3.0.4
+      typescript: 4.4.3
     dev: false
 
   /typescript/4.4.3:

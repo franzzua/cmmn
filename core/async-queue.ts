@@ -12,6 +12,7 @@ export class AsyncQueue {
         });
     }
 
+
     private run() {
         if (this.isInvoking || this.queue.length == 0)
             return;
