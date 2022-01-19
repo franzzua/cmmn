@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/domain",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "",
   "main": "dist/index-cjs.js",
   "module": "dist/esm/index.js",
@@ -10,10 +10,10 @@
     "build": "cmmn compile ./index.ts --watch"
   },
   "devDependencies": {
-    "@cmmn/tools": "^1.0.1"
+    "@cmmn/tools": "^1.1.0"
   },
   "dependencies": {
-    "@cmmn/core": "^1.0.1"
+    "@cmmn/core": "^1.1.0"
   },
   "author": "",
   "license": "ISC",
