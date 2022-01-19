@@ -1,7 +1,8 @@
 import "./helpers/Array";
 import "./helpers/map";
-
+import "./helpers/helpers";
 export {Fn} from "./helpers/Fn";
+
 export * as cell from "./cell";
 export *  from "cellx";
 export {registerSerializer, serialize, deserialize} from "./serialize";

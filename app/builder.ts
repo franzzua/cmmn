@@ -6,7 +6,6 @@ export class Builder{
     private container: Container = new Container();
 
     constructor() {
-
     }
 
     public withUI(...components: Function[]){

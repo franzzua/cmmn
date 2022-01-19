@@ -1,14 +1,14 @@
 const ts = require("typescript");
-const path_1 = require("path");
+const path = require("path");
 
-function visitRequireNode(importNode) {
+function visitRequireNode(importNode, sourceFile) {
     if (importNode.expression.kind == ts.SyntaxKind.Identifier &&
         importNode.expression.escapedText == "require") {
         const file = importNode.arguments[0].text;
         if (/\.(less|css|scss|sass|svg|png|html)/.test(file)) {
-            const currentFileName = importNode.getSourceFile().fileName;
-            const absolute = path_1.join(path_1.dirname(currentFileName), file);
-            return ts.updateCall(importNode, importNode.expression, undefined, [ts.createStringLiteral(absolute)]);
+            const sourceFileDir = path.dirname(sourceFile.path);
+            const real = path.join(sourceFileDir, file);
+            return ts.updateCall(importNode, importNode.expression, undefined, [ts.createStringLiteral(real)]);
         }
     }
     return null;
@@ -21,7 +21,7 @@ const lessToStringTransformer = function (context) {
             //     return visitImportNode(node as ts.ImportDeclaration);
             // }
             if (node && ts.isCallExpression(node)) {
-                const result = visitRequireNode(node);
+                const result = visitRequireNode(node, sourceFile);
                 if (result)
                     return result;
             }

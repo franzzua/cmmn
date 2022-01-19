@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "bootstrap": "lerna bootstrap --hoist",
-    "build": "cmmn compile"
+    "bootstrap": "lerna bootstrap",
+    "build": "cmmn compile -b --watch",
+    "bundle": "cmmn bundle -b --watch"
   },
   "author": "",
   "license": "ISC",

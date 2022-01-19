@@ -12,7 +12,8 @@
     "skipDefaultLibCheck": true,
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
-    "emitDecoratorMetadata": true,
+    "emitDecoratorMetadata": true ,
+    "noEmitHelpers": true,
     "declarationDir": "./dist/typings",
     "declaration": true,
     "types": [
