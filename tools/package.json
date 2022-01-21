@@ -13,6 +13,7 @@
   },
   "files": [
     "bin.js",
+    "gen/*",
     "compile/*",
     "bundle/*",
     "plugins/*"
