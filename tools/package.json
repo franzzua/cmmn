@@ -31,6 +31,8 @@
     "fast-glob": "^3.2.11",
     "rollup": "^2",
     "@open-wc/rollup-plugin-html": "^1.2.5",
+    "rollup-plugin-node-globals": "^1.4.0",
+    "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-livereload": "^2.0.5",
     "rollup-plugin-serve": "^1.1.0",
     "rollup-plugin-string": "^3.0.0",

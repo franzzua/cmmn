@@ -31,7 +31,8 @@
   "cmmn": {
     "index": {
       "input": "dist/esm/index.js",
-      "module": "es"
+      "module": "es",
+      "external": ["luxon"]
     }
   }
 }

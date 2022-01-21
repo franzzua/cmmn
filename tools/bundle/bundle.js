@@ -45,7 +45,7 @@ function getLernaSubPackages(lernaFile, options) {
 }
 
 function getConfigs(options) {
-    if (options.project) {
+    if (!options.input || options.project) {
         const rootDir = process.cwd();
         const lernaPath = path.join(rootDir, 'lerna.json');
         if (fs.existsSync(lernaPath)) {

@@ -1,4 +1,4 @@
-import {addExtension, Packr } from 'msgpackr';
+import {addExtension, Packr } from 'msgpackr/pack';
 import {DateTime, Duration} from "luxon";
 
 const packr = new Packr({

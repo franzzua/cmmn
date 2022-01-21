@@ -3,6 +3,7 @@ import nodeResolve from '@rollup/plugin-node-resolve';
 import {terser} from "rollup-plugin-terser"
 import {visualizer} from 'rollup-plugin-visualizer';
 import styles from "rollup-plugin-styles";
+import builtins from "rollup-plugin-node-builtins";
 import {string} from "rollup-plugin-string";
 import serve from 'rollup-plugin-serve'
 import livereload from 'rollup-plugin-livereload'
@@ -26,7 +27,8 @@ export class ConfigCreator {
      *     stats: boolean,
      *     name: string,
      *     outDir: string,
-     *     html: string
+     *     html: string,
+     *     dedupe: string[]
      * }}
      */
     options;
@@ -105,16 +107,16 @@ export class ConfigCreator {
 
     get plugins() {
         const result = [
+            builtins(),
             nodeResolve({
                 browser: true,
-                dedupe: ['lib0']
+                dedupe: this.options.dedupe || []
             }),
-            commonjs(),
+            commonjs({
+                 requireReturnsDefault: "namespace",
+            }),
             styles({
                 mode: "emit",
-                less: {
-                    rootpath: path.join(this.root, 'assets')
-                }
             }),
             string({
                 include: /\.(html|svg|less|css)$/,
@@ -154,10 +156,18 @@ export class ConfigCreator {
             },
             output: this.output,
             external: (this.options.external || []).map(s => new RegExp(s)),
-            onwarn(message) {
-                console.log(message.message);
+            onwarn(warning) {
+                // Silence circular dependency warning for moment package
+                if (
+                    warning.code === 'CIRCULAR_DEPENDENCY'
+                ) {
+                    return
+                }
+
+                console.warn(`(!) ${warning.message}`)
             },
             plugins: this.plugins,
+            treeshake: this.options.minify ? "smallest" : "recommended"
         }]
     }
 }
