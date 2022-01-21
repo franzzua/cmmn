@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/core",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "di, base extensions, useful functions",
   "publishConfig": {
     "access": "public"
@@ -13,12 +13,12 @@
     "bundle": "cmmn bundle ./dist/esm/index.js --watch"
   },
   "devDependencies": {
-    "@cmmn/tools": "^1.1.0",
+    "@cmmn/tools": "^1.2.0",
     "@types/node": "^14.14.14"
   },
   "dependencies": {
-    "bind-decorator": "^1.0.11",
     "@js-temporal/polyfill": "^0.3.0",
+    "bind-decorator": "^1.0.11",
     "cellx": "^1.10.26",
     "msgpackr": "^1.5.2",
     "ulid": "^2.3.0"
@@ -30,7 +30,10 @@
     "index": {
       "input": "dist/esm/index.js",
       "module": "es",
-      "external": ["temporal\/polyfill","cellx"]
+      "external": [
+        "temporal/polyfill",
+        "cellx"
+      ]
     }
   }
 }

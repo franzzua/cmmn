@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/tools",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "di, base extensions, useful functions",
   "main": "dist/rollup.config.js",
   "type": "module",
@@ -24,16 +24,16 @@
     "typescript-transform-paths": "^3.3.1"
   },
   "devDependencies": {
+    "@open-wc/rollup-plugin-html": "^1.2.5",
     "@rollup/plugin-commonjs": "^21",
     "@rollup/plugin-node-resolve": "^13",
     "@rollup/plugin-typescript": "^8",
     "@web/rollup-plugin-html": "^1.10.1",
     "fast-glob": "^3.2.11",
     "rollup": "^2",
-    "@open-wc/rollup-plugin-html": "^1.2.5",
-    "rollup-plugin-node-globals": "^1.4.0",
-    "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-livereload": "^2.0.5",
+    "rollup-plugin-node-builtins": "^2.1.2",
+    "rollup-plugin-node-globals": "^1.4.0",
     "rollup-plugin-serve": "^1.1.0",
     "rollup-plugin-string": "^3.0.0",
     "rollup-plugin-styles": "^4",
