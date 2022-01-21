@@ -1,22 +1,33 @@
-import {getConfig} from "./rollup.config.js";
+import {ConfigCreator} from "./rollup.config.js";
 import {rollup, watch} from "rollup";
 import fs from "fs";
 import path from "path";
 import fg from "fast-glob";
 
-function getPackageConfigs(rootDir, options) {
+function getProjectConfig(rootDir, cmmn, options) {
+    const configCreator = new ConfigCreator({
+        ...options,
+        ...cmmn,
+    });
+    configCreator.setRootDir(rootDir);
+    return configCreator.getConfig();
+}
+
+function getPackageConfigs(rootDir, options, name = null) {
     const results = [];
     const pkg = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json')));
-    for (let name in pkg.cmmn) {
-        results.push(...getConfig({
-            name,
-            outDir: path.join(rootDir, pkg.cmmn[name].output ?? 'dist'),
-            input: path.join(rootDir, pkg.cmmn[name].input ?? 'index.ts'),
-            minify: options.includes('--prod'),
-            devServer: options.includes('--run'),
-            stats: options.includes('--stats'),
-            module: pkg.cmmn[name].module ?? 'es'
-        }))
+    if (name) {
+        results.push(...getProjectConfig(rootDir, pkg.cmmn[name], {
+            ...options,
+            name
+        }));
+    } else {
+        for (let name in pkg.cmmn) {
+            results.push(...getProjectConfig(rootDir, pkg.cmmn[name], {
+                ...options,
+                name
+            }));
+        }
     }
     return results;
 }
@@ -34,25 +45,29 @@ function getLernaSubPackages(lernaFile, options) {
 }
 
 function getConfigs(options) {
-    if (options.includes('-b')) {
+    if (options.project) {
         const rootDir = process.cwd();
         const lernaPath = path.join(rootDir, 'lerna.json');
         if (fs.existsSync(lernaPath)) {
             return getLernaSubPackages(lernaPath, options);
         }
+        return getPackageConfigs(process.cwd(), options);
     }
-    const input = options.filter(x => !x.startsWith('-'))[0];
-    return getConfig({
-        input,
-        minify: options.includes('--prod'),
-        devServer: options.includes('--run'),
-        stats: options.includes('--stats'),
-        module: 'es'
-    });
+    if (options.input && !fs.existsSync(options.input)) {
+        return getPackageConfigs(process.cwd(), options, options.input);
+    }
+    const creator = new ConfigCreator(options);
+    return creator.getConfig();
 }
 
 export async function bundle(...options) {
-    const configs = getConfigs(options);
+    const configs = getConfigs({
+        input: options.filter(x => !x.startsWith('-'))[0],
+        project: options.includes('-b'),
+        minify: options.includes('--prod'),
+        devServer: options.includes('--run'),
+        stats: options.includes('--stats'),
+    });
     if (!options.includes('--watch')) {
         for (let config of configs) {
             console.log(`1. ${config.input} -> ${config.output.file}`);

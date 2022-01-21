@@ -6,56 +6,158 @@ import styles from "rollup-plugin-styles";
 import {string} from "rollup-plugin-string";
 import serve from 'rollup-plugin-serve'
 import livereload from 'rollup-plugin-livereload'
+import fs from "fs";
+import path from "path";
+import html  from '@open-wc/rollup-plugin-html';
+/**
+ * @typedef {import(rollup).RollupOptions} RollupOptions
+ * @typedef {import(rollup).OutputOptions} OutputOptions
+ */
 
-export const getConfig = ({minify, input, devServer, module, stats, name, outDir}) => {
-    const output = `${outDir ?? 'dist'}/${name ?? 'index'}-${module}${minify ? '.min' : ''}.js`;
-    return [{
-        input,
-        output: {
-            file: output,
-            sourcemap: !minify,
-            format: module,
-            exports: 'auto',
-            name: 'global'
-        },
-        onwarn: function () {
+export class ConfigCreator {
 
-        },
-        // prettier-ignore
-        plugins: [
+    /**
+     * @type {{
+     *     minify: boolean,
+     *     input: string,
+     *     devServer: boolean,
+     *     module: string,
+     *     external: string[],
+     *     stats: boolean,
+     *     name: string,
+     *     outDir: string,
+     *     html: string
+     * }}
+     */
+    options;
+
+    /**
+     * @type {string}
+     */
+    root = process.cwd();
+
+
+    constructor(options) {
+        this.options = {
+            ...options
+        };
+    }
+
+    setRootDir(rootDir){
+        this.root = rootDir;
+    }
+
+    get outDir(){
+        return path.join(this.root, this.options.outDir);
+    }
+
+    /**
+     *
+     * @returns {OutputOptions}
+     */
+    get output() {
+        // const output = `${this.options.name ?? 'index'}-${this.options.module}${this.options.minify ? '.min' : ''}.js`;
+        return {
+            entryFileNames: `[name]-${this.options.module}${this.options.minify ? '.min' : ''}.js`,
+            // file: output,
+            dir: this.outDir,
+            sourcemap: !this.options.minify,
+            format: this.options.module,
+            name: 'global',
+        };
+    }
+
+    get html(){
+        return html({
+            publicPath: '/',
+            dir: this.outDir,
+            template: () => fs.readFileSync(path.join(this.root, this.options.html), 'utf8')
+        });
+    }
+    get devServer(){
+        return serve({
+            open: false,
+            contentBase: [this.outDir, path.join(this.root, 'assets')],
+            port: 3001,
+            historyApiFallback: true
+        });
+    }
+
+    get livereload(){
+        return livereload({
+            watch: [this.outDir, path.join(this.root, 'assets')],
+            verbose: false, // Disable console output
+            // other livereload options
+            port: 12345,
+            delay: 300,
+        })
+    }
+
+    get visualizer(){
+        return visualizer({
+            open: true,
+            sourcemap: true,
+            template: 'treemap',
+            brotliSize: true,
+            filename: path.join(this.outDir, '/stats.html')
+        })
+    }
+
+    get plugins() {
+        const result = [
             nodeResolve({
                 browser: true,
                 dedupe: ['lib0']
             }),
-            commonjs({}),
-            styles({mode: "emit"}),
+            commonjs(),
+            styles({
+                mode: "emit",
+                less: {
+                    rootpath: path.join(this.root, 'assets')
+                }
+            }),
             string({
                 include: /\.(html|svg|less|css)$/,
             }),
-            ...(minify ? [terser({})] : []),
-            ...(devServer ? [
-                serve({
-                    open: false,
-                    contentBase: ['dist', 'assets'],
-                    port: 3001,
-                    historyApiFallback: true
-                }), livereload({
-                    watch: ['dist', 'assets'],
-                    verbose: false, // Disable console output
+        ];
+        if (this.options.html || this.options.input.endsWith('.html')){
+            result.push(this.html);
+        }
+        if (this.options.minify) {
+            result.push(terser());
+        }
+        if (this.options.devServer) {
+            result.push(this.devServer, this.livereload);
+        }
+        if (this.options.stats){
+            result.push(this.visualizer);
+        }
+        return result;
+    }
 
-                    // other livereload options
-                    port: 12345,
-                    delay: 300,
-                })] : []),
-            ...(stats ? [
-                visualizer({
-                    open: true,
-                    sourcemap: true,
-                    template: 'treemap',
-                    brotliSize: true,
-                    filename: 'dist/stats.html'
-                }),
-            ] : [])
-        ]
-    }];
-};
+    /**
+     * @returns {RollupOptions[]}
+     */
+    getConfig() {
+        Object.assign(this.options,{
+            module: this.options.module || 'es',
+            external: this.options.external || [],
+            name: this.options.name || 'index',
+            outDir: this.options.outDir || 'dist'
+        });
+        if (this.options.external && typeof this.options.external === "string")
+            this.options.external = [this.options.external]
+        console.log(this.options);
+        return [{
+            input: {
+                [this.options.name]: path.join(this.root,this.options.input)
+            },
+            output: this.output,
+            external: (this.options.external || []).map(s => new RegExp(s)),
+            onwarn(message) {
+                console.log(message.message);
+            },
+            plugins: this.plugins,
+        }]
+    }
+}

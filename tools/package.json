@@ -13,7 +13,9 @@
   },
   "files": [
     "bin.js",
-    "bundle/*"
+    "compile/*",
+    "bundle/*",
+    "plugins/*"
   ],
   "dependencies": {
     "less": "^4",
@@ -28,6 +30,7 @@
     "@web/rollup-plugin-html": "^1.10.1",
     "fast-glob": "^3.2.11",
     "rollup": "^2",
+    "@open-wc/rollup-plugin-html": "^1.2.5",
     "rollup-plugin-livereload": "^2.0.5",
     "rollup-plugin-serve": "^1.1.0",
     "rollup-plugin-string": "^3.0.0",
