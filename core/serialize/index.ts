@@ -1,5 +1,5 @@
 import {addExtension, Packr } from 'msgpackr/pack';
-import {DateTime, Duration} from "luxon";
+import {DateTime, Duration, utc} from "../helpers/utc";
 
 const packr = new Packr({
     structuredClone: true,
@@ -23,15 +23,13 @@ export function deserialize(bytes: Uint8Array) {
 }
 
 registerSerializer<DateTime, number>(1, DateTime,
-    x => x.toMillis(),
-    millis => DateTime.fromMillis(millis,{
-        zone: 'utc'
-    })
+    x => x.epochMilliseconds,
+    millis => utc(millis)
 );
 
 registerSerializer<Duration, number>(2, Duration,
-    x => x.as('millisecond'),
-    millis => Duration.fromMillis(millis)
+    x => x.total('milliseconds'),
+    millis => new Duration(0,0,0,0,0,0,0,millis)
 );
 //
 // registerSerializer<Map<any, any>, ReadonlyArray<[number, number]>>(100,

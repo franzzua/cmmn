@@ -126,7 +126,17 @@ export class ConfigCreator {
             result.push(this.html);
         }
         if (this.options.minify) {
-            result.push(terser());
+            result.push(terser({
+                module: true,
+                ecma: 2020,
+                compress: true,
+                keep_classnames: false,
+                keep_fnames: false,
+                mangle: true,
+                output: {
+                    comments: false
+                }
+            }));
         }
         if (this.options.devServer) {
             result.push(this.devServer, this.livereload);

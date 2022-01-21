@@ -8,6 +8,6 @@ export {Cell, cellx, ICellOptions, IEvent, ICellChangeEvent, EventEmitter, ICell
 export {registerSerializer, serialize, deserialize} from "./serialize";
 export {AsyncQueue} from "./async-queue";
 export * from "./di";
-export {utc} from "./helpers/utc";
+export {utc, local, Instant} from "./helpers/utc";
 export {bind} from "bind-decorator";
-export {DateTime, Duration} from "luxon";
+export {DateTime, Duration} from "./helpers/utc";
