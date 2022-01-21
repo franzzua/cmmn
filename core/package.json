@@ -21,7 +21,6 @@
     "@js-temporal/polyfill": "^0.3.0",
     "cellx": "^1.10.26",
     "msgpackr": "^1.5.2",
-    "reflect-metadata": "^0.1.13",
     "ulid": "^2.3.0"
   },
   "author": "",
