@@ -19,6 +19,9 @@
     "@cmmn/core": "^1.2.2",
     "@cmmn/uhtml": "^1.1.0"
   },
+  "files": [
+    "dist"
+  ],
   "author": "",
   "license": "ISC",
   "gitHead": "5309832cf3397001967465f0508d947cbab2540d",

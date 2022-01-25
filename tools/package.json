@@ -23,6 +23,7 @@
     "@rollup/plugin-commonjs": "^21",
     "@rollup/plugin-node-resolve": "^13",
     "@rollup/plugin-typescript": "^8",
+    "@rollup/plugin-json": "4",
     "@web/rollup-plugin-html": "^1.10.1",
     "fast-glob": "^3.2.11",
     "less": "^4",

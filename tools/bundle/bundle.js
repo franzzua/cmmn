@@ -53,7 +53,7 @@ function getConfigs(options) {
         }
         return getPackageConfigs(process.cwd(), options);
     }
-    if (options.input && !fs.existsSync(options.input)) {
+    if (!options.input.includes('.') || !fs.existsSync(options.input)) {
         return getPackageConfigs(process.cwd(), options, options.input);
     }
     const creator = new ConfigCreator(options);

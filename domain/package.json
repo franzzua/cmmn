@@ -9,6 +9,9 @@
     "bundle": "cmmn bundle ./dist/esm/index.js --watch",
     "build": "cmmn compile ./index.ts --watch"
   },
+  "files": [
+    "dist"
+  ],
   "devDependencies": {
     "@cmmn/tools": "^1.2.2"
   },

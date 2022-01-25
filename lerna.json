@@ -3,6 +3,7 @@
     "app",
     "core",
     "domain",
+    "server",
     "tools",
     "uhtml",
     "ui"

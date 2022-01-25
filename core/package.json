@@ -5,8 +5,12 @@
   "publishConfig": {
     "access": "public"
   },
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "module": "dist/index-es.js",
+  "main": "dist/esm/index.js",
   "typings": "dist/typings",
   "scripts": {
     "build": "cmmn compile ./index.ts --watch",

@@ -10,6 +10,7 @@ import livereload from 'rollup-plugin-livereload'
 import fs from "fs";
 import path from "path";
 import html  from '@open-wc/rollup-plugin-html';
+import json from '@rollup/plugin-json';
 /**
  * @typedef {import(rollup).RollupOptions} RollupOptions
  * @typedef {import(rollup).OutputOptions} OutputOptions
@@ -28,6 +29,7 @@ export class ConfigCreator {
      *     name: string,
      *     outDir: string,
      *     html: string,
+     *     browser: boolean,
      *     dedupe: string[]
      * }}
      */
@@ -107,9 +109,9 @@ export class ConfigCreator {
 
     get plugins() {
         const result = [
-            builtins(),
+            // builtins(),
             nodeResolve({
-                browser: true,
+                browser: this.options.browser,
                 dedupe: this.options.dedupe || []
             }),
             commonjs({
@@ -121,6 +123,7 @@ export class ConfigCreator {
             string({
                 include: /\.(html|svg|less|css)$/,
             }),
+            json()
         ];
         if (this.options.html || this.options.input.endsWith('.html')){
             result.push(this.html);
