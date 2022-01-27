@@ -1,8 +1,7 @@
 {
-  "name": "common",
+  "name": "@cmmn/framework",
   "version": "1.2.3",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "bootstrap": "lerna bootstrap --hoist",
     "compile": "cmmn compile -b --watch",
@@ -10,8 +9,17 @@
   },
   "author": "",
   "license": "ISC",
+  "files": [],
+  "devDependencies": {
+    "lerna": "^4.0.0"
+  },
   "dependencies": {
     "@cmmn/tools": "^1.2.3",
-    "lerna": "^4.0.0"
-  }
+    "@cmmn/app": "^1.2.3",
+    "@cmmn/domain": "^1.2.3",
+    "@cmmn/core": "^1.2.3",
+    "@cmmn/ui": "^1.2.3",
+    "@cmmn/server": "^1.2.3"
+  },
+  "gitHead": "68d02f49f1ecba35975351e05ec1cb0519bf0ada"
 }
