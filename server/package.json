@@ -6,13 +6,17 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "dist"
   ],
   "devDependencies": {
     "@cmmn/core": "1.2.2",
     "@cmmn/tools": "1.2.2",
-    "fastify": "^3.27.0"
+    "fastify": "^3.27.0",
+    "fastify-websocket": "^4.0.0"
   },
   "type": "module",
   "cmmn": {

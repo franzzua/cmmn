@@ -1,22 +1,35 @@
-import type {FastifyInstance} from "fastify";
+import type {FastifyInstance, FastifyServerOptions} from "fastify";
 import {Container} from "@cmmn/core";
 import {FastifyWrapper} from "./wrappers/FastifyWrapper";
+import http from "http";
 
-export class Server {
-    private container = new Container();
-    private wrapper: FastifyWrapper;
+export class Server extends http.Server {
+    private static container = new Container();
+    private static wrapper: FastifyWrapper;
 
-    withFastify(fastify: FastifyInstance): this {
-        this.wrapper = new FastifyWrapper(fastify, this.container);
+    static withFastify(fastify: (opts: FastifyServerOptions<Server>) => FastifyInstance) {
+        this.wrapper = new FastifyWrapper(fastify({
+            logger: true,
+        }), this.container);
         return this;
     }
 
-    withControllers(...controllers){
+    static withControllers(...controllers){
         this.container.provide(controllers);
         return this;
     }
+    static with(container: Container){
+        this.container.provide(container.getProviders());
+        return this;
+    }
 
-    async start(port: number) {
-        await this.wrapper.start(port);
+    static async start(port: number): Promise<ServerType> {
+        const server = await this.wrapper.start(port);
+        const ext = new Server();
+        // @ts-ignore
+        ext.__proto__ = Object.assign(server, ext.__proto__);
+        return ext;
     }
 }
+
+export type ServerType = Server & http.Server;

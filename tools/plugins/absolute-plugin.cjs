@@ -1,13 +1,46 @@
 const ts = require("typescript");
 const path = require("path");
+const fs = require("fs");
 
-function visitImportNode(importNode, sourceFile) {
-    const file  = importNode.moduleSpecifier?.text;
-    if (!/\.(less|css|scss|sass|svg|png|html)/.test(file))
+function visitExportNode(exportNode, sourceFile) {
+    if (exportNode.typeOnly){
+        console.log('type olnly')
+        return ;
+    }
+    const file = exportNode.moduleSpecifier?.text ?? exportNode.test;
+    if (!file)
         return;
     const sourceFileDir = path.dirname(sourceFile.path);
-    const real = path.join(sourceFileDir, file);
-    return ts.updateImportDeclaration(importNode, importNode.decorators, importNode.modifiers, importNode.importClause, ts.createStringLiteral(real));
+    const abs = path.resolve(sourceFileDir, file);
+    if (/\.(less|css|scss|sass|svg|png|html)$/.test(file)) {
+        return ts.updateExportDeclaration(exportNode, exportNode.decorators, exportNode.modifiers, exportNode.exportClause, ts.createStringLiteral(abs), exportNode.typeOnly);
+    }
+    if (fs.existsSync(abs + '.ts')) {
+        return ts.updateExportDeclaration(exportNode, exportNode.decorators, exportNode.modifiers, exportNode.exportClause, ts.createStringLiteral(file + '.js'), exportNode.typeOnly);
+    }
+    if (fs.existsSync(abs + '/')) {
+        const indexFile = './'+path.join(file, 'index.js');
+        console.log(sourceFileDir, file, indexFile);
+        return ts.updateExportDeclaration(exportNode, exportNode.decorators, exportNode.modifiers, exportNode.exportClause, ts.createStringLiteral(indexFile), exportNode.typeOnly);
+    }
+}
+
+function visitImportNode(importNode, sourceFile) {
+    const file = importNode.moduleSpecifier?.text;
+    if (!file)
+        return;
+    const sourceFileDir = path.dirname(sourceFile.path);
+    const abs = path.resolve(sourceFileDir, file);
+    if (/\.(less|css|scss|sass|svg|png|html)$/.test(file)) {
+        return ts.updateImportDeclaration(importNode, importNode.decorators, importNode.modifiers, importNode.importClause, ts.createStringLiteral(abs));
+    }
+    if (fs.existsSync(abs + '.ts')) {
+        return ts.updateImportDeclaration(importNode, importNode.decorators, importNode.modifiers, importNode.importClause, ts.createStringLiteral(file + '.js'));
+    }
+    if (fs.existsSync(abs + '/')) {
+        const indexFile = './' + path.join(file, 'index.js');
+        return ts.updateImportDeclaration(importNode, importNode.decorators, importNode.modifiers, importNode.importClause, ts.createStringLiteral(indexFile));
+    }
 }
 
 function visitRequireNode(importNode, sourceFile) {
@@ -29,13 +62,20 @@ const lessToStringTransformer = function (context) {
             // if (node && node.kind == ts.SyntaxKind.ImportDeclaration) {
             //     return visitImportNode(node as ts.ImportDeclaration);
             // }
-            if (node && ts.isCallExpression(node)) {
+            if (!node)
+                return ts.visitEachChild(node, visitor, context);
+            if (ts.isCallExpression(node)) {
                 const result = visitRequireNode(node, sourceFile);
                 if (result)
                     return result;
             }
-            if (node && ts.isImportDeclaration(node)) {
+            if (ts.isImportDeclaration(node)) {
                 const result = visitImportNode(node, sourceFile);
+                if (result)
+                    return result;
+            }
+            if (ts.isExportDeclaration(node)) {
+                const result = visitExportNode(node, sourceFile);
                 if (result)
                     return result;
             }

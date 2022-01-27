@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "ES6",
+    "module": "esnext",
     "moduleResolution": "Node",
     "target": "ES2019",
     "composite": true,

@@ -18,13 +18,8 @@ export function compile(...flags) {
     }, {
         excludeDirectories: ["node_modules", "dist"]
     });
-    if (flags.includes('-b')) {
-        builder.cleanReferences(rootDir);
-        builder.buildReferences(rootDir);
-    } else {
         builder.clean(rootDir);
         builder.build(rootDir);
-    }
 }
 
 function createProgram(rootNames, options, host, oldProgram, configFileParsingDiagnostics, projectReferences) {

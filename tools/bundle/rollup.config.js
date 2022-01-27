@@ -3,14 +3,15 @@ import nodeResolve from '@rollup/plugin-node-resolve';
 import {terser} from "rollup-plugin-terser"
 import {visualizer} from 'rollup-plugin-visualizer';
 import styles from "rollup-plugin-styles";
-import builtins from "rollup-plugin-node-builtins";
 import {string} from "rollup-plugin-string";
 import serve from 'rollup-plugin-serve'
 import livereload from 'rollup-plugin-livereload'
 import fs from "fs";
 import path from "path";
-import html  from '@open-wc/rollup-plugin-html';
+import html from '@open-wc/rollup-plugin-html';
 import json from '@rollup/plugin-json';
+import alias from '@rollup/plugin-alias';
+
 /**
  * @typedef {import(rollup).RollupOptions} RollupOptions
  * @typedef {import(rollup).OutputOptions} OutputOptions
@@ -47,11 +48,11 @@ export class ConfigCreator {
         };
     }
 
-    setRootDir(rootDir){
+    setRootDir(rootDir) {
         this.root = rootDir;
     }
 
-    get outDir(){
+    get outDir() {
         return path.join(this.root, this.options.outDir);
     }
 
@@ -65,20 +66,21 @@ export class ConfigCreator {
             entryFileNames: `[name]-${this.options.module}${this.options.minify ? '.min' : ''}.js`,
             // file: output,
             dir: this.outDir,
-            sourcemap: !this.options.minify,
+            sourcemap: true,
             format: this.options.module,
             name: 'global',
         };
     }
 
-    get html(){
+    get html() {
         return html({
             publicPath: '/',
             dir: this.outDir,
             template: () => fs.readFileSync(path.join(this.root, this.options.html), 'utf8')
         });
     }
-    get devServer(){
+
+    get devServer() {
         return serve({
             open: false,
             contentBase: [this.outDir, path.join(this.root, 'assets')],
@@ -87,7 +89,7 @@ export class ConfigCreator {
         });
     }
 
-    get livereload(){
+    get livereload() {
         return livereload({
             watch: [this.outDir, path.join(this.root, 'assets')],
             verbose: false, // Disable console output
@@ -97,12 +99,13 @@ export class ConfigCreator {
         })
     }
 
-    get visualizer(){
+    get visualizer() {
         return visualizer({
             open: true,
             sourcemap: true,
             template: 'treemap',
             brotliSize: true,
+
             filename: path.join(this.outDir, '/stats.html')
         })
     }
@@ -115,7 +118,7 @@ export class ConfigCreator {
                 dedupe: this.options.dedupe || []
             }),
             commonjs({
-                 requireReturnsDefault: "namespace",
+                requireReturnsDefault: "namespace",
             }),
             styles({
                 mode: "emit",
@@ -123,9 +126,16 @@ export class ConfigCreator {
             string({
                 include: /\.(html|svg|less|css)$/,
             }),
-            json()
+            json(),
+
         ];
-        if (this.options.html || this.options.input.endsWith('.html')){
+        if (this.options.alias) {
+            result.unshift(alias({
+                entries: this.options.alias
+            }));
+            console.log(this.options.alias)
+        }
+        if (this.options.html || this.options.input.endsWith('.html')) {
             result.push(this.html);
         }
         if (this.options.minify) {
@@ -144,7 +154,7 @@ export class ConfigCreator {
         if (this.options.devServer) {
             result.push(this.devServer, this.livereload);
         }
-        if (this.options.stats){
+        if (this.options.stats) {
             result.push(this.visualizer);
         }
         return result;
@@ -154,7 +164,7 @@ export class ConfigCreator {
      * @returns {RollupOptions[]}
      */
     getConfig() {
-        Object.assign(this.options,{
+        Object.assign(this.options, {
             module: this.options.module || 'es',
             external: this.options.external || [],
             name: this.options.name || 'index',
@@ -165,7 +175,7 @@ export class ConfigCreator {
         console.log(this.options);
         return [{
             input: {
-                [this.options.name]: path.join(this.root,this.options.input)
+                [this.options.name]: path.join(this.root, this.options.input)
             },
             output: this.output,
             external: (this.options.external || []).map(s => new RegExp(s)),
@@ -180,7 +190,7 @@ export class ConfigCreator {
                 console.warn(`(!) ${warning.message}`)
             },
             plugins: this.plugins,
-            treeshake: this.options.minify ? "smallest" : "recommended"
+            treeshake: this.options.minify ? "smallest" : "recommended",
         }]
     }
 }
