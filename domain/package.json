@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/domain",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "",
   "type": "module",
   "module": "dist/index-es.js",
@@ -13,10 +13,10 @@
     "dist"
   ],
   "devDependencies": {
-    "@cmmn/tools": "^1.2.2"
+    "@cmmn/tools": "^1.2.3"
   },
   "dependencies": {
-    "@cmmn/core": "^1.2.2"
+    "@cmmn/core": "^1.2.3"
   },
   "author": "",
   "license": "ISC",
