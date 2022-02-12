@@ -24,5 +24,6 @@
       "html": "./entry/index.html",
       "port": 3003
     }
-  }
+  },
+  "gitHead": "76478b70f43752f9bfe6cb96b4e540b1ff1e52e3"
 }
