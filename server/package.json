@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "typings": "dist/typings/index.d.ts",
   "publishConfig": {
     "access": "public"
   },

@@ -33,12 +33,7 @@ export class Container {
     public get<T>(target: any): T {
         if (target === Container)
             return this as unknown as T;
-        let existing = this.store.find(target);
-        if (!existing) {
-            throw new Error(`unknown dependency, ${target.name || target}`);
-            // console.warn('should register', target);
-            // existing = this.store.register({provide: target, useClass: target, deps: []});
-        }
+        const existing = this.store.find(target) ?? {provide: target};
         return this.resolve(existing as CommonProvider);
     }
 
