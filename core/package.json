@@ -9,16 +9,19 @@
     "dist"
   ],
   "type": "module",
-  "module": "dist/index-es.js",
-  "main": "dist/esm/index.js",
   "typings": "dist/typings",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
   "scripts": {
-    "build": "cmmn compile ./index.ts --watch",
-    "bundle": "cmmn bundle ./dist/esm/index.js --watch"
+    "build": "cmmn compile --watch",
+    "bundle": "cmmn bundle --watch"
   },
   "devDependencies": {
-    "@cmmn/tools": "^1.2.3",
-    "@types/node": "^14.14.14"
+    "@cmmn/tools": "^1.2.3"
   },
   "dependencies": {
     "@js-temporal/polyfill": "^0.3.0",
@@ -33,7 +36,7 @@
   "cmmn": {
     "index": {
       "input": "dist/esm/index.js",
-      "module": "es",
+      "module": "es,cjs",
       "external": [
         "temporal/polyfill",
         "cellx"

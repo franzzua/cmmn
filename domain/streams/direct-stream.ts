@@ -1,7 +1,7 @@
 import {cellx, Injectable, ICellx} from "@cmmn/core";
 import {Stream} from "./stream";
-import {IFactory} from "./shared/factory";
-import {Action} from "./shared/types";
+import {IFactory} from "../shared/factory";
+import {Action} from "../shared/types";
 
 @Injectable()
 export class DirectStream extends Stream {

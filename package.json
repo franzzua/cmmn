@@ -3,23 +3,19 @@
   "version": "1.2.3",
   "description": "",
   "scripts": {
-    "bootstrap": "lerna bootstrap --hoist",
+    "bootstrap": "npm i && lerna bootstrap --hoist",
     "compile": "cmmn compile -b --watch",
-    "bundle": "cmmn bundle -b --watch"
+    "bundle": "cmmn bundle -b --watch",
+    "prod": "cmmn bundle -b --prod"
   },
   "author": "",
   "license": "ISC",
   "files": [],
   "devDependencies": {
+    "@cmmn/tools": "file:./tools",
     "lerna": "^4.0.0"
   },
   "dependencies": {
-    "@cmmn/tools": "^1.2.3",
-    "@cmmn/app": "^1.2.3",
-    "@cmmn/domain": "^1.2.3",
-    "@cmmn/core": "^1.2.3",
-    "@cmmn/ui": "^1.2.3",
-    "@cmmn/server": "^1.2.3"
   },
   "gitHead": "68d02f49f1ecba35975351e05ec1cb0519bf0ada"
 }

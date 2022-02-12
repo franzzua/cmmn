@@ -6,7 +6,8 @@
     "server",
     "tools",
     "uhtml",
-    "ui"
+    "ui",
+    "examples/*"
   ],
   "version": "1.2.3",
   "npmClient": "npm"

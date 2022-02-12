@@ -56,20 +56,31 @@ export class ConfigCreator {
         return path.join(this.root, this.options.outDir);
     }
 
+    getOutputFileName(module, minify){
+        switch (module){
+            case "cjs":
+                return `[name]${minify ? '.min' : ''}.cjs`;
+            case "es":
+                return `[name]${minify ? '.min' : ''}.js`;
+            default:
+                return `[name]-${module}${minify ? '.min' : ''}.js`;
+        }
+    }
+
     /**
      *
      * @returns {OutputOptions}
      */
     get output() {
         // const output = `${this.options.name ?? 'index'}-${this.options.module}${this.options.minify ? '.min' : ''}.js`;
-        return {
-            entryFileNames: `[name]-${this.options.module}${this.options.minify ? '.min' : ''}.js`,
+        return this.options.module.split(',').map(module => ({
+            entryFileNames: this.getOutputFileName(module, this.options.minify),
             // file: output,
             dir: this.outDir,
             sourcemap: true,
-            format: this.options.module,
+            format: module,
             name: 'global',
-        };
+        }));
     }
 
     get html() {
@@ -84,7 +95,7 @@ export class ConfigCreator {
         return serve({
             open: false,
             contentBase: [this.outDir, path.join(this.root, 'assets')],
-            port: 3001,
+            port: this.options.port ?? 3000,
             historyApiFallback: true
         });
     }

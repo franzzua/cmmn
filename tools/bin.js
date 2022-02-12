@@ -10,4 +10,10 @@ const actions = {
     bundle, compile, gen
 }
 
-actions[action](...args);
+if (action in actions) {
+    actions[action](...args);
+} else {
+    console.log(`cmmn bundle [-b] [index.ts] [--watch] [--run] [--prod]`);
+    console.log(`cmmn compile [-b] [--watch]`);
+    console.log(`cmmn gen AppRoot . [--nested]`);
+}

@@ -2,7 +2,6 @@
   "name": "@cmmn/server",
   "version": "1.2.3",
   "description": "server libs for building rest api",
-  "main": "dist/esm/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,6 +12,12 @@
   "files": [
     "dist"
   ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
   "devDependencies": {
     "@cmmn/core": "^1.2.3",
     "@cmmn/tools": "^1.2.3",
@@ -23,6 +28,7 @@
   "cmmn": {
     "index": {
       "input": "./dist/esm/index.js",
+      "module": "es,cjs",
       "external": [
         "fastify",
         "@cmmn"

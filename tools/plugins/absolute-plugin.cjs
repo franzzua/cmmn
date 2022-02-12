@@ -13,32 +13,35 @@ function visitExportNode(exportNode, sourceFile) {
     const sourceFileDir = path.dirname(sourceFile.path);
     const abs = path.resolve(sourceFileDir, file);
     if (/\.(less|css|scss|sass|svg|png|html)$/.test(file)) {
-        return ts.updateExportDeclaration(exportNode, exportNode.decorators, exportNode.modifiers, exportNode.exportClause, ts.createStringLiteral(abs), exportNode.typeOnly);
+        const absSource = path.join(options.outDir, path.relative(options.baseUrl, sourceFile.path));
+        const relFile = path.relative(absSource, abs)
+        return ts.updateExportDeclaration(exportNode, exportNode.decorators, exportNode.modifiers, exportNode.exportClause, ts.createStringLiteral(relFile), exportNode.typeOnly);
     }
     if (fs.existsSync(abs + '.ts')) {
         return ts.updateExportDeclaration(exportNode, exportNode.decorators, exportNode.modifiers, exportNode.exportClause, ts.createStringLiteral(file + '.js'), exportNode.typeOnly);
     }
     if (fs.existsSync(abs + '/')) {
-        const indexFile = './'+path.join(file, 'index.js');
-        console.log(sourceFileDir, file, indexFile);
+        const indexFile = `${file}/index.js`;
         return ts.updateExportDeclaration(exportNode, exportNode.decorators, exportNode.modifiers, exportNode.exportClause, ts.createStringLiteral(indexFile), exportNode.typeOnly);
     }
 }
 
-function visitImportNode(importNode, sourceFile) {
+function visitImportNode(importNode, sourceFile, options) {
     const file = importNode.moduleSpecifier?.text;
     if (!file)
         return;
     const sourceFileDir = path.dirname(sourceFile.path);
     const abs = path.resolve(sourceFileDir, file);
     if (/\.(less|css|scss|sass|svg|png|html)$/.test(file)) {
-        return ts.updateImportDeclaration(importNode, importNode.decorators, importNode.modifiers, importNode.importClause, ts.createStringLiteral(abs));
+        const absSource = path.join(options.outDir, path.relative(options.baseUrl, sourceFile.path));
+        const relFile = path.relative(absSource, abs)
+        return ts.updateImportDeclaration(importNode, importNode.decorators, importNode.modifiers, importNode.importClause, ts.createStringLiteral(relFile));
     }
     if (fs.existsSync(abs + '.ts')) {
         return ts.updateImportDeclaration(importNode, importNode.decorators, importNode.modifiers, importNode.importClause, ts.createStringLiteral(file + '.js'));
     }
     if (fs.existsSync(abs + '/')) {
-        const indexFile = './' + path.join(file, 'index.js');
+        const indexFile = `${file}/index.js`;
         return ts.updateImportDeclaration(importNode, importNode.decorators, importNode.modifiers, importNode.importClause, ts.createStringLiteral(indexFile));
     }
 }
@@ -51,12 +54,15 @@ function visitRequireNode(importNode, sourceFile) {
     const file = importNode.arguments[0].text;
     if (/\.(less|css|scss|sass|svg|png|html)/.test(file)) {
         const sourceFileDir = path.dirname(sourceFile.path);
-        const real = path.join(sourceFileDir, file);
-        return ts.updateCall(importNode, importNode.expression, undefined, [ts.createStringLiteral(real)]);
+        const abs = path.join(sourceFileDir, file);
+        const absSource = path.join(options.outDir, path.relative(options.baseUrl, sourceFile.path));
+        const relFile = path.relative(absSource, abs)
+        return ts.updateCall(importNode, importNode.expression, undefined, [ts.createStringLiteral(relFile)]);
     }
 }
 
 const lessToStringTransformer = function (context) {
+    const options = context.getCompilerOptions();
     return (sourceFile) => {
         function visitor(node) {
             // if (node && node.kind == ts.SyntaxKind.ImportDeclaration) {
@@ -70,7 +76,7 @@ const lessToStringTransformer = function (context) {
                     return result;
             }
             if (ts.isImportDeclaration(node)) {
-                const result = visitImportNode(node, sourceFile);
+                const result = visitImportNode(node, sourceFile, options);
                 if (result)
                     return result;
             }

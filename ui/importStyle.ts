@@ -1,11 +1,12 @@
 export function importStyle(text: string, elementName: string = '', className: string = '') {
     const style = document.createElement('style');
-    style.textContent = text;
+    style.type = "text/css";
     if (className) {
-        style.setAttribute('target', className);
+        style.setAttribute('src', className+'.css');
     }
     if (elementName) {
         style.setAttribute('element', elementName);
     }
-    document.head.appendChild(style);
+    document.head.appendChild(style)
+    style.innerHTML = text;
 }

@@ -1,6 +1,6 @@
 import {ICellx} from "@cmmn/core";
 import {Model} from "./worker/model";
-import {Stream} from "./stream";
+import {Stream} from "./streams/stream";
 import {ModelAction, ModelPath} from "./shared/types";
 
 export class ModelProxy<TState, TActions extends ModelAction = {}> extends Model<TState, TActions> {

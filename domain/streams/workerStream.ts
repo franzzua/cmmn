@@ -1,6 +1,6 @@
 import {cell, Cell, cellx, deserialize, Fn, serialize} from "@cmmn/core";
 import {Stream} from "./stream";
-import {Action, ModelPath, WorkerMessage, WorkerMessageType} from "./shared/types";
+import {Action, ModelPath, WorkerMessage, WorkerMessageType} from "../shared/types";
 
 export class WorkerStream extends Stream {
     constructor(private workerUrl: string) {

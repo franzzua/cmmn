@@ -6,11 +6,17 @@
     "access": "public"
   },
   "type": "module",
-  "module": "dist/index-es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "module": "dist/index.js",
   "typings": "dist/typings",
   "scripts": {
-    "bundle": "cmmn bundle ./dist/esm/index.js --watch",
-    "build": "cmmn compile ./index.ts --watch"
+    "bundle": "cmmn bundle --watch",
+    "build": "cmmn compile -b --watch"
   },
   "devDependencies": {
     "@cmmn/tools": "^1.2.3"
@@ -28,7 +34,8 @@
   "cmmn": {
     "index": {
       "input": "dist/esm/index.js",
-      "external": "@cmmn"
+      "external": "@cmmn",
+      "module": "es,cjs"
     }
   }
 }

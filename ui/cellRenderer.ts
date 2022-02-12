@@ -1,5 +1,5 @@
 import {bind, Cell, cellx, Fn, IEvent} from "@cmmn/core";
-import {html, render} from "@cmmn/uhtml";
+import {html, render, svg} from "@cmmn/uhtml";
 import {HtmlComponent} from "./htmlComponent";
 import {IEvents, ITemplate} from "./types";
 import {EventHandlerProvider} from "./eventHandlerProvider";
@@ -19,11 +19,13 @@ export class CellRenderer<TState, TEvents extends IEvents> {
 
     constructor(private component: HtmlComponent<TState, TEvents>,
                 private template: ITemplate<TState, TEvents>) {
-        this.component.$render = new Cell(undefined);
+        this.component.$render = new Cell(0);
     }
 
     private html = (strings: TemplateStringsArray | string, ...args: any[]) => {
         if (typeof strings == "string") {
+            if (strings.startsWith('svg:'))
+                return svg.for(this, strings);
             // case of html('key')`<template>`
             return html.for(this, strings);
         }
@@ -35,6 +37,8 @@ export class CellRenderer<TState, TEvents extends IEvents> {
             // case of html()`<template>`
             return html.node;
         }
+        if (args[0] == 'svg' || args[0].startsWith('svg:'))
+            return svg.for(strings, args.join(','));
         // case of html(object, 'key')`<template>`
         return html.for(strings, args.join(','));
     }
@@ -48,7 +52,7 @@ export class CellRenderer<TState, TEvents extends IEvents> {
     @bind
     render(err: any, event: IEvent) {
         this.template.call(this.component, this.html, event.data.value, this.handlerProxy);
-        this.component.$render.set(Fn.ulid());
+        this.component.$render.set(this.component.$render.get()+1);
     }
 
     Start() {

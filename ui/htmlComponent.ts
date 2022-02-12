@@ -3,6 +3,8 @@ import {IEvents} from "./types";
 import {Cell} from "@cmmn/core";
 
 export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extends HTMLElement {
+    static Name: string;
+
     Events: TEvents;
 
     $state: Cell<TState>;
@@ -11,7 +13,7 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
         return this.$state.get();
     }
     /** @internal **/
-    public $render: Cell<string>;
+    public $render: Cell<number>;
 
     Actions: Function[] = [];
     Effects: Function[] = [];

@@ -11,6 +11,7 @@
   "bin": {
     "cmmn": "bin.js"
   },
+  "typings": "compile/typings.d.ts",
   "files": [
     "bin.js",
     "gen/*",

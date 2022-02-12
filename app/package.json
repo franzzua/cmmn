@@ -6,6 +6,12 @@
     "access": "public"
   },
   "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
   "module": "dist/index-es.js",
   "typings": "dist/typings",
   "scripts": {
@@ -30,6 +36,7 @@
   "cmmn": {
     "index": {
       "input": "dist/esm/index.js",
+      "module": "es,cjs",
       "external": "@cmmn"
     }
   }

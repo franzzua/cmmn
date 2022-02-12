@@ -1,7 +1,7 @@
 import {ModelKey, ModelPath} from "./types";
 import {ModelProxy} from "../modelProxy";
 import {ModelMap} from "../model-map";
-import {Stream} from "../stream";
+import {Stream} from "../streams/stream";
 
 
 type DefMapping = {

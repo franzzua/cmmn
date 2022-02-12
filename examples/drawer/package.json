@@ -1,0 +1,28 @@
+{
+  "name": "@cmmn/examples-drawer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "compile": "cmmn compile -b --watch",
+    "run": "cmmn bundle --run --watch"
+  },
+  "devDependencies": {
+    "@cmmn/app": "^1.2.3",
+    "@cmmn/core": "^1.2.3",
+    "@cmmn/domain": "^1.2.3",
+    "@cmmn/tools": "^1.2.3",
+    "@cmmn/ui": "^1.2.3",
+    "cellx-collections": "^1.0.3",
+    "cellx-decorators": "^1.6.3"
+  },
+  "author": "",
+  "license": "ISC",
+  "cmmn": {
+    "main": {
+      "input": "dist/esm/entry/index.js",
+      "html": "./entry/index.html",
+      "port": 3003
+    }
+  }
+}

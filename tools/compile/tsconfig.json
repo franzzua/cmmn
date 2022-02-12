@@ -18,6 +18,7 @@
     "declarationDir": "./dist/typings",
     "declaration": true,
     "types": [
+      "@cmmn/tools"
     ],
     "lib": [
       "ES2020.BigInt",

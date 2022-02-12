@@ -32,9 +32,7 @@ export type IComponentOptions<TState, TEvents extends IEvents = IEvents> = {
 
 export function component<TState, TEvents extends IEvents = IEvents>(opts: IComponentOptions<TState, TEvents>) {
     return (target: any) => {
-        if (opts.style) {
-            importStyle(opts.style, opts.name, target.name);
-        }
+        target.Name = opts.name;
         const componentFactory = () => GlobalStaticState.DefaultContainer ? GlobalStaticState.DefaultContainer.get(target) : new target();
         const renderer = Symbol('renderer');
 
@@ -66,6 +64,9 @@ export function component<TState, TEvents extends IEvents = IEvents>(opts: IComp
 
         GlobalStaticState.addRegistration(() => {
             customElements.define(opts.name, ProxyHTML);
+            if (opts.style) {
+                importStyle(opts.style, opts.name, target.name);
+            }
         });
         return target;
     };

@@ -4,6 +4,8 @@ import {Cell} from "@cmmn/core";
 const propertySymbol = Symbol('properties');
 
 function componentHandler(self: any, key: string): any {
+    if (!self.constructor[propertySymbol])
+        return null;
     const descr = Object.getOwnPropertyDescriptor(self.constructor.prototype, key);
     if (descr) {
         const cell = getOrCreateCell(self, key, null);

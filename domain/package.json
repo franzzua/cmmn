@@ -3,11 +3,28 @@
   "version": "1.2.3",
   "description": "",
   "type": "module",
-  "module": "dist/index-es.js",
-  "typings": "dist/typings",
+  "exports": {
+    "./proxy":{
+      "import": "./dist/proxy.js",
+      "require": "./dist/proxy.cjs",
+      "default": "./dist/proxy.js"
+    },
+    "./worker":{
+      "import": "./dist/worker.js",
+      "require": "./dist/worker.cjs",
+      "default": "./dist/worker.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "proxy": ["./dist/typings/entry/proxy.d.ts"],
+      "worker": ["./dist/typings/worker/index.d.ts"]
+    }
+  },
   "scripts": {
-    "bundle": "cmmn bundle ./dist/esm/index.js --watch",
-    "build": "cmmn compile ./index.ts --watch"
+    "bundle": "cmmn bundle -b --watch",
+    "build": "cmmn compile -b --watch"
   },
   "files": [
     "dist"
@@ -22,8 +39,14 @@
   "license": "ISC",
   "gitHead": "68d02f49f1ecba35975351e05ec1cb0519bf0ada",
   "cmmn": {
-    "index": {
-      "input": "dist/esm/index.js",
+    "proxy": {
+      "input": "dist/esm/entry/proxy.js",
+      "module": "es,cjs",
+      "external": "@cmmn"
+    },
+    "worker": {
+      "input": "dist/esm/worker/index.js",
+      "module": "es,cjs",
       "external": "@cmmn"
     }
   }

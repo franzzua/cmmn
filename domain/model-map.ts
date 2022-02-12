@@ -1,4 +1,4 @@
-import {Stream} from "./stream";
+import {Stream} from "./streams/stream";
 import {ModelKey} from "./shared/types";
 import {ModelProxy} from "./modelProxy";
 
