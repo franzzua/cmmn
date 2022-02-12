@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/core",
-  "version": "1.2.3",
+  "version": "1.3.0",
   "description": "di, base extensions, useful functions",
   "publishConfig": {
     "access": "public"
@@ -21,7 +21,7 @@
     "bundle": "cmmn bundle --watch"
   },
   "devDependencies": {
-    "@cmmn/tools": "^1.2.3"
+    "@cmmn/tools": "^1.3.0"
   },
   "dependencies": {
     "@js-temporal/polyfill": "^0.3.0",
