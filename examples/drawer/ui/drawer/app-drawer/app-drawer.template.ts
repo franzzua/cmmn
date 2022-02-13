@@ -1,26 +1,24 @@
 import {ITemplate} from "@cmmn/ui";
 import {Mode} from "../types";
-import {PointDrawerComponent} from "../point-drawer/point-drawer.component";
 import {DrawingItem} from "../drawing.store";
-import {Presentors} from "../presentors/presentors";
-import {LineDrawerComponent} from "../line-drawer/line-drawer.component";
+import {BaseFigureComponent} from "../presentors/base-figure-component";
 
 export const Drawers = {
-    [Mode.point]: document.createElement(PointDrawerComponent.Name),
-    [Mode.line]: document.createElement(LineDrawerComponent.Name)
+    [Mode.point]: html => html()`<point-drawer/>`,
+    [Mode.line]: html => html()`<line-drawer/>`,
 }
 
 export const template: ITemplate<IState, IEvents> = (html, state, events) => html`
-    ${Drawers[state.Mode]}
-    
+    ${(state.Mode in Drawers) ? Drawers[state.Mode](html) : ''}
     <svg>
-        ${state.Items.map(item => Presentors[item.type](html, item))}
+        ${state.Items.map(BaseFigureComponent.for, state.Mode == Mode.idle ? 'edit': null)}
     </svg>
 `;
 
 export type IState = {
-    Mode: Mode,
-    Items: DrawingItem[]
+    Mode: Mode;
+    Items: DrawingItem[];
+    CreatingItem?: DrawingItem;
 }
 
 export type IEvents = {}

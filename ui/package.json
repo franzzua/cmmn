@@ -13,7 +13,13 @@
     }
   },
   "module": "dist/index.js",
-  "typings": "dist/typings",
+  "typesVersions": {
+    "*": {
+      ".": [
+        "dist/typings/index.d.ts"
+      ]
+    }
+  },
   "scripts": {
     "bundle": "cmmn bundle --watch",
     "build": "cmmn compile -b --watch"

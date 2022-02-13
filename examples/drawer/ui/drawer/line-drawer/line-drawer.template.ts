@@ -1,10 +1,11 @@
 import {ITemplate} from "@cmmn/ui";
 import {LineItem} from "../drawing.store";
-import {Presentors} from "../presentors/presentors";
+import {LineFigureComponent} from "../presentors/line-figure/line-figure.component";
+import {PointFigureComponent} from "../presentors/point-figure/point-figure.component";
 
 export const template: ITemplate<LineItem, IEvents> = (html, state, events) => html`
     <svg>
-        ${state && Presentors.line(html, state)}
+        ${PointFigureComponent.for(state, 'creating')}
     </svg>
 `;
 

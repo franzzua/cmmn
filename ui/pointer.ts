@@ -18,10 +18,11 @@ export class PointerEmitter extends EventEmitter<PointerEvents> {
     }
 
     public on<TEventName extends keyof PointerEvents>(eventName, listener: (data: PointerEvents[TEventName]) => void) {
-        super.on(eventName, listener);
+        const unsubscr = super.on(eventName, listener);
         if (this.listeners.get(eventName).size == 1) {
             this.subscribe(eventName);
         }
+        return unsubscr;
     }
 
     public off<TEventName extends keyof PointerEvents>(eventName, listener: (data: PointerEvents[TEventName]) => void) {

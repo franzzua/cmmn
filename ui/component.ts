@@ -1,21 +1,24 @@
 import {HtmlComponent} from "./htmlComponent";
 import {CellRenderer} from "./cellRenderer";
-import {Html, IEvents, ITemplate} from "./types";
+import {ExtendedElement, IEvents, ITemplate, renderer} from "./types";
 import {Container} from "@cmmn/core";
 import {importStyle} from "./importStyle";
 
 export const GlobalStaticState = new class {
     _defaultContainer: Container = null;
     _registrations: Function[] = [];
+
     get DefaultContainer(): Container {
         return this._defaultContainer;
     };
+
     set DefaultContainer(value: Container) {
         this._defaultContainer = value;
         this._registrations.forEach(f => f());
         this._registrations.length = 0;
     };
-    public creatingElement: HTMLElement
+
+    public creatingElement: HTMLElement | SVGElement;
 
     addRegistration(registration: Function) {
         if (this.DefaultContainer)
@@ -27,30 +30,28 @@ export const GlobalStaticState = new class {
 export type IComponentOptions<TState, TEvents extends IEvents = IEvents> = {
     name: `${string}-${string}`,
     template: ITemplate<TState, TEvents>,
-    style?: string
+    style?: string,
+    svg?: boolean
 };
 
 export function component<TState, TEvents extends IEvents = IEvents>(opts: IComponentOptions<TState, TEvents>) {
     return (target: any) => {
         target.Name = opts.name;
-        const componentFactory = () => GlobalStaticState.DefaultContainer ? GlobalStaticState.DefaultContainer.get(target) : new target();
-        const renderer = Symbol('renderer');
+        target.Template = opts.template;
 
         class ProxyHTML extends HTMLElement {
-            private component: HtmlComponent<TState, TEvents> = (() => {
-                GlobalStaticState.creatingElement = this;
-                const component = componentFactory();
-                GlobalStaticState.creatingElement = undefined;
-                return component as HtmlComponent<TState, TEvents>;
-            })();
-            private [renderer] = new CellRenderer(this.component, opts.template);
+            public component: HtmlComponent<TState, TEvents>;
+            public [renderer]: CellRenderer<TState, TEvents>
 
-            constructor(...params: any[]) {
+            constructor() {
                 super();
+                HtmlComponent.Init(this, target);
             }
 
             connectedCallback() {
-                this[renderer].Start();
+                Promise.resolve().then(() => {
+                    this[renderer].Start();
+                });
             }
 
             attributeChangedCallback() {
@@ -59,11 +60,17 @@ export function component<TState, TEvents extends IEvents = IEvents>(opts: IComp
 
             disconnectedCallback() {
                 this[renderer].Stop();
+                this.component.onDisposeSet.forEach(x => x());
             }
+
         }
 
         GlobalStaticState.addRegistration(() => {
-            customElements.define(opts.name, ProxyHTML);
+            // @ts-ignore
+            customElements.define(opts.name, ProxyHTML, {
+                // @ts-ignore
+                extends: opts.is
+            });
             if (opts.style) {
                 importStyle(opts.style, opts.name, target.name);
             }

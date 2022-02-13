@@ -1,9 +1,8 @@
-import {component, HtmlComponent, property} from "@cmmn/ui";
-import {template, IState, IEvents} from "./app-drawer.template";
+import {component, HtmlComponent} from "@cmmn/ui";
+import {IEvents, IState, template} from "./app-drawer.template";
 import style from "./app-drawer.style.less";
 import {Injectable} from "@cmmn/core";
 import {DrawingStore} from "../drawing.store";
-import {Mode} from "../types";
 
 @Injectable(true)
 @component({name: 'app-drawer', template, style})
@@ -13,11 +12,10 @@ export class AppDrawerComponent extends HtmlComponent<IState, IEvents> {
         super();
     }
 
-
     get State() {
         return {
-            Mode: Mode.line,
-            Items: this.drawingStore.Items.toArray()
+            Mode: this.drawingStore.Mode,
+            Items: this.drawingStore.Items.toArray(),
         }
     }
 }
