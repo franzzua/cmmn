@@ -1,17 +1,21 @@
 import {ITemplate} from "@cmmn/ui";
 import {IPoint, LineItem} from "../../drawing.store";
 import {Html} from "@cmmn/ui/types";
+import {Point} from "../point.template";
 
 const radius = 3;
 
 export const template: ITemplate<IState, IEvents> = (html, state, events) => state && html.svg`
-    ${state.figure.map((point, i) => html.svg(i)`
-        <circle cx=${point.X} cy=${point.Y}, r=${radius}>
-    `)}
-    ${state.figure.slice(1).map((point, i) => getLineWithRadius(html, i, point, state.figure[i], radius))}
+    ${state.item.figure.map((point, i) => Point(html.svg(i), point, state.selected, state.hoveredIndex === i))}
+    ${state.item.figure.slice(1).map((point, i) => getLineWithRadius(html, i, point, state.item.figure[i], radius))}
 `;
 
-export type IState = LineItem
+export type IState = {
+    item: LineItem;
+    hovered: boolean;
+    selected: boolean;
+    hoveredIndex?: number;
+}
 
 export type IEvents = {}
 

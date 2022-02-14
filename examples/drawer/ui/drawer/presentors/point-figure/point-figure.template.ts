@@ -1,12 +1,15 @@
 import {ITemplate} from "@cmmn/ui";
-import {IPoint, PointItem} from "../../drawing.store";
+import {PointItem} from "../../drawing.store";
+import {Point} from "../point.template";
 
-const radius = 3;
+export const template: ITemplate<IState, IEvents> = (html, state, events) => state.item.figure
+    ? Point(html.svg, state.item.figure, state.selected, state.hovered)
+    : html.svg``;
 
-export const template: ITemplate<IState, IEvents> = (html, state, events) => state.figure ? html.svg`
-    <circle cx=${state.figure.X} cy=${state.figure.Y}, r=${radius}>
-`: html.svg``;
-
-export type IState = PointItem;
+export type IState = {
+    item: PointItem;
+    hovered: boolean;
+    selected: boolean;
+};
 
 export type IEvents = {}

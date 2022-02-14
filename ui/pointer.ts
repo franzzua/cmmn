@@ -44,6 +44,14 @@ export class PointerEmitter extends EventEmitter<PointerEvents> {
         return this._position.get();
     }
 
+    public get PositionPoint(): { X: number; Y: number; } {
+        if (!this.Position) return null;
+        return {
+            X: this.Position.x,
+            Y: this.Position.y
+        };
+    }
+
     @bind
     private async directClickListener(downEvent: PointerEvent) {
         const upEvent = await this.onceAsync('up');
