@@ -20,8 +20,8 @@ app-drawer {
     .drawer-point {
       circle {
         stroke-width: 1px;
+        fill: white;
         &.stroke {
-          fill: none;
           stroke: @mainColor;
         }
         &.none{
@@ -35,9 +35,14 @@ app-drawer {
       }
     }
 
-    line {
+    line, path {
       stroke-width: 1px;
+      fill: none;
       stroke: @mainColor;
+
+      &[hovered]{
+        stroke-width: 2px;
+      }
     }
   }
 

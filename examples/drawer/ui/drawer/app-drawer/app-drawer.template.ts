@@ -1,7 +1,7 @@
 import {ITemplate} from "@cmmn/ui";
 import {Mode} from "../types";
-import {DrawingItem} from "../drawing.store";
-import {BaseFigureComponent} from "../presentors/base-figure-component";
+import {BaseFigurePresentor} from "../presentors/base-figure-presentor";
+import {DrawingFigure} from "../model";
 
 export const Drawers = {
     [Mode.point]: html => html()`<point-drawer/>`,
@@ -22,15 +22,14 @@ export const template: ITemplate<IState, IEvents> = (html, state, events) => {
     return html`
         ${(state.Mode in Drawers) ? Drawers[state.Mode](html) : ''}
         <svg>
-            ${state.Items.map(BaseFigureComponent.for)}
+            ${state.Items.map(BaseFigurePresentor.for)}
         </svg>
     `;
 };
 
 export type IState = {
     Mode: Mode;
-    Items: DrawingItem[];
-    CreatingItem?: DrawingItem;
+    Items: DrawingFigure[];
 }
 
 export type IEvents = {}

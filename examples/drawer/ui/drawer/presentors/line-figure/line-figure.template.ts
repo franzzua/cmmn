@@ -1,20 +1,26 @@
 import {ITemplate} from "@cmmn/ui";
-import {IPoint, LineItem} from "../../drawing.store";
+import {IPoint} from "../../drawing.store";
 import {Html} from "@cmmn/ui/types";
 import {Point} from "../point.template";
+import {ObservableList} from "cellx-collections";
 
 const radius = 3;
 
 export const template: ITemplate<IState, IEvents> = (html, state, events) => state && html.svg`
-    ${state.item.figure.map((point, i) => Point(html.svg(i), point, state.selected, state.hoveredIndex === i))}
-    ${state.item.figure.slice(1).map((point, i) => getLineWithRadius(html, i, point, state.item.figure[i], radius))}
+    <path d=${state.path} ?hovered=${state.hovered}/>
+    ${state.points.map((point, i) => Point(html.svg(i), point, {
+        selected: state.selectedIndex === null ? state.selected : state.selectedIndex === i,
+        hovered: state.hoveredIndex === i
+    },))}
 `;
 
 export type IState = {
-    item: LineItem;
+    points: ObservableList<IPoint>;
+    path: string;
     hovered: boolean;
     selected: boolean;
     hoveredIndex?: number;
+    selectedIndex?: number;
 }
 
 export type IEvents = {}

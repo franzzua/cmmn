@@ -7,10 +7,11 @@ import {Observable} from "cellx-decorators";
 import {CreatorService} from "../../services/creator.service";
 import {ExtendedElement} from "@cmmn/ui/types";
 import {AppDrawerComponent} from "../../app-drawer/app-drawer.component";
+import {LineFigure} from "../../model/line-figure";
 
 @Injectable(true)
 @component({name: 'line-drawer', template, style})
-export class LineDrawerComponent extends HtmlComponent<LineItem, IEvents> {
+export class LineDrawerComponent extends HtmlComponent<LineFigure, IEvents> {
 
     constructor(private store: DrawingStore,
                 private creator: CreatorService) {
@@ -29,10 +30,7 @@ export class LineDrawerComponent extends HtmlComponent<LineItem, IEvents> {
             if (lastAddTime && event.timeStamp - lastAddTime < 400)
                 return;
             lastAddTime = event.timeStamp;
-            (this.creator.CreatingItem as LineItem).figure.push({
-                X: event.x,
-                Y: event.y
-            });
+            this.creator.CreatingItem = this.creator.CreatingItemWithLastPosition;
         });
     }
 
@@ -40,13 +38,13 @@ export class LineDrawerComponent extends HtmlComponent<LineItem, IEvents> {
         return this.parentElement as ExtendedElement<AppDrawerComponent>;
     }
 
-    private newItem = () => ({
+    private newItem = () => new LineFigure({
         type: 'line',
         id: Fn.ulid(),
         figure: []
-    } as LineItem);
+    });
 
-    get State(): LineItem {
-        return this.creator.CreatingItemWithLastPosition as LineItem ?? (this.creator.CreatingItem = this.newItem());
+    get State(): LineFigure {
+        return this.creator.CreatingItemWithLastPosition as LineFigure ?? (this.creator.CreatingItem = this.newItem());
     }
 }

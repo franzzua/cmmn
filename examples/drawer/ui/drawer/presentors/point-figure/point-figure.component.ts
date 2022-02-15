@@ -1,15 +1,16 @@
-import {component, Pointer, property} from "@cmmn/ui";
+import {component, property} from "@cmmn/ui";
 import {IEvents, IState, template} from "./point-figure.template";
 import style from "./point-figure.style.less";
 import {Injectable} from "@cmmn/core";
-import {PointItem} from "../../drawing.store";
-import {BaseFigureComponent} from "../base-figure-component";
+import {DrawingItemType} from "../../drawing.store";
+import {BaseFigurePresentor} from "../base-figure-presentor";
 import {HoverService} from "../../services/hover.service";
 import {SelectionService} from "../../services/selection.service";
+import {PointFigure} from "../../model/point-figure";
 
 @Injectable(true)
 @component({name: 'point-figure', template, style})
-export class PointFigureComponent extends BaseFigureComponent<IState, IEvents> {
+export class PointFigureComponent extends BaseFigurePresentor<IState, IEvents> {
 
     constructor(private hover: HoverService,
                 private selection: SelectionService) {
@@ -17,19 +18,19 @@ export class PointFigureComponent extends BaseFigureComponent<IState, IEvents> {
     }
 
     @property()
-    public item!: PointItem;
+    public item!: PointFigure;
 
     @property()
     public hovered!: boolean;
 
     get State() {
         return {
-            item: this.item,
-            hovered: this.hover.check(this.item),
-            selected: this.selection.SelectedItems.contains(this.item)
+            point: this.item.figure,
+            hovered: !!this.item.hover,
+            selected: !!this.item.selection
         };
     }
 
 }
 
-BaseFigureComponent.registration.set('point', PointFigureComponent);
+BaseFigurePresentor.registration.set(DrawingItemType.point, PointFigureComponent);

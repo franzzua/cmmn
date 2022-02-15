@@ -1,13 +1,13 @@
 import {ITemplate} from "@cmmn/ui";
-import {PointItem} from "../../drawing.store";
 import {Point} from "../point.template";
+import {IPoint} from "../../drawing.store";
 
-export const template: ITemplate<IState, IEvents> = (html, state, events) => state.item.figure
-    ? Point(html.svg, state.item.figure, state.selected, state.hovered)
+export const template: ITemplate<IState, IEvents> = (html, state, events) => state.point
+    ? Point(html.svg, state.point, {selected: state.selected, hovered: state.hovered})
     : html.svg``;
 
 export type IState = {
-    item: PointItem;
+    point: IPoint;
     hovered: boolean;
     selected: boolean;
 };

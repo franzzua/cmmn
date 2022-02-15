@@ -2,14 +2,14 @@ import {component, HtmlComponent, Pointer, property} from "@cmmn/ui";
 import {IEvents, IState, template} from "./point-editor.template";
 import style from "./point-editor.style.less";
 import {Injectable} from "@cmmn/core";
-import {PointItem} from "../../drawing.store";
+import {PointFigure} from "../../model/point-figure";
 
 @Injectable(true)
 @component({name: 'point-editor', template, style})
 export class PointEditorComponent extends HtmlComponent<IState, IEvents> {
 
     @property()
-    private item!: PointItem;
+    private item!: PointFigure;
 
     private get Hovered() {
         const position = Pointer.Position;

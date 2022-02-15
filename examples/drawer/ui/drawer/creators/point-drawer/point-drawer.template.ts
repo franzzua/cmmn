@@ -1,10 +1,11 @@
 import {ITemplate} from "@cmmn/ui";
 import {PointItem} from "../../drawing.store";
-import {BaseFigureComponent} from "../../presentors/base-figure-component";
+import {BaseFigurePresentor} from "../../presentors/base-figure-presentor";
+import {PointFigure} from "../../model/point-figure";
 
-export const template: ITemplate<PointItem, IEvents> = (html, state, events) => html`
+export const template: ITemplate<PointFigure, IEvents> = (html, state, events) => html`
     <svg>
-        ${BaseFigureComponent.for(state)}
+        ${BaseFigurePresentor.for(state)}
     </svg>
 `;
 

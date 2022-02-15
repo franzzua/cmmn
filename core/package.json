@@ -9,7 +9,12 @@
     "dist"
   ],
   "type": "module",
-  "typings": "dist/typings",
+  "typings": "dist/typings/index.ts",
+  "typesVersions": {
+    "*": {
+      "/": ["dist/typings/index.ts"]
+    }
+  },
   "exports": {
     ".": {
       "import": "./dist/index.js",

@@ -1,17 +1,17 @@
 import {ITemplate} from "@cmmn/ui";
-import {BaseFigureComponent} from "../../presentors/base-figure-component";
-import {PointItem} from "../../drawing.store";
+import {BaseFigurePresentor} from "../../presentors/base-figure-presentor";
+import {PointFigure} from "../../model/point-figure";
 
 export const template: ITemplate<IState, IEvents> = (html, state, events) => html`
     <svg>
-        ${BaseFigureComponent.for(state.item, {
+        ${BaseFigurePresentor.for(state.item, {
             hovered: state.hovered
         })}
     </svg>
 `;
 
 export type IState = {
-    item: PointItem;
+    item: PointFigure;
     hovered: boolean;
 }
 
