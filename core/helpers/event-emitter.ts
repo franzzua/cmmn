@@ -5,6 +5,7 @@ export class EventEmitter<TEvents extends {
 
     public on<TEventName extends keyof TEvents>(eventName, listener: (data: TEvents[TEventName]) => void) {
         this.listeners.getOrAdd(eventName, () => new Set()).add(listener);
+        return () => this.off(eventName, listener);
     }
 
     public off<TEventName extends keyof TEvents>(eventName, listener: (data: TEvents[TEventName]) => void) {
@@ -17,6 +18,7 @@ export class EventEmitter<TEvents extends {
             this.off(eventName, onceListener);
         };
         this.on(eventName, onceListener);
+        return () => this.off(eventName, onceListener);
     }
 
     public onceAsync<TEventName extends keyof TEvents>(eventName: TEventName): Promise<TEvents[TEventName]> {

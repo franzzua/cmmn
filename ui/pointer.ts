@@ -18,10 +18,11 @@ export class PointerEmitter extends EventEmitter<PointerEvents> {
     }
 
     public on<TEventName extends keyof PointerEvents>(eventName, listener: (data: PointerEvents[TEventName]) => void) {
-        super.on(eventName, listener);
+        const unsubscr = super.on(eventName, listener);
         if (this.listeners.get(eventName).size == 1) {
             this.subscribe(eventName);
         }
+        return unsubscr;
     }
 
     public off<TEventName extends keyof PointerEvents>(eventName, listener: (data: PointerEvents[TEventName]) => void) {
@@ -41,6 +42,14 @@ export class PointerEmitter extends EventEmitter<PointerEvents> {
         this.on('enter', e => this._position.set(e));
         this.on('leave', e => this._position.set(null));
         return this._position.get();
+    }
+
+    public get PositionPoint(): { X: number; Y: number; } {
+        if (!this.Position) return null;
+        return {
+            X: this.Position.x,
+            Y: this.Position.y
+        };
     }
 
     @bind

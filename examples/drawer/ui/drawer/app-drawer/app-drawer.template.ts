@@ -1,26 +1,35 @@
 import {ITemplate} from "@cmmn/ui";
 import {Mode} from "../types";
-import {PointDrawerComponent} from "../point-drawer/point-drawer.component";
-import {DrawingItem} from "../drawing.store";
-import {Presentors} from "../presentors/presentors";
-import {LineDrawerComponent} from "../line-drawer/line-drawer.component";
+import {BaseFigurePresentor} from "../presentors/base-figure-presentor";
+import {DrawingFigure} from "../model";
 
 export const Drawers = {
-    [Mode.point]: document.createElement(PointDrawerComponent.Name),
-    [Mode.line]: document.createElement(LineDrawerComponent.Name)
-}
+    [Mode.point]: html => html()`<point-drawer/>`,
+    [Mode.line]: html => html()`<line-drawer/>`,
+};
+export const Editors = {
+    point: (html, item) => html(item.id)`<point-editor item=${item}/>`,
+    line: (html, item) => html(item.id)`<line-editor item=${item}/>`,
+};
 
-export const template: ITemplate<IState, IEvents> = (html, state, events) => html`
-    ${Drawers[state.Mode]}
-    
-    <svg>
-        ${state.Items.map(item => Presentors[item.type](html, item))}
-    </svg>
-`;
+export const template: ITemplate<IState, IEvents> = (html, state, events) => {
+    // switch (state.Mode){
+    //     case Mode.idle:
+    //         return html`
+    //             ${state.Items.map(item => Editors[item.type](html, item))}
+    //         `;
+    // }
+    return html`
+        ${(state.Mode in Drawers) ? Drawers[state.Mode](html) : ''}
+        <svg>
+            ${state.Items.map(BaseFigurePresentor.for)}
+        </svg>
+    `;
+};
 
 export type IState = {
-    Mode: Mode,
-    Items: DrawingItem[]
+    Mode: Mode;
+    Items: DrawingFigure[];
 }
 
 export type IEvents = {}

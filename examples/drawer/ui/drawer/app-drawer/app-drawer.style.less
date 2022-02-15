@@ -1,25 +1,50 @@
+@mainColor: #24d;
+
 app-drawer {
-    display: block;
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
 
+  > * {
+    pointer-events: none;
+  }
 
-    svg {
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        top: 0;
+  svg {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
 
-        circle {
-            stroke-width: 2px;
-            r: 3;
-            fill: none;
-            stroke: #24d;
+    .drawer-point {
+      circle {
+        stroke-width: 1px;
+        fill: white;
+        &.stroke {
+          stroke: @mainColor;
+        }
+        &.none{
+          display: none;
+        }
+        &.fill {
+          fill: @mainColor;
+          stroke: @mainColor;
         }
 
-        line{
-            stroke-width: 1px;
-            stroke: #24d;
-        }
+      }
     }
+
+    line, path {
+      stroke-width: 1px;
+      fill: none;
+      stroke: @mainColor;
+
+      &[hovered]{
+        stroke-width: 2px;
+      }
+    }
+  }
 
 }
 

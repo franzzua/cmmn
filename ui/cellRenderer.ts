@@ -22,11 +22,8 @@ export class CellRenderer<TState, TEvents extends IEvents> {
         this.component.$render = new Cell(0);
     }
 
-    private html = (strings: TemplateStringsArray | string, ...args: any[]) => {
-        if (typeof strings == "string") {
-            if (strings.startsWith('svg:'))
-                return svg.for(this, strings);
-            // case of html('key')`<template>`
+    private getHtml = html => (strings: TemplateStringsArray | string, ...args: any[]) => {
+        if (typeof strings == "string" || typeof strings == "number") {
             return html.for(this, strings);
         }
         // case of html`<template>`
@@ -42,6 +39,9 @@ export class CellRenderer<TState, TEvents extends IEvents> {
         // case of html(object, 'key')`<template>`
         return html.for(strings, args.join(','));
     }
+    private html = Object.assign(this.getHtml(html), {
+        svg: this.getHtml(svg)
+    });
 
     handlerProxy = new Proxy({}, {
         get: (target, key) => {
@@ -52,7 +52,7 @@ export class CellRenderer<TState, TEvents extends IEvents> {
     @bind
     render(err: any, event: IEvent) {
         this.template.call(this.component, this.html, event.data.value, this.handlerProxy);
-        this.component.$render.set(this.component.$render.get()+1);
+        this.component.$render.set(this.component.$render.get() + 1);
     }
 
     Start() {

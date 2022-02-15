@@ -1,14 +1,12 @@
 import {Application, Builder} from "@cmmn/app";
-import {AppRootComponent} from "../ui/app-root/app-root.component";
 import {DrawingContainer} from "../ui/drawer";
-import {useWorkerDomain} from "@cmmn/domain/proxy";
+import {AppRootComponent} from "../ui/app-root/app-root.component";
 
 async function build()
 {
     return new Builder()
         // .with(InfrContainer)
         // .with(DomainContainer)
-        .with(await useWorkerDomain("./worker.js"))
         // .with(Container.withProviders(
         //     RouterService,  TreeReducers, TreePresenter, DomainProxy, AccountManager
         // ))
