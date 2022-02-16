@@ -1,5 +1,4 @@
 import {ITemplate} from "@cmmn/ui";
-import {PointItem} from "../../drawing.store";
 import {BaseFigurePresentor} from "../../presentors/base-figure-presentor";
 import {PointFigure} from "../../model/point-figure";
 

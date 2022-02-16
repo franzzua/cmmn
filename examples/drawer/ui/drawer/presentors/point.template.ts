@@ -1,5 +1,5 @@
-import {IPoint} from "../drawing.store";
 import {Const} from "../const";
+import {IPoint} from "../types";
 
 export function Point(svg, point: IPoint, {selected, hovered}) {
     return svg`

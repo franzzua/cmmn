@@ -1,11 +1,11 @@
-import {DrawingItem} from "../drawing.store";
-
+import {DrawingFigureJson, DrawingItemType, IPoint} from "../types";
 
 export abstract class DrawingFigureBase {
-    constructor(item: DrawingItem) {
-        this.id = item.id;
+    constructor(id: string) {
+        this.id = id;
     }
 
     id: string;
 
+    public abstract toJson(): DrawingFigureJson;
 }

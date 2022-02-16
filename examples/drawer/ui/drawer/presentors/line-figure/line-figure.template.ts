@@ -1,8 +1,8 @@
 import {ITemplate} from "@cmmn/ui";
-import {IPoint} from "../../drawing.store";
 import {Html} from "@cmmn/ui/types";
 import {Point} from "../point.template";
 import {ObservableList} from "cellx-collections";
+import {IPoint} from "../../types";
 
 const radius = 3;
 

@@ -1,17 +1,18 @@
-import {DrawingItemType, DrawingStore, IPoint} from "../drawing.store";
 import {Injectable} from "@cmmn/core";
 import {Const} from "../const";
 import {DrawingFigure} from "../model";
+import {DrawingItemType, IPoint} from "../types";
+import {DrawingStore} from "./drawing.store";
 
 @Injectable()
 export class MagnetismService {
 
-    constructor(private drawerStore: DrawingStore) {
+    constructor(private store: DrawingStore) {
 
     }
 
     public getMagnetPoint(figure: DrawingFigure, point: IPoint){
-        for (let item of this.drawerStore.Items) {
+        for (let item of this.store.Items) {
             if (figure === item)
                 continue;
             switch (item.type) {

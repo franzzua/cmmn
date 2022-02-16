@@ -1,7 +1,7 @@
 import {ExtendedElement, HtmlComponent, IEvents} from "@cmmn/ui";
-import {DrawingItem, DrawingItemType} from "../drawing.store";
 import {DrawingFigureBase} from "../model/drawing-figure-base";
 import {DrawingFigure} from "../model";
+import {DrawingItemType} from "../types";
 
 export class BaseFigurePresentor<TState, TEvents extends IEvents> extends HtmlComponent<TState, TEvents> {
 
@@ -22,9 +22,9 @@ export class BaseFigurePresentor<TState, TEvents extends IEvents> extends HtmlCo
             const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
             return HtmlComponent.Extend<BaseFigurePresentor<any, any>>(g, BaseFigurePresentor.registration.get(item.type));
         });
-        res.item = item;
+        res.component.item = item;
         if (options){
-            Object.assign(res, options);
+            Object.assign(res.component, options);
         }
         return res;
     }

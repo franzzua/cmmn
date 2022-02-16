@@ -1,4 +1,3 @@
-import type {Doc} from "yjs";
 import {AnnounceEvent, SignalEvent, SignalingConnection} from "./signaling-connection";
 import {bind} from '@cmmn/core';
 import {SignalClientMessage} from "../shared/types";
@@ -19,16 +18,16 @@ export class YjsWebRTCProvider {
         this.signalingConnections = signallingServers.map(this.createSignallingConnection)
     }
 
-    public async joinRoom(roomName: string, doc: Doc, options: RoomOptions) {
-        const room = new Room(roomName, doc, options, this.peerInitiator);
+    public joinRoom(roomName: string, options: RoomOptions) {
+        const room = new Room(roomName, options, this.peerInitiator);
         this.rooms.set(roomName, room);
         const regInfo = room.getRegistrationInfo();
         this.signalingConnections.forEach(x => x.register(regInfo));
-        await room.connect();
+        return room;
     }
 
-    public async leaveRoom(roomName: string) {
-        await this.rooms.get(roomName).disconnect();
+    public leaveRoom(roomName: string) {
+        this.rooms.get(roomName).disconnect();
     }
 
     @bind

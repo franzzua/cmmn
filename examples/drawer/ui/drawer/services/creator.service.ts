@@ -1,13 +1,13 @@
 import {Injectable} from "@cmmn/core";
-import {Computed, Observable} from "cellx-decorators";
-import {DrawingItemType, DrawingStore, IPoint} from "../drawing.store";
-import {Mode} from "../types";
+import {Observable} from "cellx-decorators";
+import {DrawingItemType, IPoint, Mode} from "../types";
 import {Pointer} from "@cmmn/ui";
 import {DrawingFigure} from "../model";
 import {LineFigure} from "../model/line-figure";
 import {PointFigure} from "../model/point-figure";
 import {PolygonFigure} from "../model/polygon-figure";
 import {MagnetismService} from "./magnetism.service";
+import {DrawingStore} from "./drawing.store";
 
 @Injectable()
 export class CreatorService {
@@ -43,7 +43,7 @@ export class CreatorService {
         return ex;
     }
 
-    private setLastPoint(figure: DrawingFigure, point: IPoint){
+    private setLastPoint(figure: DrawingFigure, point: IPoint) {
         switch (figure.type) {
             case DrawingItemType.line:
                 figure.figure.set(figure.figure.length - 1, point);
@@ -56,26 +56,16 @@ export class CreatorService {
         }
     }
 
-    private clone(){
+    private clone() {
         switch (this.CreatingItem.type) {
             case DrawingItemType.line:
-                return new LineFigure({
-                    type: 'line',
-                    id: this.CreatingItem.id,
-                    figure: [...this.CreatingItem.figure.toArray(), {X: 0, Y: 0}]
-                })
+                return new LineFigure(this.CreatingItem.id, [...this.CreatingItem.figure.toArray(), {X: 0, Y: 0}]
+                )
             case DrawingItemType.point:
-                return new PointFigure({
-                    type: 'point',
-                    id: this.CreatingItem.id,
-                    figure: this.CreatingItem.figure
-                });
+                return new PointFigure(this.CreatingItem.id, this.CreatingItem.figure);
             case DrawingItemType.polygone:
-                return new PolygonFigure({
-                    type: 'polygon',
-                    id: this.CreatingItem.id,
-                    figure: this.CreatingItem.figure
-                })
+                // TODO: app point
+                return new PolygonFigure(this.CreatingItem.id, this.CreatingItem.figure)
         }
     }
 

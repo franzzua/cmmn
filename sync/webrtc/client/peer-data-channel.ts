@@ -9,7 +9,7 @@ export abstract class PeerDataChannel extends EventEmitter<{
     private decoder = new TextDecoder();
     private encoder = new TextEncoder();
 
-    protected constructor(public accessMode: "read" | "write") {
+    constructor(public accessMode: "read" | "write") {
         super();
     }
 

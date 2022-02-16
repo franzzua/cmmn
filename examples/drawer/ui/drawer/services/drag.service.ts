@@ -1,17 +1,18 @@
 import {Injectable} from "@cmmn/core";
 import {Pointer} from "@cmmn/ui";
 import {Observable} from "cellx-decorators";
-import {DrawingItemType, DrawingStore, IPoint} from "../drawing.store";
 import {HoverService} from "./hover.service";
 import {DrawingFigure} from "../model";
 import {MagnetismService} from "./magnetism.service";
 import {LineFigure} from "../model/line-figure";
+import {DrawingItemType, IPoint} from "../types";
+import {DrawingStore} from "./drawing.store";
 
 @Injectable()
 export class DragService {
     constructor(private hover: HoverService,
-                private magnet: MagnetismService,
-                private store: DrawingStore) {
+                private store: DrawingStore,
+                private magnet: MagnetismService) {
         let isDrag = false;
         Pointer.on('down', event => {
             this.DraggedItems = this.store.Items.filter(x => !!x.hover);

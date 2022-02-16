@@ -1,5 +1,4 @@
-import {suite, test, timeout,} from "@testdeck/jest";
-import {expect} from "@jest/globals";
+import {suite, test, expect} from "@cmmn/tools/test";
 
 import {utc} from "../helpers/utc";
 

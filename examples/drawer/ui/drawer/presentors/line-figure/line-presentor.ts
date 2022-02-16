@@ -2,20 +2,15 @@ import {component, property} from "@cmmn/ui";
 import {IEvents, IState, template} from "./line-figure.template";
 import style from "./line-figure.style.less";
 import {Injectable} from "@cmmn/core";
-import {DrawingItemType, LineItem} from "../../drawing.store";
 import {BaseFigurePresentor} from "../base-figure-presentor";
-import {HoverService} from "../../services/hover.service";
-import {SelectionService} from "../../services/selection.service";
 import {LineFigure} from "../../model/line-figure";
-import {DragService} from "../../services/drag.service";
+import {DrawingItemType} from "../../types";
 
 @Injectable(true)
 @component({name: 'line-figure', template, style, svg: true})
 export class LinePresentor extends BaseFigurePresentor<IState, IEvents> {
 
-    constructor(private hover: HoverService,
-                private selection: SelectionService,
-                private drag: DragService) {
+    constructor() {
         super();
     }
 
@@ -34,9 +29,9 @@ export class LinePresentor extends BaseFigurePresentor<IState, IEvents> {
     }
 
 
-    public toPath(){
-        if(this.item.figure.length < 2)
-            return  '';
+    public toPath() {
+        if (this.item.figure.length < 2)
+            return '';
         const [first, ...arr] = this.item.figure.map(p => `${p.X} ${p.Y}`);
         return `M${first}L ${arr.join(' ')}`;
     }

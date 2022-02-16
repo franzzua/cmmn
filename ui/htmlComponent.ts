@@ -4,16 +4,17 @@ import {Cell} from "@cmmn/core";
 import {CellRenderer} from "./cellRenderer";
 import {listenSvgConnectDisconnect} from "./listen-svg-connect-disconnect";
 
-export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extends HTMLElement {
+export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> {
     static Name: string;
     static Template: ITemplate<any, any>;
+
+    public element: ExtendedElement<this>;
 
     /** @internal **/
     static Init<TComponent extends HtmlComponent<any>>(element: HTMLElement | SVGElement, type = this as any): ExtendedElement<TComponent> {
         const componentFactory = () => GlobalStaticState.DefaultContainer ? GlobalStaticState.DefaultContainer.get<TComponent>(type) : new type();
-        GlobalStaticState.creatingElement = element;
         const component = componentFactory();
-        GlobalStaticState.creatingElement = undefined;
+        component.element = element;
         return Object.assign(element, {
             component,
             [renderer]: new CellRenderer(component, type.Template)
@@ -27,7 +28,7 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
         return extElement;
     }
 
-    Events: TEvents;
+    Events: TEvents = this as any;
 
     $state: Cell<TState>;
     /** @internal **/
@@ -38,7 +39,7 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
     }
 
     get State(): TState {
-        return this.$state.get();
+        return null;
     }
 
     /** @internal **/
@@ -47,28 +48,28 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
     Actions: Function[] = [];
     Effects: Function[] = [];
 }
-
-const HtmlComponentImpl = Object.assign(function () {
-    const element = GlobalStaticState.creatingElement;
-    // @ts-ignore
-    this.__proto__.__proto__ = element.__proto__;
-    // @ts-ignore
-    element.__proto__ = this.__proto__;
-    this.Events = this;
-    this.Actions = [];
-    this.Effects = [];
-    this.onDisposeSet = new Set();
-    Object.defineProperty(element, 'onDispose', {
-        set(fn) {
-            this.onDisposeSet.add(fn);
-        }
-    })
-    Object.assign(element, this);
-    return element;
-}, {
-    Extend: HtmlComponent.Extend,
-    Init: HtmlComponent.Init
-})
-
-// @ts-ignore
-HtmlComponent = HtmlComponentImpl as any;
+//
+// const HtmlComponentImpl = Object.assign(function () {
+//     const element = GlobalStaticState.creatingElement;
+//     // @ts-ignore
+//     this.__proto__.__proto__ = element.__proto__;
+//     // @ts-ignore
+//     element.__proto__ = this.__proto__;
+//     this.Events = this;
+//     this.Actions = [];
+//     this.Effects = [];
+//     this.onDisposeSet = new Set();
+//     Object.defineProperty(element, 'onDispose', {
+//         set(fn) {
+//             this.onDisposeSet.add(fn);
+//         }
+//     })
+//     Object.assign(element, this);
+//     return element;
+// }, {
+//     Extend: HtmlComponent.Extend,
+//     Init: HtmlComponent.Init
+// })
+//
+// // @ts-ignore
+// HtmlComponent = HtmlComponentImpl as any;
