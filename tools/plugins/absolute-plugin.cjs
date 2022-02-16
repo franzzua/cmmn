@@ -13,7 +13,7 @@ function visitExportNode(exportNode, sourceFile) {
     const sourceFileDir = path.dirname(sourceFile.path);
     const abs = path.resolve(sourceFileDir, file);
     if (/\.(less|css|scss|sass|svg|png|html)$/.test(file)) {
-        const absSource = path.join(options.outDir, path.relative(options.baseUrl, sourceFile.path));
+        const absSource = path.join(options.outDir, path.relative(options.baseUrl, sourceFileDir));
         const relFile = path.relative(absSource, abs)
         return ts.updateExportDeclaration(exportNode, exportNode.decorators, exportNode.modifiers, exportNode.exportClause, ts.createStringLiteral(relFile), exportNode.typeOnly);
     }
@@ -33,7 +33,7 @@ function visitImportNode(importNode, sourceFile, options) {
     const sourceFileDir = path.dirname(sourceFile.path);
     const abs = path.resolve(sourceFileDir, file);
     if (/\.(less|css|scss|sass|svg|png|html)$/.test(file)) {
-        const absSource = path.join(options.outDir, path.relative(options.baseUrl, sourceFile.path));
+        const absSource = path.join(options.outDir, path.relative(options.baseUrl, sourceFileDir));
         const relFile = path.relative(absSource, abs)
         return ts.updateImportDeclaration(importNode, importNode.decorators, importNode.modifiers, importNode.importClause, ts.createStringLiteral(relFile));
     }
@@ -55,7 +55,7 @@ function visitRequireNode(importNode, sourceFile) {
     if (/\.(less|css|scss|sass|svg|png|html)/.test(file)) {
         const sourceFileDir = path.dirname(sourceFile.path);
         const abs = path.join(sourceFileDir, file);
-        const absSource = path.join(options.outDir, path.relative(options.baseUrl, sourceFile.path));
+        const absSource = path.join(options.outDir, path.relative(options.baseUrl, sourceFileDir));
         const relFile = path.relative(absSource, abs)
         return ts.updateCall(importNode, importNode.expression, undefined, [ts.createStringLiteral(relFile)]);
     }

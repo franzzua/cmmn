@@ -11,13 +11,28 @@
   "bin": {
     "cmmn": "bin.js"
   },
+  "exports": {
+    "./test": "./test/index.js",
+    "./test/config": "./test/jest.config.js"
+  },
+  "typesVersions": {
+    "*": {
+      "test": [
+        "./test/index.d.ts"
+      ],
+      ".": [
+        "./compile/typings.d.ts"
+      ]
+    }
+  },
   "typings": "compile/typings.d.ts",
   "files": [
     "bin.js",
     "gen/*",
     "compile/*",
     "bundle/*",
-    "plugins/*"
+    "plugins/*",
+    "test/*"
   ],
   "dependencies": {
     "@open-wc/rollup-plugin-html": "^1.2.5",
@@ -40,7 +55,14 @@
     "rollup-plugin-visualizer": "^5.5.4",
     "ttypescript": "1.5.13",
     "typescript": "4.4.3",
-    "typescript-transform-paths": "^3.3.1"
+    "typescript-transform-paths": "^3.3.1",
+    
+    "@types/jest": "27.x.x",
+    "@jest/globals": "27.x.x",
+    "@testdeck/jest": "0.2.0",
+    "@swc/jest": "0.2.17",
+    "jest": "27.x.x",
+    "ts-jest": "27.x.x"
   },
   "author": "",
   "license": "ISC",

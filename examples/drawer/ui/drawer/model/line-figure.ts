@@ -1,12 +1,12 @@
 import {Observable} from "cellx-decorators";
 import {DrawingFigureBase} from "./drawing-figure-base";
-import {DrawingItemType, IPoint, LineItem, PointInfo} from "../drawing.store";
 import {ObservableList} from "cellx-collections";
+import {DrawingItemType, IPoint, PointInfo} from "../types";
 
 export class LineFigure extends DrawingFigureBase {
-    constructor(item: LineItem) {
-        super(item);
-        this.figure = new ObservableList<IPoint>(item.figure);
+    constructor(id: string, figure: IPoint[]) {
+        super(id);
+        this.figure = new ObservableList<IPoint>(figure);
     }
 
     type: DrawingItemType.line = DrawingItemType.line;
@@ -18,5 +18,12 @@ export class LineFigure extends DrawingFigureBase {
     @Observable
     selection: null | PointInfo = null;
 
+    public toJson() {
+        return {
+            id: this.id,
+            type: this.type,
+            figure: this.figure.toArray()
+        }
+    }
 }
 

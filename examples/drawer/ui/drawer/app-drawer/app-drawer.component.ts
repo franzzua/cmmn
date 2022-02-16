@@ -1,21 +1,34 @@
-import {component, HtmlComponent} from "@cmmn/ui";
+import {component, HtmlComponent, property} from "@cmmn/ui";
 import {IEvents, IState, template} from "./app-drawer.template";
 import style from "./app-drawer.style.less";
 import {Injectable} from "@cmmn/core";
-import {DrawingStore} from "../drawing.store";
+import {DrawingFigure} from "../model";
+import {DrawingFigureJson, Mode} from "../types";
+import { services } from "../services";
 
 @Injectable(true)
 @component({name: 'app-drawer', template, style})
 export class AppDrawerComponent extends HtmlComponent<IState, IEvents> {
 
-    constructor(private drawingStore: DrawingStore) {
+    constructor() {
         super();
     }
+    public services = services(this);
+
+    @property()
+    public Items!: DrawingFigureJson[];
+
+    @property()
+    public Mode!: Mode;
 
     get State() {
         return {
-            Mode: this.drawingStore.Mode,
-            Items: this.drawingStore.Items.toArray(),
+            Mode: this.Mode,
+            Items: this.services.store.Items.toArray(),
         }
+    }
+
+    public create() {
+        this.services.creator.create();
     }
 }

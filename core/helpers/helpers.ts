@@ -1,4 +1,5 @@
 import "../di/reflect";
+// @ts-ignore
 globalThis.global = globalThis;
 function __decorate(decorators, target, key, desc) {
     var c = arguments.length,

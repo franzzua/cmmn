@@ -1,5 +1,9 @@
-import {ulid} from "ulid";
+import { generator, BASE } from "flexid";
+import { ulid } from "ulid";
 import {Cell} from "cellx";
+//
+// import { generator, BASE } from "flexid";
+// const ulid = generator(BASE["58"]);
 
 export const Fn = {
     I<T>(x: T): T {
@@ -24,6 +28,9 @@ export const Fn = {
                 }
             }
         }
+    },
+    asyncDelay(timeout: number = 0): Promise<void>{
+        return new Promise(resolve => setTimeout(resolve, timeout));
     },
     /**
      * Сравнивает два объекта, учитывает DateTime, Duration, array, object

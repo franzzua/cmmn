@@ -1,10 +1,11 @@
 import {Fn, Injectable} from "@cmmn/core";
-import {DrawingItemType, DrawingStore, IPoint, PointInfo} from "../drawing.store";
 import {Pointer} from "@cmmn/ui";
 import {Const} from "../const";
 import {DrawingFigure} from "../model";
 import {LineFigure} from "../model/line-figure";
 import {PolygonFigure} from "../model/polygon-figure";
+import {DrawingItemType, IPoint, PointInfo} from "../types";
+import {DrawingStore} from "./drawing.store";
 
 @Injectable()
 export class HoverService {

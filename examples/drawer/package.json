@@ -13,6 +13,7 @@
     "@cmmn/domain": "^1.3.0",
     "@cmmn/tools": "^1.3.0",
     "@cmmn/ui": "^1.3.0",
+    "@cmmn/sync": "^1.3.0",
     "cellx-collections": "^1.0.3",
     "cellx-decorators": "^1.6.3"
   },
@@ -22,7 +23,7 @@
     "main": {
       "input": "dist/esm/entry/index.js",
       "html": "./entry/index.html",
-      "port": 3003
+      "port": 3004
     }
   },
   "gitHead": "76478b70f43752f9bfe6cb96b4e540b1ff1e52e3"

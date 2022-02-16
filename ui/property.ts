@@ -1,14 +1,16 @@
 import {useCustomHandler} from "@cmmn/uhtml";
 import {Cell} from "@cmmn/core";
+import {ExtendedElement} from "./types";
 
 const propertySymbol = Symbol('properties');
 
-function componentHandler(self: any, key: string): any {
-    if (!self.constructor[propertySymbol])
+function componentHandler(self: ExtendedElement<any>, key: string): any {
+    if (!self.component || !self.component.constructor[propertySymbol])
         return null;
-    const descr = Object.getOwnPropertyDescriptor(self.constructor.prototype, key);
+    const prop = (self.component.constructor[propertySymbol] as Map<string, string>).get(key)
+    const descr = Object.getOwnPropertyDescriptor(self.component.constructor.prototype, prop);
     if (descr) {
-        const cell = getOrCreateCell(self, key, null);
+        const cell = getOrCreateCell(self.component, prop, null);
         return (value: any) => cell.set(value);
     }
 }
@@ -23,15 +25,15 @@ function getOrCreateCell(self: any, key: string, value: any) {
 export function property(attribute?: string): PropertyDecorator {
     return (target: any, key: string) => {
         if (!target.constructor[propertySymbol])
-            target.constructor[propertySymbol] = new Set();
-        (target.constructor[propertySymbol] as Set<string>).add(attribute || toSnake(key));
+            target.constructor[propertySymbol] = new Map();
+        (target.constructor[propertySymbol] as Map<string, string>).set(attribute || toSnake(key), key);
         Object.defineProperty(target, key, {
             get(): any {
-                const cell = getOrCreateCell(this, key, this.getAttribute(key));
+                const cell = getOrCreateCell(this, key, this.element.getAttribute(key));
                 return cell.get();
             },
             set(value: string): any {
-                const cell = getOrCreateCell(this, key, this.getAttribute(key));
+                const cell = getOrCreateCell(this, key, this.element.getAttribute(key));
                 cell.set(value);
             }
         });

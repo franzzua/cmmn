@@ -5,7 +5,7 @@ import {IEvents, ITemplate} from "./types";
 import {EventHandlerProvider} from "./eventHandlerProvider";
 
 export class CellRenderer<TState, TEvents extends IEvents> {
-    private stateCell: Cell<TState> = this.component.$state ?? cellx(() => this.component.State).cell;
+    private stateCell: Cell<TState> = this.component.$state ?? cellx(() => this.stopped ? null : this.component.State).cell;
     private actionsCells = this.component.Actions.map(action => cellx(() => {
         // const renderTime = this.renderCell.get();
         action();
@@ -28,7 +28,7 @@ export class CellRenderer<TState, TEvents extends IEvents> {
         }
         // case of html`<template>`
         if (Array.isArray(strings)) {
-            return render(this.component, html(strings, ...args));
+            return render(this.component.element, html(strings, ...args));
         }
         if (!strings) {
             // case of html()`<template>`
@@ -50,12 +50,15 @@ export class CellRenderer<TState, TEvents extends IEvents> {
     });
 
     @bind
-    render(err: any, event: IEvent) {
+    render(err, event: IEvent) {
+        if (this.stopped)
+            return;
         this.template.call(this.component, this.html, event.data.value, this.handlerProxy);
         this.component.$render.set(this.component.$render.get() + 1);
     }
 
     Start() {
+        this.stopped = false;
         this.stateCell.subscribe(this.render);
         for (const c of this.actionsCells) {
             c.subscribe(Fn.I);
@@ -70,14 +73,16 @@ export class CellRenderer<TState, TEvents extends IEvents> {
             target: this.stateCell
         } as IEvent);
     }
+    private stopped = false;
 
     Stop() {
+        this.stopped = true;
         this.stateCell.unsubscribe(this.render);
         for (const c of this.actionsCells) {
-            c.unsubscribe(Fn.I);
+            c.dispose();
         }
         for (const c of this.effectCells) {
-            c.unsubscribe(Fn.I);
+            c.dispose();
         }
     }
 }

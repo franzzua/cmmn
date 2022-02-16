@@ -1,0 +1,15 @@
+{
+  "extends": "@cmmn/tools/compile/tsconfig.json",
+  "compilerOptions": {
+    "types": [
+      "node"
+    ]
+  },
+  "include": [  "**/*.ts" ],
+  "exclude": ["dist", "node_modules"],
+  "references": [
+    {
+      "path": "../core"
+    }
+  ]
+}

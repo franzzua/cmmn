@@ -46,4 +46,4 @@ export type ExtendedElement<TComponent = HtmlComponent<any, any>> = (SVGElement 
     /** @internal **/
     [renderer]?: CellRenderer<any, any>;
     component?: TComponent;
-} & TComponent;
+};

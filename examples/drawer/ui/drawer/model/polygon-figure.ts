@@ -1,9 +1,15 @@
 import {DrawingFigureBase} from "./drawing-figure-base";
-import {DrawingItemType, IPoint, PointInfo} from "../drawing.store";
 import {Observable} from "cellx-decorators";
 import {Fn} from "@cmmn/core/helpers/Fn";
+import {DrawingItemType, IPoint, PointInfo} from "../types";
 
 export class PolygonFigure extends DrawingFigureBase {
+
+    constructor(id: string, contours: IPoint[][]) {
+        super(id);
+        this.figure = contours;
+    }
+
     type: DrawingItemType.polygone = DrawingItemType.polygone;
     id: string;
     @Observable
@@ -28,19 +34,11 @@ export class PolygonFigure extends DrawingFigureBase {
         }
     }
 
-    public with(point: IPoint): PolygonFigure {
-        return new PolygonFigure({
-            type: 'polygon',
+    public toJson() {
+        return {
             id: this.id,
-            figure: [
-                ...this.figure.slice(0, -1),
-                [
-                    ...this.figure[this.figure.length - 1],
-                    point
-                ]
-            ]
-        })
+            type: this.type,
+            figure: this.figure
+        };
     }
-
-
 }
