@@ -1,7 +1,7 @@
 import {Observable} from "cellx-decorators";
 import {DrawingFigureBase} from "./drawing-figure-base";
 import {PointItem} from "../../services/drawing.store";
-import {DrawingItemType, IPoint} from "../types";
+import {DrawingFigureJson, DrawingItemType, IPoint} from "../types";
 
 export class PointFigure extends DrawingFigureBase {
     constructor(id: string, point: IPoint) {
@@ -31,4 +31,8 @@ export class PointFigure extends DrawingFigureBase {
             figure: this.figure
         };
     }
+    public fromJson(json: DrawingFigureJson) {
+        this.figure = json.figure as IPoint;
+    }
+
 }

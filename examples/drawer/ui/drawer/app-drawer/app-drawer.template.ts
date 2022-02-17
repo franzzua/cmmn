@@ -1,5 +1,5 @@
 import {ITemplate} from "@cmmn/ui";
-import {Mode} from "../types";
+import {DrawingFigureJson, Mode} from "../types";
 import {BaseFigurePresentor} from "../presentors/base-figure-presentor";
 import {DrawingFigure} from "../model";
 
@@ -22,14 +22,14 @@ export const template: ITemplate<IState, IEvents> = (html, state, events) => {
     return html`
         ${(state.Mode in Drawers) ? Drawers[state.Mode](html) : ''}
         <svg>
-            ${state.Items.map(BaseFigurePresentor.for)}
+            ${Array.from(state.Items).map(BaseFigurePresentor.for)}
         </svg>
     `;
 };
 
 export type IState = {
     Mode: Mode;
-    Items: DrawingFigure[];
+    Items: IterableIterator<DrawingFigure>
 }
 
 export type IEvents = {}

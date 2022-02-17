@@ -1,8 +1,8 @@
-import {Fn, Injectable} from "@cmmn/core";
-import {Computed, Observable} from "cellx-decorators";
-import {ObservableList} from "cellx-collections";
-import {DrawingFigure, DrawingFigureFactory} from "../model";
-import {DrawingFigureJson, Mode} from "../types";
+import {Injectable} from "@cmmn/core";
+import {Observable} from "cellx-decorators";
+import {ObservableList, ObservableMap} from "cellx-collections";
+import {DrawingFigure} from "../model";
+import {Mode} from "../types";
 import type {AppDrawerComponent} from "../app-drawer/app-drawer.component";
 
 @Injectable()
@@ -13,19 +13,19 @@ export class DrawingStore {
 
     public async add(item: DrawingFigure) {
         await Promise.resolve(void 0);
-        this.Items.add(item);
-        this.appDrawer.element.dispatchEvent(new CustomEvent<DrawingFigureJson>("add", {
-            detail: item.toJson()
-        }))
+        this.Items.set(item.id, item);
+    }
+
+    get Mode(): Mode {
+        return this.appDrawer.Mode.get();
+    }
+
+    set Mode(value: Mode) {
+        this.appDrawer.Mode.set(value);
     }
 
     @Observable
-    Mode: Mode = Mode.line;
-
-    @Computed
-    get Items(){
-        return new ObservableList<DrawingFigure>(this.appDrawer.Items.map(DrawingFigureFactory));
-    }
+    Items = new ObservableMap<string, DrawingFigure>();
 
 }
 

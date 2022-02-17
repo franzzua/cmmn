@@ -1,7 +1,7 @@
 import {DrawingFigureBase} from "./drawing-figure-base";
 import {Observable} from "cellx-decorators";
 import {Fn} from "@cmmn/core/helpers/Fn";
-import {DrawingItemType, IPoint, PointInfo} from "../types";
+import {DrawingFigureJson, DrawingItemType, IPoint, PointInfo} from "../types";
 
 export class PolygonFigure extends DrawingFigureBase {
 
@@ -41,4 +41,9 @@ export class PolygonFigure extends DrawingFigureBase {
             figure: this.figure
         };
     }
+    public fromJson(json: DrawingFigureJson) {
+        // todo: implement
+        throw new Error(`not implemented`);
+    }
+
 }

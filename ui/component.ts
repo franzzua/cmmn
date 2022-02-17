@@ -52,6 +52,7 @@ export function component<TState, TEvents extends IEvents = IEvents>(opts: IComp
                 Promise.resolve().then(() => {
                     this[renderer].Start();
                 });
+                this.component.connectedCallback();
             }
 
             attributeChangedCallback() {
@@ -61,6 +62,7 @@ export function component<TState, TEvents extends IEvents = IEvents>(opts: IComp
             disconnectedCallback() {
                 this[renderer].Stop();
                 this.component.onDisposeSet.forEach(x => x());
+                this.component.onDisposeSet.clear();
             }
 
         }

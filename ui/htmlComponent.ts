@@ -34,6 +34,10 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> {
     /** @internal **/
     public onDisposeSet = new Set<Function>();
 
+    public connectedCallback(){
+
+    }
+
     protected set onDispose(listener) {
         this.onDisposeSet.add(listener);
     }

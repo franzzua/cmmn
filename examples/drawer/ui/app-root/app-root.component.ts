@@ -1,7 +1,7 @@
 import {component, ExtendedElement, HtmlComponent} from "@cmmn/ui";
 import {IEvents, IState, template} from "./app-root.template";
 import style from "./app-root.style.less";
-import {Injectable} from "@cmmn/core";
+import {Cell, Injectable} from "@cmmn/core";
 import {DrawingFigureJson, Mode} from "../drawer/types";
 import {AppDrawerComponent} from "../drawer";
 import {DrawingStore} from "../services/drawing.store";
@@ -18,24 +18,23 @@ export class AppRootComponent extends HtmlComponent<IState, IEvents> {
         return (this.element.children.namedItem('drawer') as ExtendedElement<AppDrawerComponent>).component;
     }
 
+    private mode = new Cell(Mode.line);
+
     get State() {
         return {
-            mode: this.drawingStore.Mode,
-            Items: Array.from(this.drawingStore.Items.values()),
+            mode: this.mode,
+            items: this.drawingStore.Items,
         }
     }
 
     changeMode(mode: Mode) {
-        if (this.drawingStore.Mode == Mode.line) {
+        if (this.mode.get() == Mode.line) {
             this.drawer.create();
-        }else {
+        } else {
             this.drawer.services.creator.cancel();
         }
-        this.drawingStore.Mode = mode;
-    }
-
-    add(item: DrawingFigureJson) {
-        this.drawingStore.Items.set(item.id, item);
+        this.mode.set(mode);
     }
 
 }
+

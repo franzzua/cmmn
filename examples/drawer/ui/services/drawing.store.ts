@@ -18,9 +18,6 @@ export class DrawingStore extends SyncStore<DrawingFigureJson> {
         this.Items.set(figure.id, figure.toJson());
     }
 
-    @Observable
-    Mode: Mode = Mode.line;
-
 }
 
 

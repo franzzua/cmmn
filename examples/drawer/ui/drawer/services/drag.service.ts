@@ -15,7 +15,7 @@ export class DragService {
                 private magnet: MagnetismService) {
         let isDrag = false;
         Pointer.on('down', event => {
-            this.DraggedItems = this.store.Items.filter(x => !!x.hover);
+            this.DraggedItems = Array.from(this.store.Items.values()).filter(x => !!x.hover);
             (event.target as HTMLElement).setPointerCapture(event.pointerId);
         });
         Pointer.on('move', event => {

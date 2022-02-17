@@ -8,4 +8,5 @@ export abstract class DrawingFigureBase {
     id: string;
 
     public abstract toJson(): DrawingFigureJson;
+    public abstract fromJson(json: DrawingFigureJson);
 }

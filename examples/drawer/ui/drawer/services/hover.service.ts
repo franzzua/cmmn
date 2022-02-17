@@ -11,7 +11,7 @@ import {DrawingStore} from "./drawing.store";
 export class HoverService {
     constructor(private store: DrawingStore) {
         Pointer.on('move', event => {
-            for (let item of this.store.Items) {
+            for (let item of this.store.Items.values()) {
                 this.setHover(item, {
                     X: event.x,
                     Y: event.y

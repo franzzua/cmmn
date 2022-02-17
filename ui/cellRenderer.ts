@@ -79,10 +79,10 @@ export class CellRenderer<TState, TEvents extends IEvents> {
         this.stopped = true;
         this.stateCell.unsubscribe(this.render);
         for (const c of this.actionsCells) {
-            c.dispose();
+            c.unsubscribe(Fn.I);
         }
         for (const c of this.effectCells) {
-            c.dispose();
+            c.unsubscribe(Fn.I);
         }
     }
 }

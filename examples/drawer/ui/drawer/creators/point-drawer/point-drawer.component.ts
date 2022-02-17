@@ -11,14 +11,14 @@ import {PointFigure} from "../../model/point-figure";
 @component({name: 'point-drawer', template, style})
 export class PointDrawerComponent extends HtmlComponent<PointFigure, IEvents> {
 
-    constructor() {
-        super();
+    connectedCallback() {
         this.onDispose = Pointer.on('directClick', event => {
             if (event.target !== this.appDrawer)
                 return;
             this.creator.CreatingItem = this.creator.CreatingItemWithLastPosition;
             this.creator.create();
         });
+        this.creator.CreatingItem = this.newItem();
     }
 
     public get creator(): CreatorService {
@@ -32,8 +32,6 @@ export class PointDrawerComponent extends HtmlComponent<PointFigure, IEvents> {
     private newItem = () => new PointFigure(Fn.ulid(), null);
 
     get State(): PointFigure {
-        if (!this.creator.CreatingItem || !(this.creator.CreatingItem instanceof PointFigure))
-            this.creator.CreatingItem = this.newItem();
         return this.creator.CreatingItemWithLastPosition as PointFigure;
     }
 }

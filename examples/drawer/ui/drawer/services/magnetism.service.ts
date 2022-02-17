@@ -12,7 +12,7 @@ export class MagnetismService {
     }
 
     public getMagnetPoint(figure: DrawingFigure, point: IPoint){
-        for (let item of this.store.Items) {
+        for (let item of this.store.Items.values()) {
             if (figure === item)
                 continue;
             switch (item.type) {

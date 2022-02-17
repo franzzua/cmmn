@@ -14,7 +14,7 @@ export class SelectionService {
         Pointer.on('down', event => {
             if (store.Mode !== Mode.idle)
                 return;
-            for (let item of this.store.Items) {
+            for (let item of this.store.Items.values()) {
                 item.selection = item.hover;
             }
         });
