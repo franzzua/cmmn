@@ -1,4 +1,4 @@
-import {ICellx} from "@cmmn/core";
+import {ICellx} from "cellx";
 import {Action, ModelPath} from "../shared/types";
 
 export abstract class Stream {

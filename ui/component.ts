@@ -61,8 +61,7 @@ export function component<TState, TEvents extends IEvents = IEvents>(opts: IComp
 
             disconnectedCallback() {
                 this[renderer].Stop();
-                this.component.onDisposeSet.forEach(x => x());
-                this.component.onDisposeSet.clear();
+                this.component.disconnectedCallback();
             }
 
         }

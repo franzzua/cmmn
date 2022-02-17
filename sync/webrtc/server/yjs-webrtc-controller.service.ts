@@ -3,6 +3,7 @@ import {WebSocket} from "ws";
 import {SignalingMessage, UserInfo} from "../shared/types";
 import {ClientConnection} from "./client-connection";
 import {ServerRoom} from "./server-room";
+import {TokenParser} from "./token-parser";
 
 @Injectable()
 export class YjsWebrtcController {
@@ -39,6 +40,7 @@ export class YjsWebrtcController {
     }> {
         const messageStr = msg.toString('utf8');
         const message = JSON.parse(messageStr) as SignalingMessage;
+        console.log(message);
         if (message.type !== 'register') {
             return;
         }
@@ -51,12 +53,4 @@ export class YjsWebrtcController {
             token: token
         };
     }
-}
-
-export abstract class TokenParser {
-
-    public abstract Parse(token: string): Promise<{
-        User: string;
-        AccessMode: 'read' | 'write'
-    }>
 }

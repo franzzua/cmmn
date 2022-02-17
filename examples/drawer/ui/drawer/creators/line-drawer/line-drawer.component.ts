@@ -6,6 +6,7 @@ import {CreatorService} from "../../services/creator.service";
 import {ExtendedElement} from "@cmmn/ui/types";
 import {AppDrawerComponent} from "../../app-drawer/app-drawer.component";
 import {LineFigure} from "../../model/line-figure";
+import {DrawingItemType} from "../../types";
 
 @Injectable(true)
 @component({name: 'line-drawer', template, style})
@@ -14,6 +15,7 @@ export class LineDrawerComponent extends HtmlComponent<LineFigure, IEvents> {
     connectedCallback(){
         this.onDispose = Pointer.on('dblClick', event => {
             this.creator.create();
+            this.creator.CreatingItem = this.newItem()
         });
 
         let lastAddTime:number = null;
@@ -40,6 +42,8 @@ export class LineDrawerComponent extends HtmlComponent<LineFigure, IEvents> {
     private newItem = () => new LineFigure(Fn.ulid(), []);
 
     get State(): LineFigure {
+        if (!this.creator.CreatingItem || this.creator.CreatingItem.type !== DrawingItemType.line)
+            this.creator.CreatingItem = this.newItem();
         return this.creator.CreatingItemWithLastPosition as LineFigure;
     }
 }

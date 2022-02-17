@@ -1,5 +1,4 @@
 import {Injectable} from "@cmmn/core";
-import {HoverService} from "./hover.service";
 import {Pointer} from "@cmmn/ui";
 import {Mode, PointInfo} from "../types";
 import {Observable} from "cellx-decorators";

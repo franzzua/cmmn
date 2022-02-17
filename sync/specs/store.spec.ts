@@ -5,8 +5,8 @@ import {ChannelMock} from "./mocks/channel.mock";
 @suite
 export class StoreSpec {
 
-    private mainStore = new SyncStore<Entity>();
-    private testStore = new SyncStore<Entity>();
+    private mainStore = new SyncStore<Entity>('main');
+    private testStore = new SyncStore<Entity>('test');
 
     constructor() {
         this.mainStore.adapter.connect(new ChannelMock());

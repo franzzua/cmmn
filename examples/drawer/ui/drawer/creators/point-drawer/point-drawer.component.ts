@@ -6,6 +6,7 @@ import {CreatorService} from "../../services";
 import {ExtendedElement} from "@cmmn/ui/types";
 import {AppDrawerComponent} from "../../app-drawer/app-drawer.component";
 import {PointFigure} from "../../model/point-figure";
+import {DrawingItemType} from "../../types";
 
 @Injectable(true)
 @component({name: 'point-drawer', template, style})
@@ -17,6 +18,7 @@ export class PointDrawerComponent extends HtmlComponent<PointFigure, IEvents> {
                 return;
             this.creator.CreatingItem = this.creator.CreatingItemWithLastPosition;
             this.creator.create();
+            this.creator.CreatingItem = this.newItem();
         });
         this.creator.CreatingItem = this.newItem();
     }
@@ -32,6 +34,8 @@ export class PointDrawerComponent extends HtmlComponent<PointFigure, IEvents> {
     private newItem = () => new PointFigure(Fn.ulid(), null);
 
     get State(): PointFigure {
+        if (!this.creator.CreatingItem || this.creator.CreatingItem.type !== DrawingItemType.point)
+            this.creator.CreatingItem = this.newItem();
         return this.creator.CreatingItemWithLastPosition as PointFigure;
     }
 }

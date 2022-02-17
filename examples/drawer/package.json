@@ -5,12 +5,16 @@
   "main": "index.js",
   "scripts": {
     "compile": "cmmn compile -b --watch",
-    "run": "cmmn bundle --run --watch"
+    "run": "cmmn bundle main --run --watch",
+    "server": "nodemon ./dist/server.cjs"
   },
+  "type": "module",
   "devDependencies": {
     "@cmmn/app": "^1.3.0",
     "@cmmn/core": "^1.3.0",
     "@cmmn/domain": "^1.3.0",
+    "@cmmn/server": "^1.3.0",
+    "fastify": "^3.27.1",
     "@cmmn/tools": "^1.3.0",
     "@cmmn/ui": "^1.3.0",
     "@cmmn/sync": "^1.3.0",
@@ -23,7 +27,13 @@
     "main": {
       "input": "dist/esm/entry/index.js",
       "html": "./entry/index.html",
+      "browser": true,
       "port": 3004
+    },
+    "server": {
+      "input": "dist/esm/entry/webrtc.server.js",
+      "external": ["node_modules", "@cmmn"],
+      "module": "cjs"
     }
   },
   "gitHead": "76478b70f43752f9bfe6cb96b4e540b1ff1e52e3"

@@ -7,23 +7,6 @@ export class ObservableYMap<TValue> extends EventEmitter
     implements ObservableMap<string, TValue> {
     constructor(private yMap: YMap<TValue>) {
         super();
-        this.yMap.observe((event, transaction) => {
-            // if (event.transaction.local)
-            //     return;
-            for (let [id, change] of event.changes.keys) {
-                switch (change.action) {
-                    case "add":
-                        this.emitChange('add', id, this.yMap.get(id), change.oldValue)
-                        break;
-                    case "delete":
-                        this.emitChange('delete', id, null, change.oldValue)
-                        break;
-                    case "update":
-                        this.emitChange('update', id, this.yMap.get(id), change.oldValue)
-                        break;
-                }
-            }
-        });
     }
 
     _entries: Map<string, TValue>;
@@ -157,6 +140,33 @@ export class ObservableYMap<TValue> extends EventEmitter
             }
         });
         return list;
+    }
+
+    public subscribe() {
+        this.yMap.observe((event, transaction) => {
+            // if (event.transaction.local)
+            //     return;
+            for (let [id, change] of event.changes.keys) {
+                switch (change.action) {
+                    case "add":
+                        this.emitChange('add', id, this.yMap.get(id), change.oldValue)
+                        break;
+                    case "delete":
+                        this.emitChange('delete', id, null, change.oldValue)
+                        break;
+                    case "update":
+                        this.emitChange('update', id, this.yMap.get(id), change.oldValue)
+                        break;
+                }
+            }
+        });
+        this.emit({
+            type: 'change',
+            target: this,
+            data: {
+
+            }
+        });
     }
 }
 

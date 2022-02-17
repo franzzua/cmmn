@@ -40,7 +40,7 @@
   "cmmn": {
     "index": {
       "input": "dist/esm/index.js",
-      "external": "@cmmn",
+      "external": ["@cmmn","cellx"],
       "module": "es,cjs"
     }
   }

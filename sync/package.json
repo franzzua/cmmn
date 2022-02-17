@@ -8,12 +8,12 @@
       "require": "./dist/index.cjs",
       "default": "./dist/index.js"
     },
-    "./webrtc": {
+    "./webrtc/client": {
       "import": "./dist/webrtc.js",
       "require": "./dist/webrtc.cjs",
       "default": "./dist/webrtc.js"
     },
-    "./server": {
+    "./webrtc/server": {
       "import": "./dist/server.js",
       "require": "./dist/server.cjs",
       "default": "./dist/server.js"
@@ -41,7 +41,8 @@
     "@cmmn/core": "^1.3.0",
     "simple-peer": "9.x.x",
     "y-protocols": "1.x.x",
-    "yjs": "13.x.x"
+    "yjs": "13.x.x",
+    "y-indexeddb": "9.x.x"
   },
   "devDependencies": {
     "@cmmn/tools": "^1.3.0"
@@ -52,13 +53,16 @@
   "cmmn": {
     "index": {
       "input": "./dist/esm/index.js",
+      "external": "cellx",
       "module": "es,cjs"
     },
     "webrtc": {
       "input": "./dist/esm/webrtc/client/index.js"
     },
     "server": {
-      "input": "./dist/esm/webrtc/server/index.js"
+      "input": "./dist/esm/webrtc/server/index.js",
+      "module": "es,cjs",
+      "external": ["node_modules", "@cmmn"]
     }
   }
 }

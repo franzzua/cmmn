@@ -1,5 +1,5 @@
 import {useCustomHandler} from "@cmmn/uhtml";
-import {Cell} from "@cmmn/core";
+import {Cell} from "cellx";
 import {ExtendedElement} from "./types";
 
 const propertySymbol = Symbol('properties');

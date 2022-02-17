@@ -1,4 +1,3 @@
-import { generator, BASE } from "flexid";
 import { ulid } from "ulid";
 import {Cell} from "cellx";
 //

@@ -1,9 +1,9 @@
 export enum Mode {
-    idle,
-    point,
-    line,
-    polygone,
-    auto
+    idle = 1,
+    point = 10,
+    line = 11,
+    polygone = 12,
+    auto = 13
 }
 
 export enum DrawingItemType {

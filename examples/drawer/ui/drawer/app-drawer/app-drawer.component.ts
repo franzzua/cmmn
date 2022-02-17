@@ -1,57 +1,71 @@
 import {component, HtmlComponent, property} from "@cmmn/ui";
 import {IEvents, IState, template} from "./app-drawer.template";
 import style from "./app-drawer.style.less";
-import {Cell, Injectable} from "@cmmn/core";
+import {bind, Injectable} from "@cmmn/core";
 import {DrawingFigure, DrawingFigureFactory} from "../model";
 import {DrawingFigureJson, Mode} from "../types";
-import { services } from "../services";
-import { ObservableList, ObservableMap } from "cellx-collections";
-import {DrawingFigureBase} from "../model/drawing-figure-base";
+import {services} from "../services";
+import {ObservableMap} from "cellx-collections";
+import {Observable} from "cellx-decorators";
 
 @Injectable(true)
 @component({name: 'app-drawer', template, style})
 export class AppDrawerComponent extends HtmlComponent<IState, IEvents> {
 
-    constructor() {
-        super();
-        this.Items.onChange(event => {
-            const value = event.data.value as DrawingFigureJson;
-            switch (event.data.subtype){
-                case "add":
-                    this.services.store.Items.set(value.id, DrawingFigureFactory(value));
-                    break;
-                case "delete":
-                    this.services.store.Items.delete(value.id);
-                    break;
-                case "update":
-                    this.services.store.Items.get(value.id).fromJson(value);
-                    break;
-            }
-        });
-        this.services.store.Items.onChange(event => {
-            const value = event.data.value as DrawingFigure;
-            switch (event.data.subtype){
-                case "add":
-                case "update":
-                    this.Items.set(value.id, value.toJson());
-                    break;
-                case "delete":
-                    this.Items.delete(value.id);
-                    break;
-            }
-        });
+    @bind
+    private onLocalChange(event) {
+        const value = event.data.value as DrawingFigure;
+        switch (event.data.subtype) {
+            case "add":
+            case "update":
+                this.Items.set(value.id, value.toJson());
+                break;
+            case "delete":
+                this.Items.delete(value.id);
+                break;
+        }
     }
+
+    @bind
+    private onRemoteChange(event) {
+        const value = event.data.value as DrawingFigureJson;
+        switch (event.data.subtype) {
+            case "add":
+                this.services.store.Items.set(value.id, DrawingFigureFactory(value));
+                break;
+            case "delete":
+                this.services.store.Items.delete(value.id);
+                break;
+            case "update":
+                this.services.store.Items.get(value.id).fromJson(value);
+                break;
+        }
+    }
+
+    connectedCallback() {
+        super.connectedCallback();
+        this.Items.onChange(this.onRemoteChange);
+        this.services.store.Items = new ObservableMap(Array.from(this.Items).map(([id, item]) => [id, DrawingFigureFactory(item)]));
+        this.services.store.Items.onChange(this.onLocalChange);
+    }
+
+    disconnectedCallback() {
+        this.Items.offChange(this.onRemoteChange);
+        this.services.store.Items.offChange(this.onLocalChange);
+        super.disconnectedCallback();
+    }
+
     public services = services(this);
 
     @property()
     public Items!: ObservableMap<string, DrawingFigureJson>
 
-    @property()
-    public Mode!: Cell<Mode>;
+    @Observable
+    public Mode: Mode = Mode.idle;
 
     get State() {
         return {
-            Mode: this.Mode.get(),
+            Mode: this.Mode,
             Items: this.services.store.Items.values(),
         }
     }

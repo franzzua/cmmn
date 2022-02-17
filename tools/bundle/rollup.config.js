@@ -4,8 +4,9 @@ import {terser} from "rollup-plugin-terser"
 import {visualizer} from 'rollup-plugin-visualizer';
 import styles from "rollup-plugin-styles";
 import {string} from "rollup-plugin-string";
-import serve from 'rollup-plugin-serve'
-import livereload from 'rollup-plugin-livereload'
+import serve from 'rollup-plugin-serve';
+import builtins from 'rollup-plugin-node-builtins';
+import livereload from 'rollup-plugin-livereload';
 import fs from "fs";
 import path from "path";
 import html from '@open-wc/rollup-plugin-html';
@@ -56,8 +57,8 @@ export class ConfigCreator {
         return path.join(this.root, this.options.outDir);
     }
 
-    getOutputFileName(module, minify){
-        switch (module){
+    getOutputFileName(module, minify) {
+        switch (module) {
             case "cjs":
                 return `[name]${minify ? '.min' : ''}.cjs`;
             case "es":
@@ -123,14 +124,17 @@ export class ConfigCreator {
 
     get plugins() {
         const result = [
-            // builtins(),
             nodeResolve({
                 browser: this.options.browser,
                 dedupe: this.options.dedupe || []
             }),
             commonjs({
                 requireReturnsDefault: "namespace",
+                dynamicRequireTargets: [
+                    'node_modules/ulid/*.js'
+                ]
             }),
+            builtins(),
             styles({
                 mode: "emit",
             }),

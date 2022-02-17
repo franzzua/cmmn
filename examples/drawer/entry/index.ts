@@ -2,6 +2,7 @@ import {Application, Builder} from "@cmmn/app";
 import {AppRootComponent} from "../ui/app-root/app-root.component";
 import "../ui/drawer";
 import {AppDrawerComponent} from "../ui/drawer";
+import {StoreFactory} from "../ui/services/store.factory";
 
 async function build()
 {
@@ -11,7 +12,7 @@ async function build()
         // .with(Container.withProviders(
         //     RouterService,  TreeReducers, TreePresenter, DomainProxy, AccountManager
         // ))
-        .withUI(AppRootComponent, AppDrawerComponent)
+        .withUI(AppRootComponent, AppDrawerComponent, StoreFactory)
         // .withRoutes({
         //     options: null,
         //     routes: Routes

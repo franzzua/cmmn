@@ -18,11 +18,11 @@ export class CreatorService {
             switch (e.code) {
                 case "Escape":
                     this.cancel();
+                    this.store.Mode = Mode.idle;
                     break;
                 case "Enter":
                 case "NumpadEnter":
                     this.create();
-                    this.CreatingItem = null;
                     break;
             }
         });
@@ -78,7 +78,6 @@ export class CreatorService {
 
     public cancel(): void {
         this.CreatingItem = null;
-        this.store.Mode = Mode.idle;
     }
 
     private isValid(item: DrawingFigure): Boolean {

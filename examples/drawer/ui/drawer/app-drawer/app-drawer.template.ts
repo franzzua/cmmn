@@ -1,7 +1,9 @@
-import {ITemplate} from "@cmmn/ui";
-import {DrawingFigureJson, Mode} from "../types";
+import {ExtendedElement, HtmlComponent, ITemplate} from "@cmmn/ui";
+import {DrawingItemType, Mode} from "../types";
 import {BaseFigurePresentor} from "../presentors/base-figure-presentor";
 import {DrawingFigure} from "../model";
+import {PointPresentor} from "../presentors/point-figure/point-presentor.service";
+import {LinePresentor} from "../presentors/line-figure/line-presentor";
 
 export const Drawers = {
     [Mode.point]: html => html()`<point-drawer/>`,
@@ -22,7 +24,7 @@ export const template: ITemplate<IState, IEvents> = (html, state, events) => {
     return html`
         ${(state.Mode in Drawers) ? Drawers[state.Mode](html) : ''}
         <svg>
-            ${Array.from(state.Items).map(BaseFigurePresentor.for)}
+            ${Array.from(state.Items).map(item => Extend(html.svg(item.id)`<g/>` as any, item))}
         </svg>
     `;
 };
@@ -33,3 +35,14 @@ export type IState = {
 }
 
 export type IEvents = {}
+const types = {
+    [DrawingItemType.point]: PointPresentor,
+    [DrawingItemType.line]: LinePresentor,
+}
+
+function Extend(element: ExtendedElement<BaseFigurePresentor<any, any>>, item: DrawingFigure) {
+    if (!element.component)
+        element = HtmlComponent.Extend(element, types[item.type]);
+    element.component.item = item;
+    return element;
+}

@@ -27,6 +27,7 @@ export class DragService {
             };
             for (let x of this.DraggedItems) {
                 this.move(x, shift);
+                this.store.update(x.id);
             }
         });
         Pointer.on('up', event => {

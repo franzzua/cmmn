@@ -1,24 +1,31 @@
-body {
-    margin: 0;
+html, body {
+  margin: 0;
+  overflow: hidden;
 }
 
+app-root {
+  display: inline-block;
+  width: 50vw;
+  height: 100vh;
+  position: relative;
+}
 
 menu {
-    position: absolute;
-    z-index: 1;
-    top: 0;
-    display: flex;
-    gap: 20px;
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  display: flex;
+  gap: 20px;
 
-    button {
-        flex: 1;
-        aspect-ratio: 1;
-        width: 20%;
-        border-radius: 6px;
+  button {
+    flex: 1;
+    aspect-ratio: 1;
+    width: 20%;
+    border-radius: 6px;
 
-        &[active]{
-            background: #444;
-            color: white;
-        }
+    &[active] {
+      background: #444;
+      color: white;
     }
+  }
 }

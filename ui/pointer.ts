@@ -1,4 +1,5 @@
-import {bind, Cell, EventEmitter, Fn} from "@cmmn/core";
+import {bind, EventEmitter, Fn} from "@cmmn/core";
+import {Cell} from "cellx";
 
 export type PointerEvents = {
     move: PointerEvent,

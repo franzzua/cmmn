@@ -1,4 +1,5 @@
-import {bind, Cell, cellx, Fn, IEvent} from "@cmmn/core";
+import {bind, Fn} from "@cmmn/core";
+import {Cell, cellx, IEvent} from "cellx";
 import {html, render, svg} from "@cmmn/uhtml";
 import {HtmlComponent} from "./htmlComponent";
 import {IEvents, ITemplate} from "./types";

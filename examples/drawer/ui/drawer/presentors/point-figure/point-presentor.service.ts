@@ -10,7 +10,7 @@ import {DrawingItemType} from "../../types";
 
 @Injectable(true)
 @component({name: 'point-figure', template, style})
-export class PointFigureComponent extends BaseFigurePresentor<IState, IEvents> {
+export class PointPresentor extends BaseFigurePresentor<IState, IEvents> {
 
     constructor() {
         super();
@@ -32,4 +32,4 @@ export class PointFigureComponent extends BaseFigurePresentor<IState, IEvents> {
 
 }
 
-BaseFigurePresentor.registration.set(DrawingItemType.point, PointFigureComponent);
+BaseFigurePresentor.registration.set(DrawingItemType.point, PointPresentor);

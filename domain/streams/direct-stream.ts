@@ -1,4 +1,5 @@
-import {cellx, Injectable, ICellx} from "@cmmn/core";
+import {cellx,  ICellx} from "cellx";
+import {Injectable} from "@cmmn/core";
 import {Stream} from "./stream";
 import {IFactory} from "../shared/factory";
 import {Action} from "../shared/types";

@@ -1,4 +1,6 @@
-import {cell, Cell, cellx, deserialize, Fn, serialize} from "@cmmn/core";
+import {cell, deserialize, Fn, serialize} from "@cmmn/core";
+import {Cell, cellx} from "cellx";
+
 import {Stream} from "./stream";
 import {Action, ModelPath, WorkerMessage, WorkerMessageType} from "../shared/types";
 

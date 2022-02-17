@@ -1,6 +1,6 @@
 import {GlobalStaticState} from "./component";
 import {ExtendedElement, IEvents, ITemplate, renderer} from "./types";
-import {Cell} from "@cmmn/core";
+import {Cell} from "cellx";
 import {CellRenderer} from "./cellRenderer";
 import {listenSvgConnectDisconnect} from "./listen-svg-connect-disconnect";
 
@@ -32,10 +32,14 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> {
 
     $state: Cell<TState>;
     /** @internal **/
-    public onDisposeSet = new Set<Function>();
+    private onDisposeSet = new Set<Function>();
 
-    public connectedCallback(){
+    public connectedCallback() {
+    }
 
+    public disconnectedCallback() {
+        this.onDisposeSet.forEach(x => x());
+        this.onDisposeSet.clear();
     }
 
     protected set onDispose(listener) {
@@ -52,6 +56,7 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> {
     Actions: Function[] = [];
     Effects: Function[] = [];
 }
+
 //
 // const HtmlComponentImpl = Object.assign(function () {
 //     const element = GlobalStaticState.creatingElement;

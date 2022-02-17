@@ -1,4 +1,4 @@
-import {ICellx} from "@cmmn/core";
+import {ICellx} from "cellx";
 import {Model} from "./worker/model";
 import {Stream} from "./streams/stream";
 import {ModelAction, ModelPath} from "./shared/types";

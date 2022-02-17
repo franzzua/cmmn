@@ -1,4 +1,4 @@
-import {cellx} from "@cmmn/core";
+import {cellx} from "cellx";
 import {ModelAction, ModelPath} from "../shared/types";
 
 export abstract class Model<TState, TActions extends ModelAction = {}> {
