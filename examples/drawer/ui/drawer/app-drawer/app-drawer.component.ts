@@ -21,7 +21,7 @@ export class AppDrawerComponent extends HtmlComponent<IState, IEvents> {
                 this.Items.set(value.id, value.toJson());
                 break;
             case "delete":
-                this.Items.delete(value.id);
+                this.Items.delete(event.data.key);
                 break;
         }
     }
@@ -31,10 +31,11 @@ export class AppDrawerComponent extends HtmlComponent<IState, IEvents> {
         const value = event.data.value as DrawingFigureJson;
         switch (event.data.subtype) {
             case "add":
-                this.services.store.Items.set(value.id, DrawingFigureFactory(value));
+                if (!this.services.store.Items.has(value.id))
+                    this.services.store.Items.set(value.id, DrawingFigureFactory(value));
                 break;
             case "delete":
-                this.services.store.Items.delete(value.id);
+                this.services.store.Items.delete(event.data.key);
                 break;
             case "update":
                 this.services.store.Items.get(value.id).fromJson(value);

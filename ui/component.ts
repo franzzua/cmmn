@@ -1,6 +1,5 @@
 import {HtmlComponent} from "./htmlComponent";
-import {CellRenderer} from "./cellRenderer";
-import {ExtendedElement, IEvents, ITemplate, renderer} from "./types";
+import {IEvents, ITemplate} from "./types";
 import {Container} from "@cmmn/core";
 import {importStyle} from "./importStyle";
 
@@ -41,7 +40,6 @@ export function component<TState, TEvents extends IEvents = IEvents>(opts: IComp
 
         class ProxyHTML extends HTMLElement {
             public component: HtmlComponent<TState, TEvents>;
-            public [renderer]: CellRenderer<TState, TEvents>
 
             constructor() {
                 super();
@@ -49,9 +47,6 @@ export function component<TState, TEvents extends IEvents = IEvents>(opts: IComp
             }
 
             connectedCallback() {
-                Promise.resolve().then(() => {
-                    this[renderer].Start();
-                });
                 this.component.connectedCallback();
             }
 
@@ -60,7 +55,6 @@ export function component<TState, TEvents extends IEvents = IEvents>(opts: IComp
             }
 
             disconnectedCallback() {
-                this[renderer].Stop();
                 this.component.disconnectedCallback();
             }
 

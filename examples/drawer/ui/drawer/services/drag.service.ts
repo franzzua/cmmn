@@ -14,9 +14,11 @@ export class DragService {
                 private store: DrawingStore,
                 private magnet: MagnetismService) {
         let isDrag = false;
+        let start: IPoint;
         Pointer.on('down', event => {
             this.DraggedItems = Array.from(this.store.Items.values()).filter(x => !!x.hover);
             (event.target as HTMLElement).setPointerCapture(event.pointerId);
+            start = this.store.getRelativePoint(event);
         });
         Pointer.on('move', event => {
             if (!this.DraggedItems.length)
@@ -25,8 +27,9 @@ export class DragService {
                 X: event.movementX,
                 Y: event.movementY
             };
+            const current = this.store.getRelativePoint(event);
             for (let x of this.DraggedItems) {
-                this.move(x, shift);
+                this.move(x, {shift, start, current});
                 this.store.update(x.id);
             }
         });
@@ -36,16 +39,13 @@ export class DragService {
         });
     }
 
-    move(item: DrawingFigure, shift: IPoint){
+    move(item: DrawingFigure, info: ShiftInfo){
         switch (item.type){
             case DrawingItemType.line:
-                this.moveLine(item, shift);
+                this.moveLine(item, info);
                 break;
             case DrawingItemType.point:
-                item.figure = {
-                    X: item.figure.X + shift.X,
-                    Y: item.figure.Y + shift.Y
-                };
+                item.figure = info.current;
                 break;
             case DrawingItemType.polygone:
                 break;
@@ -56,22 +56,26 @@ export class DragService {
     public DraggedItems: DrawingFigure[] = [];
 
 
-    moveLine(line: LineFigure, shift: IPoint) {
+    moveLine(line: LineFigure, info: ShiftInfo) {
         if (!line.selection)
             return;
         if (line.selection.index === undefined) {
             line.figure.setRange(0, line.figure.map(p => ({
-                X: p.X + shift.X,
-                Y: p.Y + shift.Y
+                X: p.X + info.shift.X,
+                Y: p.Y + info.shift.Y
             })));
         } else {
-            const p = line.figure.get(line.selection.index);
-            const newPoint = {
-                X: p.X + shift.X,
-                Y: p.Y + shift.Y
-            };
-            const magnetPoint = this.magnet.getMagnetPoint(line, newPoint);
-            line.figure.set(line.selection.index, magnetPoint);
+            let target = info.current;
+            if (line.selection.index === 0 || line.selection.index === line.figure.length - 1) {
+                target = this.magnet.getMagnetPoint(line, target);
+            }
+            line.figure.set(line.selection.index, target);
         }
     }
+}
+
+type ShiftInfo = {
+    shift: IPoint;
+    start: IPoint;
+    current: IPoint;
 }

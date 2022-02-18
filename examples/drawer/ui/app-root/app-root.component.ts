@@ -29,6 +29,7 @@ export class AppRootComponent extends HtmlComponent<IState, IEvents> implements 
             return null;
         return {
             mode: this.drawer?.Mode,
+            selected: this.drawer?.services?.selection?.SelectedItems,
             items: this.store.Items,
         }
     }
@@ -45,6 +46,10 @@ export class AppRootComponent extends HtmlComponent<IState, IEvents> implements 
             this.drawer.Mode = mode;
         }
     }
+    deleteSelected(){
+        this.drawer.services.store.delete(this.drawer.services.selection.SelectedItems);
+    }
+
 
 }
 

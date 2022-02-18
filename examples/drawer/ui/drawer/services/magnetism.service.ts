@@ -17,6 +17,8 @@ export class MagnetismService {
                 continue;
             switch (item.type) {
                 case DrawingItemType.line:
+                    if (item.selection)
+                        continue;
                     const first = item.figure.get(0);
                     if (this.checkPoint(first, point))
                         return first;

@@ -1,5 +1,5 @@
 import {ITemplate} from "@cmmn/ui";
-import {ObservableMap} from "cellx-collections";
+import {ObservableList, ObservableMap} from "cellx-collections";
 import {DrawingFigureJson, Mode} from "../drawer/types";
 
 export const template: ITemplate<IState, IEvents> = (html, state, events) => state ? html`
@@ -14,14 +14,21 @@ export const template: ITemplate<IState, IEvents> = (html, state, events) => sta
         <button .mode=${Mode.polygone} ?active=${state.mode == Mode.polygone}
                 onclick=${events.changeMode(e => e.target.mode)}>Poly
         </button>
+
+        ${state.selected?.length ? html('delete')`
+            <button onclick=${events.deleteSelected()}>Delete
+            </button>
+        ` : ''}
     </menu>
 ` : html``;
 
 export type IState = {
     mode: Mode;
     items: ObservableMap<string, DrawingFigureJson>;
+    selected: DrawingFigureJson[];
 }
 
 export type IEvents = {
+    deleteSelected();
     changeMode(mode: Mode);
 }

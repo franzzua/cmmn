@@ -2,7 +2,7 @@ import {Injectable} from "@cmmn/core";
 import {Observable} from "cellx-decorators";
 import {ObservableMap} from "cellx-collections";
 import {DrawingFigure} from "../model";
-import {IPoint, Mode} from "../types";
+import {DrawingFigureJson, IPoint, Mode} from "../types";
 import type {AppDrawerComponent} from "../app-drawer/app-drawer.component";
 
 @Injectable()
@@ -48,6 +48,16 @@ export class DrawingStore {
             X: event.pageX - rect.left,
             Y: event.pageY - rect.top
         }
+    }
+
+    public delete(items: DrawingFigureJson[]) {
+        for (let item of items) {
+            this.Items.delete(item.id);
+        }
+    }
+
+    public filterEvent(event: MouseEvent) {
+        return event.target === this.appDrawer.element;
     }
 }
 

@@ -1,5 +1,5 @@
 import {IFactory} from "../shared/factory";
-import {AsyncQueue, cell, deserialize, Injectable, serialize} from "@cmmn/core";
+import {AsyncQueue, deserialize, Injectable, serialize} from "@cmmn/core";
 import {ModelAction, ModelPath, WorkerAction, WorkerMessage, WorkerMessageType} from "../shared/types";
 import {Model} from "./model";
 
@@ -10,8 +10,7 @@ export class WorkerEntry {
         this.postMessage({
             type: WorkerMessageType.Connected,
         });
-        this.$messages.subscribe((err, actions) => {
-            const event = actions.data.value as MessageEvent<WorkerMessage>;
+        self.addEventListener('message', event => {
             switch (event.data.type) {
                 case WorkerMessageType.Subscribe:
                     const path = event.data.path;
@@ -73,9 +72,6 @@ export class WorkerEntry {
     private getModel<TState, TActions extends ModelAction>(path: ModelPath): Model<TState, TActions> {
         return this.factory.GetModel<TState, TActions>(path);
     }
-
-    $messages = cell.fromEvent<MessageEvent<WorkerMessage>>(self, 'message');
-
 }
 
 

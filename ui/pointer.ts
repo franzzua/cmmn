@@ -1,4 +1,4 @@
-import {bind, EventEmitter, Fn} from "@cmmn/core";
+import {bind, EventListener, Fn} from "@cmmn/core";
 import {Cell} from "cellx";
 
 export type PointerEvents = {
@@ -12,25 +12,10 @@ export type PointerEvents = {
     directClick: PointerEvent
 };
 
-export class PointerEmitter extends EventEmitter<PointerEvents> {
+export class PointerEmitter extends EventListener<PointerEvents> {
 
     constructor(private root: HTMLElement | Document) {
-        super();
-    }
-
-    public on<TEventName extends keyof PointerEvents>(eventName, listener: (data: PointerEvents[TEventName]) => void) {
-        const unsubscr = super.on(eventName, listener);
-        if (this.listeners.get(eventName).size == 1) {
-            this.subscribe(eventName);
-        }
-        return unsubscr;
-    }
-
-    public off<TEventName extends keyof PointerEvents>(eventName, listener: (data: PointerEvents[TEventName]) => void) {
-        super.off(eventName, listener);
-        if (this.listeners.get(eventName).size == 0) {
-            this.unsubscribe(eventName);
-        }
+        super(root);
     }
 
     private _position: Cell<PointerEvent>;
@@ -43,14 +28,6 @@ export class PointerEmitter extends EventEmitter<PointerEvents> {
         this.on('enter', e => this._position.set(e));
         this.on('leave', e => this._position.set(null));
         return this._position.get();
-    }
-
-    public get PositionPoint(): { X: number; Y: number; } {
-        if (!this.Position) return null;
-        return {
-            X: this.Position.x,
-            Y: this.Position.y
-        };
     }
 
     @bind
@@ -76,7 +53,7 @@ export class PointerEmitter extends EventEmitter<PointerEvents> {
         directClick: this.directClickListener,
     }
 
-    private subscribe(eventName: keyof PointerEvents) {
+    protected subscribe(eventName: keyof PointerEvents) {
         switch (eventName) {
             case 'enter':
             case 'leave':
@@ -98,7 +75,7 @@ export class PointerEmitter extends EventEmitter<PointerEvents> {
         }
     }
 
-    private unsubscribe(eventName: keyof PointerEvents) {
+    protected unsubscribe(eventName: keyof PointerEvents) {
         switch (eventName) {
             case 'enter':
             case 'leave':

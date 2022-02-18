@@ -1,84 +1,39 @@
-import {GlobalStaticState} from "./component";
-import {ExtendedElement, IEvents, ITemplate, renderer} from "./types";
+import {IEvents} from "./types";
+import {HtmlComponentBase} from "./html-component-base";
 import {Cell} from "cellx";
-import {CellRenderer} from "./cellRenderer";
-import {listenSvgConnectDisconnect} from "./listen-svg-connect-disconnect";
+import {bind} from "@cmmn/core";
 
-export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> {
-    static Name: string;
-    static Template: ITemplate<any, any>;
+export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extends HtmlComponentBase<TState, TEvents> {
 
-    public element: ExtendedElement<this>;
-
-    /** @internal **/
-    static Init<TComponent extends HtmlComponent<any>>(element: HTMLElement | SVGElement, type = this as any): ExtendedElement<TComponent> {
-        const componentFactory = () => GlobalStaticState.DefaultContainer ? GlobalStaticState.DefaultContainer.get<TComponent>(type) : new type();
-        const component = componentFactory();
-        component.element = element;
-        return Object.assign(element, {
-            component,
-            [renderer]: new CellRenderer(component, type.Template)
-        }) as ExtendedElement<TComponent>;
+    constructor() {
+        super();
     }
-
-    static Extend<TComponent extends HtmlComponent<any>>(element: HTMLElement | SVGElement, type = this as any): ExtendedElement<TComponent> {
-        const extElement = HtmlComponent.Init<TComponent>(element, type);
-        element.setAttribute('is', type.Name);
-        listenSvgConnectDisconnect(extElement);
-        return extElement;
-    }
-
-    Events: TEvents = this as any;
-
-    $state: Cell<TState>;
-    /** @internal **/
-    private onDisposeSet = new Set<Function>();
 
     public connectedCallback() {
+        super.connectedCallback();
+        this.isStopped = false;
+        this.$state.subscribe(this.render);
+        this.render(null, {data: {value: this.$state.get()}});
     }
+
+    @bind
+    protected render(err, event) {
+        if (this.isStopped)
+            return;
+        this.renderer.render(event.data.value);
+        this.$render.set(this.$render.get() + 1);
+    }
+
+    private isStopped = false;
 
     public disconnectedCallback() {
-        this.onDisposeSet.forEach(x => x());
-        this.onDisposeSet.clear();
+        super.disconnectedCallback();
+        this.isStopped = true;
+        this.$state.unsubscribe(this.render);
     }
 
-    protected set onDispose(listener) {
-        this.onDisposeSet.add(listener);
-    }
+    $state: Cell<TState> = new Cell(() => this.isStopped ? null : this.State);
 
-    get State(): TState {
-        return null;
-    }
-
-    /** @internal **/
-    public $render: Cell<number>;
-
-    Actions: Function[] = [];
-    Effects: Function[] = [];
+    public $render: Cell<number> = new Cell(0);
 }
 
-//
-// const HtmlComponentImpl = Object.assign(function () {
-//     const element = GlobalStaticState.creatingElement;
-//     // @ts-ignore
-//     this.__proto__.__proto__ = element.__proto__;
-//     // @ts-ignore
-//     element.__proto__ = this.__proto__;
-//     this.Events = this;
-//     this.Actions = [];
-//     this.Effects = [];
-//     this.onDisposeSet = new Set();
-//     Object.defineProperty(element, 'onDispose', {
-//         set(fn) {
-//             this.onDisposeSet.add(fn);
-//         }
-//     })
-//     Object.assign(element, this);
-//     return element;
-// }, {
-//     Extend: HtmlComponent.Extend,
-//     Init: HtmlComponent.Init
-// })
-//
-// // @ts-ignore
-// HtmlComponent = HtmlComponentImpl as any;

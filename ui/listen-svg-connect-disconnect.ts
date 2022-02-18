@@ -1,4 +1,4 @@
-import {ExtendedElement, renderer} from "./types";
+import {ExtendedElement} from "./types";
 
 
 const waitForAttach = new Set<ExtendedElement>();
@@ -7,16 +7,17 @@ const waitForDetach = new Set<ExtendedElement>();
 function checkAdded(node: ExtendedElement) {
     if (waitForAttach.has(node)) { // @ts-ignore
         waitForAttach.delete(node)
-        node[renderer].Start();
+        node.component.connectedCallback();
         waitForDetach.add(node);
     }
     node.children && Array.from(node.children).forEach(checkAdded);
 }
 
+
 function checkRemoved(node: ExtendedElement) {
     if (waitForDetach.has(node)) { // @ts-ignore
         waitForDetach.delete(node)
-        node[renderer].Stop();
+        node.component.disconnectedCallback();
         waitForAttach.add(node);
     }
     node.children && Array.from(node.children).forEach(checkAdded);

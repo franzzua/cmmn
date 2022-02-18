@@ -34,10 +34,7 @@ export class CreatorService {
     get CreatingItemWithLastPosition(): DrawingFigure {
         if (!Pointer.Position || !this.CreatingItem)
             return this.CreatingItem;
-        const point = this.magnet.getMagnetPoint(this.CreatingItem, {
-            X: Pointer.Position.x,
-            Y: Pointer.Position.y,
-        });
+        const point = this.magnet.getMagnetPoint(this.CreatingItem, this.store.getRelativePoint(Pointer.Position));
         const ex = this.clone();
         this.setLastPoint(ex, point);
         return ex;
@@ -70,9 +67,9 @@ export class CreatorService {
     }
 
     public create(): void {
-        if (!this.isValid(this.CreatingItem))
+        if (!this.isValid(this.CreatingItemWithLastPosition))
             return;
-        this.store.add(this.CreatingItem);
+        this.store.add(this.CreatingItemWithLastPosition);
         this.CreatingItem = null;
     }
 

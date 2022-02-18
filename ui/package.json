@@ -24,6 +24,9 @@
     "bundle": "cmmn bundle --watch",
     "build": "cmmn compile -b --watch"
   },
+  "optionalDependencies": {
+    "cellx": "1.x.x"
+  },
   "devDependencies": {
     "@cmmn/tools": "^1.3.0"
   },

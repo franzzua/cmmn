@@ -21,6 +21,7 @@ export class PointDrawerComponent extends HtmlComponent<PointFigure, IEvents> {
             this.creator.CreatingItem = this.newItem();
         });
         this.creator.CreatingItem = this.newItem();
+        super.connectedCallback();
     }
 
     public get creator(): CreatorService {

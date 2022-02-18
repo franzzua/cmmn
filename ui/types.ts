@@ -1,6 +1,5 @@
 import {HtmlComponent} from "./htmlComponent";
 import {Hole, TemplateFunction as UHtmlTemplateFunction} from "@cmmn/uhtml";
-import {CellRenderer} from "./cellRenderer";
 
 export type SingleArgumentsOf<TFunction> = TFunction extends (arg: infer T) => any ? T : void;
 
@@ -39,11 +38,6 @@ export type Html = UHtmlTemplateFunction<Hole> & FreeHtml & KeyedHtml & ObjectKe
 
 type ObjectNotArray<T> = T extends ReadonlyArray<string> ? never : T;
 
-/** @internal **/
-export const renderer = Symbol('renderer');
-
 export type ExtendedElement<TComponent = HtmlComponent<any, any>> = (SVGElement | HTMLElement) & {
-    /** @internal **/
-    [renderer]?: CellRenderer<any, any>;
     component?: TComponent;
 };

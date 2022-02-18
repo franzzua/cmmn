@@ -21,7 +21,7 @@ export class HoverService {
     setHover(item: DrawingFigure, position: IPoint) {
         switch (item.type) {
             case DrawingItemType.point:
-                item.hover = this.checkPointHover(item.figure, position);
+                item.hover = this.checkPointHover(item.figure, position) ? {} : null;
                 break;
             case DrawingItemType.line:
                 item.hover = this.getLineHover(item, position);

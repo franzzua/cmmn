@@ -28,7 +28,8 @@ export class LineDrawerComponent extends HtmlComponent<LineFigure, IEvents> {
             lastAddTime = event.timeStamp;
             this.creator.CreatingItem = this.creator.CreatingItemWithLastPosition;
         });
-        this.creator.CreatingItem = this.newItem()
+        this.creator.CreatingItem = this.newItem();
+        super.connectedCallback();
     }
 
     private get appDrawer(): ExtendedElement<AppDrawerComponent> {
