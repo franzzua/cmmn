@@ -6,13 +6,15 @@ import {DragService} from "./drag.service";
 import {MagnetismService} from "./magnetism.service";
 import { DrawingStore } from "./drawing.store";
 import {AppDrawerComponent} from "../app-drawer/app-drawer.component";
+import { EditorService } from "./editor.service";
 export {
     CreatorService,
     HoverService,
     SelectionService,
     DragService,
     MagnetismService,
-    DrawingStore
+    DrawingStore,
+    EditorService
 }
 
 
@@ -21,7 +23,8 @@ export const DrawingContainer = () => Container.withProviders(
     HoverService,
     SelectionService,
     DragService,
-    MagnetismService
+    MagnetismService,
+    EditorService
 )
 
 export function services(appDrawer: AppDrawerComponent) {
@@ -35,8 +38,10 @@ export function services(appDrawer: AppDrawerComponent) {
     const hover = container.get<HoverService>(HoverService);
     const drag = container.get<DragService>(DragService);
     const magnet = container.get<MagnetismService>(MagnetismService);
+    const editor = container.get<EditorService>(EditorService);
     return {
         creator,
+        editor,
         selection,
         hover,
         drag,

@@ -44,10 +44,13 @@ export class AppDrawerComponent extends HtmlComponent<IState, IEvents> {
     }
 
     connectedCallback() {
-        super.connectedCallback();
+        this.element.tabIndex = 0;
+        this.element.focus();
+        this.services = services(this);
         this.Items.onChange(this.onRemoteChange);
         this.services.store.Items = new ObservableMap(Array.from(this.Items).map(([id, item]) => [id, DrawingFigureFactory(item)]));
         this.services.store.Items.onChange(this.onLocalChange);
+        super.connectedCallback();
     }
 
     disconnectedCallback() {
@@ -56,7 +59,7 @@ export class AppDrawerComponent extends HtmlComponent<IState, IEvents> {
         super.disconnectedCallback();
     }
 
-    public services = services(this);
+    public services;
 
     @property()
     public Items!: ObservableMap<string, DrawingFigureJson>

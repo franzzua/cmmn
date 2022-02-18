@@ -1,11 +1,11 @@
 import {Injectable} from "@cmmn/core";
-import {Pointer} from "@cmmn/ui";
+import {IPoint} from "@cmmn/ui";
 import {Observable} from "cellx-decorators";
 import {HoverService} from "./hover.service";
 import {DrawingFigure} from "../model";
 import {MagnetismService} from "./magnetism.service";
 import {LineFigure} from "../model/line-figure";
-import {DrawingItemType, IPoint} from "../types";
+import {DrawingItemType} from "../types";
 import {DrawingStore} from "./drawing.store";
 
 @Injectable()
@@ -15,26 +15,26 @@ export class DragService {
                 private magnet: MagnetismService) {
         let isDrag = false;
         let start: IPoint;
-        Pointer.on('down', event => {
+        this.store.pointer.on('down', event => {
             this.DraggedItems = Array.from(this.store.Items.values()).filter(x => !!x.hover);
-            (event.target as HTMLElement).setPointerCapture(event.pointerId);
-            start = this.store.getRelativePoint(event);
+            (event.event.target as HTMLElement).setPointerCapture(event.event.pointerId);
+            start = event.point;
         });
-        Pointer.on('move', event => {
+        this.store.pointer.on('move', event => {
             if (!this.DraggedItems.length)
                 return;
             const shift = {
-                X: event.movementX,
-                Y: event.movementY
+                X: event.event.movementX,
+                Y: event.event.movementY
             };
-            const current = this.store.getRelativePoint(event);
+            const current = event.point;
             for (let x of this.DraggedItems) {
                 this.move(x, {shift, start, current});
                 this.store.update(x.id);
             }
         });
-        Pointer.on('up', event => {
-            (event.target as HTMLElement).releasePointerCapture(event.pointerId);
+        this.store.pointer.on('up', event => {
+            (event.event.target as HTMLElement).releasePointerCapture(event.event.pointerId);
             this.DraggedItems = [];
         });
     }

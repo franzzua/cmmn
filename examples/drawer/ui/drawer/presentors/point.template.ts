@@ -1,5 +1,5 @@
 import {Const} from "../const";
-import {IPoint} from "../types";
+import {IPoint} from "@cmmn/ui";
 
 export function Point(svg, point: IPoint, {selected, hovered}) {
     return svg`

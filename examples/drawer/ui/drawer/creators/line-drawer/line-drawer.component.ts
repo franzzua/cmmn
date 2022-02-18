@@ -13,7 +13,7 @@ import {DrawingItemType} from "../../types";
 export class LineDrawerComponent extends HtmlComponent<LineFigure, IEvents> {
 
     connectedCallback(){
-        this.onDispose = Pointer.on('dblClick', event => {
+        this.onDispose = Pointer.on('dblclick', event => {
             this.creator.create();
             this.creator.CreatingItem = this.newItem()
         });
@@ -21,11 +21,9 @@ export class LineDrawerComponent extends HtmlComponent<LineFigure, IEvents> {
         let lastAddTime:number = null;
 
         this.onDispose = Pointer.on('directClick', event => {
-            if (event.target !== this.appDrawer)
+            if (lastAddTime && event.event.timeStamp - lastAddTime < 400)
                 return;
-            if (lastAddTime && event.timeStamp - lastAddTime < 400)
-                return;
-            lastAddTime = event.timeStamp;
+            lastAddTime = event.event.timeStamp;
             this.creator.CreatingItem = this.creator.CreatingItemWithLastPosition;
         });
         this.creator.CreatingItem = this.newItem();

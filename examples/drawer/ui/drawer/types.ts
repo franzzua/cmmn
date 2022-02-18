@@ -1,3 +1,5 @@
+import {IPoint} from "@cmmn/ui";
+
 export enum Mode {
     idle = 1,
     point = 10,
@@ -12,13 +14,10 @@ export enum DrawingItemType {
     polygone
 }
 
-export type IPoint = {
-    X: number;
-    Y: number;
-}
 export type PointInfo = {
     index?: number;
-    contour?: number
+    segment?: [number, number];
+    contour?: number;
 }
 
 export type DrawingFigureJson = {

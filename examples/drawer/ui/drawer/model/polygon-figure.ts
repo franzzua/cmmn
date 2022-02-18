@@ -1,7 +1,7 @@
 import {DrawingFigureBase} from "./drawing-figure-base";
 import {Observable} from "cellx-decorators";
-import {Fn} from "@cmmn/core/helpers/Fn";
-import {DrawingFigureJson, DrawingItemType, IPoint, PointInfo} from "../types";
+import {DrawingFigureJson, DrawingItemType, PointInfo} from "../types";
+import {IPoint} from "@cmmn/ui";
 
 export class PolygonFigure extends DrawingFigureBase {
 

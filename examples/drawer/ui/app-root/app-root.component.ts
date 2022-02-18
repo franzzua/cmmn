@@ -29,7 +29,7 @@ export class AppRootComponent extends HtmlComponent<IState, IEvents> implements 
             return null;
         return {
             mode: this.drawer?.Mode,
-            selected: this.drawer?.services?.selection?.SelectedItems,
+            selected: this.drawer?.services?.selection?.SelectedItems.map(x => x.toJson()),
             items: this.store.Items,
         }
     }
@@ -47,7 +47,7 @@ export class AppRootComponent extends HtmlComponent<IState, IEvents> implements 
         }
     }
     deleteSelected(){
-        this.drawer.services.store.delete(this.drawer.services.selection.SelectedItems);
+        this.drawer.services.selection.deleteSelected();
     }
 
 

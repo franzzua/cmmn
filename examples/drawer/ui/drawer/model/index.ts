@@ -1,7 +1,8 @@
 import {LineFigure} from "./line-figure";
 import {PointFigure} from "./point-figure";
 import {PolygonFigure} from "./polygon-figure";
-import {DrawingFigureJson, DrawingItemType, IPoint} from "../types";
+import {DrawingFigureJson, DrawingItemType} from "../types";
+import {IPoint} from "@cmmn/ui";
 
 export type DrawingFigure = LineFigure | PointFigure | PolygonFigure;
 

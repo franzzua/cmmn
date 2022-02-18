@@ -4,7 +4,7 @@ import {DrawingFigureJson, Mode} from "../drawer/types";
 
 export const template: ITemplate<IState, IEvents> = (html, state, events) => state ? html`
     <app-drawer name="drawer" items=${state.items}></app-drawer>
-    <menu style="z-index: 1; position: absolute;">
+    <menu >
         <button .mode=${Mode.line} ?active=${state.mode == Mode.line}
                 onclick=${events.changeMode(e => e.target.mode)}>Line
         </button>
@@ -16,9 +16,10 @@ export const template: ITemplate<IState, IEvents> = (html, state, events) => sta
         </button>
 
         ${state.selected?.length ? html('delete')`
-            <button onclick=${events.deleteSelected()}>Delete
+            <button onclick=${events.deleteSelected()}>Del
             </button>
         ` : ''}
+        <input/>
     </menu>
 ` : html``;
 

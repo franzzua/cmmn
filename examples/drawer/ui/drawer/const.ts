@@ -3,5 +3,5 @@ export const Const = Object.freeze({
     pointRadiusBig: 5,
     hoverRadius: 5,
     magnetRadius: 8,
-    hoverDistance: 2,
+    lineHoverDistance: 5,
 });

@@ -1,24 +1,29 @@
 import {Fn, Injectable} from "@cmmn/core";
-import {Pointer} from "@cmmn/ui";
+import {IPoint, Pointer} from "@cmmn/ui";
+import { Computed } from "cellx-decorators";
 import {Const} from "../const";
 import {DrawingFigure} from "../model";
 import {LineFigure} from "../model/line-figure";
 import {PolygonFigure} from "../model/polygon-figure";
-import {DrawingItemType, IPoint, PointInfo} from "../types";
+import {DrawingItemType, PointInfo} from "../types";
 import {DrawingStore} from "./drawing.store";
 
 @Injectable()
 export class HoverService {
     constructor(private store: DrawingStore) {
-        Pointer.on('move', event => {
-            const point = this.store.getRelativePoint(event);
+        this.store.pointer.on('move', event => {
             for (let item of this.store.Items.values()) {
-                this.setHover(item, point)
+                this.setHover(item, event.point)
             }
         });
     }
 
-    setHover(item: DrawingFigure, position: IPoint) {
+    @Computed
+    public get HoveredItems(): DrawingFigure[] {
+        return Array.from(this.store.Items.values()).filter(x => x.hover != null);
+    }
+
+    private setHover(item: DrawingFigure, position: IPoint) {
         switch (item.type) {
             case DrawingItemType.point:
                 item.hover = this.checkPointHover(item.figure, position) ? {} : null;
@@ -34,7 +39,7 @@ export class HoverService {
     }
 
 
-    public getPolygonHover(item: PolygonFigure, position: IPoint) {
+    private getPolygonHover(item: PolygonFigure, position: IPoint) {
         // TODO: implement
         return item.figure.map((points, contour) => {
             return points.map((point, index) => {
@@ -47,7 +52,7 @@ export class HoverService {
         }).filter(Fn.Ib)[0];
     }
 
-    public getLineHover(item: LineFigure, position: IPoint) {
+    private getLineHover(item: LineFigure, position: IPoint) {
         let hover = null;
         item.figure.some((point, index) => {
             if (this.checkPointHover(point, position)) {
@@ -63,15 +68,16 @@ export class HoverService {
                 return false;
             const prevPoint = item.figure.get(index - 1);
             if (checkPointOnSegment(position, point, prevPoint)) {
+                hover = {segment: [index - 1, index]};
                 return true;
             }
         });
         if (hovered)
-            return {};
+            return hover;
         return null;
     }
 
-    checkPointHover(point: IPoint, position: IPoint) {
+    private checkPointHover(point: IPoint, position: IPoint) {
         if (!point || !position)
             return false;
         return Math.abs(position.X - point.X) < Const.hoverRadius &&
@@ -84,7 +90,7 @@ function checkPointOnSegment(x: IPoint, a: IPoint, b: IPoint): boolean {
     const ab = {X: b.X - a.X, Y: b.Y - a.Y};
     const vecSquare = (x.X - a.X) * ab.Y - ab.X * (x.Y - a.Y);
     const lenSquare = ab.X ** 2 + ab.Y ** 2;
-    if (vecSquare ** 2 > lenSquare * (Const.hoverDistance ** 2))
+    if (vecSquare ** 2 > lenSquare * (Const.lineHoverDistance ** 2))
         return false;
     return Math.abs(ab.X) > Math.abs(ab.Y)
         ? x.X <= a.X && x.X >= b.X || x.X >= a.X && x.X <= b.X

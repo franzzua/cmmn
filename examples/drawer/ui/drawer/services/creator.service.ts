@@ -1,7 +1,7 @@
 import {Injectable} from "@cmmn/core";
 import {Observable} from "cellx-decorators";
-import {DrawingItemType, IPoint, Mode} from "../types";
-import {Pointer} from "@cmmn/ui";
+import {DrawingItemType, Mode} from "../types";
+import {IPoint, Keyboard, Pointer} from "@cmmn/ui";
 import {DrawingFigure} from "../model";
 import {LineFigure} from "../model/line-figure";
 import {PointFigure} from "../model/point-figure";
@@ -13,8 +13,7 @@ import {DrawingStore} from "./drawing.store";
 export class CreatorService {
     constructor(private store: DrawingStore,
                 private magnet: MagnetismService) {
-        document.addEventListener('keydown', e => {
-            console.log(e.code)
+        this.store.keyboard.on('keydown', e => {
             switch (e.code) {
                 case "Escape":
                     this.cancel();
@@ -34,7 +33,7 @@ export class CreatorService {
     get CreatingItemWithLastPosition(): DrawingFigure {
         if (!Pointer.Position || !this.CreatingItem)
             return this.CreatingItem;
-        const point = this.magnet.getMagnetPoint(this.CreatingItem, this.store.getRelativePoint(Pointer.Position));
+        const point = this.magnet.getMagnetPoint(this.CreatingItem, Pointer.Position.point);
         const ex = this.clone();
         this.setLastPoint(ex, point);
         return ex;

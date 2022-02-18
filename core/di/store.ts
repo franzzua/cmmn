@@ -13,6 +13,7 @@ export class Store {
     }
 
 
+
     register(provider: Provider | Store) {
         if (provider instanceof Store) {
             provider.providers.forEach(p => this.register(p));

@@ -1,8 +1,9 @@
 import {Observable} from "cellx-decorators";
 import {DrawingFigureBase} from "./drawing-figure-base";
 import {ObservableList} from "cellx-collections";
-import {DrawingFigureJson, DrawingItemType, IPoint, PointInfo} from "../types";
-import { Fn } from "@cmmn/core";
+import {DrawingFigureJson, DrawingItemType, PointInfo} from "../types";
+import {Fn} from "@cmmn/core";
+import {IPoint} from "@cmmn/ui";
 
 export class LineFigure extends DrawingFigureBase {
     constructor(id: string, figure: IPoint[]) {
@@ -31,7 +32,7 @@ export class LineFigure extends DrawingFigureBase {
         const newPoints = json.figure as IPoint[];
         const changeType = newPoints.length > this.figure.length ? 'add' :
             newPoints.length < this.figure.length ? 'remove' : 'update';
-        switch (changeType){
+        switch (changeType) {
             case "update":
                 for (let i = 0; i < this.figure.length; i++) {
                     if (Fn.compare(this.figure.get(i), newPoints[i]))
@@ -62,5 +63,13 @@ export class LineFigure extends DrawingFigureBase {
 
     }
 
+    public addPoint(point: IPoint) {
+        if (!this.hover?.segment)
+            return;
+        this.figure.insert(this.hover.segment[1], point);
+        this.hover.index = this.hover.segment[1];
+        this.hover.segment = undefined;
+        this.selection = this.hover;
+    }
 }
 

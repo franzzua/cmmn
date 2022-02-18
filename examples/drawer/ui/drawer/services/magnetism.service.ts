@@ -1,8 +1,9 @@
 import {Injectable} from "@cmmn/core";
 import {Const} from "../const";
 import {DrawingFigure} from "../model";
-import {DrawingItemType, IPoint} from "../types";
+import {DrawingItemType} from "../types";
 import {DrawingStore} from "./drawing.store";
+import {IPoint} from "@cmmn/ui";
 
 @Injectable()
 export class MagnetismService {

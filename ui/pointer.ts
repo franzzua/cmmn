@@ -1,26 +1,41 @@
 import {bind, EventListener, Fn} from "@cmmn/core";
 import {Cell} from "cellx";
 
+export type RelativePointerEvent = {event: PointerEvent, point: IPoint};
+
 export type PointerEvents = {
-    move: PointerEvent,
-    down: PointerEvent,
-    up: PointerEvent,
-    enter: PointerEvent,
-    leave: PointerEvent,
-    click: PointerEvent,
-    dblClick: PointerEvent,
-    directClick: PointerEvent
+    move: RelativePointerEvent,
+    down: RelativePointerEvent,
+    up: RelativePointerEvent,
+    enter: RelativePointerEvent,
+    leave: RelativePointerEvent,
+    click: RelativePointerEvent,
+    dblclick: RelativePointerEvent,
+    directClick: RelativePointerEvent
 };
 
-export class PointerEmitter extends EventListener<PointerEvents> {
+export class PointerListener extends EventListener<PointerEvents> {
 
-    constructor(private root: HTMLElement | Document) {
+    constructor(private root: HTMLElement | SVGElement | Document) {
         super(root);
     }
 
-    private _position: Cell<PointerEvent>;
+    private getLeftTop(){
+        if ('getBoundingClientRect' in this.root)
+            return this.root.getBoundingClientRect();
+        return {left: 0, top: 0};
+    }
 
-    public get Position(): PointerEvent {
+    public getRelativePoint(event: MouseEvent): IPoint{
+        const rect = this.getLeftTop()
+        return  {
+            X: event.pageX - rect.left,
+            Y: event.pageY - rect.top
+        }
+    }
+    private _position: Cell<RelativePointerEvent>;
+
+    public get Position(): RelativePointerEvent {
         if (this._position)
             return this._position.get();
         this._position = new Cell(null);
@@ -31,25 +46,25 @@ export class PointerEmitter extends EventListener<PointerEvents> {
     }
 
     @bind
-    private async directClickListener(downEvent: PointerEvent) {
+    private async directClickListener(downEvent: RelativePointerEvent) {
         const upEvent = await this.onceAsync('up');
-        if (upEvent.timeStamp - downEvent.timeStamp > 400)
+        if (upEvent.event.timeStamp - downEvent.event.timeStamp > 400)
             return;
-        if (upEvent.x - downEvent.x > 1)
+        if (upEvent.event.x - downEvent.event.x > 1)
             return;
-        if (upEvent.y - downEvent.y > 1)
+        if (upEvent.event.y - downEvent.event.y > 1)
             return;
         this.emit('directClick', upEvent);
     }
 
     private emitters = {
-        move: event => this.emit('move', event),
-        down: event => this.emit('down', event),
-        up: event => this.emit('up', event),
-        enter: event => this.emit('enter', event),
-        leave: event => this.emit('leave', event),
-        click: event => this.emit('click', event),
-        dblClick: event => this.emit('dblClick', event),
+        move: event => this.emit('move', {event, point: this.getRelativePoint(event)}),
+        down: event => this.emit('down', {event, point: this.getRelativePoint(event)}),
+        up: event => this.emit('up', {event, point: this.getRelativePoint(event)}),
+        enter: event => this.emit('enter', {event, point: this.getRelativePoint(event)}),
+        leave: event => this.emit('leave', {event, point: this.getRelativePoint(event)}),
+        click: event => this.emit('click', {event, point: this.getRelativePoint(event)}),
+        dblclick: event => this.emit('dblclick', {event, point: this.getRelativePoint(event)}),
         directClick: this.directClickListener,
     }
 
@@ -65,7 +80,7 @@ export class PointerEmitter extends EventListener<PointerEvents> {
             case 'click':
                 this.root.addEventListener('mouseClick', this.emitters[eventName]);
                 break;
-            case "dblClick":
+            case "dblclick":
                 this.root.addEventListener('dblclick', this.emitters[eventName]);
                 break;
             case 'directClick':
@@ -87,7 +102,7 @@ export class PointerEmitter extends EventListener<PointerEvents> {
             case 'click':
                 this.root.removeEventListener('mouseClick', this.emitters[eventName]);
                 break;
-            case "dblClick":
+            case "dblclick":
                 this.root.removeEventListener('dblclick', this.emitters[eventName]);
                 break;
             case 'directClick':
@@ -98,4 +113,10 @@ export class PointerEmitter extends EventListener<PointerEvents> {
     }
 }
 
-export const Pointer = new PointerEmitter(document);
+export const Pointer = new PointerListener(document);
+
+
+export type IPoint = {
+    X: number;
+    Y: number;
+}

@@ -49,7 +49,7 @@ export class EventListener<TEvents extends {
     }
 
 
-    public on<TEventName extends keyof TEvents>(eventName, listener: (data: TEvents[TEventName]) => void) {
+    public on<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void) {
         const unsubscr = super.on(eventName, listener);
         if (this.listeners.get(eventName).size == 1) {
             this.subscribe(eventName);
@@ -57,7 +57,7 @@ export class EventListener<TEvents extends {
         return unsubscr;
     }
 
-    public off<TEventName extends keyof TEvents>(eventName, listener: (data: TEvents[TEventName]) => void) {
+    public off<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void) {
         super.off(eventName, listener);
         if (this.listeners.get(eventName).size == 0) {
             this.unsubscribe(eventName);

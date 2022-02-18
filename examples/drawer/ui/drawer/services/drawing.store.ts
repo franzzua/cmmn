@@ -2,14 +2,18 @@ import {Injectable} from "@cmmn/core";
 import {Observable} from "cellx-decorators";
 import {ObservableMap} from "cellx-collections";
 import {DrawingFigure} from "../model";
-import {DrawingFigureJson, IPoint, Mode} from "../types";
+import {Mode} from "../types";
 import type {AppDrawerComponent} from "../app-drawer/app-drawer.component";
+import {KeyboardListener, PointerListener} from "@cmmn/ui";
 
 @Injectable()
 export class DrawingStore {
 
     constructor(private appDrawer: AppDrawerComponent) {
     }
+
+    public pointer = new PointerListener(this.appDrawer.element as HTMLElement | SVGElement);
+    public keyboard = new KeyboardListener(this.appDrawer.element as HTMLElement | SVGElement);
 
     public async add(item: DrawingFigure) {
         await Promise.resolve(void 0);
@@ -42,23 +46,11 @@ export class DrawingStore {
     }
 
 
-    public getRelativePoint(event: MouseEvent): IPoint{
-        const rect = this.appDrawer.element.getBoundingClientRect();
-        return  {
-            X: event.pageX - rect.left,
-            Y: event.pageY - rect.top
-        }
-    }
-
-    public delete(items: DrawingFigureJson[]) {
-        for (let item of items) {
-            this.Items.delete(item.id);
-        }
-    }
 
     public filterEvent(event: MouseEvent) {
         return event.target === this.appDrawer.element;
     }
+
 }
 
 

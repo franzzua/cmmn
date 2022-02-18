@@ -1,4 +1,4 @@
-import {DrawingFigureJson, DrawingItemType, IPoint} from "../types";
+import {DrawingFigureJson} from "../types";
 
 export abstract class DrawingFigureBase {
     constructor(id: string) {
