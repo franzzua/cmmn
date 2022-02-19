@@ -1,5 +1,4 @@
 import {Injectable} from "@cmmn/core";
-import {Keyboard, Pointer} from "@cmmn/ui";
 import {DrawingItemType, Mode} from "../types";
 import {Computed} from "cellx-decorators";
 import {DrawingStore} from "./drawing.store";
@@ -31,7 +30,7 @@ export class SelectionService {
                     this.store.Items.delete(selectedItem.id);
                     break;
                 case DrawingItemType.line:
-                    if (selectedItem.selection.index !== undefined) {
+                    if (selectedItem.selection.index !== undefined && selectedItem.figure.length > 2) {
                         selectedItem.figure.removeAt(selectedItem.selection.index);
                         this.store.update(selectedItem.id);
                     } else {

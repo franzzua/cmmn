@@ -1,7 +1,7 @@
 import {Injectable} from "@cmmn/core";
 import {Observable} from "cellx-decorators";
 import {DrawingItemType, Mode} from "../types";
-import {IPoint, Keyboard, Pointer} from "@cmmn/ui";
+import {IPoint} from "@cmmn/ui";
 import {DrawingFigure} from "../model";
 import {LineFigure} from "../model/line-figure";
 import {PointFigure} from "../model/point-figure";
@@ -31,9 +31,9 @@ export class CreatorService {
     CreatingItem: DrawingFigure;
 
     get CreatingItemWithLastPosition(): DrawingFigure {
-        if (!Pointer.Position || !this.CreatingItem)
+        if (!this.store.pointer.Position || !this.CreatingItem)
             return this.CreatingItem;
-        const point = this.magnet.getMagnetPoint(this.CreatingItem, Pointer.Position.point);
+        const point = this.magnet.getMagnetPoint(this.CreatingItem, this.store.pointer.Position.point);
         const ex = this.clone();
         this.setLastPoint(ex, point);
         return ex;
@@ -66,7 +66,7 @@ export class CreatorService {
     }
 
     public create(): void {
-        if (!this.isValid(this.CreatingItemWithLastPosition))
+        if (!this.CreatingItemWithLastPosition.isValid())
             return;
         this.store.add(this.CreatingItemWithLastPosition);
         this.CreatingItem = null;
@@ -76,13 +76,4 @@ export class CreatorService {
         this.CreatingItem = null;
     }
 
-    private isValid(item: DrawingFigure): Boolean {
-        if (!item || !item.figure)
-            return false;
-        switch (item.type) {
-            case DrawingItemType.line:
-                return item.figure.length >= 2;
-        }
-        return true;
-    }
 }

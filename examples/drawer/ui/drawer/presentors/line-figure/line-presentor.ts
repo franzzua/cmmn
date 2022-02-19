@@ -5,6 +5,7 @@ import {Injectable} from "@cmmn/core";
 import {BaseFigurePresentor} from "../base-figure-presentor";
 import {LineFigure} from "../../model/line-figure";
 import {DrawingItemType} from "../../types";
+import {Bezier} from "./bezier";
 
 @Injectable(true)
 @component({name: 'line-figure', template, style, svg: true})
@@ -28,13 +29,12 @@ export class LinePresentor extends BaseFigurePresentor<IState, IEvents> {
         };
     }
 
-
     public toPath() {
         if (this.item.figure.length < 2)
             return '';
-        const [first, ...arr] = this.item.figure.map(p => `${p.X} ${p.Y}`);
-        return `M${first}L ${arr.join(' ')}`;
+        return Bezier.getString(this.item.figure);
     }
 }
 
 BaseFigurePresentor.registration.set(DrawingItemType.line, LinePresentor);
+

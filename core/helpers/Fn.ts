@@ -1,4 +1,4 @@
-import { ulid } from "ulid";
+import {ulid} from "ulid";
 import {Cell} from "cellx";
 //
 // import { generator, BASE } from "flexid";
@@ -15,6 +15,13 @@ export const Fn = {
     pipe: (...functions: Function[]) => {
         return functions.reduce((f1, f2) => (...args: any[]) => f2(f1(...args)))
     },
+    join: (...functions: Function[]) => {
+        return function (...args) {
+            for (let fn of functions) {
+                fn.apply(this, args);
+            }
+        }
+    },
     distinctUntilChanged<T>(comparator: (x: T, y: T) => boolean): MethodDecorator {
         return <T>(target: any, key: string, descr: TypedPropertyDescriptor<T>) => {
             const symbol = Symbol(key + 'distinct');
@@ -28,7 +35,7 @@ export const Fn = {
             }
         }
     },
-    asyncDelay(timeout: number = 0): Promise<void>{
+    asyncDelay(timeout: number = 0): Promise<void> {
         return new Promise(resolve => setTimeout(resolve, timeout));
     },
     /**

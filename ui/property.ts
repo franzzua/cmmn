@@ -10,15 +10,15 @@ function componentHandler(self: ExtendedElement<any>, key: string): any {
     const prop = (self.component.constructor[propertySymbol] as Map<string, string>).get(key)
     const descr = Object.getOwnPropertyDescriptor(self.component.constructor.prototype, prop);
     if (descr) {
-        const cell = getOrCreateCell(self.component, prop, null);
+        const cell = getOrCreateCell(self.component, prop, () => null);
         return (value: any) => cell.set(value);
     }
 }
 
-function getOrCreateCell(self: any, key: string, value: any) {
+function getOrCreateCell(self: any, key: string, value: Function) {
     const map = self[propertySymbol] ?? (self[propertySymbol] = new Map<string, Cell>());
     if (!map.has(key))
-        map.set(key, new Cell(value));
+        map.set(key, new Cell(value()));
     return map.get(key);
 }
 
@@ -29,11 +29,11 @@ export function property(attribute?: string): PropertyDecorator {
         (target.constructor[propertySymbol] as Map<string, string>).set(attribute || toSnake(key), key);
         Object.defineProperty(target, key, {
             get(): any {
-                const cell = getOrCreateCell(this, key, this.element.getAttribute(key));
+                const cell = getOrCreateCell(this, key, () => this.element.getAttribute(key));
                 return cell.get();
             },
             set(value: string): any {
-                const cell = getOrCreateCell(this, key, this.element.getAttribute(key));
+                const cell = getOrCreateCell(this, key, () => value);
                 cell.set(value);
             }
         });

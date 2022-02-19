@@ -1,5 +1,5 @@
 import {Fn, Injectable} from "@cmmn/core";
-import {IPoint, Pointer} from "@cmmn/ui";
+import {IPoint} from "@cmmn/ui";
 import { Computed } from "cellx-decorators";
 import {Const} from "../const";
 import {DrawingFigure} from "../model";

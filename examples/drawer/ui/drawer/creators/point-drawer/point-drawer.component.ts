@@ -1,4 +1,4 @@
-import {component, HtmlComponent, Pointer} from "@cmmn/ui";
+import {component, HtmlComponent} from "@cmmn/ui";
 import {IEvents, template} from "./point-drawer.template";
 import style from "./point-drawer.style.less";
 import {Fn, Injectable} from "@cmmn/core";
@@ -12,13 +12,8 @@ import {DrawingItemType} from "../../types";
 @component({name: 'point-drawer', template, style})
 export class PointDrawerComponent extends HtmlComponent<PointFigure, IEvents> {
 
-    constructor(private store: DrawingStore) {
-        super();
-
-    }
-
     connectedCallback() {
-        this.onDispose = this.store.pointer.on('directClick', event => {
+        this.onDispose = this.appDrawer.component.services.store.pointer.on('directClick', event => {
             this.creator.CreatingItem = this.creator.CreatingItemWithLastPosition;
             this.creator.create();
             this.creator.CreatingItem = this.newItem();

@@ -19,7 +19,8 @@
     "@cmmn/ui": "^1.3.0",
     "@cmmn/sync": "^1.3.0",
     "cellx-collections": "^1.0.3",
-    "cellx-decorators": "^1.6.3"
+    "cellx-decorators": "^1.6.3",
+    "@freder/bezier-spline": "^0.2.4"
   },
   "author": "",
   "license": "ISC",

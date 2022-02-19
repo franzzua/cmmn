@@ -26,7 +26,7 @@ export class TokenParserMock extends TokenParser{
     }
 
 }
-
+//@ts-ignore
 Server.withFastify(fastify)
     .with(Container.withProviders({
         provide: TokenParser, useClass: TokenParserMock

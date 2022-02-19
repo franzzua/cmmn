@@ -1,4 +1,4 @@
-import {component, HtmlComponent, Pointer} from "@cmmn/ui";
+import {component, HtmlComponent} from "@cmmn/ui";
 import {IEvents, template} from "./line-drawer.template";
 import style from "./line-drawer.style.less";
 import {Fn, Injectable} from "@cmmn/core";
@@ -7,20 +7,21 @@ import {ExtendedElement} from "@cmmn/ui/types";
 import {AppDrawerComponent} from "../../app-drawer/app-drawer.component";
 import {LineFigure} from "../../model/line-figure";
 import {DrawingItemType} from "../../types";
+import {DrawingStore} from "../../services";
 
 @Injectable(true)
 @component({name: 'line-drawer', template, style})
 export class LineDrawerComponent extends HtmlComponent<LineFigure, IEvents> {
 
     connectedCallback(){
-        this.onDispose = Pointer.on('dblclick', event => {
+        this.onDispose = this.appDrawer.component.services.store.pointer.on('dblclick', event => {
             this.creator.create();
             this.creator.CreatingItem = this.newItem()
         });
 
         let lastAddTime:number = null;
 
-        this.onDispose = Pointer.on('directClick', event => {
+        this.onDispose = this.appDrawer.component.services.store.pointer.on('directClick', event => {
             if (lastAddTime && event.event.timeStamp - lastAddTime < 400)
                 return;
             lastAddTime = event.event.timeStamp;

@@ -1,7 +1,7 @@
 import {component, HtmlComponent, property} from "@cmmn/ui";
 import {IEvents, IState, template} from "./app-drawer.template";
 import style from "./app-drawer.style.less";
-import {bind, Injectable} from "@cmmn/core";
+import {bind, Fn, Injectable} from "@cmmn/core";
 import {DrawingFigure, DrawingFigureFactory} from "../model";
 import {DrawingFigureJson, Mode} from "../types";
 import {services} from "../services";
@@ -13,7 +13,8 @@ import {Observable} from "cellx-decorators";
 export class AppDrawerComponent extends HtmlComponent<IState, IEvents> {
 
     @bind
-    private onLocalChange(event) {
+    private async onLocalChange(event) {
+        await Fn.asyncDelay(0);
         const value = event.data.value as DrawingFigure;
         switch (event.data.subtype) {
             case "add":
@@ -31,8 +32,12 @@ export class AppDrawerComponent extends HtmlComponent<IState, IEvents> {
         const value = event.data.value as DrawingFigureJson;
         switch (event.data.subtype) {
             case "add":
-                if (!this.services.store.Items.has(value.id))
-                    this.services.store.Items.set(value.id, DrawingFigureFactory(value));
+                if (!this.services.store.Items.has(value.id)) {
+                    const newItem = DrawingFigureFactory(value)
+                    if (newItem.isValid()) {
+                        this.services.store.Items.set(value.id, newItem);
+                    }
+                }
                 break;
             case "delete":
                 this.services.store.Items.delete(event.data.key);
@@ -48,7 +53,7 @@ export class AppDrawerComponent extends HtmlComponent<IState, IEvents> {
         this.element.focus();
         this.services = services(this);
         this.Items.onChange(this.onRemoteChange);
-        this.services.store.Items = new ObservableMap(Array.from(this.Items).map(([id, item]) => [id, DrawingFigureFactory(item)]));
+        this.services.store.Items = new ObservableMap(Array.from(this.Items).map(([id, item]) => [id, DrawingFigureFactory(item)] as [string, DrawingFigure]).filter(x => x[1].isValid()));
         this.services.store.Items.onChange(this.onLocalChange);
         super.connectedCallback();
     }
@@ -59,7 +64,7 @@ export class AppDrawerComponent extends HtmlComponent<IState, IEvents> {
         super.disconnectedCallback();
     }
 
-    public services;
+    public services: ReturnType<typeof services>;
 
     @property()
     public Items!: ObservableMap<string, DrawingFigureJson>

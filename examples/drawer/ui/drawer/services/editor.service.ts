@@ -1,6 +1,5 @@
 import {DrawingStore} from "./drawing.store";
 import {Injectable} from "@cmmn/core";
-import {Keyboard, Pointer} from "@cmmn/ui";
 import {SelectionService} from "./selection.service";
 import {HoverService} from "./hover.service";
 import {DrawingItemType} from "../types";

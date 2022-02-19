@@ -71,5 +71,9 @@ export class LineFigure extends DrawingFigureBase {
         this.hover.segment = undefined;
         this.selection = this.hover;
     }
+
+    override isValid(): boolean {
+        return this.figure.length >= 2;
+    }
 }
 
