@@ -1,6 +1,6 @@
 import {bind} from "@cmmn/core";
 import {WebsocketConnection} from "./websocket.connection";
-import {WebSocketDataMessage, WebSocketMessage} from "../shared/types";
+import {WebSocketDataMessage} from "../shared/types";
 
 export class ServerRoom {
     private users = new Map<string, WebsocketConnection>();
@@ -11,7 +11,6 @@ export class ServerRoom {
 
 
     public addClient(connection: WebsocketConnection) {
-        console.log(connection.userInfo);
         this.users.forEach(c => c.send({
             type: "announce",
             room: this.name,
@@ -25,13 +24,15 @@ export class ServerRoom {
         if (this.users.has(connection.userInfo.user))
             this.users.get(connection.userInfo.user).close();
         this.users.set(connection.userInfo.user, connection);
-        connection.on('message', this.onMessage);
+        connection.on('message', message => this.onMessage(message, connection.userInfo.user));
         connection.on('close', () => this.users.delete(connection.userInfo.user))
     }
 
     @bind
-    private onMessage(message: WebSocketDataMessage) {
-        for (let user of this.users.values()) {
+    private onMessage(message: WebSocketDataMessage, userKey: string) {
+        for (let [key, user] of this.users) {
+            if (key === userKey)
+                continue;
             user.send(message);
         }
     }

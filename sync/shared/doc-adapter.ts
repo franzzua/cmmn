@@ -10,8 +10,9 @@ export class DocAdapter {
     private connections = new Set<PeerDataChannel>();
 
     constructor(public doc: Doc, private awareness: Awareness) {
-        this.doc.on('update', update => {
-            this.broadcast(MessageType.Update, update);
+        this.doc.on('update', (update, _, doc, transaction) => {
+            if (transaction.local)
+                this.broadcast(MessageType.Update, update);
         });
     }
 

@@ -21,15 +21,14 @@ app-drawer {
       circle {
         stroke-width: 1px;
         fill: white;
+        stroke: @mainColor;
+        display: none;
         &.stroke {
-          stroke: @mainColor;
-        }
-        &.none{
-          display: none;
+          display: initial;
         }
         &.fill {
+          display: initial;
           fill: @mainColor;
-          stroke: @mainColor;
         }
 
       }

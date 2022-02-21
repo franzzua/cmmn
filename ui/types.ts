@@ -1,5 +1,5 @@
 import {HtmlComponent} from "./htmlComponent";
-import {Hole, TemplateFunction as UHtmlTemplateFunction} from "@cmmn/uhtml";
+import {Hole, Renderable, TemplateFunction} from "@cmmn/uhtml";
 
 export type SingleArgumentsOf<TFunction> = TFunction extends (arg: infer T) => any ? T : void;
 
@@ -8,7 +8,7 @@ export type IEventHandler<TEvents> = {
 };
 
 export type ITemplate<TState, TEvents extends IEvents, TComponent extends HtmlComponent<TState, TEvents> = HtmlComponent<TState, TEvents>>
-    = (this: TComponent, html: Html, state: TState, events: IEventHandler<TEvents>) => Hole;
+    = (this: TComponent, html: Html, state: TState, events: IEventHandler<TEvents>) => Renderable;
 
 export type SingleArg<F> = F extends (arg?: infer T) => any ? T : void;
 export type IEvents = {
@@ -18,23 +18,24 @@ export type IEvents = {
 /**
  * Every time it will returns new html
  */
-export type FreeHtml = (() => UHtmlTemplateFunction<Hole>);
+export type FreeHtml = (() => TemplateFunction<Renderable>);
 
 /**
  * Every time a key change it will returns new html
  * It will stores html for every key: beware of memory leaks
  */
-export type KeyedHtml = ((key: string | number) => UHtmlTemplateFunction<Hole>);
+export type KeyedHtml = ((key: string | number) => TemplateFunction<Renderable>);
 
 /**
  * Every time a key or object change it will returns new html
  * It will stores html for every key: beware of memory leaks
  */
-export type ObjectKeyedHtml = <T>(object: ObjectNotArray<T>, key: string) => UHtmlTemplateFunction<Hole>;
+export type ObjectKeyedHtml = <T>(object: ObjectNotArray<T>, key: string) => TemplateFunction<Renderable>;
 
-export type Html = UHtmlTemplateFunction<Hole> & FreeHtml & KeyedHtml & ObjectKeyedHtml & {
-    svg: Html
+export type Html = TemplateFunction<Renderable> & FreeHtml & KeyedHtml & ObjectKeyedHtml & {
+    svg: Html;
 };
+export {Renderable, Hole, TemplateFunction};
 
 type ObjectNotArray<T> = T extends ReadonlyArray<string> ? never : T;
 

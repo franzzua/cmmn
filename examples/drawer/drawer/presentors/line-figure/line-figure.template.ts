@@ -1,17 +1,20 @@
 import {IPoint, ITemplate} from "@cmmn/ui";
 import {Html} from "@cmmn/ui/types";
-import {Point} from "../point.template";
+import {PointTemplate} from "../point.template";
 import {ObservableList} from "cellx-collections";
 
 const radius = 3;
 
-export const template: ITemplate<IState, IEvents> = (html, state, events) => state && html.svg`
-    <path d=${state.path} ?hovered=${state.hovered} ?selected=${state.selected}/>
-    ${state.points.map((point, i) => Point(html.svg(i), point, {
+export const template: ITemplate<IState, IEvents> = (html, state, events) => {
+    if (!state) return html.svg``;
+    return html.svg`
+        <path d=${state.path} ?hovered=${state.hovered} ?selected=${state.selected}/>
+        ${state.points.map((point, i) => PointTemplate(html.svg(i), point, {
         selected: state.selectedIndex === null ? state.selected : state.selectedIndex === i,
         hovered: state.hoveredIndex === i
     },))}
-`;
+    `;
+};
 
 export type IState = {
     points: ObservableList<IPoint>;

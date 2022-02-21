@@ -64,19 +64,22 @@ export class WorkerStream extends Stream {
         return cellx<T>(() => cell.get(), {
             put: (_: any, state: T) => {
                 cell.set(state);
+                const uint8Array = serialize(state);
                 this.postMessage({
                     type: WorkerMessageType.State,
                     path,
-                    state: serialize(state)
-                });
+                    state: uint8Array
+                }, [uint8Array.buffer]);
             }
         })
     }
 
-    private postMessage(msg: WorkerMessage) {
+    private postMessage(msg: WorkerMessage, transferables: any[] = null) {
         this.Connected.then(() => {
             try {
-                this.Worker.postMessage(msg);
+                this.Worker.postMessage(msg, {
+                    transfer: transferables ?? []
+                });
             } catch (err) {
                 switch (err.name) {
                     case 'DataCloneError':

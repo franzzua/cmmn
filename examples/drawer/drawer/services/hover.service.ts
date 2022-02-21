@@ -9,11 +9,18 @@ import {DrawingStore} from "./drawing.store";
 
 @Injectable()
 export class HoverService {
+
+    private lastIdleCallback: number;
+
     constructor(private store: DrawingStore) {
         this.store.pointer.on('move', event => {
-            for (let item of this.store.Items.values()) {
-                this.setHover(item, event.point)
-            }
+            if (this.lastIdleCallback)
+                cancelIdleCallback(this.lastIdleCallback)
+            this.lastIdleCallback = requestIdleCallback(() => {
+                for (let item of this.store.Items.values()) {
+                    this.setHover(item, event.point)
+                }
+            });
         });
     }
 

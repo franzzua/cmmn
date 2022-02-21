@@ -14,7 +14,7 @@ export function registerSerializer<T, U>(type: number, classFunction: Function, 
     })
 }
 
-export function serialize(data: any) {
+export function serialize(data: any): Uint8Array {
     return packr.encode(data);
 }
 

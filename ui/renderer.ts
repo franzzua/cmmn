@@ -1,5 +1,5 @@
 import {bind} from "@cmmn/core";
-import {html, render, svg} from "@cmmn/uhtml";
+import {Hole, render, unroll} from "@cmmn/uhtml";
 import {IEvents, ITemplate} from "./types";
 import {EventHandlerProvider} from "./eventHandlerProvider";
 import {HtmlComponentBase} from "./html-component-base";
@@ -15,31 +15,43 @@ export class Renderer<TState, TEvents extends IEvents> {
     //         return;
     //     action();
     // }));
+    private cache = new Map<object, Map<string, { stack, entry: { wire? }, wire }>>();
     private eventHandler = new EventHandlerProvider(this.component);
 
     constructor(private component: HtmlComponentBase<TState, TEvents>,
                 private template: ITemplate<TState, TEvents>) {
     }
 
-    private getHtml = html => (strings: TemplateStringsArray | string, ...args: any[]) => {
+    private cacheFor(obj, key, type) {
+        const cache = this.cache.getOrAdd(this, () => new Map()).getOrAdd(key, key => ({
+            stack: [],
+            entry: {},
+            wire: null
+        }));
+        return Object.assign((template, ...values) => unroll(cache, {type, template, values}), {
+            get cache(){
+                return cache.entry.wire;
+            }
+        });
+    }
+
+    private getHtml = (type = 'html') => (strings: TemplateStringsArray | string, ...values: any[]) => {
         if (typeof strings == "string" || typeof strings == "number") {
-            return html.for(this, strings);
+            return this.cacheFor(this, strings, type);
         }
         // case of html`<template>`
         if (Array.isArray(strings)) {
-            return render(this.component.element, html(strings, ...args));
+            return render(this.component.element, new Hole(type, strings, values));
         }
         if (!strings) {
             // case of html()`<template>`
-            return html.node;
+            return (template, ...values) => unroll({stack: [], entry: {}, wire: null}, {type, template, values});
         }
-        if (args[0] == 'svg' || args[0].startsWith('svg:'))
-            return svg.for(strings, args.join(','));
         // case of html(object, 'key')`<template>`
-        return html.for(strings, args.join(','));
+        return this.cacheFor(strings, values.join(','), type);
     }
-    private html = Object.assign(this.getHtml(html), {
-        svg: this.getHtml(svg)
+    private html = Object.assign(this.getHtml('html'), {
+        svg: this.getHtml('svg')
     });
 
     handlerProxy = new Proxy({}, {
@@ -59,6 +71,14 @@ export class Renderer<TState, TEvents extends IEvents> {
             }
         });
         // });
+    }
+
+    dispose() {
+        for (let x of this.cache.values()) {
+            for (let y of x.values()) {
+                console.log(y.entry.wire);
+            }
+        }
     }
 
 }

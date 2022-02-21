@@ -19,22 +19,29 @@ export class WorkerEntry {
                         throw new Error(`Model not found at path ${path.join(':')}`)
                     model.$state.subscribe((err, evt) => {
                         const state = evt.data.value;
-                        this.postMessage({
-                            path,
-                            type: WorkerMessageType.State,
-                            state: serialize(state)
-                        });
+                        if (!model['mute']) {
+                            this.postMessage({
+                                path,
+                                type: WorkerMessageType.State,
+                                state: serialize(state)
+                            });
+                        }
                     });
                     const state = model.State;
+                    const uint8Array = serialize(state)
                     this.postMessage({
                         path,
                         type: WorkerMessageType.State,
-                        state: serialize(state)
-                    });
+                        state: uint8Array
+                    }, [uint8Array.buffer]);
                     break;
-                case WorkerMessageType.State:
-                    this.getModel(event.data.path).$state(deserialize(event.data.state));
+                case WorkerMessageType.State: {
+                    const model = this.getModel(event.data.path);
+                    model['mute'] = true;
+                    model.$state(deserialize(event.data.state));
+                    model['mute'] = false;
                     break;
+                }
                 case WorkerMessageType.Action:
                     this.Action(event.data);
                     break;
@@ -45,11 +52,13 @@ export class WorkerEntry {
     private asyncQueue = new AsyncQueue();
 
     private Action(action: WorkerAction) {
+        const model = this.getModel<any, any>(action.path);
         const result = this.asyncQueue.Invoke(() => {
-            const model = this.getModel<any, any>(action.path);
+            model['mute'] = true;
             return model.Actions[action.action](...action.args.map(deserialize));
         });
         result.then(response => {
+            model['mute'] = false;
             return ({response: serialize(response)});
         })
             .catch(error => {
@@ -65,8 +74,10 @@ export class WorkerEntry {
             });
     }
 
-    private postMessage(message: WorkerMessage) {
-        self.postMessage(message);
+    private postMessage(message: WorkerMessage, transferables = null) {
+        self.postMessage(message, {
+            transfer: transferables ?? []
+        });
     }
 
     private getModel<TState, TActions extends ModelAction>(path: ModelPath): Model<TState, TActions> {

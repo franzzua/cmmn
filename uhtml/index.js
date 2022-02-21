@@ -9,7 +9,8 @@ const {create, defineProperties} = Object;
 // with a `for(ref[, id])` and a `node` tag too
 const tag = type => {
     // both `html` and `svg` tags have their own cache
-    const keyed = umap(new WeakMap);
+    const map = new WeakMap();
+    const keyed = umap(map);
     // keyed operations always re-use the same cache and unroll
     // the template and its interpolations right away
     const fixed = cache => (template, ...values) => unroll(
@@ -27,10 +28,12 @@ const tag = type => {
                 // related node, handy with JSON results and mutable list of objects
                 // that usually carry a unique identifier
                 value(ref, id) {
+                    console.log(map);
                     const memo = keyed.get(ref) || keyed.set(ref, create(null));
                     return memo[id] || (memo[id] = fixed(createCache()));
                 }
             },
+            cache: keyed,
             node: {
                 // it is possible to create one-off content out of the box via node tag
                 // this might return the single created node, or a fragment with all
@@ -71,4 +74,4 @@ const render = (where, what) => {
 const html = tag('html');
 const svg = tag('svg');
 
-export {Hole, render, html, svg, foreign, useCustomHandler, setter};
+export {Hole, render, html, svg, foreign, useCustomHandler, setter, unroll};
