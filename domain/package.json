@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/domain",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "",
   "type": "module",
   "exports": {
@@ -34,10 +34,10 @@
     "dist"
   ],
   "devDependencies": {
-    "@cmmn/tools": "^1.3.0"
+    "@cmmn/tools": "^1.4.0"
   },
   "dependencies": {
-    "@cmmn/core": "^1.3.0"
+    "@cmmn/core": "^1.4.0"
   },
   "author": "",
   "license": "ISC",
@@ -46,12 +46,18 @@
     "proxy": {
       "input": "dist/esm/entry/proxy.js",
       "module": "es,cjs",
-      "external": ["@cmmn", "cellx"]
+      "external": [
+        "@cmmn",
+        "cellx"
+      ]
     },
     "worker": {
       "input": "dist/esm/worker/index.js",
       "module": "es,cjs",
-      "external": ["@cmmn", "cellx"]
+      "external": [
+        "@cmmn",
+        "cellx"
+      ]
     }
   }
 }
