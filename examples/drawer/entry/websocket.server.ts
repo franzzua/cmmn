@@ -1,13 +1,14 @@
-import {WebrtcController,TokenParser} from "@cmmn/sync/webrtc/server";
+import {TokenParser} from "@cmmn/sync";
 import {controller, Get, Server} from "@cmmn/server";
 import {Container, Injectable} from "@cmmn/core";
 import fastify from "fastify";
+import {WebSocketController} from "@cmmn/sync/websocket/server";
 
 @controller()
-@Injectable()
 export class Controller {
+    private handler: WebSocketController = new WebSocketController(new TokenParserMock());
 
-    constructor(private handler: WebrtcController) {
+    constructor() {
 
     }
 
@@ -17,7 +18,7 @@ export class Controller {
     }
 }
 
-export class TokenParserMock extends TokenParser{
+export class TokenParserMock extends TokenParser {
     public async Parse(token: string): Promise<{ User: string; AccessMode: "read" | "write" }> {
         return {
             AccessMode: "write",
@@ -26,6 +27,7 @@ export class TokenParserMock extends TokenParser{
     }
 
 }
+
 //@ts-ignore
 Server.withFastify(fastify)
     .with(Container.withProviders({

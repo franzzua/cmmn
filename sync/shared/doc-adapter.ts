@@ -4,7 +4,7 @@ import {PeerDataChannel} from "./peer-data-channel";
 import * as awarenessProtocol from 'y-protocols/awareness'
 import {Awareness} from 'y-protocols/awareness'
 import {bind} from "@cmmn/core";
-import {MessageType} from "../shared/types";
+import {MessageType} from "../webrtc/shared/types";
 
 export class DocAdapter {
     private connections = new Set<PeerDataChannel>();

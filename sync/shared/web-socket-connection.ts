@@ -1,12 +1,9 @@
 import {WebSocket} from "ws";
-import {SignalingMessage, SignalingServerMessage, SignalServerMessage} from "../shared/types";
-import {EventEmitter} from "../shared/observable";
-import {bind} from "@cmmn/core";
+import {EventEmitter} from "../webrtc/shared/observable";
 
-export class ClientConnection extends EventEmitter<{
-    signal: SignalServerMessage,
+export abstract class WebSocketConnection<TEvents> extends EventEmitter<TEvents & {
     close: void
-}>{
+}> {
     constructor(private socket: WebSocket,
                 public userInfo: {
                     user: string, accessMode: 'read' | 'write'
@@ -37,24 +34,11 @@ export class ClientConnection extends EventEmitter<{
         })
     }
 
-    public send(message: SignalingServerMessage) {
-        // const buffer = new Buffer(JSON.stringify(message), 'utf8');
+    public send(message: object) {
         this.socket.send(JSON.stringify(message),);
     }
 
-    private decoder = new TextDecoder();
-
-    @bind
-    private onMessage(data: string | Buffer) {
-        const stringData = typeof data === "string" ? data : this.decoder.decode(data);
-        const message = JSON.parse(stringData) as SignalingMessage;
-        if (message.type !== 'signal')
-            return;
-        this.emit('signal', {
-            ...message,
-            from: this.userInfo
-        });
-    }
+    protected abstract onMessage(data: string | Buffer);
 
     public close() {
         super.dispose();

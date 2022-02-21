@@ -1,9 +1,8 @@
 import {
-    AnnounceMessage, SignalClientMessage,
+    SignalClientMessage,
     SignalingMessage,
     SignalingRegistrationInfo,
     SignalingServerMessage,
-    SignalServerMessage,
     SignalData
 } from "../shared/types";
 import {bind} from "@cmmn/core";

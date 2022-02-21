@@ -1,5 +1,5 @@
-import {EventEmitter} from "../shared/observable";
-import {MessageType} from "../shared/types";
+import {EventEmitter} from "../webrtc/shared/observable";
+import {MessageType} from "../webrtc/shared/types";
 
 export abstract class PeerDataChannel extends EventEmitter<{
     [key in MessageType]: Uint8Array;

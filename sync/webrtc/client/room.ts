@@ -1,7 +1,7 @@
 import {Awareness} from "y-protocols/awareness";
 import {SignalingRegistrationInfo} from "../shared/types";
 import {UserInfo} from "./signaling-connection";
-import {DocAdapter} from "./doc-adapter";
+import {DocAdapter} from "../../shared/doc-adapter";
 import {DataChannelProvider} from "./data-channel-provider";
 import {PeerConnection} from "./peer-connection";
 

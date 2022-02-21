@@ -10,6 +10,7 @@
   "main": "index.js",
   "scripts": {
     "compile": "cmmn compile -b --watch",
+    "bundle": "cmmn bundle -b --watch",
     "run": "cmmn bundle main --run --watch",
     "worker": "cmmn bundle worker --watch",
     "server": "nodemon ./dist/server.cjs"
@@ -42,7 +43,7 @@
       "port": 3004
     },
     "server": {
-      "input": "dist/esm/entry/webrtc.server.js",
+      "input": "dist/esm/entry/websocket.server.js",
       "external": [
         "node_modules",
         "@cmmn"

@@ -1,16 +1,17 @@
-import {ClientConnection} from "./client-connection";
+import {WebSocketConnection} from "../../shared/web-socket-connection";
 import {bind} from "@cmmn/core";
 import type {SignalServerMessage} from "../shared/types";
+import {SignalingConnection} from "./signaling.connection";
 
 export class ServerRoom {
-    private users = new Map<string, ClientConnection>();
+    private users = new Map<string, SignalingConnection>();
 
     constructor(private name: string) {
 
     }
 
 
-    public addClient(connection: ClientConnection) {
+    public addClient(connection: SignalingConnection) {
         this.users.forEach(c => c.send({
             type: "announce",
             room: this.name,

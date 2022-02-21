@@ -4,7 +4,7 @@ import {SignalClientMessage} from "../shared/types";
 import {Room, RoomOptions} from "./room";
 import {DataChannelProvider} from "./data-channel-provider";
 
-export class YjsWebRTCProvider {
+export class WebRtcProvider {
     private readonly signalingConnections: ReadonlyArray<SignalingConnection>;
     private readonly rooms: Map<string, Room> = new Map<string, Room>();
     private peerInitiator = new DataChannelProvider({

@@ -1,5 +1,5 @@
 import {UserInfo} from "./signaling-connection";
-import {PeerDataChannel} from "./peer-data-channel";
+import {PeerDataChannel} from "../../shared/peer-data-channel";
 import { MessageType } from "../shared/types";
 
 export class PeerConnection extends PeerDataChannel {

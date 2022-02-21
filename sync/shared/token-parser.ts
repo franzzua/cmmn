@@ -5,3 +5,7 @@ export abstract class TokenParser {
         AccessMode: 'read' | 'write'
     }>
 }
+export type UserInfo = {
+    user: string;
+    accessMode: 'read' | 'write';
+}

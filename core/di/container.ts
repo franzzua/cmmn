@@ -69,14 +69,7 @@ export class Container {
                 provider.deps = (provider.useClass && provider.useClass.deps) || provider.provide.deps || [];
             }
             const deps = provider.deps.map(dep => {
-                try {
                     return this.get(dep);
-                } catch (e) {
-                    e.message = `
-                        couldn't resolve ${provider.provide.name}
-                           ${e.message}`;
-                    throw e;
-                }
             });
             const instance = new provider.useClass(...deps);
             if (!provider.multiple) {

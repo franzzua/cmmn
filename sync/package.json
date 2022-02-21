@@ -17,19 +17,38 @@
       "default": "./dist/webrtc.js"
     },
     "./webrtc/server": {
-      "import": "./dist/server.js",
-      "require": "./dist/server.cjs",
-      "default": "./dist/server.js"
+      "import": "./dist/webrtc-server.js",
+      "require": "./dist/webrtc-server.cjs",
+      "default": "./dist/webrtc-server.js"
+    },
+    "./websocket/client": {
+      "import": "./dist/websocket.js",
+      "require": "./dist/websocket.cjs",
+      "default": "./dist/websocket.js"
+    },
+    "./websocket/server": {
+      "import": "./dist/websocket-server.js",
+      "require": "./dist/websocket-server.cjs",
+      "default": "./dist/websocket-server.js"
     },
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
-      "proxy": [
-        "./dist/typings/entry/proxy.d.ts"
+      ".": [
+        "./dist/typings/index.d.ts"
       ],
-      "worker": [
-        "./dist/typings/worker/index.d.ts"
+      "webrtc/client": [
+        "./dist/typings/webrtc/client/index.d.ts"
+      ],
+      "webrtc/server": [
+        "./dist/typings/webrtc/server/index.d.ts"
+      ],
+      "websocket/client": [
+        "./dist/typings/websocket/client/index.d.ts"
+      ],
+      "websocket/server": [
+        "./dist/typings/websocket/server/index.d.ts"
       ]
     }
   },
@@ -44,6 +63,8 @@
     "@cmmn/core": "^1.4.0",
     "simple-peer": "9.x.x",
     "y-indexeddb": "9.x.x",
+    "y-websocket": "1.x.x",
+    "y-websocket-server": "1.x.x",
     "y-protocols": "1.x.x",
     "yjs": "13.x.x"
   },
@@ -56,14 +77,27 @@
   "cmmn": {
     "index": {
       "input": "./dist/esm/index.js",
-      "external": "cellx",
+      "external": ["cellx", "@cmmn"],
       "module": "es,cjs"
     },
     "webrtc": {
-      "input": "./dist/esm/webrtc/client/index.js"
+      "input": "./dist/esm/webrtc/client/index.js",
+      "external": ["cellx", "@cmmn"]
     },
-    "server": {
+    "webrtc-server": {
       "input": "./dist/esm/webrtc/server/index.js",
+      "module": "es,cjs",
+      "external": [
+        "node_modules",
+        "@cmmn"
+      ]
+    },
+    "websocket": {
+      "input": "./dist/esm/websocket/client/index.js",
+      "external": ["cellx", "@cmmn"]
+    },
+    "websocket-server": {
+      "input": "./dist/esm/websocket/server/index.js",
       "module": "es,cjs",
       "external": [
         "node_modules",

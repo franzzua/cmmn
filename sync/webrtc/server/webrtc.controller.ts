@@ -1,12 +1,13 @@
 import {Injectable} from "@cmmn/core";
 import {WebSocket} from "ws";
 import {SignalingMessage, UserInfo} from "../shared/types";
-import {ClientConnection} from "./client-connection";
+import {WebSocketConnection} from "../../shared/web-socket-connection";
 import {ServerRoom} from "./server-room";
-import {TokenParser} from "./token-parser";
+import {TokenParser} from "../../shared/token-parser";
+import {SignalingConnection} from "./signaling.connection";
 
 @Injectable()
-export class YjsWebrtcController {
+export class WebrtcController {
     private rooms = new Map<string, ServerRoom>();
     private subscribedTopics = new Set<ServerRoom>();
 
@@ -25,7 +26,7 @@ export class YjsWebrtcController {
                 }
                 console.log(userInfo.user);
                 const room = this.rooms.getOrAdd(registerMessage.room, name => new ServerRoom(name));
-                const connection = new ClientConnection(socket, userInfo);
+                const connection = new SignalingConnection(socket, userInfo);
                 room.addClient(connection);
                 this.subscribedTopics.add(room);
             } catch (e) {

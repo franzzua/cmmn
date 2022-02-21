@@ -1,3 +1,4 @@
+import {UserInfo} from "../../shared/token-parser";
 
 export enum MessageType {
     UpdateRequest = 0,
@@ -14,7 +15,7 @@ export type SignalClientMessage = {
     type: 'signal';
     signal: SignalData
 };
-export type SignalData = RTCSessionDescriptionInit  | {
+export type SignalData = RTCSessionDescriptionInit | {
     type: "candidate",
     candidate: RTCIceCandidate
 } | {
@@ -43,10 +44,8 @@ export type AnnounceMessage = {
     users: UserInfo[];
 }
 
-export type UserInfo = {
-    user: string;
-    accessMode: 'read' | 'write';
-}
+export {UserInfo};
+
 
 export type SignalingMessage = SignalingRegisterMessage | SignalClientMessage;
 export type SignalingServerMessage = SignalServerMessage | AnnounceMessage;

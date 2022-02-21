@@ -1,1 +1,1 @@
-export {YjsWebRTCProvider} from "./yjs-webrtc.provider";
+export {WebRtcProvider} from "./web-rtc-provider";

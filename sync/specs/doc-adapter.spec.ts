@@ -1,7 +1,7 @@
 import {suite, test, expect} from "@cmmn/tools/test";
 import { Doc } from "yjs";
 import {ChannelMock} from "./mocks/channel.mock";
-import {DocAdapter} from "../webrtc/client/doc-adapter";
+import {DocAdapter} from "../shared/doc-adapter";
 import { Awareness } from "y-protocols/awareness";
 
 @suite

@@ -1,5 +1,5 @@
 import {Doc} from "yjs";
-import {DocAdapter} from "../webrtc/client/doc-adapter";
+import {DocAdapter} from "..";
 import {Awareness} from "y-protocols/awareness";
 import {ObservableYMap} from "./observable-y-map";
 import {Observable} from "cellx-decorators";
