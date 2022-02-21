@@ -1,6 +1,5 @@
 import {Fn, Injectable} from "@cmmn/core";
 import {IPoint} from "@cmmn/ui";
-import { Computed } from "cellx-decorators";
 import {Const} from "../const";
 import {DrawingFigure} from "../model";
 import {LineFigure} from "../model/line-figure";
@@ -18,7 +17,7 @@ export class HoverService {
         });
     }
 
-    public *getHoveredItems(): Iterable<DrawingFigure> {
+    public* getHoveredItems(): Iterable<DrawingFigure> {
         for (let value of this.store.Items.values()) {
             if (value.hover)
                 yield value;
@@ -54,7 +53,7 @@ export class HoverService {
         }).filter(Fn.Ib)[0];
     }
 
-    private getLineHover(item: LineFigure, position: IPoint) {
+    private getLineHover(item: LineFigure, position: IPoint): PointInfo {
         let hover = null;
         item.figure.some((point, index) => {
             if (this.checkPointHover(point, position)) {
@@ -65,17 +64,9 @@ export class HoverService {
         if (hover) {
             return hover;
         }
-        const hovered = item.figure.some((point, index) => {
-            if (index == 0)
-                return false;
-            const prevPoint = item.figure.get(index - 1);
-            if (checkPointOnSegment(position, point, prevPoint)) {
-                hover = {segment: [index - 1, index]};
-                return true;
-            }
-        });
-        if (hovered)
-            return hover;
+        const segment = item.Bezier.checkHover(position, Const.lineHoverDistance);
+        if (segment)
+            return {segment};
         return null;
     }
 

@@ -1,9 +1,10 @@
-import {Observable} from "cellx-decorators";
+import {Computed, Observable} from "cellx-decorators";
 import {DrawingFigureBase} from "./drawing-figure-base";
 import {ObservableList} from "cellx-collections";
 import {DrawingFigureJson, DrawingItemType, PointInfo} from "../types";
 import {Fn} from "@cmmn/core";
 import {IPoint} from "@cmmn/ui";
+import {Bezier} from "../presentors/line-figure/bezier";
 
 export class LineFigure extends DrawingFigureBase {
     constructor(id: string, figure: IPoint[]) {
@@ -20,12 +21,25 @@ export class LineFigure extends DrawingFigureBase {
     @Observable
     selection: null | PointInfo = null;
 
+    @Computed
+    get Bezier(){
+        return new Bezier(this.figure);
+    }
     public toJson() {
         return {
             id: this.id,
             type: this.type,
             figure: this.figure.toArray()
         }
+    }
+
+    public toPath(): string {
+        if (this.figure.length < 2)
+            return '';
+        // if (this.figure.length == 2)
+        //     return 'M' + this.figure.get(0).X + ' ' + this.figure.get(0).Y +
+        //         'L' + this.figure.get(1).X + ' ' + this.figure.get(1).Y;
+        return this.Bezier.toString();
     }
 
     public fromJson(json: DrawingFigureJson) {

@@ -57,6 +57,7 @@ export class AppRootComponent extends HtmlComponent<IState, IEvents> implements 
     @HtmlComponent.effect(state => state)
     subscribe() {
         this.store.$state.onChange(this.onRemoteChange);
+        this.onRemoteChange({data: {value: this.store.State ?? []}});
         this.Items?.onChange(this.onLocalChange);
     }
 
@@ -80,7 +81,9 @@ export class AppRootComponent extends HtmlComponent<IState, IEvents> implements 
             if (this.Items.has(json.id)) {
                 this.Items.get(json.id).fromJson(json);
             } else {
-                this.Items.set(json.id, DrawingFigureFactory(json));
+                const figure = DrawingFigureFactory(json);
+                if (figure.isValid())
+                    this.Items.set(json.id, figure);
             }
         }
         keys.forEach(key => this.Items.delete(key));

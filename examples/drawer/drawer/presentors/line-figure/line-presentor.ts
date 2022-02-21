@@ -30,9 +30,7 @@ export class LinePresentor extends BaseFigurePresentor<IState, IEvents> {
     }
 
     public toPath() {
-        if (this.item.figure.length < 2)
-            return '';
-        return Bezier.getString(this.item.figure);
+        return this.item.toPath();
     }
 }
 

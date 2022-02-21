@@ -51,10 +51,13 @@ export class Renderer<TState, TEvents extends IEvents> {
     @bind
     render(state) {
         // requestAnimationFrame(() => {
-            this.template.call(this.component, this.html, state, this.handlerProxy);
+        this.template.call(this.component, this.html, state, this.handlerProxy);
+        requestIdleCallback(() => {
+
             for (let effect of (this.component.constructor as typeof HtmlComponentBase).Effects) {
                 effect.call(this.component);
             }
+        });
         // });
     }
 

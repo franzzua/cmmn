@@ -40,10 +40,12 @@ app-drawer {
       fill: none;
       stroke: @mainColor;
 
-      &[hovered]{
-        stroke-width: 2px;
-      }
       &[selected]{
+        stroke-width: 2px;
+        stroke: #2a4;
+      }
+      &[hovered]{
+        stroke: @mainColor;
         stroke-width: 2px;
       }
     }

@@ -13,7 +13,7 @@ export class BezierSpec {
                 Y: Math.random(),
             }));
             const time = performance.now();
-            const str = Bezier.getString(points);
+            const str = new Bezier(points).toString();
             const duration = performance.now() - time;
             avg.push(duration)
         }
@@ -22,7 +22,3 @@ export class BezierSpec {
         // expect(control2).toHaveLength(2 * points.length - 2);
     }
 }
-
-[
-
-]
