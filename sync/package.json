@@ -2,6 +2,9 @@
   "name": "@cmmn/sync",
   "version": "1.4.0",
   "description": "collaborative with yjs",
+  "publishConfig": {
+    "access": "public"
+  },
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -67,5 +70,6 @@
         "@cmmn"
       ]
     }
-  }
+  },
+  "gitHead": "824d290afabaa3a44ccb98322cb1758825bd9efb"
 }

@@ -23,7 +23,6 @@
     "@cmmn/sync": "^1.4.0",
     "@cmmn/tools": "^1.4.0",
     "@cmmn/ui": "^1.4.0",
-    "@freder/bezier-spline": "^0.2.4",
     "cellx-collections": "^1.0.3",
     "cellx-decorators": "^1.6.3",
     "fastify": "^3.27.1"
