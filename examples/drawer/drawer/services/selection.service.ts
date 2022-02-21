@@ -17,14 +17,17 @@ export class SelectionService {
             }
         });
     }
-    @Computed
-    public get SelectedItems(): DrawingFigure[] {
-        return Array.from(this.store.Items.values()).filter(x => x.selection != null);
+
+    public* getSelectedItems(): Iterable<DrawingFigure> {
+        for (let value of this.store.Items.values()) {
+            if (value.hover)
+                yield value;
+        }
     }
 
     public deleteSelected() {
 
-        for (let selectedItem of this.SelectedItems) {
+        for (let selectedItem of this.getSelectedItems()) {
             switch (selectedItem.type) {
                 case DrawingItemType.point:
                     this.store.Items.delete(selectedItem.id);
@@ -42,12 +45,12 @@ export class SelectionService {
                         if (selectedItem.selection.index !== undefined) {
                             //todo: implement polygone
                             // selectedItem.figure.removeAt(selectedItem.selection.index);
-                        }else{
+                        } else {
                             //todo: implement polygone
                             // selectedItem.figure.removeAt(selectedItem.selection.index)
                         }
                         this.store.update(selectedItem.id);
-                    }else {
+                    } else {
                         this.store.Items.delete(selectedItem.id);
                     }
                     break;

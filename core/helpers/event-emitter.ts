@@ -79,4 +79,5 @@ export class EventListener<TEvents extends {
     protected unsubscribe(eventName: keyof TEvents) {
         this.target.removeEventListener(eventName as string, this._emitters[eventName] as any);
     }
+
 }

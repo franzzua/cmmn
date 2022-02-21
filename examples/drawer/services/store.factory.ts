@@ -1,7 +1,6 @@
 import {Fn, Injectable} from "@cmmn/core";
 import {SyncStore} from "@cmmn/sync";
-import {DrawingFigureJson} from "../drawer/types";
-import {YjsWebRTCProvider} from "@cmmn/sync/webrtc/client";
+import type {DrawingFigureJson} from "../drawer/types";
 
 @Injectable()
 export class StoreFactory {

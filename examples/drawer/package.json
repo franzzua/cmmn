@@ -1,11 +1,17 @@
 {
   "name": "@cmmn/examples-drawer",
   "version": "1.3.0",
+  "publishConfig": {
+    "access": "public",
+    "registry": "none"
+  },
+  "private": true,
   "description": "",
   "main": "index.js",
   "scripts": {
     "compile": "cmmn compile -b --watch",
     "run": "cmmn bundle main --run --watch",
+    "worker": "cmmn bundle worker --watch",
     "server": "nodemon ./dist/server.cjs"
   },
   "type": "module",
@@ -25,6 +31,11 @@
   "author": "",
   "license": "ISC",
   "cmmn": {
+    "worker": {
+      "input": "dist/esm/entry/worker.js",
+      "module": "umd",
+      "browser": true
+    },
     "main": {
       "input": "dist/esm/entry/index.js",
       "html": "./entry/index.html",

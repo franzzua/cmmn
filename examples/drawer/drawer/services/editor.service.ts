@@ -20,7 +20,7 @@ export class EditorService {
         });
 
         this.store.pointer.on('dblclick', e => {
-            for (let hoveredItem of this.hover.HoveredItems) {
+            for (let hoveredItem of this.hover.getHoveredItems()) {
                 switch (hoveredItem.type) {
                     case DrawingItemType.line:
                         hoveredItem.addPoint(e.point);

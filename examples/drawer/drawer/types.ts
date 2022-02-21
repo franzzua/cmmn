@@ -1,4 +1,7 @@
-import {IPoint} from "@cmmn/ui";
+export type IPoint = {
+    X: number;
+    Y: number;
+}
 
 export enum Mode {
     idle = 1,

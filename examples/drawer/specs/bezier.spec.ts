@@ -1,5 +1,5 @@
 import {suite, test} from "@cmmn/tools/test";
-import {Bezier} from "../ui/drawer/presentors/line-figure/bezier";
+import {Bezier} from "../drawer/presentors/line-figure/bezier";
 
 @suite
 export class BezierSpec {

@@ -1,12 +1,13 @@
 import {Application, Builder} from "@cmmn/app";
-import {AppRootComponent} from "../ui/app-root/app-root.component";
-import "../ui/drawer";
-import {AppDrawerComponent} from "../ui/drawer";
-import {StoreFactory} from "../ui/services/store.factory";
+import {AppRootComponent} from "../app-root/app-root.component";
+import "../drawer";
+import {AppDrawerComponent} from "../drawer";
+import {StoreFactory} from "../services/store.factory";
+import {ModelProxy, proxy, useWorkerDomain} from "@cmmn/domain/proxy";
 
-async function build()
-{
+async function build() {
     return new Builder()
+        .with(await useWorkerDomain('./worker-umd.js'))
         // .with(InfrContainer)
         // .with(DomainContainer)
         // .with(Container.withProviders(

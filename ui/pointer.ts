@@ -1,7 +1,8 @@
-import {bind, EventListener, Fn} from "@cmmn/core";
+import {bind, EventEmitter, EventListener, Fn} from "@cmmn/core";
 import {Cell} from "cellx";
+import {Observable} from "cellx-decorators"
 
-export type RelativePointerEvent = {event: PointerEvent, point: IPoint};
+export type RelativePointerEvent = { event: PointerEvent, point: IPoint };
 
 export type PointerEvents = {
     move: RelativePointerEvent,
@@ -13,6 +14,25 @@ export type PointerEvents = {
     dblclick: RelativePointerEvent,
     directClick: RelativePointerEvent
 };
+type Rect = {
+    left;top;width;height;
+}
+export class BoundRectListener extends EventEmitter<{
+    rect: Rect
+}> {
+    constructor(private root: HTMLElement | SVGElement | Document) {
+        super();
+    }
+
+    private getRect(): Rect {
+        if ('getBoundingClientRect' in this.root)
+            return this.root.getBoundingClientRect();
+        return {left: 0, top: 0, width: window.innerWidth, height: window.innerHeight};
+    }
+
+    @Observable
+    public Rect: Rect = this.getRect();
+}
 
 export class PointerListener extends EventListener<PointerEvents> {
 
@@ -20,19 +40,16 @@ export class PointerListener extends EventListener<PointerEvents> {
         super(root);
     }
 
-    private getLeftTop(){
-        if ('getBoundingClientRect' in this.root)
-            return this.root.getBoundingClientRect();
-        return {left: 0, top: 0};
-    }
+    private rectWatcher = new BoundRectListener(this.root);
 
-    public getRelativePoint(event: MouseEvent): IPoint{
-        const rect = this.getLeftTop()
-        return  {
+    public getRelativePoint(event: MouseEvent): IPoint {
+        const rect = this.rectWatcher.Rect;
+        return {
             X: event.pageX - rect.left,
             Y: event.pageY - rect.top
         }
     }
+
     private _position: Cell<RelativePointerEvent>;
 
     public get Position(): RelativePointerEvent {

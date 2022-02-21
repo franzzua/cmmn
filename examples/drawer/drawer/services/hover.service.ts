@@ -18,9 +18,11 @@ export class HoverService {
         });
     }
 
-    @Computed
-    public get HoveredItems(): DrawingFigure[] {
-        return Array.from(this.store.Items.values()).filter(x => x.hover != null);
+    public *getHoveredItems(): Iterable<DrawingFigure> {
+        for (let value of this.store.Items.values()) {
+            if (value.hover)
+                yield value;
+        }
     }
 
     private setHover(item: DrawingFigure, position: IPoint) {

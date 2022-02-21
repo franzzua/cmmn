@@ -52,5 +52,15 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
     }
 
     Actions: Function[] = [];
-    Effects: Function[] = [];
+    static Effects: Function[];
+
+
+    public static effect<TState>(filter: (state: TState) => any = null): MethodDecorator {
+        return (target: {constructor: typeof HtmlComponent}, key, descr) => {
+            if (!Object.getOwnPropertyDescriptor(target.constructor, 'Effect'))
+                target.constructor.Effects = [];
+            target.constructor.Effects.push(descr.value as any);
+            return descr;
+        }
+    }
 }

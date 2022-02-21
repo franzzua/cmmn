@@ -3,7 +3,7 @@ import {ObservableList, ObservableMap} from "cellx-collections";
 import {DrawingFigureJson, Mode} from "../drawer/types";
 
 export const template: ITemplate<IState, IEvents> = (html, state, events) => state ? html`
-    <app-drawer name="drawer" items=${state.items}></app-drawer>
+    <app-drawer name="drawer"></app-drawer>
     <menu >
         <button .mode=${Mode.line} ?active=${state.mode == Mode.line}
                 onclick=${events.changeMode(e => e.target.mode)}>Line
@@ -25,7 +25,6 @@ export const template: ITemplate<IState, IEvents> = (html, state, events) => sta
 
 export type IState = {
     mode: Mode;
-    items: ObservableMap<string, DrawingFigureJson>;
     selected: DrawingFigureJson[];
 }
 
