@@ -1,4 +1,4 @@
-import {ulid} from "ulid";
+import {ulid} from "./ulid";
 import {Cell} from "cellx";
 //
 // import { generator, BASE } from "flexid";
