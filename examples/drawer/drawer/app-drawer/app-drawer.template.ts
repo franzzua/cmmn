@@ -6,15 +6,15 @@ import {PointPresentor} from "../presentors/point-figure/point-presentor.service
 import {LinePresentor} from "../presentors/line-figure/line-presentor";
 
 export const Drawers = {
-    [Mode.point]: html => html()`<point-drawer/>`,
-    [Mode.line]: html => html()`<line-drawer/>`,
+    [Mode.point]: html => html.for('new-point')`<point-drawer/>`,
+    [Mode.line]: html => html.for('new-line')`<line-drawer/>`,
 };
 export const Editors = {
     point: (html, item) => html(item.id)`<point-editor item=${item}/>`,
     line: (html, item) => html(item.id)`<line-editor item=${item}/>`,
 };
 
-export const template: ITemplate<IState, IEvents> = (html, state, events) => {
+export const AppDrawerTemplate: ITemplate<IState, IEvents> = (html, state, events) => {
     // switch (state.Mode){
     //     case Mode.idle:
     //         return html`
@@ -24,7 +24,7 @@ export const template: ITemplate<IState, IEvents> = (html, state, events) => {
     return html`
         ${(state.Mode in Drawers) ? Drawers[state.Mode](html) : ''}
         <svg>
-            ${Array.from(state.Items).map(item => Extend(html.svg(item.id)`<g/>` as any, item))}
+            ${Array.from(state.Items).map(item => BaseFigurePresentor.for(html.svg.for(item.id), item))}
         </svg>
     `;
 };

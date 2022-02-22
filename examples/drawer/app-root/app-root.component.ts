@@ -7,6 +7,7 @@ import {AppDrawerComponent} from "../drawer";
 import {IFactory, ModelProxy, proxy} from "@cmmn/domain/proxy";
 import {DrawingFigure, DrawingFigureFactory} from "../drawer/model";
 import {ObservableMap} from "cellx-collections";
+import { Computed } from "cellx-decorators";
 
 
 @Injectable(true)
@@ -19,7 +20,10 @@ export class AppRootComponent extends HtmlComponent<IState, IEvents> implements 
 
     protected store = this.factory.Root as DrawingProxy;
 
+    @Computed
     get drawer() {
+        if (this.$render.get() == 0)
+            return null;
         return (this.element.children.namedItem('drawer') as ExtendedElement<AppDrawerComponent>)?.component;
     }
 
@@ -53,8 +57,7 @@ export class AppRootComponent extends HtmlComponent<IState, IEvents> implements 
         return this.drawer && this.drawer.services.store.Items;
     }
 
-
-    @HtmlComponent.effect(state => state)
+    @HtmlComponent.effect()
     subscribe() {
         this.store.$state.onChange(this.onRemoteChange);
         this.onRemoteChange({data: {value: this.store.State ?? []}});
@@ -70,6 +73,9 @@ export class AppRootComponent extends HtmlComponent<IState, IEvents> implements 
 
     @bind
     private async onRemoteChange(event) {
+        if (this.muteRemote)
+            return;
+        console.log('external');
         const arr = event.data.value as DrawingFigureJson[];
         if (!this.Items) {
             this.drawer.services.store.Items = new ObservableMap(arr.map(x => [x.id, DrawingFigureFactory(x)]));
@@ -88,19 +94,22 @@ export class AppRootComponent extends HtmlComponent<IState, IEvents> implements 
         }
         keys.forEach(key => this.Items.delete(key));
     }
+    private muteRemote = false;
 
     @bind
     private async onLocalChange(event) {
+        this.muteRemote = true;
         const value = event.data.value as DrawingFigure;
         switch (event.data.subtype) {
             case "add":
             case "update":
-                this.store.Actions.AddOrUpdate(value.toJson());
+                await this.store.Actions.AddOrUpdate(value.toJson());
                 break;
             case "delete":
-                this.store.Actions.delete(event.data.key);
+                await this.store.Actions.delete(event.data.key);
                 break;
         }
+        this.muteRemote = false;
     }
 
 }

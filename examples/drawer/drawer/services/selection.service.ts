@@ -20,7 +20,7 @@ export class SelectionService {
 
     public* getSelectedItems(): Iterable<DrawingFigure> {
         for (let value of this.store.Items.values()) {
-            if (value.hover)
+            if (value.selection)
                 yield value;
         }
     }

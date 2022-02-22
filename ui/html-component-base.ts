@@ -24,6 +24,8 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
     }
 
     static Extend<TComponent extends HtmlComponent<any>>(element: HTMLElement | SVGElement, type = this as any): ExtendedElement<TComponent> {
+        if ('component' in element)
+            return element;
         const extElement = HtmlComponent.Init<TComponent>(element, type);
         element.setAttribute('is', type.Name);
         listenSvgConnectDisconnect(extElement);
@@ -52,14 +54,19 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
     }
 
     Actions: Function[] = [];
-    static Effects: Function[];
+    /** @internal **/
+    static Effects: {filter, effect}[];
+    /** @internal **/
+    public EffectValues = new Map<Function, any>();
 
-
-    public static effect<TState>(filter: (state: TState) => any = null): MethodDecorator {
+    public static effect<TState>(filter: (state: TState) => any = () => null): MethodDecorator {
         return (target: {constructor: typeof HtmlComponent}, key, descr) => {
             if (!Object.getOwnPropertyDescriptor(target.constructor, 'Effect'))
                 target.constructor.Effects = [];
-            target.constructor.Effects.push(descr.value as any);
+            target.constructor.Effects.push({
+                filter: filter,
+                effect: descr.value as any
+            });
             return descr;
         }
     }

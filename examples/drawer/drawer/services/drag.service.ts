@@ -10,15 +10,21 @@ import {DrawingStore} from "./drawing.store";
 
 @Injectable()
 export class DragService {
+    public isMoving = false;
+
     constructor(private hover: HoverService,
                 private store: DrawingStore,
                 private magnet: MagnetismService) {
-        let isDrag = false;
         let start: IPoint;
         this.store.pointer.on('down', event => {
             this.DraggedItems = Array.from(this.store.Items.values()).filter(x => !!x.hover);
             (event.event.target as HTMLElement).setPointerCapture(event.event.pointerId);
             start = event.point;
+            this.isMoving = true;
+
+            for (let x of this.DraggedItems) {
+                x.isMoving = true;
+            }
         });
         this.store.pointer.on('move', event => {
             if (!this.DraggedItems.length)
@@ -35,6 +41,10 @@ export class DragService {
         });
         this.store.pointer.on('up', event => {
             (event.event.target as HTMLElement).releasePointerCapture(event.event.pointerId);
+            this.isMoving = false;
+            for (let x of this.DraggedItems) {
+                x.isMoving = false;
+            }
             this.DraggedItems = [];
         });
     }

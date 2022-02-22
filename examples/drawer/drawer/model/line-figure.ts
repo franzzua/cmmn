@@ -3,7 +3,7 @@ import {DrawingFigureBase} from "./drawing-figure-base";
 import {ObservableList} from "cellx-collections";
 import {DrawingFigureJson, DrawingItemType, PointInfo} from "../types";
 import {Fn} from "@cmmn/core";
-import {IPoint} from "@cmmn/ui";
+import {HtmlComponent, IPoint} from "@cmmn/ui";
 import {Bezier} from "../presentors/line-figure/bezier";
 
 export class LineFigure extends DrawingFigureBase {
@@ -22,9 +22,29 @@ export class LineFigure extends DrawingFigureBase {
     selection: null | PointInfo = null;
 
     @Computed
+    get FigureFromStart(){
+        const start = this.figure.get(0);
+        return {
+            length: this.figure.length,
+            get: (index) => {
+                const x = this.figure.get(index);
+                return {
+                    X: x.X - start.X,
+                    Y: x.Y - start.Y
+                };
+            }
+        }
+    }
+
+    @Computed
     get Bezier(){
         return new Bezier(this.figure);
     }
+    @Computed
+    get BezierFromStart(){
+        return new Bezier(this.FigureFromStart);
+    }
+
     public toJson() {
         return {
             id: this.id,
@@ -33,13 +53,14 @@ export class LineFigure extends DrawingFigureBase {
         }
     }
 
-    public toPath(): string {
+    @Computed
+    public get Path(): string {
         if (this.figure.length < 2)
             return '';
-        // if (this.figure.length == 2)
-        //     return 'M' + this.figure.get(0).X + ' ' + this.figure.get(0).Y +
-        //         'L' + this.figure.get(1).X + ' ' + this.figure.get(1).Y;
-        return this.Bezier.toString();
+        if (this.figure.length == 2)
+            return 'M' + this.figure.get(0).X + ' ' + this.figure.get(0).Y +
+                'L' + this.figure.get(1).X + ' ' + this.figure.get(1).Y;
+        return this.BezierFromStart.toString();
     }
 
     public fromJson(json: DrawingFigureJson) {
@@ -89,5 +110,6 @@ export class LineFigure extends DrawingFigureBase {
     override isValid(): boolean {
         return this.figure.length >= 2;
     }
+
 }
 

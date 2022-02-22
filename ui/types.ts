@@ -32,8 +32,9 @@ export type KeyedHtml = ((key: string | number) => TemplateFunction<Renderable>)
  */
 export type ObjectKeyedHtml = <T>(object: ObjectNotArray<T>, key: string) => TemplateFunction<Renderable>;
 
-export type Html = TemplateFunction<Renderable> & FreeHtml & KeyedHtml & ObjectKeyedHtml & {
+export type Html = TemplateFunction<Renderable> & {
     svg: Html;
+    for(obj: string | number | object, ...keys: (string | number)[]): TemplateFunction<Renderable>;
 };
 export {Renderable, Hole, TemplateFunction};
 

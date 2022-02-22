@@ -15,7 +15,7 @@ export const template: ITemplate<IState, IEvents> = (html, state, events) => sta
                 onclick=${events.changeMode(e => e.target.mode)}>Poly
         </button>
 
-        ${state.selected?.length ? html('delete')`
+        ${state.selected?.length ? html.for('delete')`
             <button onclick=${events.deleteSelected()}>Del
             </button>
         ` : ''}

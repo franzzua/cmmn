@@ -19,13 +19,11 @@ export class WorkerEntry {
                         throw new Error(`Model not found at path ${path.join(':')}`)
                     model.$state.subscribe((err, evt) => {
                         const state = evt.data.value;
-                        if (!model['mute']) {
-                            this.postMessage({
-                                path,
-                                type: WorkerMessageType.State,
-                                state: serialize(state)
-                            });
-                        }
+                        this.postMessage({
+                            path,
+                            type: WorkerMessageType.State,
+                            state: serialize(state)
+                        });
                     });
                     const state = model.State;
                     const uint8Array = serialize(state)
@@ -37,9 +35,7 @@ export class WorkerEntry {
                     break;
                 case WorkerMessageType.State: {
                     const model = this.getModel(event.data.path);
-                    model['mute'] = true;
                     model.$state(deserialize(event.data.state));
-                    model['mute'] = false;
                     break;
                 }
                 case WorkerMessageType.Action:
@@ -52,13 +48,11 @@ export class WorkerEntry {
     private asyncQueue = new AsyncQueue();
 
     private Action(action: WorkerAction) {
-        const model = this.getModel<any, any>(action.path);
         const result = this.asyncQueue.Invoke(() => {
-            model['mute'] = true;
+            const model = this.getModel<any, any>(action.path);
             return model.Actions[action.action](...action.args.map(deserialize));
         });
         result.then(response => {
-            model['mute'] = false;
             return ({response: serialize(response)});
         })
             .catch(error => {

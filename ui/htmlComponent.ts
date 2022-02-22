@@ -17,10 +17,11 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
     }
 
     @bind
-    protected render(err, event) {
+    protected async render(err, event) {
         if (this.isStopped)
             return;
-        this.renderer.render(event.data.value);
+        await this.renderer.render(event.data.value);
+        this.$render.set(this.$render.get() + 1);
     }
 
     private isStopped = false;
@@ -35,9 +36,5 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
 
     public $render: Cell<number> = new Cell(0);
 
-    @HtmlComponentBase.effect()
-    afterRender(){
-        this.$render.set(this.$render.get() + 1);
-    }
 }
 

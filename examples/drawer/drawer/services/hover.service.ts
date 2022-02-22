@@ -17,7 +17,10 @@ export class HoverService {
             if (this.lastIdleCallback)
                 cancelIdleCallback(this.lastIdleCallback)
             this.lastIdleCallback = requestIdleCallback(() => {
+                this.lastIdleCallback = null;
                 for (let item of this.store.Items.values()) {
+                    if (item.isMoving)
+                        continue;
                     this.setHover(item, event.point)
                 }
             });

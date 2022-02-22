@@ -28,7 +28,7 @@ export class EventEmitter<TEvents extends {
     }
 
     @bind
-    public emit<TEventName extends keyof TEvents>(eventName: TEventName, data: TEvents[TEventName]) {
+    public emit<TEventName extends keyof TEvents>(eventName: TEventName, data?: TEvents[TEventName]) {
         this.listeners.get(eventName)?.forEach(cb => cb(data));
     }
 

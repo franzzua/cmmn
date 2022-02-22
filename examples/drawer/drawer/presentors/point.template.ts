@@ -2,9 +2,11 @@ import {Const} from "../const";
 import {Renderable, TemplateFunction, IPoint} from "@cmmn/ui";
 
 export function PointTemplate(svg: TemplateFunction<Renderable>, point: IPoint, {selected, hovered}): Renderable {
-    if (svg.cache) {
+    if (svg.cache instanceof SVGGElement) {
         const cached = svg.cache as SVGGElement;
-        cached.transform.baseVal[0].setTranslate(point.X, point.Y);
+        const translate = cached.transform.baseVal[0];
+        if (translate.matrix.e !== point.X || translate.matrix.f !== point.Y)
+            translate.setTranslate(point.X, point.Y);
         if (hovered) {
             (cached.firstElementChild as SVGCircleElement).classList.add('stroke');
         } else {

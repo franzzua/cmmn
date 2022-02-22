@@ -1,5 +1,5 @@
 import {component, HtmlComponent, property} from "@cmmn/ui";
-import {IEvents, IState, template} from "./app-drawer.template";
+import {IEvents, IState, AppDrawerTemplate} from "./app-drawer.template";
 import style from "./app-drawer.style.less";
 import {bind, Fn, Injectable} from "@cmmn/core";
 import {DrawingFigure, DrawingFigureFactory} from "../model";
@@ -9,7 +9,7 @@ import {ObservableMap} from "cellx-collections";
 import {Observable} from "cellx-decorators";
 
 @Injectable(true)
-@component({name: 'app-drawer', template, style})
+@component({name: 'app-drawer', template: AppDrawerTemplate, style})
 export class AppDrawerComponent extends HtmlComponent<IState, IEvents> {
 
     connectedCallback() {

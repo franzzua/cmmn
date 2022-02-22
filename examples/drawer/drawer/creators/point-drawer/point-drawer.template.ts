@@ -4,7 +4,7 @@ import {PointFigure} from "../../model/point-figure";
 
 export const template: ITemplate<PointFigure, IEvents> = (html, state, events) => html`
     <svg>
-        ${BaseFigurePresentor.for(state)}
+        ${BaseFigurePresentor.for(html.svg.for('new'), state)}
     </svg>
 `;
 
