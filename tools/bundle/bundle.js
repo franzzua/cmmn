@@ -70,10 +70,14 @@ export async function bundle(...options) {
     });
     if (!options.includes('--watch')) {
         for (let config of configs) {
-            console.log(`1. ${config.input} -> ${config.output.file}`);
+            for (let key in config.input){
+                // console.log(`1. ${key} (${config.input[key]})`);
+            }
             const build = await rollup(config);
-            await build.write(config.output);
-            console.log('SUCCESS');
+            for (let out of config.output){
+                console.log(`SUCCESS: ${out.dir} ${out.entryFileNames.replace('[name]', Object.keys(config.input)[0])}`);
+                await build.write(out);
+            }
         }
         return;
     }
@@ -88,10 +92,14 @@ export async function bundle(...options) {
                 console.log('FINISH');
                 break;
             case 'BUNDLE_START':
-                console.log(`1. ${event.input} -> ${event.output}`);
+                for (let key in event.input){
+                    console.log(`1. ${key} -> ${event.output}`);
+                }
                 break;
             case 'BUNDLE_END':
-                console.log(`1. ${event.input} -> ${event.output}, (${event.duration / 1000}s)`);
+                for (let key in event.input){
+                    console.log(`1. ${key} -> ${event.output}, (${event.duration / 1000}s)`);
+                }
                 break;
 
             case 'ERROR':

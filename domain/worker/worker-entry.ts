@@ -1,19 +1,22 @@
 import {IFactory} from "../shared/factory";
-import {AsyncQueue, deserialize, Injectable, serialize} from "@cmmn/core";
+import {AsyncQueue, Injectable} from "@cmmn/core";
 import {ModelAction, ModelPath, WorkerAction, WorkerMessage, WorkerMessageType} from "../shared/types";
 import {Model} from "./model";
+import {BaseStream} from "../streams/base.stream";
 
 @Injectable()
 export class WorkerEntry {
+
+    private baseStream = new BaseStream(self);
 
     constructor(private factory: IFactory) {
         this.postMessage({
             type: WorkerMessageType.Connected,
         });
-        self.addEventListener('message', event => {
-            switch (event.data.type) {
+        this.baseStream.on('message', message => {
+            switch (message.type) {
                 case WorkerMessageType.Subscribe:
-                    const path = event.data.path;
+                    const path = message.path;
                     const model = this.getModel(path);
                     if (!model)
                         throw new Error(`Model not found at path ${path.join(':')}`)
@@ -22,24 +25,23 @@ export class WorkerEntry {
                         this.postMessage({
                             path,
                             type: WorkerMessageType.State,
-                            state: serialize(state)
+                            state: state
                         });
                     });
                     const state = model.State;
-                    const uint8Array = serialize(state)
                     this.postMessage({
                         path,
                         type: WorkerMessageType.State,
-                        state: uint8Array
-                    }, [uint8Array.buffer]);
+                        state
+                    });
                     break;
                 case WorkerMessageType.State: {
-                    const model = this.getModel(event.data.path);
-                    model.$state(deserialize(event.data.state));
+                    const model = this.getModel(message.path);
+                    model.$state(message.state);
                     break;
                 }
                 case WorkerMessageType.Action:
-                    this.Action(event.data);
+                    this.Action(message);
                     break;
             }
         })
@@ -50,14 +52,14 @@ export class WorkerEntry {
     private Action(action: WorkerAction) {
         const result = this.asyncQueue.Invoke(() => {
             const model = this.getModel<any, any>(action.path);
-            return model.Actions[action.action](...action.args.map(deserialize));
+            return model.Actions[action.action](...action.args);
         });
         result.then(response => {
-            return ({response: serialize(response)});
+            return ({response: (response)});
         })
             .catch(error => {
                 console.error(error);
-                return ({error: serialize('domain error')});
+                return ({error: ('domain error')});
             })
             .then(responseOrError => {
                 this.postMessage({
@@ -68,10 +70,8 @@ export class WorkerEntry {
             });
     }
 
-    private postMessage(message: WorkerMessage, transferables = null) {
-        self.postMessage(message, {
-            transfer: transferables ?? []
-        });
+    private postMessage(message: WorkerMessage["data"]) {
+        this.baseStream.send(message);
     }
 
     private getModel<TState, TActions extends ModelAction>(path: ModelPath): Model<TState, TActions> {

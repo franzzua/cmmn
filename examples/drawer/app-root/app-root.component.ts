@@ -106,7 +106,7 @@ export class AppRootComponent extends HtmlComponent<IState, IEvents> implements 
                 await this.store.Actions.AddOrUpdate(value.toJson());
                 break;
             case "delete":
-                await this.store.Actions.delete(event.data.key);
+                await this.store.Actions.Delete(event.data.key);
                 break;
         }
         this.muteRemote = false;

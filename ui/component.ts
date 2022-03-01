@@ -4,14 +4,14 @@ import {Container} from "@cmmn/core";
 import {importStyle} from "./importStyle";
 
 export const GlobalStaticState = new class {
-    _defaultContainer: Container = null;
+    _defaultContainer: {get<T>(target): T;} = null;
     _registrations: Function[] = [];
 
-    get DefaultContainer(): Container {
+    get DefaultContainer(): {get<T>(target): T;} {
         return this._defaultContainer;
     };
 
-    set DefaultContainer(value: Container) {
+    set DefaultContainer(value: {get<T>(target): T;}) {
         this._defaultContainer = value;
         this._registrations.forEach(f => f());
         this._registrations.length = 0;

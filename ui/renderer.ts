@@ -42,7 +42,11 @@ export class Renderer<TState, TEvents extends IEvents> {
     private getRender(type) {
         const render = getRender(type, this.component.element)
         render.for = this.getRenderFor(type);
-        return render;
+        return (template: any, ...values) => {
+            if (Array.isArray(template))
+                return render(template as any, ...values);
+            return render.for(template, ...values);
+        };
     }
 
     private html = Object.assign(this.getRender('html'), {

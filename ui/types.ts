@@ -35,7 +35,7 @@ export type ObjectKeyedHtml = <T>(object: ObjectNotArray<T>, key: string) => Tem
 export type Html = TemplateFunction<Renderable> & {
     svg: Html;
     for(obj: string | number | object, ...keys: (string | number)[]): TemplateFunction<Renderable>;
-};
+} & ObjectKeyedHtml & KeyedHtml & FreeHtml;
 export {Renderable, Hole, TemplateFunction};
 
 type ObjectNotArray<T> = T extends ReadonlyArray<string> ? never : T;

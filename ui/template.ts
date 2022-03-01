@@ -25,6 +25,7 @@ function getCache() {
 export function getRender(type: 'html' | 'svg', element: HTMLElement | SVGElement): Html {
     const cache = getCache();
     const result = function (template, ...values) {
+
         const oldWire = cache.entry.wire;
         const wire = unroll(cache, {type, template, values});
         if (wire !== oldWire) {

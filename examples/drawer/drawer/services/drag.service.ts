@@ -15,37 +15,27 @@ export class DragService {
     constructor(private hover: HoverService,
                 private store: DrawingStore,
                 private magnet: MagnetismService) {
-        let start: IPoint;
-        this.store.pointer.on('down', event => {
-            this.DraggedItems = Array.from(this.store.Items.values()).filter(x => !!x.hover);
-            (event.event.target as HTMLElement).setPointerCapture(event.event.pointerId);
-            start = event.point;
-            this.isMoving = true;
-
-            for (let x of this.DraggedItems) {
-                x.isMoving = true;
-            }
-        });
-        this.store.pointer.on('move', event => {
-            if (!this.DraggedItems.length)
+        this.store.pointer.on('drag', event => {
+            if (event.isStart){
+                this.DraggedItems = Array.from(this.store.Items.values()).filter(x => !!x.hover);
+                this.isMoving = true;
+                for (let x of this.DraggedItems) {
+                    x.isMoving = true;
+                }
                 return;
-            const shift = {
-                X: event.event.movementX,
-                Y: event.event.movementY
-            };
-            const current = event.point;
+            }
+            if (event.isEnd){
+                this.isMoving = false;
+                for (let x of this.DraggedItems) {
+                    x.isMoving = false;
+                }
+                this.DraggedItems = [];
+                return;
+            }
             for (let x of this.DraggedItems) {
-                this.move(x, {shift, start, current});
+                this.move(x, {shift: event.shift, start: event.start, current: event.point});
                 this.store.update(x.id);
             }
-        });
-        this.store.pointer.on('up', event => {
-            (event.event.target as HTMLElement).releasePointerCapture(event.event.pointerId);
-            this.isMoving = false;
-            for (let x of this.DraggedItems) {
-                x.isMoving = false;
-            }
-            this.DraggedItems = [];
         });
     }
 

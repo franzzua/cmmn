@@ -1,22 +1,19 @@
-import {deserialize, EventEmitter, Fn, ResolvablePromise, serialize} from "@cmmn/core";
+import {Fn} from "@cmmn/core";
 import {Cell, cellx} from "cellx";
-
 import {Stream} from "./stream";
 import {Action, ModelPath, WorkerMessage, WorkerMessageType} from "../shared/types";
+import {BaseStream} from "./base.stream";
+
 
 export class WorkerStream extends Stream {
     constructor(private workerUrl: string) {
         super();
-        this.messageListener.on('message', event => {
-            const message = event.data;
-            if (message.type === WorkerMessageType.Connected)
-                this.Connected.resolve();
+        this.BaseStream.on('message', message => {
             if (message.type !== WorkerMessageType.State)
                 return;
             const cell = this.models.getOrAdd(this.pathToStr(message.path), x => new Cell(undefined));
-            const state = deserialize(message.state);
             // console.log(this.pathToStr(message), state);
-            cell.set(state);
+            cell.set(message.state);
         })
     }
 
@@ -24,32 +21,26 @@ export class WorkerStream extends Stream {
         return path.join(':');
     }
 
-    private _worker: Worker;
-    public Connected = new ResolvablePromise<void>();
+    private _baseStream: BaseStream;
 
-    protected get Worker() {
-        return this._worker ?? (this._worker = new Worker(this.workerUrl));
+    protected get BaseStream() {
+        return this._baseStream ?? (this._baseStream = new BaseStream(new Worker(this.workerUrl)));
     }
 
     private models = new Map<string, Cell>();
 
-    private messageListener = EventEmitter.fromEventTarget<{
-        message: MessageEvent<WorkerMessage>
-    }>(this.Worker);
-
     async Invoke(action: Action) {
         const actionId = Fn.ulid();
-        this.postMessage({type: WorkerMessageType.Action, ...action, actionId, args: action.args.map(serialize)});
-        return new Promise((resolve, reject) => this.messageListener.on('message', event => {
-            const message = event.data;
+        this.postMessage({type: WorkerMessageType.Action, ...action, actionId});
+        return new Promise((resolve, reject) => this.BaseStream.on('message', message => {
             if (message.type !== WorkerMessageType.Response)
                 return;
             if (message.actionId !== actionId)
                 return;
             if (message.error)
-                reject(deserialize(message.error));
+                reject(message.error);
             else
-                resolve(deserialize(message.response));
+                resolve(message.response);
         }))
     }
 
@@ -64,31 +55,17 @@ export class WorkerStream extends Stream {
         return cellx<T>(() => cell.get(), {
             put: (_: any, state: T) => {
                 cell.set(state);
-                const uint8Array = serialize(state);
                 this.postMessage({
                     type: WorkerMessageType.State,
                     path,
-                    state: uint8Array
-                }, [uint8Array.buffer]);
+                    state
+                });
             }
         })
     }
 
-    private postMessage(msg: WorkerMessage, transferables: any[] = null) {
-        this.Connected.then(() => {
-            try {
-                this.Worker.postMessage(msg, {
-                    transfer: transferables ?? []
-                });
-            } catch (err) {
-                switch (err.name) {
-                    case 'DataCloneError':
-                        debugger;
-                        console.log('could not clone', msg);
-                        break;
-                }
-            }
-        });
+    private postMessage(msg: WorkerMessage["data"]) {
+        this.BaseStream.send(msg);
     }
 }
 

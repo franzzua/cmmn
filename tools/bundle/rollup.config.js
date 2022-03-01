@@ -80,7 +80,7 @@ export class ConfigCreator {
             dir: this.outDir,
             sourcemap: true,
             format: module,
-            name: 'global',
+            name: this.options.global ?? 'global',
         }));
     }
 

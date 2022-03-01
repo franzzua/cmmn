@@ -1,4 +1,11 @@
 {
   "extends": "@cmmn/tools/compile/tsconfig.json",
-  "exclude": ["dist","node_modules"]
+  "exclude": ["dist","node_modules"],
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "es2017.sharedmemory",
+      "esnext"
+    ]
+  }
 }

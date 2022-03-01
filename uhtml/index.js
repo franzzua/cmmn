@@ -28,12 +28,10 @@ const tag = type => {
                 // related node, handy with JSON results and mutable list of objects
                 // that usually carry a unique identifier
                 value(ref, id) {
-                    console.log(map);
                     const memo = keyed.get(ref) || keyed.set(ref, create(null));
                     return memo[id] || (memo[id] = fixed(createCache()));
                 }
             },
-            cache: keyed,
             node: {
                 // it is possible to create one-off content out of the box via node tag
                 // this might return the single created node, or a fragment with all

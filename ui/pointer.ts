@@ -13,6 +13,12 @@ export type PointerEvents = {
     click: RelativePointerEvent,
     dblclick: RelativePointerEvent,
     directClick: RelativePointerEvent
+    drag: RelativePointerEvent & {
+        shift: IPoint;
+        start: IPoint;
+        isStart?: boolean;
+        isEnd?: boolean;
+    }
 };
 type Rect = {
     left;top;width;height;
@@ -42,6 +48,10 @@ export class PointerListener extends EventListener<PointerEvents> {
 
     private rectWatcher = new BoundRectListener(this.root);
 
+    public get Rect(){
+        return this.rectWatcher.Rect;
+    }
+
     public getRelativePoint(event: MouseEvent): IPoint {
         const rect = this.rectWatcher.Rect;
         return {
@@ -63,6 +73,38 @@ export class PointerListener extends EventListener<PointerEvents> {
     }
 
     @bind
+    private async dragListener(downEvent: RelativePointerEvent) {
+        (this.root as HTMLElement).setPointerCapture(downEvent.event.pointerId);
+        const moveListener = event => {
+            const shift = {
+                X: event.event.movementX,
+                Y: event.event.movementY
+            };
+            this.emit('drag', {
+                ...event,
+                shift,
+                start: downEvent.point
+            });
+        };
+        this.on('move', moveListener)
+        this.once('up', event => {
+            this.off('move', moveListener);
+            (this.root as HTMLElement).releasePointerCapture(downEvent.event.pointerId);
+            this.emit('drag', {
+                ...event,
+                shift: undefined,
+                start: downEvent.point,
+                isEnd: true,
+            });
+        });
+        this.emit('drag', {
+            ...downEvent,
+            shift: undefined,
+            start: downEvent.point,
+            isStart: true,
+        });
+    }
+    @bind
     private async directClickListener(downEvent: RelativePointerEvent) {
         const upEvent = await this.onceAsync('up');
         if (upEvent.event.timeStamp - downEvent.event.timeStamp > 400)
@@ -83,6 +125,7 @@ export class PointerListener extends EventListener<PointerEvents> {
         click: event => this.emit('click', {event, point: this.getRelativePoint(event)}),
         dblclick: event => this.emit('dblclick', {event, point: this.getRelativePoint(event)}),
         directClick: this.directClickListener,
+        drag: this.dragListener,
     }
 
     protected subscribe(eventName: keyof PointerEvents) {
@@ -99,6 +142,9 @@ export class PointerListener extends EventListener<PointerEvents> {
                 break;
             case "dblclick":
                 this.root.addEventListener('dblclick', this.emitters[eventName]);
+                break;
+            case "drag":
+                this.on('down', this.dragListener)
                 break;
             case 'directClick':
                 this.on('up', Fn.I);
@@ -125,6 +171,9 @@ export class PointerListener extends EventListener<PointerEvents> {
             case 'directClick':
                 this.off('up', Fn.I);
                 this.off('down', this.directClickListener);
+                break;
+            case "drag":
+                this.off('down', this.dragListener);
                 break;
         }
     }

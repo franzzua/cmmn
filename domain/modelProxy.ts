@@ -19,7 +19,7 @@ export class ModelProxy<TState, TActions extends ModelAction = {}> extends Model
         this.cell(value);
     }
 
-    public override Actions = new Proxy({} as any as TActions, {
+    public override Actions: TActions = new Proxy({} as any as TActions, {
         get: (target: any, key: string) => {
             if (key in target)
                 return target[key];
@@ -36,7 +36,7 @@ export class ModelProxy<TState, TActions extends ModelAction = {}> extends Model
         });
     }
 
-    public override QueryModel(path: (string | number)[], current: any = this): any {
+    public override QueryModel(path: (string | number)[]): any {
         return new ModelProxy(this.stream, [this.path, path].flat());
     }
 

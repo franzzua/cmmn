@@ -3,7 +3,7 @@ import {DateTime, Duration, utc} from "../helpers/utc";
 
 const packr = new Packr({
     structuredClone: true,
-});
+}) as Packr & {offset: number;};
 
 export function registerSerializer<T, U>(type: number, classFunction: Function, write: (value: T) => U, read: (value: U) => T) {
     addExtension({
@@ -15,7 +15,11 @@ export function registerSerializer<T, U>(type: number, classFunction: Function, 
 }
 
 export function serialize(data: any): Uint8Array {
-    return packr.encode(data);
+    // const offset = packr.offset;
+    const result = packr.encode(data);
+    // const length = packr.offset - offset;
+    // return {buffer: result.buffer, byteLength: length, byteOffset: offset, length: result.length} as Uint8Array;
+    return  result;
 }
 
 export function deserialize(bytes: Uint8Array) {
@@ -23,13 +27,13 @@ export function deserialize(bytes: Uint8Array) {
 }
 
 registerSerializer<DateTime, number>(1, DateTime,
-    x => x.epochMilliseconds,
+    x => x.toMillis(),
     millis => utc(millis)
 );
 
 registerSerializer<Duration, number>(2, Duration,
-    x => x.total('milliseconds'),
-    millis => new Duration(0,0,0,0,0,0,0,millis)
+    x => x.toMillis(),
+    millis => Duration.fromMillis(millis)
 );
 //
 // registerSerializer<Map<any, any>, ReadonlyArray<[number, number]>>(100,

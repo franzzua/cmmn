@@ -1,54 +1,22 @@
-import {Temporal} from "@js-temporal/polyfill";
-import ZonedDateTime = Temporal.ZonedDateTime;
-import Duration = Temporal.Duration;
+import { Duration } from 'luxon';
+import {DateTime} from 'luxon';
 
-export function utc(): Instant;
-export function utc(millis: number): Instant;
-export function utc(iso: string): Instant;
-export function utc(input?: string | number): Instant {
-    if (input === undefined) {
-        return Instant.now();
+export function utc(d: (Date | number | string) = undefined): DateTime {
+    if (typeof d === "string") {
+        return DateTime.fromISO(d).toUTC();
     }
-    if (input === null)
-        return  null;
-    if (typeof input === "string") {
-        return Instant.fromISO(input);
+    if (typeof d === "number") {
+        return DateTime.fromMillis(d, {zone: 'utc'});
     }
-    if (typeof input === "number") {
-        return new Instant(BigInt(input) * BigInt(1E6));
+    if (d instanceof Date) {
+        return DateTime.fromJSDate(d, {zone: 'utc'});
     }
-    throw new Error("unsupported input for utc: " + input);
+    return DateTime.utc();
 }
 
 
-export function local(): ZonedDateTime;
-export function local(millis: number): ZonedDateTime;
-export function local(iso: string): ZonedDateTime;
-export function local(input?: string | number): ZonedDateTime {
-    return utc(input as any).toZonedDateTimeISO(Temporal.Now.timeZone());
+export function utcToday() {
+    return utc().startOf('day');
 }
 
-export class Instant extends Temporal.Instant {
-    public toLocal() {
-        return this.toZonedDateTimeISO(Temporal.Now.timeZone());
-    }
-
-    public static now() {
-        return this.extend(Temporal.Now.instant());
-    }
-
-    public static fromISO(iso: string) {
-        return this.extend(Temporal.Instant.from(iso));
-    }
-
-    private static extend(inst: Temporal.Instant): Instant {
-        // @ts-ignore
-        inst.__proto__ = Instant.prototype;
-        return inst as Instant;
-    }
-}
-
-export {
-    Instant as DateTime,
-    Duration
-};
+export {DateTime, Duration}

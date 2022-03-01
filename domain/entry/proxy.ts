@@ -28,7 +28,6 @@ export function useStreamDomain(Factory: {new(...args: any[]):IFactory}) {
 
 export async function useWorkerDomain(workerUrl: string) {
     const stream = new WorkerStream(workerUrl);
-    await stream.Connected;
     return Container.withProviders({
         provide: IFactory, useClass: ProxyFactory
     }, {

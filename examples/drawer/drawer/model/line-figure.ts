@@ -57,9 +57,10 @@ export class LineFigure extends DrawingFigureBase {
     public get Path(): string {
         if (this.figure.length < 2)
             return '';
-        if (this.figure.length == 2)
-            return 'M' + this.figure.get(0).X + ' ' + this.figure.get(0).Y +
-                'L' + this.figure.get(1).X + ' ' + this.figure.get(1).Y;
+        if (this.figure.length == 2) {
+            const first = this.FigureFromStart.get(1);
+            return 'M 0 0 L' + first.X + ' ' + first.Y;
+        }
         return this.BezierFromStart.toString();
     }
 

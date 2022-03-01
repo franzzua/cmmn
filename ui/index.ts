@@ -2,10 +2,11 @@ import {component, GlobalStaticState} from "./component";
 import {HtmlComponent} from "./htmlComponent";
 import {Container, Fn} from "@cmmn/core";
 import "./styleHandler"
+import { Renderer } from "./renderer";
 
 export {HtmlComponent, component};
 
-export function setDefaultContainer(container: Container) {
+export function setDefaultContainer(container: {get(target): any;}) {
     GlobalStaticState.DefaultContainer = container;
 }
 
@@ -29,3 +30,4 @@ EventTarget.prototype.removeEventListener = Fn.join(
         listeners.get(name).delete(listener);
     }
 );
+export {Renderer};

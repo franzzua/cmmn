@@ -41,8 +41,19 @@ export type ModelStructure = {
 export type ModelAction = {
     [key: string]: (...args: any[]) => Promise<any>;
 }
-export type WorkerMessage = WorkerState
-    | WorkerAction
-    | WorkerResponse
-    | WorkerSubscribe
-    | WorkerConnected;
+export type WorkerMessage = {
+    data: WorkerState
+        | WorkerAction
+        | WorkerResponse
+        | WorkerSubscribe
+        | WorkerConnected,
+    transferables: any[]
+};
+export type WorkerMessageSerialized = {
+    data: Uint8Array;
+    transferables: any[];
+}
+// | {
+//     buffer: SharedArrayBuffer;
+//     id: string;
+// }
