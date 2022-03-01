@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/core",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "di, base extensions, useful functions",
   "publishConfig": {
     "access": "public"
@@ -29,7 +29,7 @@
     "bundle": "cmmn bundle --watch"
   },
   "devDependencies": {
-    "@cmmn/tools": "^1.4.2"
+    "@cmmn/tools": "^1.4.3"
   },
   "dependencies": {
     "@types/luxon": "2.x.x",
