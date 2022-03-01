@@ -6,6 +6,8 @@
     "access": "public"
   },
   "type": "module",
+  "main": "./dist/index.js",
+  "typings": "./dist/typings/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/index.js",

@@ -9,7 +9,8 @@
     "dist"
   ],
   "type": "module",
-  "typings": "dist/typings/index.ts",
+  "main": "./dist/index.js",
+  "typings": "./dist/typings/index.d.ts",
   "typesVersions": {
     "*": {
       "/": [

@@ -1,5 +1,6 @@
 import {ulid} from "./ulid";
 import {Cell} from "cellx";
+import {compare} from "./compare";
 //
 // import { generator, BASE } from "flexid";
 // const ulid = generator(BASE["58"]);
@@ -44,29 +45,6 @@ export const Fn = {
      * @param b
      * @returns {boolean}
      */
-    compare: function compare(a: any, b: any): boolean {
-        if (["string", "number", "boolean", "function"].includes(typeof a))
-            return a === b;
-        if (a === b)
-            return true;
-        if (a == null && b == null)
-            return true;
-        if (a == null || b == null)
-            return false;
-        if ('equals' in a)
-            return a['equals'](b);
-        if (Array.isArray(a) && Array.isArray(b)) {
-            return a.length === b.length &&
-                a.every((x, i) => compare(x, b[i]));
-        }
-        if (typeof a === "object" && typeof b === "object") {
-            const aKeys = Object.getOwnPropertyNames(a);
-            const bKeys = Object.getOwnPropertyNames(b);
-            if (!compare(aKeys, bKeys))
-                return false;
-            return aKeys.every(key => compare(a[key], b[key]));
-        }
-        return false;
-    }
+    compare: compare
 
 };

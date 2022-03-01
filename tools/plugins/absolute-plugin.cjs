@@ -14,7 +14,7 @@ function visitExportNode(exportNode, sourceFile) {
     const abs = path.resolve(sourceFileDir, file);
     if (/\.(less|css|scss|sass|svg|png|html)$/.test(file)) {
         const absSource = path.join(options.outDir, path.relative(options.baseUrl, sourceFileDir));
-        const relFile = path.relative(absSource, abs)
+        const relFile = path.relative(absSource, abs).replaceAll(path.sep, '/');
         return ts.updateExportDeclaration(exportNode, exportNode.decorators, exportNode.modifiers, exportNode.exportClause, ts.createStringLiteral(relFile), exportNode.typeOnly);
     }
     if (fs.existsSync(abs + '.ts')) {
@@ -34,7 +34,7 @@ function visitImportNode(importNode, sourceFile, options) {
     const abs = path.resolve(sourceFileDir, file);
     if (/\.(less|css|scss|sass|svg|png|html)$/.test(file)) {
         const absSource = path.join(options.outDir, path.relative(options.baseUrl, sourceFileDir));
-        const relFile = path.relative(absSource, abs)
+        const relFile = path.relative(absSource, abs).replaceAll(path.sep, '/');
         return ts.updateImportDeclaration(importNode, importNode.decorators, importNode.modifiers, importNode.importClause, ts.createStringLiteral(relFile));
     }
     if (fs.existsSync(abs + '.ts')) {
@@ -56,7 +56,7 @@ function visitRequireNode(importNode, sourceFile) {
         const sourceFileDir = path.dirname(sourceFile.path);
         const abs = path.join(sourceFileDir, file);
         const absSource = path.join(options.outDir, path.relative(options.baseUrl, sourceFileDir));
-        const relFile = path.relative(absSource, abs)
+        const relFile = path.relative(absSource, abs).replaceAll(path.sep, '/');
         return ts.updateCall(importNode, importNode.expression, undefined, [ts.createStringLiteral(relFile)]);
     }
 }
