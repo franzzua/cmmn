@@ -24,7 +24,6 @@ export class EventHandlerProvider<TEvents extends IEvents> {
             if (key in this.eventHandlers)
                 return this.eventHandlers[key];
             const listener = (event: Event) => {
-                event.preventDefault();
                 const directHandler = this.component.Events && this.component.Events[type];
                 if (directHandler)
                     directHandler.call(this.component, mapping(event));

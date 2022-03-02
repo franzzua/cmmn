@@ -25,23 +25,27 @@ export class WorkerEntry {
                         this.postMessage({
                             path,
                             type: WorkerMessageType.State,
-                            state: state
+                            state: state,
+                            version: model.$version
                         });
                     });
                     const state = model.State;
                     this.postMessage({
                         path,
                         type: WorkerMessageType.State,
+                        version: model.$version,
                         state
                     });
                     break;
                 case WorkerMessageType.State: {
                     const model = this.getModel(message.path);
                     model.$state(message.state);
+                    model.$version = message.version;
                     break;
                 }
                 case WorkerMessageType.Action:
                     this.Action(message);
+
                     break;
             }
         })
@@ -50,8 +54,9 @@ export class WorkerEntry {
     private asyncQueue = new AsyncQueue();
 
     private Action(action: WorkerAction) {
+        const model = this.getModel<any, any>(action.path);
         const result = this.asyncQueue.Invoke(() => {
-            const model = this.getModel<any, any>(action.path);
+            model.$version = action.version;
             return model.Actions[action.action](...action.args);
         });
         result.then(response => {
@@ -65,6 +70,7 @@ export class WorkerEntry {
                 this.postMessage({
                     type: WorkerMessageType.Response,
                     actionId: action.actionId,
+                    version: model.$version,
                     ...responseOrError
                 });
             });

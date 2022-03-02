@@ -1,8 +1,10 @@
 import {cellx} from "cellx";
 import {ModelAction, ModelPath} from "../shared/types";
+import {Fn} from "@cmmn/core";
 
 export abstract class Model<TState, TActions extends ModelAction = {}> {
 
+    public $version = Fn.ulid();
     public $state = cellx(() => this.State, {
         put: (cell, value) => {
             this.State = value;

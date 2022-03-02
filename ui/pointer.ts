@@ -1,6 +1,20 @@
 import {bind, EventEmitter, EventListener, Fn} from "@cmmn/core";
 import {Cell} from "cellx";
-import {Observable} from "cellx-decorators"
+import {Computed} from "cellx-decorators"
+import {useCustomHandler} from "@cmmn/uhtml";
+
+useCustomHandler((node, name) => {
+    if (name == "ondrag") {
+        const pointer = new PointerListener(node);
+        let lastListener = null;
+        return ([listener, options, unsubscr]) => {
+            if (lastListener !== listener) {
+                unsubscr(pointer.on('drag', listener));
+                lastListener = listener;
+            }
+        }
+    }
+});
 
 export type RelativePointerEvent = { event: PointerEvent, point: IPoint };
 
@@ -21,8 +35,9 @@ export type PointerEvents = {
     }
 };
 type Rect = {
-    left;top;width;height;
+    left; top; width; height;
 }
+
 export class BoundRectListener extends EventEmitter<{
     rect: Rect
 }> {
@@ -36,8 +51,10 @@ export class BoundRectListener extends EventEmitter<{
         return {left: 0, top: 0, width: window.innerWidth, height: window.innerHeight};
     }
 
-    @Observable
-    public Rect: Rect = this.getRect();
+    @Computed
+    public get Rect(): Rect {
+        return this.getRect()
+    };
 }
 
 export class PointerListener extends EventListener<PointerEvents> {
@@ -48,7 +65,7 @@ export class PointerListener extends EventListener<PointerEvents> {
 
     private rectWatcher = new BoundRectListener(this.root);
 
-    public get Rect(){
+    public get Rect() {
         return this.rectWatcher.Rect;
     }
 
@@ -104,6 +121,7 @@ export class PointerListener extends EventListener<PointerEvents> {
             isStart: true,
         });
     }
+
     @bind
     private async directClickListener(downEvent: RelativePointerEvent) {
         const upEvent = await this.onceAsync('up');

@@ -8,6 +8,7 @@ export enum WorkerMessageType {
 
 export type WorkerResponse = {
     type: WorkerMessageType.Response;
+    version: string;
     response?: any,
     error?: any,
     actionId: string;
@@ -21,6 +22,7 @@ export type Action = {
 }
 export type WorkerAction = {
     type: WorkerMessageType.Action;
+    version: string;
     actionId: string;
 } & Action;
 export type WorkerSubscribe = {
@@ -31,6 +33,7 @@ export type WorkerState = {
     path: ModelPath;
     type: WorkerMessageType.State;
     state: any;
+    version: string;
 };
 export type WorkerConnected = {
     type: WorkerMessageType.Connected;

@@ -8,7 +8,7 @@ export class StoreFactory {
     constructor() {
     }
 
-    private webSocketProvider = new WebsocketProvider("ws://localhost:3005");
+    // private webSocketProvider = new WebsocketProvider("ws://localhost:3005");
     //
     // private webRtcProvider = new YjsWebRTCProvider(
     //     ["ws://localhost:3005"]
@@ -21,11 +21,11 @@ export class StoreFactory {
         return this.stores.getOrAdd(name, name => {
             const store = new SyncStore<DrawingFigureJson>(name);
             store.useIndexedDB();
-            const room = this.webSocketProvider.joinRoom(name, {
-                user: this.user,
-                token: this.user
-            });
-            room.addAdapter(store.adapter);
+            // const room = this.webSocketProvider.joinRoom(name, {
+            //     user: this.user,
+            //     token: this.user
+            // });
+            // room.addAdapter(store.adapter);
             return store;
         });
     }

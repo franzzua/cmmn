@@ -75,7 +75,6 @@ export class AppRootComponent extends HtmlComponent<IState, IEvents> implements 
     private async onRemoteChange(event) {
         if (this.muteRemote)
             return;
-        console.log('external');
         const arr = event.data.value as DrawingFigureJson[];
         if (!this.Items) {
             this.drawer.services.store.Items = new ObservableMap(arr.map(x => [x.id, DrawingFigureFactory(x)]));
