@@ -3,6 +3,7 @@ import {Renderer} from "./renderer";
 import {GlobalStaticState} from "./component";
 import {listenSvgConnectDisconnect} from "./listen-svg-connect-disconnect";
 import {HtmlComponent} from "./htmlComponent";
+import {BoundRectListener} from "./boundRectListener";
 
 export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
     static Name: string;
@@ -55,12 +56,12 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
 
     Actions: Function[] = [];
     /** @internal **/
-    static Effects: {filter, effect}[];
+    static Effects: { filter, effect }[];
     /** @internal **/
     public EffectValues = new Map<Function, any>();
 
     public static effect<TState>(filter: (state: TState) => any = () => null): MethodDecorator {
-        return (target: {constructor: typeof HtmlComponent}, key, descr) => {
+        return (target: { constructor: typeof HtmlComponent }, key, descr) => {
             if (!Object.getOwnPropertyDescriptor(target.constructor, 'Effect'))
                 target.constructor.Effects = [];
             target.constructor.Effects.push({
@@ -69,5 +70,10 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
             });
             return descr;
         }
+    }
+
+    public get ClientRect(): { width; height; left; top; } {
+        const listener = BoundRectListener.GetInstance(this.element)
+        return listener.Rect;
     }
 }

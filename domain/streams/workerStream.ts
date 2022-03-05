@@ -13,7 +13,7 @@ export class WorkerStream extends Stream {
                 return;
             const cell = this.models.get(this.pathToStr(message.path));
             // console.log(this.pathToStr(message), state);
-            cell.setVersion(message.version, message.state);
+            cell.setRemote(message.version, message.state);
         })
     }
 
@@ -80,7 +80,8 @@ export class WorkerStream extends Stream {
 }
 
 export class VersionState<T> extends Cell<T> {
-    private states = new Map<string, T>();
+    remoteVersion: string;
+    remoteState: T;
 
     public Version: string;
 
@@ -90,25 +91,12 @@ export class VersionState<T> extends Cell<T> {
 
     public up() {
         this.Version = Fn.ulid();
-        this.states.set(this.Version, this._value);
     }
 
-    setVersion(version: string, state: T) {
-        if (!this.states.has(version)){
-            super.set(state);
+    setRemote(version: string, state: T) {
+        if (!this.Version || version >= this.Version){
+            this.Version = version;
+            this.set(state);
         }
-        const existed = this.states.get(version);
-        this.states.delete(version);
-        if (Fn.compare(state, existed))
-            return;
-        if (!this.states.size) {
-            super.set(state);
-            return;
-        }
-        this.applyDiff(existed, state);
-    }
-
-    private applyDiff(oldValue: T, newValue: T): any{
-        // TODO: implement
     }
 }

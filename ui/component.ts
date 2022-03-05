@@ -1,7 +1,7 @@
 import {HtmlComponent} from "./htmlComponent";
 import {IEvents, ITemplate} from "./types";
-import {Container} from "@cmmn/core";
 import {importStyle} from "./importStyle";
+import {componentHandler, propertySymbol} from "./property";
 
 export const GlobalStaticState = new class {
     _defaultContainer: {get<T>(target): T;} = null;
@@ -40,7 +40,9 @@ export function component<TState, TEvents extends IEvents = IEvents>(opts: IComp
 
         class ProxyHTML extends HTMLElement {
             public component: HtmlComponent<TState, TEvents>;
-
+            static get observedAttributes() {
+                return Array.from(target[propertySymbol].keys());
+            }
             constructor() {
                 super();
                 HtmlComponent.Init(this, target);
@@ -50,8 +52,9 @@ export function component<TState, TEvents extends IEvents = IEvents>(opts: IComp
                 this.component.connectedCallback();
             }
 
-            attributeChangedCallback() {
-
+            attributeChangedCallback(name, oldValue, newValue) {
+                const setter = componentHandler(this,name);
+                setter(newValue);
             }
 
             disconnectedCallback() {
@@ -67,6 +70,10 @@ export function component<TState, TEvents extends IEvents = IEvents>(opts: IComp
                 extends: opts.is
             });
             if (opts.style) {
+                if (typeof opts.style === "object" && 'default' in opts.style){
+                    // @ts-ignore
+                    opts.style = opts.style.default;
+                }
                 importStyle(opts.style, opts.name, target.name);
             }
         });

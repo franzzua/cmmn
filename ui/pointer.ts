@@ -1,7 +1,7 @@
-import {bind, EventEmitter, EventListener, Fn} from "@cmmn/core";
+import {bind, EventListener, Fn} from "@cmmn/core";
 import {Cell} from "cellx";
-import {Computed} from "cellx-decorators"
 import {useCustomHandler} from "@cmmn/uhtml";
+import {BoundRectListener} from "./boundRectListener";
 
 useCustomHandler((node, name) => {
     if (name == "ondrag") {
@@ -34,28 +34,6 @@ export type PointerEvents = {
         isEnd?: boolean;
     }
 };
-type Rect = {
-    left; top; width; height;
-}
-
-export class BoundRectListener extends EventEmitter<{
-    rect: Rect
-}> {
-    constructor(private root: HTMLElement | SVGElement | Document) {
-        super();
-    }
-
-    private getRect(): Rect {
-        if ('getBoundingClientRect' in this.root)
-            return this.root.getBoundingClientRect();
-        return {left: 0, top: 0, width: window.innerWidth, height: window.innerHeight};
-    }
-
-    @Computed
-    public get Rect(): Rect {
-        return this.getRect()
-    };
-}
 
 export class PointerListener extends EventListener<PointerEvents> {
 
@@ -63,7 +41,7 @@ export class PointerListener extends EventListener<PointerEvents> {
         super(root);
     }
 
-    private rectWatcher = new BoundRectListener(this.root);
+    private rectWatcher = BoundRectListener.GetInstance(this.root);
 
     public get Rect() {
         return this.rectWatcher.Rect;

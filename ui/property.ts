@@ -2,9 +2,9 @@ import {useCustomHandler} from "@cmmn/uhtml";
 import {Cell} from "cellx";
 import {ExtendedElement} from "./types";
 
-const propertySymbol = Symbol('properties');
+export const propertySymbol = Symbol('properties');
 
-function componentHandler(self: ExtendedElement<any>, key: string): any {
+export function componentHandler(self: ExtendedElement<any>, key: string): any {
     if (!self.component || !self.component.constructor[propertySymbol])
         return null;
     const prop = (self.component.constructor[propertySymbol] as Map<string, string>).get(key)
