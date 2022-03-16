@@ -1,6 +1,7 @@
 import {useCustomHandler} from "@cmmn/uhtml";
 import {Cell} from "cellx";
 import {ExtendedElement} from "./types";
+import {Fn} from "@cmmn/core";
 
 export const propertySymbol = Symbol('properties');
 
@@ -11,7 +12,10 @@ export function componentHandler(self: ExtendedElement<any>, key: string): any {
     const descr = Object.getOwnPropertyDescriptor(self.component.constructor.prototype, prop);
     if (descr) {
         const cell = getOrCreateCell(self.component, prop, () => null);
-        return (value: any) => cell.set(value);
+        return (value: any) => {
+            if (!Fn.compare(value, cell.get()))
+                cell.set(value);
+        }
     }
 }
 
@@ -34,7 +38,8 @@ export function property(attribute?: string): PropertyDecorator {
             },
             set(value: string): any {
                 const cell = getOrCreateCell(this, key, () => value);
-                cell.set(value);
+                if (!Fn.compare(value, cell.get()))
+                    cell.set(value);
             }
         });
     }

@@ -4,6 +4,8 @@ import {GlobalStaticState} from "./component";
 import {listenSvgConnectDisconnect} from "./listen-svg-connect-disconnect";
 import {HtmlComponent} from "./htmlComponent";
 import {BoundRectListener} from "./boundRectListener";
+import { cellx, ICellx } from "cellx";
+import { Fn } from "@cmmn/core";
 
 export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
     static Name: string;
@@ -54,7 +56,7 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
         return null;
     }
 
-    Actions: Function[] = [];
+
     /** @internal **/
     static Effects: { filter, effect }[];
     /** @internal **/
@@ -62,7 +64,7 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
 
     public static effect<TState>(filter: (state: TState) => any = () => null): MethodDecorator {
         return (target: { constructor: typeof HtmlComponent }, key, descr) => {
-            if (!Object.getOwnPropertyDescriptor(target.constructor, 'Effect'))
+            if (!Object.getOwnPropertyDescriptor(target.constructor, 'Effects'))
                 target.constructor.Effects = [];
             target.constructor.Effects.push({
                 filter: filter,
