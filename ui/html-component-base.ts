@@ -41,6 +41,14 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
     private onDisposeSet = new Set<Function>();
 
     public connectedCallback() {
+        const actions = (this.constructor as typeof HtmlComponentBase).Actions ?? [];
+        for (let action of actions) {
+            // TODO: unsubscribe
+            cellx(() => action.filter.call(this),{
+                compareValues: Fn.compare
+            }).subscribe(() => action.action.call(this));
+            action.action.call(this);
+        }
     }
 
     public disconnectedCallback() {
@@ -56,11 +64,15 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
         return null;
     }
 
-
+    private actionsCell: ICellx<void>;
     /** @internal **/
     static Effects: { filter, effect }[];
     /** @internal **/
+    static Actions: { filter, action }[];
+    /** @internal **/
     public EffectValues = new Map<Function, any>();
+    /** @internal **/
+    public ActionValues = new Map<Function, any>();
 
     public static effect<TState>(filter: (state: TState) => any = () => null): MethodDecorator {
         return (target: { constructor: typeof HtmlComponent }, key, descr) => {
@@ -69,6 +81,18 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
             target.constructor.Effects.push({
                 filter: filter,
                 effect: descr.value as any
+            });
+            return descr;
+        }
+    }
+
+    public static action<TState>(filter: (this: any) => any = () => null): MethodDecorator {
+        return (target: { constructor: typeof HtmlComponent }, key, descr) => {
+            if (!Object.getOwnPropertyDescriptor(target.constructor, 'Actions'))
+                target.constructor.Actions = [];
+            target.constructor.Actions.push({
+                filter: filter,
+                action: descr.value as any
             });
             return descr;
         }

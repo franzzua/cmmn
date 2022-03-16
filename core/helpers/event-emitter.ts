@@ -3,11 +3,11 @@ import {bind} from "bind-decorator";
 export abstract class EventListenerBase<TEvents extends {
     [key in string]: any | void;
 }> {
-    public abstract on<TEventName extends keyof TEvents>(eventName, listener: (data: TEvents[TEventName]) => void): () => void;
+    public abstract on<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void): () => void;
 
-    public abstract off<TEventName extends keyof TEvents>(eventName, listener: (data: TEvents[TEventName]) => void): void;
+    public abstract off<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void): void;
 
-    public once<TEventName extends keyof TEvents>(eventName, listener: (data: TEvents[TEventName]) => void) {
+    public once<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void) {
         const onceListener = data => {
             listener(data);
             this.off(eventName, onceListener);
@@ -27,7 +27,7 @@ export class EventEmitter<TEvents extends {
 
     protected listeners = new Map<keyof TEvents, Set<Function>>();
 
-    public on<TEventName extends keyof TEvents>(eventName, listener: (data: TEvents[TEventName]) => void) {
+    public on<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void) {
         this.listeners.getOrAdd(eventName, () => {
             this.subscribe(eventName);
             return new Set();
@@ -35,7 +35,7 @@ export class EventEmitter<TEvents extends {
         return () => this.off(eventName, listener);
     }
 
-    public off<TEventName extends keyof TEvents>(eventName, listener: (data: TEvents[TEventName]) => void) {
+    public off<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void) {
         const set = this.listeners.getOrAdd(eventName, () => new Set());
         if (set.size == 1) {
             this.listeners.delete(eventName);
@@ -76,12 +76,12 @@ export class MergeListener<TEvents extends {
         super();
     }
 
-    on<TEventName extends keyof TEvents>(eventName, listener: (data: TEvents[TEventName]) => void): () => void {
+    on<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void): () => void {
         const unsubscrs = this.emitters.map(x => x.on(eventName, listener));
         return () => unsubscrs.forEach(f => f());
     }
 
-    off<TEventName extends keyof TEvents>(eventName, listener: (data: TEvents[TEventName]) => void): void {
+    off<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void): void {
         this.emitters.map(x => x.off(eventName, listener));
     }
 
