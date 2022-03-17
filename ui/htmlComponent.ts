@@ -1,7 +1,7 @@
 import {IEvents} from "./types";
 import {HtmlComponentBase} from "./html-component-base";
 import {Cell} from "cellx";
-import {bind} from "@cmmn/core";
+import {bind, Fn} from "@cmmn/core";
 
 export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extends HtmlComponentBase<TState, TEvents> {
 
@@ -32,7 +32,9 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
         this.$state.unsubscribe(this.render);
     }
 
-    $state: Cell<TState> = new Cell(() => this.isStopped ? null : this.State);
+    $state: Cell<TState> = new Cell(() => this.isStopped ? null : this.State, {
+        compareValues: Fn.compare
+    });
 
     public $render: Cell<number> = new Cell(0);
 
