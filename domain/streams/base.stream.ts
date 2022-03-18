@@ -8,19 +8,19 @@ export class BaseStream extends EventEmitter<{
 
     constructor(private target: Worker | typeof globalThis) {
         super();
-        this.target.addEventListener('message', (event: MessageEvent<WorkerMessageSerialized>) => {
+        this.target.addEventListener('message', (event: MessageEvent<WorkerMessage>) => {
             // if ('buffer' in event.data) {
             //     this.SharedArrayBuffers.set(event.data.id, event.data.buffer);
             //     return;
             // }
             // const buffer = this.SharedArrayBuffers.get(event.data.data.bufferId);
             // try {
-                const message = Transferable.Join(deserialize(event.data.data), event.data.transferables) as WorkerMessage["data"];
-                // console.log(event.data.data, message);
-                if (message.type === WorkerMessageType.Connected)
-                    this.Connected.resolve();
-                else
-                    this.emit('message', message);
+            const message = event.data.data;//Transferable.Join(deserialize(event.data.data), event.data.transferables) as WorkerMessage["data"];
+            // console.log(event.data.data, message);
+            if (message.type === WorkerMessageType.Connected)
+                this.Connected.resolve();
+            else
+                this.emit('message', message);
             // } catch (e) {
             //     console.error(e);
             //     console.log('error', event.data.data, uint8);
@@ -36,8 +36,7 @@ export class BaseStream extends EventEmitter<{
     // public ArrayBuffers = new Map<ArrayBuffer, string>();
 
     public async send(message: WorkerMessage["data"]) {
-        const transferables = Transferable.Split(message);
-        const data = serialize(message);
+        const transferables = Transferable.Extract(message);
         await this.Connected;
         // const info = {
         //     length: data.byteLength,
@@ -63,8 +62,8 @@ export class BaseStream extends EventEmitter<{
         // console.log(info, message, source);
         try {
             this.target.postMessage({
-                data: data, transferables
-            } as WorkerMessageSerialized, {
+                data: message, transferables
+            } as WorkerMessage, {
                 transfer: transferables
             });
         } catch (err) {

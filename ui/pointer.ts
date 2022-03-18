@@ -37,7 +37,7 @@ export type PointerEvents = {
 
 export class PointerListener extends EventListener<PointerEvents> {
 
-    constructor(private root: HTMLElement | SVGElement | Document) {
+    constructor(public root: HTMLElement | SVGElement | Document) {
         super(root);
     }
 
@@ -69,12 +69,26 @@ export class PointerListener extends EventListener<PointerEvents> {
 
     @bind
     private async dragListener(downEvent: RelativePointerEvent) {
-        (this.root as HTMLElement).setPointerCapture(downEvent.event.pointerId);
+        let isStarted = false;
+
+        if (downEvent.event.target !== this.root)
+            return;
         const moveListener = event => {
             const shift = {
                 X: event.event.movementX,
                 Y: event.event.movementY
             };
+            if (shift.X == 0 && shift.Y == 0)
+                return;
+            if (!isStarted){
+                (this.root as HTMLElement).setPointerCapture(downEvent.event.pointerId);
+                this.emit('drag', {
+                    ...downEvent,
+                    shift: undefined,
+                    start: downEvent.point,
+                    isStart: true,
+                });
+            }
             this.emit('drag', {
                 ...event,
                 shift,
@@ -91,12 +105,6 @@ export class PointerListener extends EventListener<PointerEvents> {
                 start: downEvent.point,
                 isEnd: true,
             });
-        });
-        this.emit('drag', {
-            ...downEvent,
-            shift: undefined,
-            start: downEvent.point,
-            isStart: true,
         });
     }
 

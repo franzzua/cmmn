@@ -25,27 +25,25 @@ export class Transferable {
             return results;
         if (Array.isArray(data)) {
             for (let i = 0; i < data.length; i++) {
-                if (!isTransferable(data[i])){
+                if (!isTransferable(data[i])) {
                     Transferable.Split(data[i], results);
                     continue;
                 }
                 results.push(data[i]);
                 data[i] = new Transferable(results.length - 1);
             }
-        }
-        if (data instanceof Map) {
+        } else if (data instanceof Map) {
             for (let [key, value] of data) {
-                if (!isTransferable(value)){
+                if (!isTransferable(value)) {
                     Transferable.Split(value, results);
                     continue;
                 }
                 results.push(value);
                 data.set(key, new Transferable(results.length - 1));
             }
-        }
-        if (data instanceof Set) {
+        } else if (data instanceof Set) {
             for (let value of data) {
-                if (!isTransferable(value)){
+                if (!isTransferable(value)) {
                     Transferable.Split(value, results);
                     continue;
                 }
@@ -53,8 +51,7 @@ export class Transferable {
                 data.delete(value);
                 data.add(new Transferable(results.length - 1));
             }
-        }
-        for (let key in data){
+        } else for (let key in data) {
             if (!isTransferable(data[key])) {
                 Transferable.Split(data[key], results);
                 continue;
@@ -65,38 +62,75 @@ export class Transferable {
         return results;
     }
 
-    public static Join<T>(data: T, transferables: any[]):T {
+    public static Extract<T>(data: T, results = []): any[] {
+        if (!data || typeof data != "object")
+            return results;
+        if (Array.isArray(data)) {
+            for (let i = 0; i < data.length; i++) {
+                if (!isTransferable(data[i])) {
+                    Transferable.Extract(data[i], results);
+                    continue;
+                }
+                results.push(data[i]);
+            }
+        } else if (data instanceof Map) {
+            for (let [key, value] of data) {
+                if (!isTransferable(value)) {
+                    Transferable.Extract(value, results);
+                    continue;
+                }
+                results.push(value);
+            }
+        } else if (data instanceof Set) {
+            for (let value of data) {
+                if (!isTransferable(value)) {
+                    Transferable.Extract(value, results);
+                    continue;
+                }
+                results.push(value);
+            }
+        } else for (let key in data) {
+            if (!isTransferable(data[key])) {
+                Transferable.Extract(data[key], results);
+                continue;
+            }
+            results.push(data[key]);
+        }
+        return results;
+    }
+
+    public static Join<T>(data: T, transferables: any[]): T {
+        if (!transferables.length)
+            return data;
+
         if (!data || typeof data != "object")
             return data;
         if (Array.isArray(data)) {
             for (let i = 0; i < data.length; i++) {
-                if (!(data[i] instanceof Transferable)){
+                if (!(data[i] instanceof Transferable)) {
                     Transferable.Join(data[i], transferables);
                     continue;
                 }
                 data[i] = transferables[data[i].index];
             }
-        }
-        if (data instanceof Map) {
+        } else if (data instanceof Map) {
             for (let [key, value] of data) {
-                if (!(value instanceof Transferable)){
+                if (!(value instanceof Transferable)) {
                     Transferable.Join(value, transferables);
                     continue;
                 }
                 data.set(key, transferables[value.index]);
             }
-        }
-        if (data instanceof Set) {
+        } else if (data instanceof Set) {
             for (let value of data) {
-                if (!(value instanceof Transferable)){
+                if (!(value instanceof Transferable)) {
                     Transferable.Join(value, transferables);
                     continue;
                 }
                 data.delete(value);
                 data.add(transferables[value.index]);
             }
-        }
-        for (let key in data){
+        } else for (let key in data) {
             if (data[key] instanceof Transferable) {
                 const t = data[key] as any as Transferable;
                 data[key] = transferables[t.index];
@@ -153,4 +187,4 @@ function isNotJustObject(value): boolean { // это не просто объе�
 registerSerializer<Transferable, number>(10, Transferable,
     x => x.index,
     index => new Transferable(index)
-    );
+);

@@ -44,9 +44,12 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
         const actions = (this.constructor as typeof HtmlComponentBase).Actions ?? [];
         for (let action of actions) {
             // TODO: unsubscribe
-            cellx(() => action.filter.call(this),{
+            const cell = cellx(() => action.filter.call(this),{
                 compareValues: Fn.compare
-            }).subscribe(() => action.action.call(this));
+            });
+            const list = () => action.action.call(this);
+            cell.subscribe(list);
+            this.onDispose = () => cell.unsubscribe(list);
             action.action.call(this);
         }
     }

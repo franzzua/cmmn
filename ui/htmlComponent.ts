@@ -10,10 +10,11 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
     }
 
     public connectedCallback() {
-        super.connectedCallback();
         this.isStopped = false;
         this.$state.subscribe(this.render);
-        this.render(null, {data: {value: this.$state.get()}});
+        this.renderer.state = this.$state.get();
+        this.renderer._render();
+        super.connectedCallback();
     }
 
     @bind

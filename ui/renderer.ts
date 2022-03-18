@@ -74,12 +74,15 @@ export class Renderer<TState, TEvents extends IEvents> {
         AnimationFrameListener.Instance.off('frame', Renderer.Render);
     }
 
-    private state: TState;
+
+    public state: TState;
 
     async _render() {
         this.template.call(this.component, this.html, this.state, this.handlerProxy);
-        this.renderedTask.resolve();
-        await this.renderedTask;
+        if (this.renderedTask) {
+            this.renderedTask.resolve();
+            await this.renderedTask;
+        }
         const effects = (this.component.constructor as typeof HtmlComponentBase).Effects;
         if (effects?.length) {
             for (let effect of effects) {
