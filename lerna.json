@@ -10,6 +10,6 @@
     "sync",
     "examples/*"
   ],
-  "version": "4.0.6-cmmn",
+  "version": "1.4.7",
   "npmClient": "npm"
 }
