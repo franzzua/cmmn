@@ -37,6 +37,8 @@ function visitImportNode(importNode, sourceFile, options) {
         const relFile = path.relative(absSource, abs).replaceAll(path.sep, '/');
         return ts.updateImportDeclaration(importNode, importNode.decorators, importNode.modifiers, importNode.importClause, ts.createStringLiteral(relFile));
     }
+    if (/\.(json|tsx?|jsx?)$/.test(file))
+        return;
     if (fs.existsSync(abs + '.ts')) {
         return ts.updateImportDeclaration(importNode, importNode.decorators, importNode.modifiers, importNode.importClause, ts.createStringLiteral(file + '.js'));
     }

@@ -41,7 +41,9 @@ export function component<TState, TEvents extends IEvents = IEvents>(opts: IComp
         class ProxyHTML extends HTMLElement {
             public component: HtmlComponent<TState, TEvents>;
             static get observedAttributes() {
-                return Array.from(target[propertySymbol].keys());
+                if (propertySymbol in target)
+                    return Array.from(target[propertySymbol].keys());
+                return  [];
             }
             constructor() {
                 super();
