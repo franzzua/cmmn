@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/ui",
-  "version": "1.4.7",
+  "version": "1.4.8",
   "description": "",
   "publishConfig": {
     "access": "public"
@@ -30,10 +30,10 @@
     "cellx": "1.x.x"
   },
   "devDependencies": {
-    "@cmmn/tools": "^1.4.3"
+    "@cmmn/tools": "^1.4.8"
   },
   "dependencies": {
-    "@cmmn/core": "^1.4.7",
+    "@cmmn/core": "^1.4.8",
     "@cmmn/uhtml": "^1.4.2",
     "cellx-decorators": "1.x.x"
   },
