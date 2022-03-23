@@ -184,7 +184,3 @@ function isNotJustObject(value): boolean { // это не просто объе�
     return typeof value !== 'object' || value === null;
 }
 
-registerSerializer<Transferable, number>(10, Transferable,
-    x => x.index,
-    index => new Transferable(index)
-);

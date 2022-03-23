@@ -51,8 +51,13 @@ export type WorkerMessage = {
         | WorkerSubscribe
         | WorkerConnected,
     transferables: any[]
+} & {
+    start?: number,
+    origin?: number,
 };
 export type WorkerMessageSerialized = {
+    start: number,
+    origin?: number,
     data: Uint8Array;
     transferables: any[];
 }

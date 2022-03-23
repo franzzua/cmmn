@@ -1,21 +1,37 @@
 import {WorkerMessage, WorkerMessageSerialized, WorkerMessageType} from "../shared/types";
-import {deserialize, EventEmitter, Fn, ResolvablePromise, serialize} from "@cmmn/core";
+import {deserialize, EventEmitter, ResolvablePromise, serialize} from "@cmmn/core";
 import {Transferable} from "./transferable";
 
 export class BaseStream extends EventEmitter<{
     message: WorkerMessage["data"]
 }> {
+    private performanceDiff = 0;
+    private useBinary = true;
 
     constructor(private target: Worker | typeof globalThis) {
         super();
-        this.target.addEventListener('message', (event: MessageEvent<WorkerMessage>) => {
+        this.Connected.then(() => this.target.postMessage({
+            origin: performance.timeOrigin
+        }));
+        this.target.addEventListener('message', (event: MessageEvent<WorkerMessage | WorkerMessageSerialized>) => {
+            if (event.data.origin) {
+                this.performanceDiff = -performance.timeOrigin + event.data.origin;
+                return;
+            }
             // if ('buffer' in event.data) {
             //     this.SharedArrayBuffers.set(event.data.id, event.data.buffer);
             //     return;
             // }
             // const buffer = this.SharedArrayBuffers.get(event.data.data.bufferId);
             // try {
-            const message = event.data.data;//Transferable.Join(deserialize(event.data.data), event.data.transferables) as WorkerMessage["data"];
+            const message = this.useBinary
+                ? Transferable.Join(deserialize(event.data.data as Uint8Array), event.data.transferables) as WorkerMessage["data"]
+                : event.data.data as WorkerMessage["data"];// ;
+            const sendTime = performance.now() - event.data.start - this.performanceDiff;
+            // console.log('send time:', sendTime, message);
+            // if (sendTime > 50){
+            //     console.warn(message);
+            // }
             // console.log(event.data.data, message);
             if (message.type === WorkerMessageType.Connected)
                 this.Connected.resolve();
@@ -36,8 +52,11 @@ export class BaseStream extends EventEmitter<{
     // public ArrayBuffers = new Map<ArrayBuffer, string>();
 
     public async send(message: WorkerMessage["data"]) {
-        const transferables = Transferable.Extract(message);
         await this.Connected;
+        const start = performance.now();
+        const transferables = Transferable.Split(message);
+        const data = this.useBinary ? serialize(message): message;
+        // console.log('send:', message);
         // const info = {
         //     length: data.byteLength,
         //     offset: data.byteOffset,
@@ -62,7 +81,7 @@ export class BaseStream extends EventEmitter<{
         // console.log(info, message, source);
         try {
             this.target.postMessage({
-                data: message, transferables
+                data, transferables, start
             } as WorkerMessage, {
                 transfer: transferables
             });
