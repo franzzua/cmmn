@@ -1,5 +1,7 @@
 import {HtmlComponent} from "./htmlComponent";
 import {Hole, Renderable, TemplateFunction} from "@cmmn/uhtml";
+import { Cell } from "cellx";
+import {propertySymbol} from "./property";
 
 export type SingleArgumentsOf<TFunction> = TFunction extends (arg: infer T) => any ? T : void;
 
@@ -41,5 +43,6 @@ export {Renderable, Hole, TemplateFunction};
 type ObjectNotArray<T> = T extends ReadonlyArray<string> ? never : T;
 
 export type ExtendedElement<TComponent = HtmlComponent<any, any>> = (SVGElement | HTMLElement) & {
+    [propertySymbol]?: Map<string, Cell>;
     component?: TComponent;
 };

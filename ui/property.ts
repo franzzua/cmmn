@@ -2,42 +2,34 @@ import {useCustomHandler} from "@cmmn/uhtml";
 import {Cell} from "cellx";
 import {ExtendedElement} from "./types";
 import {Fn} from "@cmmn/core";
+import {HtmlComponentBase} from "./html-component-base";
 
 export const propertySymbol = Symbol('properties');
 
 export function componentHandler(self: ExtendedElement<any>, key: string): any {
-    if (!self.component || !self.component.constructor[propertySymbol])
-        return null;
-    const prop = (self.component.constructor[propertySymbol] as Map<string, string>).get(key)
-    const descr = Object.getOwnPropertyDescriptor(self.component.constructor.prototype, prop);
-    if (descr) {
-        const cell = getOrCreateCell(self.component, prop, () => null);
-        return (value: any) => {
-            if (!Fn.compare(value, cell.get()))
-                cell.set(value);
-        }
-    }
+    return value => {
+        const cell = getOrCreateCell(self, key, () => value);
+        if (!Fn.compare(value, cell.get()))
+            cell.set(value);
+    };
 }
 
-function getOrCreateCell(self: any, key: string, value: Function) {
-    const map = self[propertySymbol] ?? (self[propertySymbol] = new Map<string, Cell>());
-    if (!map.has(key))
-        map.set(key, new Cell(value()));
-    return map.get(key);
+function getOrCreateCell(self: ExtendedElement<any>, key: string, value: Function) {
+    self[propertySymbol] ??= new Map<string, Cell>();
+    return self[propertySymbol].getOrAdd(key, key => new Cell(value()))
 }
+
 
 export function property(attribute?: string): PropertyDecorator {
-    return (target: any, key: string) => {
-        if (!target.constructor[propertySymbol])
-            target.constructor[propertySymbol] = new Map();
-        (target.constructor[propertySymbol] as Map<string, string>).set(attribute || toSnake(key), key);
+    return function (this: HtmlComponentBase<any, any>, target: any, key: string) {
+        const name = attribute || toSnake(key);
         Object.defineProperty(target, key, {
             get(): any {
-                const cell = getOrCreateCell(this, key, () => this.element.getAttribute(key));
+                const cell = getOrCreateCell(this.element, name, () => this.element.getAttribute(name));
                 return cell.get();
             },
             set(value: string): any {
-                const cell = getOrCreateCell(this, key, () => value);
+                const cell = getOrCreateCell(this.element, name, () => value);
                 if (!Fn.compare(value, cell.get()))
                     cell.set(value);
             }
