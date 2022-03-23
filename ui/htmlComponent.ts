@@ -8,8 +8,18 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
     constructor() {
         super();
     }
+    protected InjectedContent = this.element.firstElementChild;
+
+    static removing = false;
 
     public connectedCallback() {
+        if (HtmlComponent.removing)
+            return;
+        if (this.InjectedContent) {
+            HtmlComponent.removing = true;
+            this.element.removeChild(this.InjectedContent)
+            HtmlComponent.removing = false;
+        }
         this.isStopped = false;
         this.$state.subscribe(this.render);
         this.renderer.state = this.$state.get();
@@ -25,9 +35,11 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
         this.$render.set(this.$render.get() + 1);
     }
 
-    private isStopped = false;
+    private isStopped = true;
 
     public disconnectedCallback() {
+        if (HtmlComponent.removing)
+            return;
         super.disconnectedCallback();
         this.isStopped = true;
         this.$state.unsubscribe(this.render);
