@@ -42,7 +42,7 @@ export function component<TState, TEvents extends IEvents = IEvents>(opts: IComp
             public component: HtmlComponent<TState, TEvents>;
             static get observedAttributes() {
                 if (propertySymbol in target)
-                    return Array.from(target[propertySymbol].keys());
+                    return Array.from(target[propertySymbol]);
                 return  [];
             }
             constructor() {

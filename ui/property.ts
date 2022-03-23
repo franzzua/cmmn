@@ -7,12 +7,16 @@ import {HtmlComponentBase} from "./html-component-base";
 export const propertySymbol = Symbol('properties');
 
 export function componentHandler(self: ExtendedElement<any>, key: string): any {
+    // @ts-ignore
+    if (!self.constructor.observedAttributes?.includes(key))
+        return null;
     return value => {
         const cell = getOrCreateCell(self, key, () => value);
         if (!Fn.compare(value, cell.get()))
             cell.set(value);
     };
 }
+useCustomHandler(componentHandler);
 
 function getOrCreateCell(self: ExtendedElement<any>, key: string, value: Function) {
     self[propertySymbol] ??= new Map<string, Cell>();
@@ -23,6 +27,7 @@ function getOrCreateCell(self: ExtendedElement<any>, key: string, value: Functio
 export function property(attribute?: string): PropertyDecorator {
     return function (this: HtmlComponentBase<any, any>, target: any, key: string) {
         const name = attribute || toSnake(key);
+        (target.constructor[propertySymbol] ??= new Set<string>()).add(name);
         Object.defineProperty(target, key, {
             get(): any {
                 const cell = getOrCreateCell(this.element, name, () => this.element.getAttribute(name));
@@ -37,7 +42,6 @@ export function property(attribute?: string): PropertyDecorator {
     }
 }
 
-useCustomHandler(componentHandler);
 
 
 function toSnake(str: string): string {
