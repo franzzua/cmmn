@@ -8,16 +8,19 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
     constructor() {
         super();
     }
-    protected InjectedContent = this.element.firstElementChild;
+    protected Children: Element[] = Array.from(this.element.children)
+        .filter(x => x instanceof Element);
 
     static removing = false;
 
     public connectedCallback() {
         if (HtmlComponent.removing)
             return;
-        if (this.InjectedContent) {
+        if (this.Children.length) {
             HtmlComponent.removing = true;
-            this.element.removeChild(this.InjectedContent)
+            for (let element of this.Children) {
+                this.element.removeChild(element)
+            }
             HtmlComponent.removing = false;
         }
         this.isStopped = false;
