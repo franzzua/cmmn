@@ -37,6 +37,6 @@ jobs:
           node-version: 16
           registry-url: https://registry.npmjs.org/
           scope: '@cmmn'
-      - run: lerna publish from-git -y
+      - run: lerna publish from-package -y
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}

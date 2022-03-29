@@ -194,7 +194,7 @@ export class ConfigCreator {
                 [this.options.name]: path.join(this.root, this.options.input)
             },
             output: this.output,
-            external: (this.options.external || []).map(s => new RegExp(`^${s}$`)),
+            external: (this.options.external || []),
             onwarn(warning) {
                 switch (warning.code){
                     case 'CIRCULAR_DEPENDENCY':
