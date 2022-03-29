@@ -11,7 +11,7 @@ export function setDefaultContainer(container: {get(target): any;}) {
 }
 
 export * from "./types";
-export {property} from "./property";
+export {property, propertySymbol} from "./property";
 export {PointerListener, IPoint, PointerEvents} from "./pointer"
 export {Keyboard, KeyboardListener} from "./keyboard";
 //

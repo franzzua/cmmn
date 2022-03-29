@@ -80,6 +80,7 @@ export class ConfigCreator {
             dir: this.outDir,
             sourcemap: true,
             format: module,
+            globals: Object.fromEntries(this.options.external.map(x => [x,x])),
             name: this.options.global ?? 'global',
         }));
     }
@@ -193,7 +194,7 @@ export class ConfigCreator {
                 [this.options.name]: path.join(this.root, this.options.input)
             },
             output: this.output,
-            external: (this.options.external || []).map(s => new RegExp(s)),
+            external: (this.options.external || []).map(s => new RegExp(`^${s}$`)),
             onwarn(warning) {
                 switch (warning.code){
                     case 'CIRCULAR_DEPENDENCY':
