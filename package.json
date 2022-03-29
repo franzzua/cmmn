@@ -6,7 +6,8 @@
     "bootstrap": "npm i && lerna bootstrap --hoist",
     "compile": "cmmn compile -b --watch",
     "bundle": "cmmn bundle -b --watch",
-    "prod": "cmmn bundle -b --prod"
+    "prod": "cmmn bundle -b --prod",
+    "ci": "cmmn compile -b && cmmn bundle -b"
   },
   "author": "",
   "license": "ISC",
