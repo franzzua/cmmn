@@ -41,7 +41,7 @@
   },
   "author": "",
   "license": "ISC",
-  "gitHead": "6d71154c76d97bf9e1a8ebd52ab3c31df797d56d",
+  "gitHead": "2dc32e552dd5877be0ceb18f64cb896f13f15303",
   "cmmn": {
     "proxy": {
       "input": "dist/esm/entry/proxy.js",
