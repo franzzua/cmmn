@@ -89,16 +89,16 @@ export async function bundle(...options) {
                 console.log('START BUNDLING');
                 break;
             case 'END':
-                console.log('FINISH');
+                console.log(`FINISH at ${new Date().toTimeString().substring(0,8)}`);
                 break;
             case 'BUNDLE_START':
                 for (let key in event.input){
-                    console.log(`1. ${key} -> ${event.output}`);
+                    console.log(`\t${key} -> ${event.output}`);
                 }
                 break;
             case 'BUNDLE_END':
                 for (let key in event.input){
-                    console.log(`1. ${key} -> ${event.output}, (${event.duration / 1000}s)`);
+                    console.log(`\t${key} -> ${event.output}, (${event.duration / 1000}s)`);
                 }
                 break;
 
@@ -119,6 +119,8 @@ export async function bundle(...options) {
                         break;
                 }
                 break;
+            default:
+                console.warn('WARNING:', event)
         }
     });
 }

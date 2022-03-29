@@ -195,14 +195,17 @@ export class ConfigCreator {
             output: this.output,
             external: (this.options.external || []).map(s => new RegExp(s)),
             onwarn(warning) {
-                // Silence circular dependency warning for moment package
-                if (
-                    warning.code === 'CIRCULAR_DEPENDENCY'
-                ) {
-                    return
+                switch (warning.code){
+                    case 'CIRCULAR_DEPENDENCY':
+                        return;
+                    case 'THIS_IS_UNDEFINED':
+                        console.log(`${warning.message} at`);
+                        console.log(`\t${warning.id}`);
+                        break;
+                    default:
+                        console.warn(`\t(!) ${warning.message}`)
                 }
 
-                console.warn(`(!) ${warning.message}`)
             },
             plugins: this.plugins,
             treeshake: this.options.minify ? "smallest" : "recommended",

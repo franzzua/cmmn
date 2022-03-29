@@ -21,27 +21,39 @@ export abstract class EventListenerBase<TEvents extends {
     }
 }
 
+export type EventListenerOptions = {
+    Priority: number,
+}
+const DefaultListenerOptions: EventListenerOptions = {
+    Priority: Number.NEGATIVE_INFINITY
+}
+
+export type StoppableEvent<T> = T & {
+    stop();
+}
+
 export class EventEmitter<TEvents extends {
     [key in string]: any | void;
 }> extends EventListenerBase<TEvents> {
 
-    protected listeners = new Map<keyof TEvents, Set<Function>>();
+    protected listeners = new Map<keyof TEvents, Array<{ listener: (data, stop?) => void, options: EventListenerOptions }>>();
 
-    public on<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void) {
+    public on<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName], stop?: Function) => void,
+                                                options: EventListenerOptions = DefaultListenerOptions) {
         this.listeners.getOrAdd(eventName, () => {
             this.subscribe(eventName);
-            return new Set();
-        }).add(listener);
+            return [];
+        }).push({listener, options: options});
         return () => this.off(eventName, listener);
     }
 
-    public off<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void) {
-        const set = this.listeners.getOrAdd(eventName, () => new Set());
-        if (set.size == 1) {
+    public off<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName], stop?: Function) => void) {
+        const set = this.listeners.getOrAdd(eventName, () => []);
+        if (set.length == 1) {
             this.listeners.delete(eventName);
             this.unsubscribe(eventName);
         } else {
-            set.delete(listener);
+            set.removeAll(x => x.listener === listener);
         }
     }
 
@@ -53,7 +65,12 @@ export class EventEmitter<TEvents extends {
 
     @bind
     public emit<TEventName extends keyof TEvents>(eventName: TEventName, data?: TEvents[TEventName]) {
-        this.listeners.get(eventName)?.forEach(cb => cb(data));
+        let isStopped = false;
+        for (const cb of (this.listeners.get(eventName) ?? []).orderBy(x => x.options.Priority, true)) {
+            if (isStopped)
+                return;
+            cb.listener(data, () => isStopped = true);
+        }
     }
 
     public static fromEventTarget<TEvents extends {

@@ -1,5 +1,5 @@
 import {Doc} from "yjs";
-import {DocAdapter} from "..";
+import {DocAdapter} from "../index";
 import {Awareness} from "y-protocols/awareness";
 import {ObservableYMap} from "./observable-y-map";
 import {Observable} from "cellx-decorators";
