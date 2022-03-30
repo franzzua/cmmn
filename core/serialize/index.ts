@@ -6,7 +6,6 @@ const packr = new Packr({
 }) as Packr & {offset: number;};
 
 export function registerSerializer<T, U>(type: number, classFunction: Function, write: (value: T) => U, read: (value: U) => T) {
-    // console.log('register', type, classFunction, globalThis);
     addExtension({
         Class: classFunction,
         write: write,
@@ -27,15 +26,15 @@ export function deserialize(bytes: Uint8Array) {
     return packr.decode(bytes);
 }
 
-registerSerializer<DateTime, number>(1, DateTime,
-    x => x.toMillis(),
-    millis => utc(millis)
-);
-
-registerSerializer<Duration, number>(2, Duration,
-    x => x.toMillis(),
-    millis => Duration.fromMillis(millis)
-);
+// registerSerializer<DateTime, number>(1, DateTime,
+//     x => x.toMillis(),
+//     millis => utc(millis)
+// );
+//
+// registerSerializer<Duration, number>(2, Duration,
+//     x => x.toMillis(),
+//     millis => Duration.fromMillis(millis)
+// );
 //
 // registerSerializer<Map<any, any>, ReadonlyArray<[number, number]>>(100,
 //     perm => perm instanceof Map,

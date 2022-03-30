@@ -47,7 +47,8 @@
       "input": "dist/esm/entry/proxy.js",
       "module": "es,cjs",
       "external": [
-        "@cmmn",
+        "@cmmn.*",
+        "luxon",
         "cellx"
       ]
     },
@@ -55,8 +56,9 @@
       "input": "dist/esm/worker/index.js",
       "module": "es,cjs",
       "external": [
-        "@cmmn",
-        "cellx"
+        "@cmmn.*",
+        "luxon",
+        "cellx.*"
       ]
     }
   }

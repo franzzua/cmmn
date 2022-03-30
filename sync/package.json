@@ -79,16 +79,16 @@
     "index": {
       "input": "./dist/esm/index.js",
       "external": [
-        "cellx",
-        "@cmmn"
+        "cellx.*",
+        "@cmmn.*"
       ],
       "module": "es,cjs"
     },
     "webrtc": {
       "input": "./dist/esm/webrtc/client/index.js",
       "external": [
-        "cellx",
-        "@cmmn"
+        "cellx.*",
+        "@cmmn.*"
       ]
     },
     "webrtc-server": {
@@ -96,14 +96,14 @@
       "module": "es,cjs",
       "external": [
         "node_modules",
-        "@cmmn"
+        "@cmmn.*"
       ]
     },
     "websocket": {
       "input": "./dist/esm/websocket/client/index.js",
       "external": [
-        "cellx",
-        "@cmmn"
+        "cellx.*",
+        "@cmmn.*"
       ]
     },
     "websocket-server": {
@@ -111,7 +111,7 @@
       "module": "es,cjs",
       "external": [
         "node_modules",
-        "@cmmn"
+        "@cmmn.*"
       ]
     }
   },
