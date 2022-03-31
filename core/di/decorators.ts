@@ -4,6 +4,16 @@ import {Container} from "./container";
 export function Injectable(multiple: boolean = false): (target: any) => void {
     return ((target: any) => {
         const deps = Reflect.getMetadata("design:paramtypes", target) ?? [];
+        const data = Container.StaticDepsMap.getOrAdd(target, () => ({
+            deps: [],
+            multiple: false
+        }));
+        if (data.deps){
+            for(let i = 0; i < data.deps.length; i++){
+                if (data.deps[i])
+                    deps[i] = data.deps[i];
+            }
+        }
         Container.StaticDepsMap.set(target, ({
             deps: deps,
             multiple
