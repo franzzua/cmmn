@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/tools",
-  "version": "1.4.15",
+  "version": "1.4.16",
   "description": "Compilation, bundling, code generator, testing.",
   "main": "dist/rollup.config.js",
   "type": "module",
@@ -53,11 +53,10 @@
     "less": "^4",
     "rollup": "^2",
     "rollup-plugin-img": "1.x.x",
-
-    "rollup-plugin-postcss": "4.x.x",
     "rollup-plugin-livereload": "^2.0.5",
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "^1.4.0",
+    "rollup-plugin-postcss": "4.x.x",
     "rollup-plugin-serve": "^1.1.0",
     "rollup-plugin-string": "^3.0.0",
     "rollup-plugin-styles": "^4",
