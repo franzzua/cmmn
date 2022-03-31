@@ -10,8 +10,8 @@
  *
  * Важно!
  * Предполагается, что нет разницы между null и undefined, т.е.:
- *   compare(null, undefined)      -> true
- *   compare(undefined, null)      -> true
+ *   compare(null, undefined) -> true
+ *   compare(undefined, null) -> true
  */
 export function compare(a: any, b: any): boolean {
   switch (typeof a) {
@@ -60,7 +60,7 @@ export function compare(a: any, b: any): boolean {
 
 function compareArrays(a: any[], b: any[]): boolean {
   return a.length === b.length &&
-    a.every((x, i) => compare(x, b[i]));
+      a.every((x, i) => compare(x, b[i]));
 }
 
 function compareSets(a: Set<any>, b: Set<any>): boolean {

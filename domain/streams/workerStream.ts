@@ -1,8 +1,9 @@
 import {Fn} from "@cmmn/core";
-import {Cell, cellx, EventEmitter} from "cellx";
+import {cellx} from "cellx";
 import {Stream} from "./stream";
 import {Action, ModelPath, WorkerMessage, WorkerMessageType} from "../shared/types";
 import {BaseStream} from "./base.stream";
+import {VersionState} from "./versionState";
 
 
 export class WorkerStream extends Stream {
@@ -79,24 +80,3 @@ export class WorkerStream extends Stream {
     }
 }
 
-export class VersionState<T> extends Cell<T> {
-    remoteVersion: string;
-    remoteState: T;
-
-    public Version: string;
-
-    constructor() {
-        super(undefined);
-    }
-
-    public up() {
-        this.Version = Fn.ulid();
-    }
-
-    setRemote(version: string, state: T) {
-        if (!this.Version || version >= this.Version){
-            this.Version = version;
-            this.set(state);
-        }
-    }
-}

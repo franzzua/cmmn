@@ -14,8 +14,11 @@ function getProjectConfig(rootDir, cmmn, options) {
 }
 
 function getPackageConfigs(rootDir, options, name = null) {
+    const pckPath = path.join(rootDir, 'package.json');
+    if (!fs.existsSync(pckPath))
+        return [];
     const results = [];
-    const pkg = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json')));
+    const pkg = JSON.parse(fs.readFileSync(pckPath));
     if (name) {
         results.push(...getProjectConfig(rootDir, pkg.cmmn[name], {
             ...options,
@@ -111,7 +114,10 @@ export async function bundle(...options) {
                         console.log(`\tline: ${event.error.frame}`);
                         break;
                     case 'UNRESOLVED_IMPORT':
-                        console.error(event.error.message);
+                        console.warn('UNRESOLVED_IMPORT:\t',event.error.message);
+                        break;
+                    case 'MISSING_EXPORT':
+                        console.warn('MISSING_EXPORT: \t', event.error.message);
                         break;
                     default:
                         console.warn('Unknown error:', event.error.code);

@@ -1,5 +1,6 @@
 import {ulid} from "./ulid";
 import {Cell} from "cellx";
+import * as crc32 from "crc-32";
 import {compare} from "./compare";
 //
 // import { generator, BASE } from "flexid";
@@ -13,7 +14,7 @@ export const Fn = {
         return !!x;
     },
     ulid: ulid,
-    pipe: (...functions: Function[]) => {
+    pipe: (...functions: (((...input: any[]) => any | Function))[]):  ((...input: any[]) => any) => {
         return functions.reduce((f1, f2) => (...args: any[]) => f2(f1(...args)))
     },
     join: (...functions: Function[]) => {
@@ -45,6 +46,20 @@ export const Fn = {
      * @param b
      * @returns {boolean}
      */
-    compare: compare
-
+    compare: compare,
+    cache() {
+        return (target, key, descr) => {
+            const existed = descr.value;
+            const cacheSymbol = Symbol("cache");
+            descr.value = function (id) {
+                if (!this[cacheSymbol]) this[cacheSymbol] = {};
+                return this[cacheSymbol][id] ||
+                    (this[cacheSymbol][id] = existed.call(this, id))
+            };
+            return descr;
+        }
+    },
+    crc32(value) {
+        return crc32.str(JSON.stringify(value));
+    },
 };

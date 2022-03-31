@@ -12,3 +12,5 @@ export {utc, utcToday, Duration, DateTime} from "./helpers/utc";
 export {bind} from "bind-decorator";
 export {EventEmitter, EventListener, EventListenerBase} from "./helpers/event-emitter";
 export {ResolvablePromise} from "./helpers/resolvable.promise";
+
+export {compare} from "./helpers/compare";

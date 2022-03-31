@@ -1,36 +1,20 @@
 const Base = Array.from("0123456789@ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz");
 
-const origin = 1500000000000;
-const resolution = 1000;
+const origin = 150000000000;
 
-function tick() {
-    return (+new Date() - origin / resolution) >>> 0;
-}
-
-const buffer = new Uint8Array(8);
-function random() {
-    if ('crypto' in globalThis){
-        let res = '';
-        globalThis.crypto.getRandomValues(buffer);
-        for (let num of buffer) {
-            res = Base[num >> 7] + Base[num % 64] + res;
-        }
-        return res;
-    }
-}
-
-function encode(value: number): string {
+export function ulid() {
+    let value = +new Date() - origin;
     let res = "";
-    if (value == 0)
-        return Base[0];
     while (value > 0) {
         const mod = value % 64;
         res = Base[mod] + res;
-        value >>= 7;
+        value = (value - mod) / 64;
+    }
+    value = Math.random() * 64;
+    for (let i = 0; i < 8; i++) {
+        const mod = value >>> 0;
+        res += Base[mod];
+        value = (value % 1) * 64;
     }
     return res;
-}
-
-export function ulid() {
-    return encode(tick()) + random();
 }

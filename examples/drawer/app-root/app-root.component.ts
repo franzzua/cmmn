@@ -9,7 +9,6 @@ import {DrawingFigure, DrawingFigureFactory} from "../drawer/model";
 import {ObservableMap} from "cellx-collections";
 import { Computed } from "cellx-decorators";
 
-
 @Injectable(true)
 @component({name: 'app-root', template, style})
 export class AppRootComponent extends HtmlComponent<IState, IEvents> implements IEvents {

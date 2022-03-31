@@ -12,9 +12,13 @@ function __decorate(decorators, target, key, desc) {
 function __exportStar(m, exports) {
     for (var p in m) if (p !== "default" && !exports.hasOwnProperty(p)) exports[p] = m[p];
 }
+function __param(paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+}
 
 Object.assign(globalThis, {
     __decorate,
     __metadata: Reflect.metadata,
-    __exportStar
+    __exportStar,
+    __param
 });

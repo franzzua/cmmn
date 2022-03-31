@@ -10,11 +10,11 @@
   ],
   "type": "module",
   "main": "./dist/index.js",
-  "typings": "./dist/typings/index.d.ts",
+  "typings": "index.d.ts",
   "typesVersions": {
     "*": {
-      "/": [
-        "dist/typings/index.ts"
+      "index.d.ts": [
+        "dist/typings/index.d.ts"
       ]
     }
   },
@@ -29,7 +29,8 @@
     "bundle": "cmmn bundle --watch"
   },
   "devDependencies": {
-    "@cmmn/tools": "^1.4.14"
+    "@cmmn/tools": "^1.4.14",
+    "crc-32": "1.x.x"
   },
   "dependencies": {
     "@types/luxon": "2.x.x",

@@ -1,5 +1,6 @@
 import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
+import image from "rollup-plugin-img";
 import {terser} from "rollup-plugin-terser"
 import {visualizer} from 'rollup-plugin-visualizer';
 import styles from "rollup-plugin-styles";
@@ -12,6 +13,7 @@ import path from "path";
 import html from '@open-wc/rollup-plugin-html';
 import json from '@rollup/plugin-json';
 import alias from '@rollup/plugin-alias';
+import replace from '@rollup/plugin-replace';
 
 /**
  * @typedef {import(rollup).RollupOptions} RollupOptions
@@ -29,6 +31,7 @@ export class ConfigCreator {
      *     external: string[],
      *     stats: boolean,
      *     name: string,
+     *     styles: 'modules' | null,
      *     outDir: string,
      *     html: string,
      *     browser: boolean,
@@ -80,7 +83,7 @@ export class ConfigCreator {
             dir: this.outDir,
             sourcemap: true,
             format: module,
-            globals: Object.fromEntries(this.options.external.map(x => [x,x])),
+            globals: Array.isArray(this.options.external) ? Object.fromEntries(this.options.external.map(x => [x, x])) : this.options.external,
             name: this.options.global ?? 'global',
         }));
     }
@@ -125,6 +128,10 @@ export class ConfigCreator {
 
     get plugins() {
         const result = [
+            replace({
+                'process.env.NODE_ENV': JSON.stringify('development'),
+                preventAssignment: true
+            }),
             nodeResolve({
                 browser: this.options.browser,
                 dedupe: this.options.dedupe || []
@@ -136,11 +143,26 @@ export class ConfigCreator {
                 ]
             }),
             builtins(),
-            styles({
-                mode: "emit",
+            styles(this.options.styles === 'modules' ? {
+                mode: [
+                    "inject",
+                    {container: "head", singleTag: true, prepend: true, attributes: {id: "global"}},
+                ],
+                modules: true,
+                namedExports: false,
+                autoModules: true,
+            }: {
+                mode: "emit"
+            }),
+            image({
+                output: `/assets`, // default the root
+                extensions: /\.(png|jpg|jpeg|gif)$/, // support png|jpg|jpeg|gif|svg, and it's alse the default value
+                limit: 8192,  // default 8192(8k)
+                exclude: 'node_modules/**'
             }),
             string({
-                include: /\.(html|svg|less|css)$/,
+                include: /\.(html|svg|less)$/,
+                exclude: /\.module\.css/
             }),
             json(),
 
@@ -176,6 +198,14 @@ export class ConfigCreator {
         return result;
     }
 
+    getExternals() {
+        if (!this.options.external)
+            return [];
+        if (Array.isArray(this.options.external))
+            return this.options.external.map(s => new RegExp(s));
+        return Object.keys(this.options.external).map(s => new RegExp(s));
+    }
+
     /**
      * @returns {RollupOptions[]}
      */
@@ -188,23 +218,27 @@ export class ConfigCreator {
         });
         if (this.options.external && typeof this.options.external === "string")
             this.options.external = [this.options.external]
-        console.log(this.options);
+        console.log(this.options.name, this.options);
         return [{
             input: {
                 [this.options.name]: path.join(this.root, this.options.input)
             },
             output: this.output,
-            external: (this.options.external || []).map(s => new RegExp(s)),
+            external: this.getExternals(),
             onwarn(warning) {
-                switch (warning.code){
+                switch (warning.code) {
                     case 'CIRCULAR_DEPENDENCY':
                         return;
                     case 'THIS_IS_UNDEFINED':
                         console.log(`${warning.message} at`);
                         console.log(`\t${warning.id}`);
                         break;
+                    case 'PLUGIN_WARNING':
+                        console.log(`${warning.message} at`);
+                        console.log(`\t${warning.id}`);
+                        break;
                     default:
-                        console.warn(`\t(!) ${warning.message}`)
+                        console.warn(`\t${warning.code}(!) ${warning.message}`)
                 }
 
             },

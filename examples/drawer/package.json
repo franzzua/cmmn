@@ -24,8 +24,8 @@
     "@cmmn/sync": "^1.4.14",
     "@cmmn/tools": "^1.4.14",
     "@cmmn/ui": "^1.4.14",
-    "cellx-collections": "^1.0.3",
-    "cellx-decorators": "^1.6.3",
+    "cellx-collections": "1.x.x",
+    "cellx-decorators": "1.x.x",
     "fastify": "^3.27.1"
   },
   "author": "",
