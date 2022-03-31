@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/examples-drawer",
-  "version": "1.4.14",
+  "version": "1.4.15",
   "publishConfig": {
     "access": "public",
     "registry": "none"
@@ -17,13 +17,13 @@
   },
   "type": "module",
   "devDependencies": {
-    "@cmmn/app": "^1.4.14",
-    "@cmmn/core": "^1.4.14",
-    "@cmmn/domain": "^1.4.14",
-    "@cmmn/server": "^1.4.14",
-    "@cmmn/sync": "^1.4.14",
-    "@cmmn/tools": "^1.4.14",
-    "@cmmn/ui": "^1.4.14",
+    "@cmmn/app": "^1.4.15",
+    "@cmmn/core": "^1.4.15",
+    "@cmmn/domain": "^1.4.15",
+    "@cmmn/server": "^1.4.15",
+    "@cmmn/sync": "^1.4.15",
+    "@cmmn/tools": "^1.4.15",
+    "@cmmn/ui": "^1.4.15",
     "cellx-collections": "1.x.x",
     "cellx-decorators": "1.x.x",
     "fastify": "^3.27.1"
