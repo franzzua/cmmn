@@ -1,5 +1,5 @@
 import {IFactory} from "../shared/factory";
-import {AsyncQueue, Injectable} from "@cmmn/core";
+import {AsyncQueue, Fn, Injectable} from "@cmmn/core";
 import {ModelAction, ModelPath, WorkerAction, WorkerMessage, WorkerMessageType} from "../shared/types";
 import {Model} from "./model";
 import {BaseStream} from "../streams/base.stream";
@@ -21,6 +21,7 @@ export class WorkerEntry {
                     if (!model)
                         throw new Error(`Model not found at path ${path.join(':')}`)
                     model.$state.subscribe((err, evt) => {
+                        model.$version = Fn.ulid();
                         const state = evt.data.value;
                         this.postMessage({
                             path,

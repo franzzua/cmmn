@@ -146,9 +146,11 @@ export class ConfigCreator {
             styles(this.options.styles === 'modules' ? {
                 mode: [
                     "inject",
-                    {container: "head", singleTag: true, prepend: true, attributes: {id: "global"}},
+                    {container: "head", prepend: true, attributes: {id: "global"}},
                 ],
-                modules: true,
+                modules: {
+                    failOnWrongOrder: true
+                },
                 namedExports: false,
                 autoModules: true,
             }: {
