@@ -10,6 +10,6 @@
     "sync",
     "examples/*"
   ],
-  "version": "1.4.16",
+  "version": "1.4.17",
   "npmClient": "npm"
 }
