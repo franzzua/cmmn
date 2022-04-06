@@ -14,7 +14,9 @@ import html from '@open-wc/rollup-plugin-html';
 import json from '@rollup/plugin-json';
 import alias from '@rollup/plugin-alias';
 import replace from '@rollup/plugin-replace';
+import postCSS from "rollup-plugin-postcss"
 
+import flexbugs from 'postcss-flexbugs-fixes';
 /**
  * @typedef {import(rollup).RollupOptions} RollupOptions
  * @typedef {import(rollup).OutputOptions} OutputOptions
@@ -143,17 +145,20 @@ export class ConfigCreator {
                 ]
             }),
             builtins(),
-            styles(this.options.styles === 'modules' ? {
+            this.options.styles === 'modules' ? postCSS({
                 mode: [
                     "inject",
                     {container: "head", prepend: true, attributes: {id: "global"}},
                 ],
+                plugins: [
+                    flexbugs,
+                ],
                 modules: {
-                    failOnWrongOrder: true
+                    root: ''
                 },
                 namedExports: false,
                 autoModules: true,
-            }: {
+            }) : styles({
                 mode: "emit"
             }),
             image({

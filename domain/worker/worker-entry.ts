@@ -40,41 +40,38 @@ export class WorkerEntry {
                     break;
                 case WorkerMessageType.State: {
                     const model = this.getModel(message.path);
-                    model.$state(message.state);
-                    model.$version = message.version;
+                        model.$remoteSetter = true;
+                        model.$state(message.state);
+                        model.$version = message.version;
+                        model.$remoteSetter = false;
                     break;
                 }
-                case WorkerMessageType.Action:
-                    this.Action(message);
-
+                case WorkerMessageType.Action: {
+                    const model = this.getModel<any, any>(message.path);
+                    this.Action(model, message).then(response => {
+                        return ({response: (response)});
+                    })
+                        .catch(error => {
+                            console.error(error);
+                            return ({error: ('domain error')});
+                        })
+                        .then(responseOrError => {
+                            this.postMessage({
+                                type: WorkerMessageType.Response,
+                                actionId: message.actionId,
+                                version: model.$version,
+                                ...responseOrError
+                            });
+                        });
                     break;
+                }
             }
         })
     }
 
-    private asyncQueue = new AsyncQueue();
 
-    private Action(action: WorkerAction) {
-        const model = this.getModel<any, any>(action.path);
-        const result = this.asyncQueue.Invoke(() => {
-            model.$version = action.version;
-            return model.Actions[action.action](...action.args);
-        });
-        result.then(response => {
-            return ({response: (response)});
-        })
-            .catch(error => {
-                console.error(error);
-                return ({error: ('domain error')});
-            })
-            .then(responseOrError => {
-                this.postMessage({
-                    type: WorkerMessageType.Response,
-                    actionId: action.actionId,
-                    version: model.$version,
-                    ...responseOrError
-                });
-            });
+    private Action(model: Model<any>, action: WorkerAction) {
+        return model.Actions[action.action](...action.args);
     }
 
     private postMessage(message: WorkerMessage["data"]) {

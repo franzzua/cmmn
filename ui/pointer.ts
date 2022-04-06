@@ -16,7 +16,7 @@ useCustomHandler((node, name) => {
     }
 });
 
-export type RelativePointerEvent = { event: PointerEvent, point: IPoint };
+export type RelativePointerEvent<TEvent = PointerEvent> = { event: TEvent, point: IPoint };
 
 export type PointerEvents = {
     move: RelativePointerEvent,
@@ -24,6 +24,7 @@ export type PointerEvents = {
     up: RelativePointerEvent,
     enter: RelativePointerEvent,
     leave: RelativePointerEvent,
+    wheel: RelativePointerEvent<WheelEvent>,
     click: RelativePointerEvent,
     dblclick: RelativePointerEvent,
     directClick: RelativePointerEvent
@@ -127,6 +128,7 @@ export class PointerListener extends EventListener<PointerEvents> {
         enter: event => this.emit('enter', {event, point: this.getRelativePoint(event)}),
         leave: event => this.emit('leave', {event, point: this.getRelativePoint(event)}),
         click: event => this.emit('click', {event, point: this.getRelativePoint(event)}),
+        wheel: event => this.emit('wheel', {event, point: this.getRelativePoint(event)}),
         dblclick: event => this.emit('dblclick', {event, point: this.getRelativePoint(event)}),
         directClick: this.directClickListener,
         drag: this.dragListener,
@@ -140,6 +142,9 @@ export class PointerListener extends EventListener<PointerEvents> {
             case 'up':
             case 'move':
                 this.root.addEventListener('pointer' + eventName, this.emitters[eventName]);
+                break;
+            case 'wheel':
+                this.root.addEventListener('wheel', this.emitters[eventName]);
                 break;
             case 'click':
                 this.root.addEventListener('mouseClick', this.emitters[eventName]);
@@ -165,6 +170,9 @@ export class PointerListener extends EventListener<PointerEvents> {
             case 'up':
             case 'move':
                 this.root.removeEventListener('pointer' + eventName, this.emitters[eventName]);
+                break;
+            case 'wheel':
+                this.root.removeEventListener('wheel', this.emitters[eventName]);
                 break;
             case 'click':
                 this.root.removeEventListener('mouseClick', this.emitters[eventName]);

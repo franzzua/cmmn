@@ -2,6 +2,7 @@ import {ulid} from "./ulid";
 import {Cell} from "cellx";
 import * as crc32 from "crc-32";
 import {compare} from "./compare";
+import {deepAssign} from "./deepAssign";
 //
 // import { generator, BASE } from "flexid";
 // const ulid = generator(BASE["58"]);
@@ -47,6 +48,7 @@ export const Fn = {
      * @returns {boolean}
      */
     compare: compare,
+    deepAssign: deepAssign,
     cache() {
         return (target, key, descr) => {
             const existed = descr.value;

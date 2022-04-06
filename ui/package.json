@@ -7,7 +7,7 @@
   },
   "type": "module",
   "main": "./dist/index.js",
-  "typings": "./dist/typings/index.d.ts",
+  "typings": "typings.d.ts",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -17,7 +17,7 @@
   "module": "dist/index.js",
   "typesVersions": {
     "*": {
-      ".": [
+      "typings.d.ts": [
         "dist/typings/index.d.ts"
       ]
     }

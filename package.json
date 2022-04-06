@@ -3,7 +3,7 @@
   "version": "1.2.3",
   "description": "",
   "scripts": {
-    "bootstrap": "npm i && lerna bootstrap --hoist",
+    "bootstrap": "lerna bootstrap --hoist",
     "compile": "cmmn compile -b --watch",
     "bundle": "cmmn bundle -b --watch",
     "prod": "cmmn bundle -b --prod",

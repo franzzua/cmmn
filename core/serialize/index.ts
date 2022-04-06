@@ -6,6 +6,7 @@ const packr = new Packr({
 }) as Packr & {offset: number;};
 
 export function registerSerializer<T, U>(type: number, classFunction: Function, write: (value: T) => U, read: (value: U) => T) {
+    // console.log(type, classFunction, globalThis);
     addExtension({
         Class: classFunction,
         write: write,

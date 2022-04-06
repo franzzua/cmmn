@@ -8,7 +8,7 @@ export class VersionState<T> extends Cell<T> {
     public Version: string;
 
     constructor() {
-        super(undefined);
+        super(null);
     }
 
     public up() {

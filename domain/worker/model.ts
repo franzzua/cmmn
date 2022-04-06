@@ -4,11 +4,15 @@ import {Fn} from "@cmmn/core";
 
 export abstract class Model<TState, TActions extends ModelAction = {}> {
 
+    /** @internal **/
     public $version = Fn.ulid();
+    /** @internal **/
+    public $remoteSetter = false;
     public $state = cellx(() => this.State, {
         put: (cell, value) => {
             this.State = value;
-        }
+        },
+        compareValues: Fn.compare
     })
 
     public get State(): Readonly<TState> {
