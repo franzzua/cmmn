@@ -4,8 +4,8 @@ import {GlobalStaticState} from "./component";
 import {listenSvgConnectDisconnect} from "./listen-svg-connect-disconnect";
 import {HtmlComponent} from "./htmlComponent";
 import {BoundRectListener} from "./boundRectListener";
-import { cellx, ICellx } from "cellx";
-import { Fn } from "@cmmn/core";
+import {cellx, ICellx} from "cellx";
+import {Fn} from "@cmmn/core";
 
 export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
     static Name: string;
@@ -44,13 +44,17 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
         const actions = (this.constructor as typeof HtmlComponentBase).Actions ?? [];
         for (let action of actions) {
             // TODO: unsubscribe
-            const cell = cellx(() => action.filter.call(this),{
+            const cell = cellx(() => action.filter.call(this), {
                 compareValues: Fn.compare
             });
-            const list = () => action.action.call(this);
-            cell.subscribe(list);
-            this.onDispose = () => cell.unsubscribe(list);
-            action.action.call(this);
+            const invokeAction = async (err, evt) => {
+                if (action.unsusbscr && typeof action.unsusbscr === "function")
+                    action.unsusbscr();
+                action.unsusbscr = await action.action.call(this, evt.data.value);
+            }
+            cell.subscribe(invokeAction);
+            this.onDispose = () => cell.unsubscribe(invokeAction);
+            action.unsusbscr = action.action.call(this, action.filter.call(this));
         }
     }
 
@@ -59,8 +63,9 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
         this.onDisposeSet.clear();
     }
 
-    protected set onDispose(listener) {
-        this.onDisposeSet.add(listener);
+    set onDispose(listener) {
+        if (listener && typeof listener === "function")
+            this.onDisposeSet.add(listener);
     }
 
     get State(): TState {
@@ -69,9 +74,9 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
 
     private actionsCell: ICellx<void>;
     /** @internal **/
-    static Effects: { filter, effect }[];
+    static Effects: { filter, effect, unsubscr?: Function }[];
     /** @internal **/
-    static Actions: { filter, action }[];
+    static Actions: { filter, action, unsusbscr?: Function }[];
     /** @internal **/
     public EffectValues = new Map<Function, any>();
     /** @internal **/

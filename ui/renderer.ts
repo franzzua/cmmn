@@ -93,7 +93,9 @@ export class Renderer<TState, TEvents extends IEvents> {
                         continue;
                 }
                 this.component.EffectValues.set(effect.effect, value);
-                effect.effect.call(this.component, value, this.state);
+                if (effect.unsubscr && typeof effect.unsubscr === "function")
+                    effect.unsubscr();
+                effect.unsubscr = await effect.effect.call(this.component, value, this.state);
             }
         }
     }
