@@ -2,6 +2,7 @@
   "packages": [
     "app",
     "core",
+    "cell",
     "domain",
     "server",
     "tools",

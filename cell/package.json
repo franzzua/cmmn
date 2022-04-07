@@ -1,0 +1,46 @@
+{
+  "name": "@cmmn/cell",
+  "version": "1.4.19",
+  "description": "pull-based state flow",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "typings": "index.d.ts",
+  "typesVersions": {
+    "*": {
+      "index.d.ts": [
+        "dist/typings/index.d.ts"
+      ]
+    }
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "scripts": {
+    "build": "cmmn compile --watch",
+    "bundle": "cmmn bundle --watch"
+  },
+  "devDependencies": {
+    "@cmmn/tools": "^1.4.17"
+  },
+  "dependencies": {
+    "@cmmn/core": "^1.4.19"
+  },
+  "author": "",
+  "license": "ISC",
+  "gitHead": "2dc32e552dd5877be0ceb18f64cb896f13f15303",
+  "cmmn": {
+    "index": {
+      "input": "dist/esm/index.js",
+      "module": "es,cjs"
+    }
+  }
+}
