@@ -53,7 +53,11 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
                 action.unsusbscr = await action.action.call(this, evt.data.value);
             }
             cell.subscribe(invokeAction);
-            this.onDispose = () => cell.unsubscribe(invokeAction);
+            this.onDispose = () => {
+                if (action.unsusbscr && typeof action.unsusbscr === "function")
+                    action.unsusbscr();
+                cell.unsubscribe(invokeAction);
+            }
             action.unsusbscr = action.action.call(this, action.filter.call(this));
         }
     }
@@ -63,14 +67,11 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
         this.onDisposeSet.clear();
     }
 
-    set onDispose(listener) {
+    public set onDispose(listener) {
         if (listener && typeof listener === "function")
             this.onDisposeSet.add(listener);
     }
 
-    get State(): TState {
-        return null;
-    }
 
     private actionsCell: ICellx<void>;
     /** @internal **/

@@ -113,7 +113,7 @@ export class PointerListener extends EventListener<PointerEvents> {
 
     @bind
     private async directClickListener(downEvent: RelativePointerEvent) {
-        const upEvent = await this.onceAsync('up');
+        const upEvent = await this.onceAsync('up', {Priority: Number.POSITIVE_INFINITY});
         if (upEvent.event.timeStamp - downEvent.event.timeStamp > 400)
             return;
         if (upEvent.event.x - downEvent.event.x > 1)

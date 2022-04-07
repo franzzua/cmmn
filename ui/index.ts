@@ -1,9 +1,9 @@
 import {component, GlobalStaticState} from "./component";
-import {HtmlComponent} from "./htmlComponent";
+import {HtmlComponent, AsyncHtmlComponent} from "./htmlComponent";
 import "./styleHandler"
 import {Renderer} from "./renderer";
 
-export {HtmlComponent, component};
+export {HtmlComponent, component, AsyncHtmlComponent};
 
 export function setDefaultContainer(container: { get(target): any; }) {
     GlobalStaticState.DefaultContainer = container;

@@ -3,7 +3,7 @@ import {DrawingFigureBase} from "../model/drawing-figure-base";
 import {DrawingFigure} from "../model";
 import {DrawingItemType} from "../types";
 
-export class BaseFigurePresentor<TState = any, TEvents extends IEvents = any> extends HtmlComponent<TState, TEvents> {
+export abstract class BaseFigurePresentor<TState = any, TEvents extends IEvents = any> extends HtmlComponent<TState, TEvents> {
 
     public mode: string;
 

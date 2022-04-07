@@ -75,7 +75,7 @@ export class Renderer<TState, TEvents extends IEvents> {
     }
 
 
-    private state: TState;
+    private state: TState ;
 
     async _render() {
         this.template.call(this.component, this.html, this.state, this.handlerProxy);

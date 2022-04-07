@@ -39,7 +39,7 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
         super.connectedCallback();
     }
 
-    private _render = (err, event) => this.render(event.data.value);
+    protected _render = (err, event) => this.render(event.data.value);
 
     protected async render(state) {
         if (this.isStopped || !state)
@@ -48,7 +48,7 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
         this.$render.set(this.$render.get() + 1);
     }
 
-    private isStopped = true;
+    protected isStopped = true;
 
     public disconnectedCallback() {
         if (HtmlComponent.removing)
@@ -58,11 +58,23 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
         this.$state.unsubscribe(this._render);
     }
 
-    $state: Cell<TState> = new Cell(() => this.isStopped ? null : this.State, {
+    $state: Cell<TState | Promise<TState>> = new Cell(() => this.isStopped ? null : this.State, {
         compareValues: Fn.compare
     });
+
+    abstract get State(): TState;
 
     public $render: Cell<number> = new Cell(0);
 
 }
 
+export abstract class AsyncHtmlComponent<TState, TEvents extends IEvents> extends HtmlComponent<TState, TEvents>{
+
+    abstract patchState(state: TState): AsyncGenerator<TState>;
+    protected _render = async (err, event) => {
+        for await (let state of this.patchState(event.data.value)){
+            this.render(state);
+        }
+    }
+
+}
