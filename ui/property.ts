@@ -37,7 +37,8 @@ export function property(attribute?: string): PropertyDecorator {
                 const cell = getOrCreateCell(this.element, name, () => value);
                 if (!Fn.compare(value, cell.get()))
                     cell.set(value);
-            }
+            },
+            configurable: true
         });
     }
 }

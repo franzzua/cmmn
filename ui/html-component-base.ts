@@ -77,7 +77,7 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
     /** @internal **/
     public ActionValues = new Map<Function, any>();
 
-    public static effect<TState>(filter: (state: TState) => any = () => null): MethodDecorator {
+    public static effect<TState>(filter: (this: any, state: TState) => any = () => null): MethodDecorator {
         return (target: { constructor: typeof HtmlComponent }, key, descr) => {
             if (!Object.getOwnPropertyDescriptor(target.constructor, 'Effects'))
                 target.constructor.Effects = [];

@@ -13,7 +13,13 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
 
     static removing = false;
 
-    public connectedCallback() {
+    /**
+     * Removes children element and sets into this.Children
+     * So you can render it somewhere inside element
+     */
+    private DetachChildren(){
+        // Hack: if there are some HtmlComponents in Children
+        // their connectedCallbacks will invoke on removeChild (strange but in every browser)
         if (HtmlComponent.removing)
             return;
         if (this.Children.length) {
@@ -23,18 +29,22 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
             }
             HtmlComponent.removing = false;
         }
+    }
+
+    public connectedCallback() {
+        this.DetachChildren();
         this.isStopped = false;
-        this.$state.subscribe(this.render);
-        this.renderer.state = this.$state.get();
-        this.renderer._render();
+        this.$state.subscribe(this._render);
+        this.render(this.$state.get());
         super.connectedCallback();
     }
 
-    @bind
-    protected async render(err, event) {
-        if (this.isStopped)
+    private _render = (err, event) => this.render(event.data.value);
+
+    protected async render(state) {
+        if (this.isStopped || !state)
             return;
-        await this.renderer.render(event.data.value);
+        await this.renderer.render(state);
         this.$render.set(this.$render.get() + 1);
     }
 
@@ -45,7 +55,7 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
             return;
         super.disconnectedCallback();
         this.isStopped = true;
-        this.$state.unsubscribe(this.render);
+        this.$state.unsubscribe(this._render);
     }
 
     $state: Cell<TState> = new Cell(() => this.isStopped ? null : this.State, {
