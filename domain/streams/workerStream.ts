@@ -1,5 +1,5 @@
-import {Fn} from "@cmmn/core";
-import {Cell, cellx} from "cellx";
+import {Fn, ResolvablePromise} from "@cmmn/core";
+import {cellx} from "cellx";
 import {Stream} from "./stream";
 import {Action, ModelPath, WorkerMessage, WorkerMessageType} from "../shared/types";
 import {BaseStream} from "./base.stream";
@@ -10,6 +10,15 @@ export class WorkerStream extends Stream {
     constructor(private workerUrl: string) {
         super();
         this.BaseStream.on('message', message => {
+            if (message.type == WorkerMessageType.Response) {
+                const promise = this.responses.get(message.actionId);
+                this.responses.delete(message.actionId);
+                if (message.error)
+                    promise?.reject(message.error);
+                else
+                    promise?.resolve(message.response);
+                return;
+            }
             if (message.type !== WorkerMessageType.State)
                 return;
             const cell = this.models.get(this.pathToStr(message.path));
@@ -29,6 +38,7 @@ export class WorkerStream extends Stream {
     }
 
     private models = new Map<string, VersionState<any>>();
+    private responses = new Map<string, ResolvablePromise<void>>();
 
     async Invoke(action: Action) {
         const actionId = Fn.ulid();
@@ -39,19 +49,7 @@ export class WorkerStream extends Stream {
             version: null,
             actionId
         });
-        return new Promise((resolve, reject) => {
-            const unsubscr = this.BaseStream.on('message', message => {
-                if (message.type !== WorkerMessageType.Response)
-                    return;
-                if (message.actionId !== actionId)
-                    return;
-                if (message.error)
-                    reject(message.error);
-                else
-                    resolve(message.response);
-                unsubscr();
-            })
-        });
+        return this.responses.getOrAdd(actionId, () => new ResolvablePromise());
     }
 
     getCell<T>(path: ModelPath) {

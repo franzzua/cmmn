@@ -1,12 +1,11 @@
 import {component, GlobalStaticState} from "./component";
 import {HtmlComponent} from "./htmlComponent";
-import {Fn} from "@cmmn/core";
 import "./styleHandler"
-import { Renderer } from "./renderer";
+import {Renderer} from "./renderer";
 
 export {HtmlComponent, component};
 
-export function setDefaultContainer(container: {get(target): any;}) {
+export function setDefaultContainer(container: { get(target): any; }) {
     GlobalStaticState.DefaultContainer = container;
 }
 
@@ -14,6 +13,7 @@ export * from "./types";
 export {property, propertySymbol} from "./property";
 export {PointerListener, IPoint, PointerEvents} from "./pointer"
 export {Keyboard, KeyboardListener} from "./keyboard";
+export {AnimationFrame} from "./animationFrameListener";
 //
 // const listeners = globalThis['listeners'] = new Map<string, Map<Function, EventTarget>>();
 //

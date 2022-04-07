@@ -106,6 +106,8 @@ export class PointerListener extends EventListener<PointerEvents> {
                 start: downEvent.point,
                 isEnd: true,
             });
+        }, {
+            Priority: Number.POSITIVE_INFINITY
         });
     }
 

@@ -1,31 +1,53 @@
-import {EventListener} from "@cmmn/core";
-
-export class AnimationFrameListener extends EventListener<{
-    frame: void
-}> {
-
-    public static Instance = new AnimationFrameListener();
+class AnimationFrameListener {
 
     constructor() {
-        super(globalThis);
+    }
+
+    private listeners = new Set<Function>();
+    private oneTimeListeners = new Set<Function>();
+    private isActive = false;
+
+    public on(listener: Function){
+        this.listeners.add(listener);
+        if (!this.isActive){
+            this.active();
+        }
+    }
+
+    active(){
+        this.isActive = true;
         requestAnimationFrame(this.handler);
     }
 
-    private subscribed = false;
+    public onceAsync(): Promise<void> {
+        if (!this.isActive)
+            this.active();
+        return new Promise<void>(resolve => this.oneTimeListeners.add(resolve));
+    }
+    public off(listener: Function){
+        this.listeners.delete(listener);
+        if (!this.listeners.size)
+            this.isActive = false;
+    }
 
     private handler = () => {
-        this.emit('frame');
-        if (this.subscribed)
-            requestAnimationFrame(this.handler);
+        if (!this.isActive)
+            return;
+        for (const fn of this.listeners) {
+            fn();
+        }
+        for (const fn of this.oneTimeListeners) {
+            fn();
+        }
+        this.oneTimeListeners.clear();
+        if (!this.listeners.size) {
+            this.isActive = false;
+            return;
+        }
+        requestAnimationFrame(this.handler);
     };
 
-    protected subscribe(eventName: keyof { frame: void }) {
-        this.subscribed = true;
-        requestAnimationFrame(this.handler);
-    }
-
-    protected unsubscribe(eventName: keyof { frame: void }) {
-        this.subscribed = false;
-    }
 
 }
+
+export const AnimationFrame = new AnimationFrameListener();

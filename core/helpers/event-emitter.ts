@@ -3,21 +3,22 @@ import {bind} from "bind-decorator";
 export abstract class EventListenerBase<TEvents extends {
     [key in string]: any | void;
 }> {
-    public abstract on<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void): () => void;
+    public abstract on<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void, options?: EventListenerOptions): () => void;
 
-    public abstract off<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void): void;
+    public abstract off<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void, options?: EventListenerOptions): void;
 
-    public once<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void) {
+    public once<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void
+                                                  , options: EventListenerOptions = DefaultListenerOptions) {
         const onceListener = data => {
             listener(data);
-            this.off(eventName, onceListener);
+            this.off(eventName, onceListener, options);
         };
-        this.on(eventName, onceListener);
-        return () => this.off(eventName, onceListener);
+        this.on(eventName, onceListener, options);
+        return () => this.off(eventName, onceListener, options);
     }
 
-    public onceAsync<TEventName extends keyof TEvents>(eventName: TEventName): Promise<TEvents[TEventName]> {
-        return new Promise(resolve => this.once(eventName, resolve));
+    public onceAsync<TEventName extends keyof TEvents>(eventName: TEventName, options: EventListenerOptions = DefaultListenerOptions): Promise<TEvents[TEventName]> {
+        return new Promise(resolve => this.once(eventName, resolve, options));
     }
 }
 
@@ -25,7 +26,7 @@ export type EventListenerOptions = {
     Priority: number,
 }
 const DefaultListenerOptions: EventListenerOptions = {
-    Priority: Number.NEGATIVE_INFINITY
+    Priority: 0
 }
 
 export type StoppableEvent<T> = T & {
@@ -40,20 +41,21 @@ export class EventEmitter<TEvents extends {
 
     public on<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName], stop?: Function) => void,
                                                 options: EventListenerOptions = DefaultListenerOptions) {
-        this.listeners.getOrAdd(eventName, () => {
+        const arr = this.listeners.getOrAdd(eventName, () => {
             this.subscribe(eventName);
             return [];
-        }).push({listener, options: options});
+        });
+        arr.push({listener, options: options});
+        arr.sort((a, b) => b.options.Priority - a.options.Priority);
         return () => this.off(eventName, listener);
     }
 
     public off<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName], stop?: Function) => void) {
         const set = this.listeners.getOrAdd(eventName, () => []);
-        if (set.length == 1) {
+        set.removeAll(x => x.listener === listener);
+        if (set.length == 0) {
             this.listeners.delete(eventName);
             this.unsubscribe(eventName);
-        } else {
-            set.removeAll(x => x.listener === listener);
         }
     }
 
@@ -65,11 +67,15 @@ export class EventEmitter<TEvents extends {
 
     @bind
     public emit<TEventName extends keyof TEvents>(eventName: TEventName, data?: TEvents[TEventName]) {
+        const arr = this.listeners.get(eventName);
+        if (!arr)
+            return;
         let isStopped = false;
-        for (const cb of (this.listeners.get(eventName) ?? []).orderBy(x => x.options.Priority, true)) {
+        const stopAction = () => isStopped = true;
+        for (let i = 0; i < arr.length; i++) {
             if (isStopped)
                 return;
-            cb.listener(data, () => isStopped = true);
+            arr[i].listener(data, stopAction);
         }
     }
 
@@ -93,13 +99,13 @@ export class MergeListener<TEvents extends {
         super();
     }
 
-    on<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void): () => void {
-        const unsubscrs = this.emitters.map(x => x.on(eventName, listener));
+    on<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void, options: EventListenerOptions = DefaultListenerOptions): () => void {
+        const unsubscrs = this.emitters.map(x => x.on(eventName, listener, options));
         return () => unsubscrs.forEach(f => f());
     }
 
-    off<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void): void {
-        this.emitters.map(x => x.off(eventName, listener));
+    off<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void, options: EventListenerOptions = DefaultListenerOptions): void {
+        this.emitters.map(x => x.off(eventName, listener, options));
     }
 
 }

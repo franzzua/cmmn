@@ -4,7 +4,7 @@ import {IEvents, ITemplate} from "./types";
 import {EventHandlerProvider} from "./eventHandlerProvider";
 import {HtmlComponentBase} from "./html-component-base";
 import {getRender, getTemplate} from "./template";
-import {AnimationFrameListener} from "./animationFrameListener";
+import {AnimationFrame} from "./animationFrameListener";
 
 export class Renderer<TState, TEvents extends IEvents> {
     // private stateCell: Cell<TState> = this.component.$state ?? cellx(() => this.stopped ? null : this.component.State).cell;
@@ -71,7 +71,7 @@ export class Renderer<TState, TEvents extends IEvents> {
             renderer._render();
         }
         Renderer.renderTasks.clear();
-        AnimationFrameListener.Instance.off('frame', Renderer.Render);
+        AnimationFrame.off( Renderer.Render);
     }
 
 
@@ -103,7 +103,7 @@ export class Renderer<TState, TEvents extends IEvents> {
     @bind
     render(state) {
         this.state = state;
-        AnimationFrameListener.Instance.on('frame', Renderer.Render);
+        AnimationFrame.on( Renderer.Render);
         Renderer.renderTasks.add(this);
         this.renderedTask ??= new ResolvablePromise();
         return this.renderedTask;

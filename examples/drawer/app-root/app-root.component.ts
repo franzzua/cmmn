@@ -17,7 +17,7 @@ export class AppRootComponent extends HtmlComponent<IState, IEvents> implements 
         super();
     }
 
-    protected store = this.factory.Root as DrawingProxy;
+    protected store = this.factory.Root as any;
 
     @Computed
     get drawer() {
