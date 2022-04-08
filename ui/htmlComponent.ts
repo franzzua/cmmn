@@ -1,6 +1,6 @@
 import {IEvents} from "./types";
 import {HtmlComponentBase} from "./html-component-base";
-import {Cell} from "cellx";
+import {Cell} from "@cmmn/cell";
 import {bind, Fn} from "@cmmn/core";
 
 export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extends HtmlComponentBase<TState, TEvents> {
@@ -34,12 +34,12 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
     public connectedCallback() {
         this.DetachChildren();
         this.isStopped = false;
-        this.$state.subscribe(this._render);
+        this.$state.on('change', this._render);
         this.render(this.$state.get());
         super.connectedCallback();
     }
 
-    protected _render = (err, event) => this.render(event.data.value);
+    protected _render = ({value}) => this.render(value);
 
     protected async render(state) {
         if (this.isStopped || !state)
@@ -55,11 +55,11 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
             return;
         super.disconnectedCallback();
         this.isStopped = true;
-        this.$state.unsubscribe(this._render);
+        this.$state.off('change', this._render);
     }
 
     $state: Cell<TState | Promise<TState>> = new Cell(() => this.isStopped ? null : this.State, {
-        compareValues: Fn.compare
+        compare: Fn.compare
     });
 
     abstract get State(): TState;
@@ -71,8 +71,8 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
 export abstract class AsyncHtmlComponent<TState, TEvents extends IEvents> extends HtmlComponent<TState, TEvents>{
 
     abstract patchState(state: TState): AsyncGenerator<TState>;
-    protected _render = async (err, event) => {
-        for await (let state of this.patchState(event.data.value)){
+    protected _render = async ({value}) => {
+        for await (let state of this.patchState(value)){
             this.render(state);
         }
     }

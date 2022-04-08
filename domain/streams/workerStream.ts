@@ -1,5 +1,5 @@
 import {Fn, ResolvablePromise} from "@cmmn/core";
-import {cellx} from "cellx";
+import {BaseCell} from "@cmmn/cell";
 import {Stream} from "./stream";
 import {Action, ModelPath, WorkerMessage, WorkerMessageType} from "../shared/types";
 import {BaseStream} from "./base.stream";
@@ -60,18 +60,15 @@ export class WorkerStream extends Stream {
             });
             return new VersionState();
         });
-
-        return cellx<T>(() => cell.get(), {
-            put: (_: any, state: T) => {
-                cell.set(state);
-                // this.postMessage({
-                //     type: WorkerMessageType.State,
-                //     path,
-                //     state,
-                //     version: null,
-                // });
-            }
+        cell.on('change', ({value})=>{
+            this.postMessage({
+                type: WorkerMessageType.State,
+                path,
+                state: value,
+                version: null,
+            });
         })
+        return cell;
     }
 
     private postMessage(msg: WorkerMessage["data"]) {

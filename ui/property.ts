@@ -1,5 +1,5 @@
 import {useCustomHandler} from "@cmmn/uhtml";
-import {Cell} from "cellx";
+import {Cell} from "@cmmn/cell";
 import {ExtendedElement} from "./types";
 import {Fn} from "@cmmn/core";
 import {HtmlComponentBase} from "./html-component-base";

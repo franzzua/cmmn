@@ -1,4 +1,4 @@
-import {cellx,  ICellx} from "cellx";
+import {BaseCell, Cell} from "@cmmn/cell";
 import {Injectable} from "@cmmn/core";
 import {Stream} from "./stream";
 import {IFactory} from "../shared/factory";
@@ -17,13 +17,12 @@ export class DirectStream extends Stream {
         return model.Actions[action.action](...action.args);
     }
 
-    getCell<T>(path: (string | number)[]): ICellx<T> {
-        return cellx<T>(() => {
+    getCell<T>(path: (string | number)[]): BaseCell {
+        const cell = new Cell(() => {
             return this.factory.GetModel(path).State as T;
         }, {
-            put: async (cell, value: T) => {
-                this.factory.GetModel(path).State = value;
-            }
+            put: value => this.factory.GetModel(path).State = value
         });
+        return cell;
     }
 }

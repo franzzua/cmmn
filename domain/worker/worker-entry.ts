@@ -20,9 +20,8 @@ export class WorkerEntry {
                     const model = this.getModel(path);
                     if (!model)
                         throw new Error(`Model not found at path ${path.join(':')}`)
-                    model.$state.subscribe((err, evt) => {
+                    model.$state.on('change', state => {
                         model.$version = Fn.ulid();
-                        const state = evt.data.value;
                         this.postMessage({
                             path,
                             type: WorkerMessageType.State,
@@ -41,7 +40,7 @@ export class WorkerEntry {
                 case WorkerMessageType.State: {
                     const model = this.getModel(message.path);
                         model.$remoteSetter = true;
-                        model.$state(message.state);
+                        model.$state.set(message.state);
                         model.$version = message.version;
                         model.$remoteSetter = false;
                     break;

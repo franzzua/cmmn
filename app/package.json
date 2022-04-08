@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@cmmn/core": "^1.4.19",
+    "@cmmn/cell": "^1.4.19",
     "@cmmn/ui": "^1.4.21",
     "router5": "^8.0.1",
     "router5-plugin-browser": "^8.0.1"

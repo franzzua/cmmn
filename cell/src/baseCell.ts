@@ -1,22 +1,21 @@
-import {EventEmitter} from "@cmmn/core";
-import {CellGraph} from "./cellGraph";
+import {EventEmitter} from "./event-emitter";
 import {Actualizator} from "./actualizator";
 
-export class Cell<T = any> extends EventEmitter<{
+export class BaseCell<T = any> extends EventEmitter<{
     change: { value: T, oldValue: T },
     error: Error,
 }> {
 
     /** @internal **/
     public pull: () => T;
-    private dependencies: Set<Cell<any>>;
-    private reactions: Set<Cell<any>>;
+    dependencies: Set<BaseCell<any>>;
+    private reactions: Set<BaseCell<any>>;
     private isActive = false;
-    private state: CellState = CellState.Actual;
+    state: CellState = CellState.Actual;
     value: T;
     error: Error;
 
-    constructor(value: T | (() => T), protected options?) {
+    constructor(value: T | (() => T)) {
         super();
         if (typeof value === "function") {
             this.pull = value as () => T;
@@ -28,13 +27,10 @@ export class Cell<T = any> extends EventEmitter<{
     }
 
     public get(): T {
-        if (Actualizator.CurrentCell) {
-            Actualizator.CurrentCell.addDependency(this);
-            this.addReaction(Actualizator.CurrentCell);
-        }
+        Actualizator.imCalled(this);
         switch (this.state) {
             case CellState.Dirty:
-                this.actualize();
+                Actualizator.Down(this);
                 break;
         }
         if (this.error)
@@ -43,23 +39,34 @@ export class Cell<T = any> extends EventEmitter<{
     }
 
     public set(value: T) {
-        if (this.value == value)
+        if (this.compare(value, this.value))
             return;
         const oldValue = this.value;
         this.value = value;
+        this.state = CellState.Actual;
         if (this.isActive)
-            this.emit('change', {oldValue, value});
+            this.notifyChange(value, oldValue);
         if (this.reactions) {
             for (let reaction of this.reactions) {
                 reaction.state = CellState.Dirty;
-                Actualizator.Add(reaction);
+                Actualizator.Up(reaction);
             }
         }
     }
 
+    protected compare(newValue: T, oldValue: T){
+        return newValue === oldValue;
+    }
+
+    protected notifyChange(value: T, oldValue: T){
+        const data = {oldValue, value, data: null}
+        data.data = data;
+        this.emit('change', data);
+    }
+
     protected active() {
         this.isActive = true;
-        this.actualize();
+        Actualizator.Down(this);
     }
 
     protected disactive() {
@@ -71,45 +78,34 @@ export class Cell<T = any> extends EventEmitter<{
     }
 
     protected subscribe(eventName: keyof { change: T }) {
-        this.active();
+        if (eventName == 'change')
+            this.active();
     }
 
     protected unsubscribe(eventName: keyof { change: T }) {
-        this.disactive();
+        if (eventName == 'change' && !this.reactions)
+            this.disactive();
     }
 
-    protected actualize() {
-        if (this.state == CellState.Actual)
-            return;
-        const oldDependencies = this.dependencies;
-        this.dependencies = null;
-        Actualizator.Process(this);
-        if (oldDependencies) {
-            for (let oldDependency of oldDependencies) {
-                if (this.dependencies.has(oldDependency))
-                    continue;
-                oldDependency.removeReaction(this);
-            }
-        }
-        this.state = CellState.Actual;
-    }
-
-
-    addDependency(cell: Cell) {
+    addDependency(cell: BaseCell) {
         this.dependencies ??= new Set();
         this.dependencies.add(cell);
     }
 
-    addReaction(cell: Cell) {
+    addReaction(cell: BaseCell) {
         this.reactions ??= new Set();
         this.reactions.add(cell);
     }
 
-    removeReaction(cell: Cell) {
+    removeReaction(cell: BaseCell) {
         this.reactions.delete(cell);
-        if (!this.reactions.size)
-            this.disactive();
+        if (!this.reactions.size) {
+            this.reactions = null;
+            if (!this.listeners.get('change')?.size)
+                this.disactive();
+        }
     }
+
 }
 
 export enum CellState {

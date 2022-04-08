@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+
+    <link rel="stylesheet" type="text/css" href="lib/ceres.css">
+    <style>
+        body {
+            padding: 50px;
+        }
+
+        #bSelectLibrary {
+            line-height: 2.2rem;
+        }
+
+        #tfOutput {
+            display: block;
+            padding: 10px 20px;
+            border: 1px dashed #999;
+            color: #000;
+            font-size: 1.1em;
+        }
+    </style>
+
+</head>
+<body>
+
+<p>
+    <label>
+        Number of layers
+        <input id="tfLayerCount" class="-textfield" type="text" value="10">
+
+<div id="bSetLayerCount">
+    <button class="-btn -btn-primary">10</button>
+    <button class="-btn -btn-primary">20</button>
+    <button class="-btn -btn-primary">30</button>
+    <button class="-btn -btn-danger">50</button>
+    <button class="-btn -btn-danger">100</button>
+    <button class="-btn -btn-danger">1000</button>
+    <button class="-btn -btn-danger">5000</button>
+</div>
+</label>
+</p>
+
+<hr>
+
+<p id="bSelectLibrary">
+    Library
+    <br>
+    <label class="-radiobox"><input type="radio" name="rdbLibrary" value="cmmn" checked><span></span>cmmn</label>
+    <label class="-radiobox"><input type="radio" name="rdbLibrary" value="cellx" checked><span></span>cellx</label>
+    <label class="-radiobox"><input type="radio" name="rdbLibrary" value="vanilla"><span></span>VanillaJS
+        (naive)</label>
+    <label class="-radiobox"><input type="radio" name="rdbLibrary" value="knockout"><span></span>Knockout</label>
+    <label class="-radiobox"><input type="radio" name="rdbLibrary" value="jin-atom"><span></span>$jin.atom</label>
+    <br>
+    <label class="-radiobox"><input type="radio" name="rdbLibrary" value="mol_atom"><span></span>$mol_atom</label>
+    <label class="-radiobox"><input type="radio" name="rdbLibrary" value="reactor"><span></span>Reactor.js</label>
+    <label class="-radiobox"><input type="radio" name="rdbLibrary" value="reactive"><span></span>Reactive.js</label>
+    <br>
+    <label class="-radiobox"><input type="radio" name="rdbLibrary" value="kefir"><span></span>Kefir.js</label>
+    <label class="-radiobox"><input type="radio" name="rdbLibrary" value="mobx"><span></span>MobX</label>
+    <label class="-radiobox"><input type="radio" name="rdbLibrary" value="effector"><span></span>Effector</label>
+</p>
+
+<hr>
+
+<p>
+    <button id="btnRunTest" class="-btn -btn-high -btn-success">Run</button>
+</p>
+
+<hr>
+
+<p>
+    Output
+<pre><output id="tfOutput">&nbsp;</output></pre>
+</p>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/kefir/3.2.0/kefir.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mobx/3.6.2/mobx.umd.min.js"></script>
+<script src="https://unpkg.com/effector@22.1.2/effector.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cellx/1.10.26/cellx.umd.js"></script>
+<script type="module">
+    $('#bSetLayerCount button').click(function () {
+        $('#tfLayerCount').val(this.innerHTML);
+    });
+
+    $('#btnRunTest').click(function () {
+        runTest($('#bSelectLibrary input:checked').val(), parseInt($('#tfLayerCount').val(), 10));
+    });
+
+    function runTest(lib, layerCount) {
+        $('#btnRunTest')[0].disabled = true;
+
+        setTimeout(() => {
+            let report = {};
+
+            function onDone() {
+                $('#tfOutput').html(
+                    'beforeChange: [' + report.beforeChange +
+                    '],<br>afterChange: [' + report.afterChange +
+                    '],<br>recalculationTime: ' + report.recalculationTime
+                );
+
+                $('#btnRunTest')[0].disabled = false;
+            }
+
+            switch (lib) {
+                case 'cmmn': {
+                    testCmmn(report, layerCount, onDone);
+                    break;
+                }
+                case 'cellx': {
+                    testCellx(report, layerCount, onDone);
+                    break;
+                }
+                case 'vanilla': {
+                    testVanilla(report, layerCount, onDone);
+                    break;
+                }
+                case 'knockout': {
+                    testKnockout(report, layerCount, onDone);
+                    break;
+                }
+                case 'jin-atom': {
+                    testJinAtom(report, layerCount, onDone);
+                    break;
+                }
+                case 'mol_atom': {
+                    testMolAtom(report, layerCount, onDone);
+                    break;
+                }
+                case 'reactor': {
+                    testReactor(report, layerCount, onDone);
+                    break;
+                }
+                case 'reactive': {
+                    testReactive(report, layerCount, onDone);
+                    break;
+                }
+                case 'kefir': {
+                    testKefir(report, layerCount, onDone);
+                    break;
+                }
+                case 'mobx': {
+                    testMobX(report, layerCount, onDone);
+                    break;
+                }
+                case 'effector': {
+                    testEffector(report, layerCount, onDone);
+                    break;
+                }
+            }
+        }, 500);
+    }
+
+    import {BaseCell} from "../dist/index.js";
+
+    async function testCmmn(report, layerCount, done) {
+        const Cell = BaseCell;
+        let start = {
+            prop1: new Cell(1),
+            prop2: new Cell(2),
+            prop3: new Cell(3),
+            prop4: new Cell(4)
+        };
+        let layer = start;
+
+        for (let i = layerCount; i--;) {
+            layer = ((prev) => {
+                let next = {
+                    prop1: new Cell(() => prev.prop2.get()),
+                    prop2: new Cell(() => prev.prop1.get() - prev.prop3.get()),
+                    prop3: new Cell(() => prev.prop2.get() + prev.prop4.get()),
+                    prop4: new Cell(() => prev.prop3.get())
+                };
+
+                next.prop1.on('change', () => {
+                });
+                next.prop2.on('change', () => {
+                });
+                next.prop3.on('change', () => {
+                });
+                next.prop4.on('change', () => {
+                });
+
+                next.prop1.get();
+                next.prop2.get();
+                next.prop3.get();
+                next.prop4.get();
+
+                return next;
+            })(layer);
+        }
+
+        let end = layer;
+
+        report.beforeChange = [
+            end.prop1.get(),
+            end.prop2.get(),
+            end.prop3.get(),
+            end.prop4.get()
+        ];
+
+        let startTime = performance.now();
+
+        start.prop1.set(4);
+        start.prop2.set(3);
+        start.prop3.set(2);
+        start.prop4.set(1);
+
+        await Promise.resolve();
+        report.afterChange = [
+            end.prop1.get(),
+            end.prop2.get(),
+            end.prop3.get(),
+            end.prop4.get()
+        ];
+
+        report.recalculationTime = performance.now() - startTime;
+
+        done();
+    }
+
+    function testCellx(report, layerCount, done) {
+        let Cell = cellx.Cell;
+
+        let start = {
+            prop1: new Cell(1),
+            prop2: new Cell(2),
+            prop3: new Cell(3),
+            prop4: new Cell(4)
+        };
+        let layer = start;
+
+        for (let i = layerCount; i--;) {
+            layer = ((prev) => {
+                let next = {
+                    prop1: new Cell(() => prev.prop2.get()),
+                    prop2: new Cell(() => prev.prop1.get() - prev.prop3.get()),
+                    prop3: new Cell(() => prev.prop2.get() + prev.prop4.get()),
+                    prop4: new Cell(() => prev.prop3.get())
+                };
+
+                next.prop1.on('change', () => {
+                });
+                next.prop2.on('change', () => {
+                });
+                next.prop3.on('change', () => {
+                });
+                next.prop4.on('change', () => {
+                });
+
+                next.prop1.get();
+                next.prop2.get();
+                next.prop3.get();
+                next.prop4.get();
+
+                return next;
+            })(layer);
+        }
+
+        let end = layer;
+
+        report.beforeChange = [
+            end.prop1.get(),
+            end.prop2.get(),
+            end.prop3.get(),
+            end.prop4.get()
+        ];
+
+        let startTime = performance.now();
+
+        start.prop1.set(4);
+        start.prop2.set(3);
+        start.prop3.set(2);
+        start.prop4.set(1);
+
+        report.afterChange = [
+            end.prop1.get(),
+            end.prop2.get(),
+            end.prop3.get(),
+            end.prop4.get()
+        ];
+
+        report.recalculationTime = performance.now() - startTime;
+
+        done();
+    }
+
+    function testVanilla(report, layerCount, done) {
+        let start = {
+            prop1: 1,
+            prop2: 2,
+            prop3: 3,
+            prop4: 4
+        };
+        let layer = start;
+
+        for (let i = layerCount; i--;) {
+            layer = ((prev) => {
+                let next = {
+                    get prop1() {
+                        return prev.prop2;
+                    },
+                    get prop2() {
+                        return prev.prop1 - prev.prop3;
+                    },
+                    get prop3() {
+                        return prev.prop2 + prev.prop4;
+                    },
+                    get prop4() {
+                        return prev.prop3;
+                    }
+                };
+
+                return next;
+            })(layer);
+        }
+
+        let end = layer;
+
+        report.beforeChange = [
+            end.prop1,
+            end.prop2,
+            end.prop3,
+            end.prop4
+        ];
+
+        let startTime = performance.now();
+
+        start.prop1 = 4;
+        start.prop2 = 3;
+        start.prop3 = 2;
+        start.prop4 = 1;
+
+        report.afterChange = [
+            end.prop1,
+            end.prop2,
+            end.prop3,
+            end.prop4
+        ];
+
+        report.recalculationTime = performance.now() - startTime;
+
+        done();
+    }
+
+    function testKnockout(report, layerCount, done) {
+        let Start = function () {
+            this.prop1 = ko.observable(1);
+            this.prop2 = ko.observable(2);
+            this.prop3 = ko.observable(3);
+            this.prop4 = ko.observable(4);
+        };
+
+        let start = new Start();
+        let layer = start;
+
+        for (let i = layerCount; i--;) {
+            layer = ((prev) => {
+                let Next = function () {
+                    this.prop1 = ko.computed(() => prev.prop2());
+                    this.prop2 = ko.computed(() => prev.prop1() - prev.prop3());
+                    this.prop3 = ko.computed(() => prev.prop2() + prev.prop4());
+                    this.prop4 = ko.computed(() => prev.prop3());
+
+                    this.prop1.subscribe(() => {
+                    });
+                    this.prop2.subscribe(() => {
+                    });
+                    this.prop3.subscribe(() => {
+                    });
+                    this.prop4.subscribe(() => {
+                    });
+                };
+
+                let next = new Next();
+
+                next.prop1();
+                next.prop2();
+                next.prop3();
+                next.prop4();
+
+                return next;
+            })(layer);
+        }
+
+        let end = layer;
+
+        report.beforeChange = [
+            end.prop1(),
+            end.prop2(),
+            end.prop3(),
+            end.prop4()
+        ];
+
+        let startTime = performance.now();
+
+        start.prop1(4);
+        start.prop2(3);
+        start.prop3(2);
+        start.prop4(1);
+
+        report.afterChange = [
+            end.prop1(),
+            end.prop2(),
+            end.prop3(),
+            end.prop4()
+        ];
+
+        report.recalculationTime = performance.now() - startTime;
+
+        done();
+    }
+
+    function testJinAtom(report, layerCount, done) {
+        let start = {
+            prop1: new $jin.atom.prop({value: 1}),
+            prop2: new $jin.atom.prop({value: 2}),
+            prop3: new $jin.atom.prop({value: 3}),
+            prop4: new $jin.atom.prop({value: 4})
+        };
+        let layer = start;
+
+        for (let i = layerCount; i--;) {
+            layer = ((prev) => {
+                let next = {
+                    prop1: new $jin.atom.prop({
+                        pull: () => prev.prop2.get(),
+                        reap: () => {
+                        }
+                    }),
+                    prop2: new $jin.atom.prop({
+                        pull: () => prev.prop1.get() - prev.prop3.get(),
+                        reap: () => {
+                        }
+                    }),
+                    prop3: new $jin.atom.prop({
+                        pull: () => prev.prop2.get() + prev.prop4.get(),
+                        reap: () => {
+                        }
+                    }),
+                    prop4: new $jin.atom.prop({
+                        pull: () => prev.prop3.get(),
+                        reap: () => {
+                        }
+                    })
+                };
+
+                next.prop1.get();
+                next.prop2.get();
+                next.prop3.get();
+                next.prop4.get();
+
+                return next;
+            })(layer);
+        }
+
+        let end = layer;
+
+        report.beforeChange = [
+            end.prop1.get(),
+            end.prop2.get(),
+            end.prop3.get(),
+            end.prop4.get()
+        ];
+
+        let startTime = performance.now();
+
+        start.prop1.push(4);
+        start.prop2.push(3);
+        start.prop3.push(2);
+        start.prop4.push(1);
+
+        new $jin.defer(() => {
+            report.afterChange = [
+                end.prop1.get(),
+                end.prop2.get(),
+                end.prop3.get(),
+                end.prop4.get()
+            ];
+
+            report.recalculationTime = performance.now() - startTime;
+
+            done();
+        });
+    }
+
+    function testMolAtom(report, layerCount, done) {
+        let $mol_atom = $.$mol_atom;
+
+        let start = {
+            prop1: new $mol_atom(() => 1),
+            prop2: new $mol_atom(() => 2),
+            prop3: new $mol_atom(() => 3),
+            prop4: new $mol_atom(() => 4)
+        };
+        let layer = start;
+
+        for (let i = layerCount; i--;) {
+            layer = ((prev) => {
+                let next = {
+                    prop1: new $mol_atom(() => prev.prop2.get()),
+                    prop2: new $mol_atom(() => prev.prop1.get() - prev.prop3.get()),
+                    prop3: new $mol_atom(() => prev.prop2.get() + prev.prop4.get()),
+                    prop4: new $mol_atom(() => prev.prop3.get())
+                };
+
+                next.prop1.get();
+                next.prop2.get();
+                next.prop3.get();
+                next.prop4.get();
+
+                return next;
+            })(layer);
+        }
+
+        let end = layer;
+
+        report.beforeChange = [
+            end.prop1.get(),
+            end.prop2.get(),
+            end.prop3.get(),
+            end.prop4.get()
+        ];
+
+        let startTime = performance.now();
+
+        start.prop1.push(4);
+        start.prop2.push(3);
+        start.prop3.push(2);
+        start.prop4.push(1);
+
+        report.afterChange = [
+            end.prop1.get(),
+            end.prop2.get(),
+            end.prop3.get(),
+            end.prop4.get()
+        ];
+
+        report.recalculationTime = performance.now() - startTime;
+
+        done();
+    }
+
+    function testReactor(report, layerCount, done) {
+        let start = {
+            prop1: Signal(1),
+            prop2: Signal(2),
+            prop3: Signal(3),
+            prop4: Signal(4)
+        };
+        let layer = start;
+
+        for (let i = layerCount; i--;) {
+            layer = ((prev) => {
+                let next = {
+                    prop1: Signal(() => prev.prop2()),
+                    prop2: Signal(() => prev.prop1() - prev.prop3()),
+                    prop3: Signal(() => prev.prop2() + prev.prop4()),
+                    prop4: Signal(() => prev.prop3())
+                };
+
+                next.prop1();
+                next.prop2();
+                next.prop3();
+                next.prop4();
+
+                return next;
+            })(layer);
+        }
+
+        let end = layer;
+
+        report.beforeChange = [
+            end.prop1(),
+            end.prop2(),
+            end.prop3(),
+            end.prop4()
+        ];
+
+        let startTime = performance.now();
+
+        start.prop1(4);
+        start.prop2(3);
+        start.prop3(2);
+        start.prop4(1);
+
+        report.afterChange = [
+            end.prop1(),
+            end.prop2(),
+            end.prop3(),
+            end.prop4()
+        ];
+
+        report.recalculationTime = performance.now() - startTime;
+
+        done();
+    }
+
+    function testReactive(report, layerCount, done) {
+        let start = {
+            prop1: $R.state(1),
+            prop2: $R.state(2),
+            prop3: $R.state(3),
+            prop4: $R.state(4)
+        };
+        let layer = start;
+
+        for (let i = layerCount; i--;) {
+            layer = ((prev) => {
+                let next = {
+                    prop1: $R((prop2) => prop2),
+                    prop2: $R((prop1, prop3) => prop1 - prop3),
+                    prop3: $R((prop2, prop4) => prop2 + prop4),
+                    prop4: $R((prop3) => prop3)
+                };
+
+                next.prop1.bindTo(prev.prop2);
+                next.prop2.bindTo(prev.prop1, prev.prop3);
+                next.prop3.bindTo(prev.prop2, prev.prop4);
+                next.prop4.bindTo(prev.prop3);
+
+                next.prop1();
+                next.prop2();
+                next.prop3();
+                next.prop4();
+
+                return next;
+            })(layer);
+        }
+
+        let end = layer;
+
+        report.beforeChange = [
+            end.prop1(),
+            end.prop2(),
+            end.prop3(),
+            end.prop4()
+        ];
+
+        let startTime = performance.now();
+
+        start.prop1.set(4);
+        start.prop2.set(3);
+        start.prop3.set(2);
+        start.prop4.set(1);
+
+        report.afterChange = [
+            end.prop1(),
+            end.prop2(),
+            end.prop3(),
+            end.prop4()
+        ];
+
+        report.recalculationTime = performance.now() - startTime;
+
+        done();
+    }
+
+    function testKefir(report, layerCount, done) {
+        let em1;
+        let em2;
+        let em3;
+        let em4;
+
+        let start = {
+            prop1: Kefir.stream((em) => {
+                em1 = em;
+            }),
+            prop2: Kefir.stream((em) => {
+                em2 = em;
+            }),
+            prop3: Kefir.stream((em) => {
+                em3 = em;
+            }),
+            prop4: Kefir.stream((em) => {
+                em4 = em;
+            })
+        };
+        let layer = start;
+
+        for (let i = layerCount; i--;) {
+            layer = ((prev) => {
+                let next = {
+                    prop1: prev.prop2.map((a) => a),
+                    prop2: Kefir.combine([prev.prop1, prev.prop3], (a, b) => a - b),
+                    prop3: Kefir.combine([prev.prop2, prev.prop4], (a, b) => a + b),
+                    prop4: prev.prop3.map((a) => a)
+                };
+
+                next.prop1.onValue(() => {
+                });
+                next.prop2.onValue(() => {
+                });
+                next.prop3.onValue(() => {
+                });
+                next.prop4.onValue(() => {
+                });
+
+                return next;
+            })(layer);
+        }
+
+        let end = layer;
+
+        let startTime;
+
+        Kefir.combine([end.prop1, end.prop2, end.prop3, end.prop4], (a, b, c, d) => [a, b, c, d]).onValue((v) => {
+            if (!startTime) {
+                startTime = performance.now();
+
+                report.beforeChange = v;
+
+                setTimeout(() => {
+                    em1.emit(4);
+                    em2.emit(3);
+                    em3.emit(2);
+                    em4.emit(1);
+                }, 1);
+            } else {
+                report.afterChange = v;
+                report.recalculationTime = performance.now() - startTime;
+
+                done();
+            }
+        });
+
+        em1.emit(1);
+        em2.emit(2);
+        em3.emit(3);
+        em4.emit(4);
+    }
+
+    function testMobX(report, layerCount, done) {
+        let start = {
+            prop1: mobx.observable(1),
+            prop2: mobx.observable(2),
+            prop3: mobx.observable(3),
+            prop4: mobx.observable(4)
+        };
+        let layer = start;
+
+        for (let i = layerCount; i--;) {
+            layer = ((prev) => {
+                let next = {
+                    prop1: mobx.computed(() => prev.prop2.get()),
+                    prop2: mobx.computed(() => prev.prop1.get() - prev.prop3.get()),
+                    prop3: mobx.computed(() => prev.prop2.get() + prev.prop4.get()),
+                    prop4: mobx.computed(() => prev.prop3.get())
+                };
+
+                next.prop1.observe(() => {
+                });
+                next.prop2.observe(() => {
+                });
+                next.prop3.observe(() => {
+                });
+                next.prop4.observe(() => {
+                });
+
+                next.prop1.get();
+                next.prop2.get();
+                next.prop3.get();
+                next.prop4.get();
+
+                return next;
+            })(layer);
+        }
+
+        let end = layer;
+
+        report.beforeChange = [
+            end.prop1.get(),
+            end.prop2.get(),
+            end.prop3.get(),
+            end.prop4.get()
+        ];
+
+        let startTime = performance.now();
+
+        start.prop1.set(4);
+        start.prop2.set(3);
+        start.prop3.set(2);
+        start.prop4.set(1);
+
+        report.afterChange = [
+            end.prop1.get(),
+            end.prop2.get(),
+            end.prop3.get(),
+            end.prop4.get()
+        ];
+
+        report.recalculationTime = performance.now() - startTime;
+
+        done();
+    }
+
+    function testEffector(report, layerCount, done) {
+        let start = {
+            prop1: effector.createStore(1),
+            prop2: effector.createStore(2),
+            prop3: effector.createStore(3),
+            prop4: effector.createStore(4)
+        };
+        let layer = start;
+
+        for (let i = layerCount; i--;) {
+            layer = ((prev) => {
+                let next = {
+                    prop1: prev.prop2.map((prop2) => prop2),
+                    prop2: effector.combine(prev.prop1, prev.prop3, (prop1, prop3) => prop1 - prop3),
+                    prop3: effector.combine(prev.prop2, prev.prop4, (prop2, prop4) => prop2 + prop4),
+                    prop4: prev.prop3.map((prop3) => prop3)
+                };
+
+                next.prop1.watch(() => {
+                });
+                next.prop2.watch(() => {
+                });
+                next.prop3.watch(() => {
+                });
+                next.prop4.watch(() => {
+                });
+
+                next.prop1.getState();
+                next.prop2.getState();
+                next.prop3.getState();
+                next.prop4.getState();
+
+                return next;
+            })(layer);
+        }
+
+        let end = layer;
+
+        report.beforeChange = [
+            end.prop1.getState(),
+            end.prop2.getState(),
+            end.prop3.getState(),
+            end.prop4.getState()
+        ];
+
+        let startTime = performance.now();
+
+        start.prop1.setState(4);
+        start.prop2.setState(3);
+        start.prop3.setState(2);
+        start.prop4.setState(1);
+
+        report.afterChange = [
+            end.prop1.getState(),
+            end.prop2.getState(),
+            end.prop3.getState(),
+            end.prop4.getState()
+        ];
+
+        report.recalculationTime = performance.now() - startTime;
+
+        done();
+    }
+
+</script>
+
+</body>
+</html>

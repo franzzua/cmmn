@@ -1,7 +1,7 @@
 import {Stream} from "./streams/stream";
 import {ModelAction, ModelPath} from "./shared/types";
 import {AsyncQueue, Fn} from "@cmmn/core";
-import {Cell} from "cellx";
+import {Cell} from "@cmmn/cell";
 
 export class ModelProxy<TState, TActions extends ModelAction = {}> {
 
@@ -13,9 +13,9 @@ export class ModelProxy<TState, TActions extends ModelAction = {}> {
     public $state = new Cell<TState>(() => {
         if (this.asyncQueue.IsEmpty) {
             this.$localState.set(null);
-            return this.$remoteState();
+            return this.$remoteState.get();
         }
-        return this.$localState.get() ?? this.$remoteState();
+        return this.$localState.get() ?? this.$remoteState.get();
     });
 
     public get State(): TState {
@@ -23,18 +23,18 @@ export class ModelProxy<TState, TActions extends ModelAction = {}> {
     }
 
     public Diff(change: (state: TState) => TState) {
-        const current = this.$remoteState();
+        const current = this.$remoteState.get();
         this.$localState.set(change(current));
         this.asyncQueue.Invoke(() => {
-            const current = this.$remoteState();
-            this.$remoteState(change(current));
+            const current = this.$remoteState.get();
+            this.$remoteState.set(change(current));
         });
     }
 
     public set State(state: TState) {
         this.$localState.set(state);
         this.asyncQueue.Invoke(() => {
-            this.$remoteState(state);
+            this.$remoteState.set(state);
         });
         // this.asyncQueue.Invoke(() => {
         //     return this.$remoteState(state);

@@ -1,7 +1,7 @@
 import createRouter, {Options, Route, RouteNode, Router as Router5, State as RouterState} from 'router5';
 import browserPlugin from 'router5-plugin-browser';
 import {Injectable} from "@cmmn/core";
-import {Cell} from "cellx";
+import {Cell} from "@cmmn/cell";
 
 export {RouterState, Route};
 
@@ -16,7 +16,7 @@ export class Router {
         const router = createRouter(this.routerInit.routes, this.routerInit.options);
         router.usePlugin((browserPlugin as any)());
         router.start();
-        router.subscribe(change => this.Route = change.route as RouterState)
+        router.subscribe(change => this.cell.set(change.route as RouterState))
         return router;
     })();
     private cell = new Cell<RouterState>(this.router.getState());

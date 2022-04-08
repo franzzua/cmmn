@@ -1,5 +1,5 @@
 import { Fn } from "@cmmn/core";
-import {Cell} from "cellx";
+import {Cell} from "@cmmn/cell";
 
 export class VersionState<T> extends Cell<T> {
     remoteVersion: string;

@@ -10,7 +10,7 @@ export * from "./di";
 
 export {utc, utcToday, Duration, DateTime} from "./helpers/utc";
 export {bind} from "bind-decorator";
-export {EventEmitter, EventListener, EventListenerBase} from "./helpers/event-emitter";
+export {EventEmitter, EventListener} from "./helpers/event-emitter";
 export {ResolvablePromise} from "./helpers/resolvable.promise";
 export {Lazy} from "./helpers/Lazy";
 export {compare} from "./helpers/compare";

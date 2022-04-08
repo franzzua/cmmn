@@ -1,85 +1,17 @@
 import {expect, sinon, suite, test} from "@cmmn/tools/test";
-import {Cell} from '../Cell';
-import {Actualizator} from "../actualizator";
+import {BaseCell} from '../src/baseCell';
+import {Actualizator} from "../src/actualizator";
 
 @suite
-class CellSpec {
-    @test
-    readCell() {
-        const a = new Cell(1);
-        expect(a.get()).toEqual(1);
-        expect(a['value']).toEqual(1);
-    }
+class ChangeCombineSpec {
 
     @test
-    readCell2() {
-        const a = new Cell(() => 1);
-        expect(a.get()).toEqual(1);
-    }
-
-    @test
-    readCells() {
-        const b = new Cell(1);
-        const c = new Cell(() => b.get() + 1)
-        expect(c.get()).toEqual(2);
-    }
-
-    @test
-    write() {
-        const a = new Cell(0);
-        a.set(3);
-        expect(a.get()).toEqual(3);
-    }
-
-    @test
-    writeWithDeps() {
-        const a = new Cell(0);
-        const b = new Cell(() => a.get() + 1);
-        a.set(3);
-        expect(b.get()).toEqual(4);
-    }
-
-
-    @test
-    changeEvent() {
-        const a = new Cell(0);
-        a.on('change', x => {
-            expect(x.value).toBe(1);
-            expect(x.oldValue).toBe(0);
-        })
-        a.set(1);
-    }
-
-    @test
-    async changeEvent2() {
-        const a = new Cell(0);
-        const b = new Cell(() => a.get() + 1);
-        const onChange = sinon.spy(x => {
-            expect(x.value).toBe(2);
-            expect(x.oldValue).toBe(1);
-        });
-        b.on('change', onChange)
-        a.set(1);
-        await Actualizator.wait;
-        expect(onChange.calledOnce).toBeTruthy();
-    }
-
-    @test
-    distinctChange() {
-        let onChange = sinon.spy();
-        let a = new Cell(1);
-        a.on('change', onChange)
-        a.set(1);
-        expect(onChange.notCalled).toBeTruthy();
-    }
-
-    @test
-    async oneChangeOnTwoSet() {
-        let a = new Cell(1);
-        let b = new Cell(2);
+    async combin1() {
+        let a = new BaseCell(1);
+        let b = new BaseCell(2);
         let getC = sinon.spy(() => a.get() + b.get());
 
-        const c = new Cell(getC);
+        const c = new BaseCell(getC);
         c.on('change', console.log);
         getC.resetHistory();
 
@@ -89,65 +21,30 @@ class CellSpec {
         await Actualizator.wait;
         expect(getC.calledOnce).toBeTruthy();
     }
+
+    @test
+    async combine2() {
+        let a = new BaseCell(1);
+        let b = new BaseCell(2);
+        let aa = new BaseCell<number>(() => a.get() + 1);
+        let bb = new BaseCell<number>(() => b.get() + 1);
+        let getC = sinon.spy(() => {
+            return aa.get() + bb.get()
+        });
+
+        const c = new BaseCell(getC);
+        c.on('change', () => {});
+        getC.resetHistory();
+
+        a.set(2);
+        b.set(3);
+
+        await Actualizator.wait;
+        expect(getC.callCount).toBe(1);
+    }
 }
 
 // describe('Cell', () => {
-//
-//
-//     describe('behavior', () => {
-//         it('одно вычисление при изменении нескольких зависимостей', () => {
-//             let a = new Cell(1);
-//             let b = new Cell(2);
-//             let getC = sinon.spy(() => a.get() + b.get());
-//
-//             new Cell(getC, { onChange() {} });
-//
-//             getC.resetHistory();
-//
-//             a.set(2);
-//             b.set(3);
-//
-//             Cell.release();
-//
-//             expect(getC.calledOnce).to.be.true;
-//         });
-//
-//         it('одно вычисление при изменении нескольких зависимостей (2)', () => {
-//             let a = new Cell(1);
-//             let b = new Cell(2);
-//             let c = new Cell<number>(() => b.get() + 1);
-//             let getD = sinon.spy(() => a.get() + c.get());
-//
-//             new Cell(getD, { onChange() {} });
-//
-//             getD.resetHistory();
-//
-//             a.set(2);
-//             b.set(3);
-//
-//             Cell.release();
-//
-//             expect(getD.calledOnce).to.be.true;
-//         });
-//
-//         it('одно вычисление при изменении нескольких зависимостей (3)', () => {
-//             let a = new Cell(1);
-//             let b = new Cell(2);
-//             let aa = new Cell<number>(() => a.get() + 1);
-//             let bb = new Cell<number>(() => b.get() + 1);
-//             let getC = sinon.spy(() => aa.get() + bb.get());
-//
-//             new Cell(getC, { onChange() {} });
-//
-//             getC.resetHistory();
-//
-//             a.set(2);
-//             b.set(3);
-//
-//             Cell.release();
-//
-//             expect(getC.calledOnce).to.be.true;
-//         });
 //
 //         it('запись в неинициализированную ячейку отменяет pull', () => {
 //             let a = new Cell<number>(() => 1);
@@ -169,28 +66,6 @@ class CellSpec {
 //             a.on(Cell.EVENT_CHANGE, () => {});
 //
 //             expect(b.get()).to.equal(5);
-//         });
-//
-//         it('последняя запись более приоритетная', () => {
-//             let a = new Cell(1);
-//             let b = new Cell<number>(() => a.get() + 1);
-//             let c = new Cell(() => b.get() + 1, { onChange() {} });
-//
-//             a.set(2);
-//             b.set(4);
-//
-//             expect(c.get()).to.equal(5);
-//         });
-//
-//         it('последняя запись более приоритетная (2)', () => {
-//             let a = new Cell(1);
-//             let b = new Cell<number>(() => a.get() + 1);
-//             let c = new Cell(() => b.get() + 1, { onChange() {} });
-//
-//             b.set(4);
-//             a.set(2);
-//
-//             expect(c.get()).to.equal(4);
 //         });
 //
 //         it('запись в активную ячейку и последующее изменение её зависимости', done => {

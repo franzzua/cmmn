@@ -4,7 +4,7 @@ import {GlobalStaticState} from "./component";
 import {listenSvgConnectDisconnect} from "./listen-svg-connect-disconnect";
 import {HtmlComponent} from "./htmlComponent";
 import {BoundRectListener} from "./boundRectListener";
-import {cellx, ICellx} from "cellx";
+import {Cell, BaseCell} from "@cmmn/cell";
 import {Fn} from "@cmmn/core";
 
 export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
@@ -44,19 +44,18 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
         const actions = (this.constructor as typeof HtmlComponentBase).Actions ?? [];
         for (let action of actions) {
             // TODO: unsubscribe
-            const cell = cellx(() => action.filter.call(this), {
-                compareValues: Fn.compare
+            const cell = new Cell(() => action.filter.call(this), {
+                compare: Fn.compare
             });
-            const invokeAction = async (err, evt) => {
+            const invokeAction = async ({value}) => {
                 if (action.unsusbscr && typeof action.unsusbscr === "function")
                     action.unsusbscr();
-                action.unsusbscr = await action.action.call(this, evt.data.value);
+                action.unsusbscr = await action.action.call(this, value);
             }
-            cell.subscribe(invokeAction);
+            this.onDispose = cell.on('change', invokeAction);
             this.onDispose = () => {
                 if (action.unsusbscr && typeof action.unsusbscr === "function")
                     action.unsusbscr();
-                cell.unsubscribe(invokeAction);
             }
             action.unsusbscr = action.action.call(this, action.filter.call(this));
         }
@@ -73,7 +72,6 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
     }
 
 
-    private actionsCell: ICellx<void>;
     /** @internal **/
     static Effects: { filter, effect, unsubscr?: Function }[];
     /** @internal **/

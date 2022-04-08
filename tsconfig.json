@@ -6,6 +6,9 @@
   "include": [],
   "references": [
     {
+      "path": "./cell"
+    },
+    {
       "path": "./core"
     },
     {
