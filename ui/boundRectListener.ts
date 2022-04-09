@@ -1,4 +1,4 @@
-import {Observable} from "cellx-decorators";
+import {cell} from "@cmmn/cell";
 
 export class BoundRectListener {
     static onWindowResize() {
@@ -39,7 +39,7 @@ export class BoundRectListener {
         }
     }
 
-    @Observable
+    @cell
     public Rect: Rect;
 }
 

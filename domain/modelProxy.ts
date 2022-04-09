@@ -10,13 +10,14 @@ export class ModelProxy<TState, TActions extends ModelAction = {}> {
 
     public $remoteState = this.stream.getCell<Readonly<TState>>(this.path);
     public $localState = new Cell(null);
-    public $state = new Cell<TState>(() => {
-        if (this.asyncQueue.IsEmpty) {
-            this.$localState.set(null);
-            return this.$remoteState.get();
-        }
-        return this.$localState.get() ?? this.$remoteState.get();
-    });
+    public $state = this.$remoteState;
+    // public $state = new Cell<TState>(() => {
+    //     if (this.asyncQueue.IsEmpty) {
+    //         this.$localState.set(null);
+    //         return this.$remoteState.get();
+    //     }
+    //     return this.$localState.get() ?? this.$remoteState.get();
+    // });
 
     public get State(): TState {
         return this.$state.get();

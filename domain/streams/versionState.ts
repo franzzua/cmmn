@@ -16,9 +16,9 @@ export class VersionState<T> extends Cell<T> {
     }
 
     setRemote(version: string, state: T) {
-        if (!this.Version || version >= this.Version) {
-            this.Version = version;
+        // if (!this.Version || version >= this.Version) {
+        //     this.Version = version;
             this.set(state);
-        }
+        // }
     }
 }

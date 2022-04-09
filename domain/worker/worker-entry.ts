@@ -20,12 +20,12 @@ export class WorkerEntry {
                     const model = this.getModel(path);
                     if (!model)
                         throw new Error(`Model not found at path ${path.join(':')}`)
-                    model.$state.on('change', state => {
+                    model.$state.on('change', ({value}) => {
                         model.$version = Fn.ulid();
                         this.postMessage({
                             path,
                             type: WorkerMessageType.State,
-                            state: state,
+                            state: value,
                             version: model.$version
                         });
                     });

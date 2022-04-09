@@ -8,8 +8,7 @@
     "tools",
     "uhtml",
     "ui",
-    "sync",
-    "examples/*"
+    "sync"
   ],
   "version": "1.4.21",
   "npmClient": "npm"

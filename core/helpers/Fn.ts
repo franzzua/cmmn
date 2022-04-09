@@ -1,5 +1,4 @@
 import {ulid} from "./ulid";
-import {Cell} from "cellx";
 import * as crc32 from "crc-32";
 import {compare} from "./compare";
 import {deepAssign} from "./deepAssign";
@@ -22,19 +21,6 @@ export const Fn = {
         return function (...args) {
             for (let fn of functions) {
                 fn.apply(this, args);
-            }
-        }
-    },
-    distinctUntilChanged<T>(comparator: (x: T, y: T) => boolean): MethodDecorator {
-        return <T>(target: any, key: string, descr: TypedPropertyDescriptor<T>) => {
-            const symbol = Symbol(key + 'distinct');
-            return {
-                get() {
-                    const cell: Cell<T> = this[symbol] ?? (this[symbol] = new Cell(descr.get!.bind(this), {
-                        compareValues: comparator
-                    }));
-                    return cell.get();
-                }
             }
         }
     },

@@ -60,14 +60,14 @@ export class WorkerStream extends Stream {
             });
             return new VersionState();
         });
-        cell.on('change', ({value})=>{
-            this.postMessage({
-                type: WorkerMessageType.State,
-                path,
-                state: value,
-                version: null,
-            });
-        })
+        // cell.on('change', ({value})=>{
+        //     this.postMessage({
+        //         type: WorkerMessageType.State,
+        //         path,
+        //         state: value,
+        //         version: null,
+        //     });
+        // })
         return cell;
     }
 

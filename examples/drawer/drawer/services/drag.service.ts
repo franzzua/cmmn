@@ -1,6 +1,6 @@
 import {Injectable} from "@cmmn/core";
 import {IPoint} from "@cmmn/ui";
-import {Observable} from "cellx-decorators";
+import {cell} from "@cmmn/cell";
 import {HoverService} from "./hover.service";
 import {DrawingFigure} from "../model";
 import {MagnetismService} from "./magnetism.service";
@@ -52,7 +52,7 @@ export class DragService {
         }
     }
 
-    @Observable
+    @cell
     public DraggedItems: DrawingFigure[] = [];
 
 

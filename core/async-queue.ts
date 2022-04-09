@@ -1,4 +1,4 @@
-import {Observable} from "cellx-decorators";
+import {cell} from "@cmmn/cell";
 
 export class AsyncQueue {
 
@@ -14,8 +14,8 @@ export class AsyncQueue {
         });
     }
 
-    @Observable
-    public IsEmpty: boolean;
+    @cell
+    public IsEmpty: boolean = false;
 
     private emptyTimeout: any = null;
     private run() {

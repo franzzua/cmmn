@@ -59,8 +59,7 @@ export class BaseCell<T = any> extends EventEmitter<{
     }
 
     protected notifyChange(value: T, oldValue: T){
-        const data = {oldValue, value, data: null}
-        data.data = data;
+        const data = {oldValue, value};
         this.emit('change', data);
     }
 
@@ -71,10 +70,13 @@ export class BaseCell<T = any> extends EventEmitter<{
 
     protected disactive() {
         this.isActive = false;
-        for (let dependency of this.dependencies) {
-            dependency.removeReaction(this)
+
+        if (this.dependencies) {
+            for (let dependency of this.dependencies) {
+                dependency.removeReaction(this)
+            }
+            this.dependencies = null;
         }
-        this.dependencies.clear();
     }
 
     protected subscribe(eventName: keyof { change: T }) {

@@ -47,8 +47,7 @@
       "input": "dist/esm/index.js",
       "module": "es,cjs",
       "external": [
-        "luxon",
-        "cellx"
+        "luxon"
       ]
     }
   }

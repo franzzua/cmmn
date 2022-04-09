@@ -25,9 +25,6 @@
     },
     {
       "path": "./sync"
-    },
-    {
-      "path": "./examples/drawer"
     }
   ]
 }
