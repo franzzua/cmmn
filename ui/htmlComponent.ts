@@ -35,7 +35,11 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
         this.DetachChildren();
         this.isStopped = false;
         this.$state.on('change', this._render);
-        this.render(this.$state.get());
+        try {
+            this.render(this.$state.get());
+        }catch (e){
+
+        }
         super.connectedCallback();
     }
 

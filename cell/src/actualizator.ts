@@ -58,7 +58,7 @@ export class Actualizator {
         if (!Actualizator.CurrentCell)
             return;
         if (!cell.isActive)
-            cell.isActive = true;
+            cell.active();
         Actualizator.CurrentCell.addDependency(cell);
         cell.addReaction(Actualizator.CurrentCell);
     }

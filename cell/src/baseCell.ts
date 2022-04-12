@@ -94,7 +94,7 @@ export class BaseCell<T = any> extends EventEmitter<{
         this.emit('change', data);
     }
 
-    protected active() {
+    active() {
         this.isActive = true;
 
         Actualizator.Down(this);

@@ -62,6 +62,8 @@ export class ModelProxy<TState, TActions extends ModelAction = {}> {
     });
 
     public Invoke(action: string, args: any[]): Promise<any> {
+        if (action === 'equals')
+            return Promise.resolve(false);
         this.isInvoking = true;
         return this.asyncQueue.Invoke(() => this.stream.Invoke({
             path: this.path,
@@ -77,6 +79,10 @@ export class ModelProxy<TState, TActions extends ModelAction = {}> {
 
     public QueryModel(path: (string | number)[]): any {
         return new ModelProxy(this.stream, [this.path, path].flat());
+    }
+
+    public equals(x: any){
+        return this === x;
     }
 
 }

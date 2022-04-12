@@ -50,14 +50,22 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
             const invokeAction = async ({value}) => {
                 if (action.unsusbscr && typeof action.unsusbscr === "function")
                     action.unsusbscr();
-                action.unsusbscr = await action.action.call(this, value);
+                try {
+                    action.unsusbscr = await action.action.call(this, value);
+                }catch (e){
+
+                }
             }
             this.onDispose = cell.on('change', invokeAction);
             this.onDispose = () => {
                 if (action.unsusbscr && typeof action.unsusbscr === "function")
                     action.unsusbscr();
             }
-            action.unsusbscr = action.action.call(this, action.filter.call(this));
+            try {
+                action.unsusbscr = action.action.call(this, action.filter.call(this));
+            }catch (e){
+
+            }
         }
     }
 

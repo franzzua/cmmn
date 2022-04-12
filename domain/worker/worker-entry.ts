@@ -70,7 +70,12 @@ export class WorkerEntry {
 
 
     private Action(model: Model<any>, action: WorkerAction) {
-        return model.Actions[action.action](...action.args);
+        try {
+            return model.Actions[action.action](...action.args);
+        }catch (e){
+            console.log('failed action:', model, action.action, action.args);
+            throw e;
+        }
     }
 
     private postMessage(message: WorkerMessage["data"]) {

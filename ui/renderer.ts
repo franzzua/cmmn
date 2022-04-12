@@ -95,7 +95,11 @@ export class Renderer<TState, TEvents extends IEvents> {
                 this.component.EffectValues.set(effect.effect, value);
                 if (effect.unsubscr && typeof effect.unsubscr === "function")
                     effect.unsubscr();
-                effect.unsubscr = await effect.effect.call(this.component, value, this.state);
+                try {
+                    effect.unsubscr = await effect.effect.call(this.component, value, this.state);
+                }catch (e){
+
+                }
             }
         }
     }
