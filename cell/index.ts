@@ -4,3 +4,4 @@ export {BaseCell} from "./src/baseCell";
 export {cell} from "./src/decorators";
 export {ObservableMap} from "./src/ObservableMap";
 export {ObservableList} from "./src/ObservableList";
+export {AsyncCell} from "./src/AsyncCell";

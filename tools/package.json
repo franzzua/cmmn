@@ -36,7 +36,6 @@
   ],
   "dependencies": {
     "@jest/globals": "27.x.x",
-    "@modular-css/rollup": "28.x.x",
     "@open-wc/rollup-plugin-html": "^1.2.5",
     "@rollup/plugin-alias": "3",
     "@rollup/plugin-commonjs": "^21",
@@ -52,9 +51,6 @@
     "fast-glob": "^3.2.11",
     "jest": "27.x.x",
     "less": "^4",
-    "postcss-composes": "^0.1.0",
-    "postcss-flexbugs-fixes": "5.x.x",
-    "postcss-normalize": "10.x.x",
     "rollup": "^2",
     "rollup-plugin-img": "1.x.x",
     "rollup-plugin-livereload": "^2.0.5",

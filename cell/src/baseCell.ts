@@ -1,6 +1,22 @@
 import {EventEmitter} from "./event-emitter";
 import {Actualizator} from "./actualizator";
 
+function getDebugName(){
+    try{
+        throw new Error();
+    }catch (e){
+        const sources = e.stack.split('\n').slice(2);
+        return sources.map(s => {
+            const m = s.match(/at\s?(new )?(.*)\s+\(/);
+            if (!m) return null;
+            return m[2];
+        }).filter(x => x)
+            .distinct()
+            .filter(x => !x.match(/BaseCell|Cell/))
+            .join(' ')
+    }
+}
+
 export class BaseCell<T = any> extends EventEmitter<{
     change: { value: T, oldValue: T },
     error: Error,
@@ -10,10 +26,11 @@ export class BaseCell<T = any> extends EventEmitter<{
     public pull: () => T;
     dependencies: Set<BaseCell<any>>;
     private reactions: Set<BaseCell<any>>;
-    private isActive = false;
+    isActive = false;
     state: CellState = CellState.Actual;
     value: T;
     error: Error;
+    // debug = getDebugName();
 
     constructor(value: T | (() => T)) {
         super();
@@ -36,6 +53,20 @@ export class BaseCell<T = any> extends EventEmitter<{
         if (this.error)
             throw this.error;
         return this.value;
+    }
+
+    public setError(error: Error){
+        this.error = error;
+        this.value = undefined;
+        this.state = CellState.Actual;
+        if (this.isActive)
+            this.emit('error', this.error);
+        if (this.reactions) {
+            for (let reaction of this.reactions) {
+                reaction.state = CellState.Dirty;
+                Actualizator.Up(reaction);
+            }
+        }
     }
 
     public set(value: T) {
@@ -65,27 +96,30 @@ export class BaseCell<T = any> extends EventEmitter<{
 
     protected active() {
         this.isActive = true;
+
         Actualizator.Down(this);
     }
 
     protected disactive() {
         this.isActive = false;
-
         if (this.dependencies) {
             for (let dependency of this.dependencies) {
                 dependency.removeReaction(this)
             }
             this.dependencies = null;
         }
+        if (this.pull) {
+            this.state = CellState.Dirty;
+        }
     }
 
     protected subscribe(eventName: keyof { change: T }) {
-        if (eventName == 'change')
+        if (eventName == 'change' && !this.isActive)
             this.active();
     }
 
     protected unsubscribe(eventName: keyof { change: T }) {
-        if (eventName == 'change' && !this.reactions)
+        if (eventName == 'change' && !this.reactions && this.isActive)
             this.disactive();
     }
 
@@ -97,13 +131,15 @@ export class BaseCell<T = any> extends EventEmitter<{
     addReaction(cell: BaseCell) {
         this.reactions ??= new Set();
         this.reactions.add(cell);
+        if (!this.isActive)
+            this.active();
     }
 
     removeReaction(cell: BaseCell) {
         this.reactions.delete(cell);
         if (!this.reactions.size) {
             this.reactions = null;
-            if (!this.listeners.get('change')?.size)
+            if (this.isActive && !this.listeners.get('change')?.size)
                 this.disactive();
         }
     }

@@ -1,7 +1,7 @@
 import {Stream} from "./streams/stream";
 import {ModelAction, ModelPath} from "./shared/types";
 import {AsyncQueue, Fn} from "@cmmn/core";
-import {Cell} from "@cmmn/cell";
+import {cell, Cell} from "@cmmn/cell";
 
 export class ModelProxy<TState, TActions extends ModelAction = {}> {
 
@@ -12,12 +12,15 @@ export class ModelProxy<TState, TActions extends ModelAction = {}> {
     public $localState = new Cell(null);
     public $state = this.$remoteState;
     // public $state = new Cell<TState>(() => {
-    //     if (this.asyncQueue.IsEmpty) {
+    //     if (!this.isInvoking) {
     //         this.$localState.set(null);
     //         return this.$remoteState.get();
     //     }
     //     return this.$localState.get() ?? this.$remoteState.get();
     // });
+
+    @cell
+    protected isInvoking = false;
 
     public get State(): TState {
         return this.$state.get();
@@ -26,16 +29,20 @@ export class ModelProxy<TState, TActions extends ModelAction = {}> {
     public Diff(change: (state: TState) => TState) {
         const current = this.$remoteState.get();
         this.$localState.set(change(current));
+        this.isInvoking = true;
         this.asyncQueue.Invoke(() => {
             const current = this.$remoteState.get();
             this.$remoteState.set(change(current));
+            this.isInvoking = false;
         });
     }
 
     public set State(state: TState) {
         this.$localState.set(state);
+        this.isInvoking = true;
         this.asyncQueue.Invoke(() => {
             this.$remoteState.set(state);
+            this.isInvoking = false;
         });
         // this.asyncQueue.Invoke(() => {
         //     return this.$remoteState(state);
@@ -55,10 +62,17 @@ export class ModelProxy<TState, TActions extends ModelAction = {}> {
     });
 
     public Invoke(action: string, args: any[]): Promise<any> {
+        this.isInvoking = true;
         return this.asyncQueue.Invoke(() => this.stream.Invoke({
             path: this.path,
             args, action
-        }));
+        })).catch(e => {
+            this.isInvoking = false;
+            throw e;
+        }).then(x => {
+            this.isInvoking = false;
+            return x;
+        });
     }
 
     public QueryModel(path: (string | number)[]): any {

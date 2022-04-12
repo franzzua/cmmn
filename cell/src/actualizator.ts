@@ -38,7 +38,7 @@ export class Actualizator {
         try {
             cell.set(cell.pull());
         } catch (e) {
-            cell.error = e;
+            cell.setError(e);
         }
         Actualizator.CurrentCell = prevCell;
         if (oldDependencies) {
@@ -57,6 +57,8 @@ export class Actualizator {
     static imCalled(cell: BaseCell) {
         if (!Actualizator.CurrentCell)
             return;
+        if (!cell.isActive)
+            cell.isActive = true;
         Actualizator.CurrentCell.addDependency(cell);
         cell.addReaction(Actualizator.CurrentCell);
     }
