@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/core",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "di, base extensions, useful functions",
   "publishConfig": {
     "access": "public"
@@ -29,11 +29,11 @@
     "bundle": "cmmn bundle --watch"
   },
   "devDependencies": {
-    "@cmmn/tools": "^1.5.0",
+    "@cmmn/tools": "^1.5.1",
     "crc-32": "1.x.x"
   },
   "dependencies": {
-    "@cmmn/cell": "^1.5.0",
+    "@cmmn/cell": "^1.5.1",
     "@types/luxon": "2.x.x",
     "bind-decorator": "^1.0.11",
     "luxon": "2.x.x",
@@ -47,7 +47,8 @@
       "input": "dist/esm/index.js",
       "module": "es,cjs",
       "external": [
-        "luxon", "@cmmn"
+        "luxon",
+        "@cmmn"
       ]
     }
   }
