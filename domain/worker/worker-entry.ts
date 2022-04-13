@@ -47,7 +47,6 @@ export class WorkerEntry {
                 }
                 case WorkerMessageType.Action: {
                     const model = this.getModel<any, any>(message.path);
-                    model.$version = message.version;
                     this.Action(model, message).then(response => {
                         return ({response: (response)});
                     })
@@ -56,10 +55,11 @@ export class WorkerEntry {
                             return ({error: ('domain error')});
                         })
                         .then(responseOrError => {
+                            model.$version = message.version;
                             this.postMessage({
                                 type: WorkerMessageType.Response,
                                 actionId: message.actionId,
-                                version: model.$version,
+                                version: message.version,
                                 ...responseOrError
                             });
                         });

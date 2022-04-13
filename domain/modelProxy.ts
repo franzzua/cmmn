@@ -58,8 +58,10 @@ export class ModelProxy<TState, TActions extends ModelAction = {}> {
             return Promise.resolve(false);
         if (!action.startsWith('Get'))
             this.$state.up();
+        const version = this.$state.localVersion;
         return this.asyncQueue.Invoke(() => this.stream.Invoke({
             path: this.path,
+            version,
             args, action
         }));
     }

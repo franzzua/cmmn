@@ -18,7 +18,8 @@ export type ModelPath = ModelKey[];
 export type Action = {
     path: ModelPath;
     action: string;
-    args: any[]
+    args: any[];
+    version?: string;
 }
 export type WorkerAction = {
     type: WorkerMessageType.Action;
