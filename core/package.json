@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/core",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "di, base extensions, useful functions",
   "publishConfig": {
     "access": "public"
@@ -33,7 +33,7 @@
     "crc-32": "1.x.x"
   },
   "dependencies": {
-    "@cmmn/cell": "^1.5.1",
+    "@cmmn/cell": "^1.5.2",
     "@types/luxon": "2.x.x",
     "bind-decorator": "^1.0.11",
     "luxon": "2.x.x",
