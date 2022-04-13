@@ -8,6 +8,8 @@ export type CellDecorator =
     & MethodDecorator
 
 const getCell = (self: { [KEY_VALUE_CELLS]?: { [key: string]: BaseCell } }, prop, descr: PropertyDescriptor, options) => {
+    if (self[KEY_VALUE_CELLS] && self[KEY_VALUE_CELLS][prop])
+        return self[KEY_VALUE_CELLS][prop];
     self[KEY_VALUE_CELLS] ??= {};
     let pull = null; // if simple observable
     if (descr) {

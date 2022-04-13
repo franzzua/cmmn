@@ -21,7 +21,7 @@ export class WorkerEntry {
                     if (!model)
                         throw new Error(`Model not found at path ${path.join(':')}`)
                     model.$state.on('change', ({value}) => {
-                        model.$version = Fn.ulid();
+                        // model.$version = Fn.ulid();
                         this.postMessage({
                             path,
                             type: WorkerMessageType.State,
@@ -47,6 +47,7 @@ export class WorkerEntry {
                 }
                 case WorkerMessageType.Action: {
                     const model = this.getModel<any, any>(message.path);
+                    model.$version = message.version;
                     this.Action(model, message).then(response => {
                         return ({response: (response)});
                     })

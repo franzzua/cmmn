@@ -42,11 +42,11 @@ export class WorkerStream extends Stream {
 
     async Invoke(action: Action) {
         const actionId = Fn.ulid();
-        this.models.get(this.pathToStr(action.path)).up()
+        // this.models.get(this.pathToStr(action.path)).up()
         this.postMessage({
             type: WorkerMessageType.Action,
             ...action,
-            version: null,
+            version: actionId,
             actionId
         });
         return this.responses.getOrAdd(actionId, () => new ResolvablePromise());

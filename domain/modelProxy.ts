@@ -1,16 +1,16 @@
 import {Stream} from "./streams/stream";
 import {ModelAction, ModelPath} from "./shared/types";
-import {AsyncQueue, Fn} from "@cmmn/core";
+import {AsyncQueue} from "@cmmn/core";
 import {cell, Cell} from "@cmmn/cell";
+import {VersionState} from "./streams/versionState";
 
 export class ModelProxy<TState, TActions extends ModelAction = {}> {
 
     constructor(protected stream: Stream, public path: ModelPath) {
     }
-
-    public $remoteState = this.stream.getCell<Readonly<TState>>(this.path);
-    public $localState = new Cell(null);
-    public $state = this.$remoteState;
+    public $state: VersionState<TState> = this.stream.getCell<Readonly<TState>>(this.path) as VersionState<TState>;
+    // public $localState = new Cell(null);
+    // public $state = this.$remoteState;
     // public $state = new Cell<TState>(() => {
     //     if (!this.isInvoking) {
     //         this.$localState.set(null);
@@ -19,34 +19,26 @@ export class ModelProxy<TState, TActions extends ModelAction = {}> {
     //     return this.$localState.get() ?? this.$remoteState.get();
     // });
 
-    @cell
-    protected isInvoking = false;
+    // @cell
+    // protected isInvoking = false;
 
     public get State(): TState {
         return this.$state.get();
     }
 
     public Diff(change: (state: TState) => TState) {
-        const current = this.$remoteState.get();
-        this.$localState.set(change(current));
-        this.isInvoking = true;
-        this.asyncQueue.Invoke(() => {
-            const current = this.$remoteState.get();
-            this.$remoteState.set(change(current));
-            this.isInvoking = false;
-        });
+        const current = this.$state.get();
+        this.$state.setLocal(change(current));
+        // this.$localState.set(change(current));
+        // this.isInvoking = true;
+        // this.asyncQueue.Invoke(() => {
+        //     // this.isInvoking = false;
+        //     this.$remoteState.set(change(current));
+        // });
     }
 
     public set State(state: TState) {
-        this.$localState.set(state);
-        this.isInvoking = true;
-        this.asyncQueue.Invoke(() => {
-            this.$remoteState.set(state);
-            this.isInvoking = false;
-        });
-        // this.asyncQueue.Invoke(() => {
-        //     return this.$remoteState(state);
-        // });
+        this.Diff(() => state);
     }
 
     private asyncQueue = new AsyncQueue();
@@ -64,24 +56,19 @@ export class ModelProxy<TState, TActions extends ModelAction = {}> {
     public Invoke(action: string, args: any[]): Promise<any> {
         if (action === 'equals')
             return Promise.resolve(false);
-        this.isInvoking = true;
+        if (!action.startsWith('Get'))
+            this.$state.up();
         return this.asyncQueue.Invoke(() => this.stream.Invoke({
             path: this.path,
             args, action
-        })).catch(e => {
-            this.isInvoking = false;
-            throw e;
-        }).then(x => {
-            this.isInvoking = false;
-            return x;
-        });
+        }));
     }
 
     public QueryModel(path: (string | number)[]): any {
         return new ModelProxy(this.stream, [this.path, path].flat());
     }
 
-    public equals(x: any){
+    public equals(x: any) {
         return this === x;
     }
 

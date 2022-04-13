@@ -1,24 +1,35 @@
 import { Fn } from "@cmmn/core";
-import {Cell} from "@cmmn/cell";
+import {cell, Cell} from "@cmmn/cell";
 
 export class VersionState<T> extends Cell<T> {
+    @cell
     remoteVersion: string;
+    @cell
+    localVersion: string;
+    @cell
+    localState: T;
+    @cell
     remoteState: T;
 
-    public Version: string;
-
     constructor() {
-        super(null);
+        super(() => {
+            if (this.localVersion && this.remoteVersion < this.localVersion)
+                return this.localState;
+            return this.remoteState;
+        });
     }
 
     public up() {
-        this.Version = Fn.ulid();
+        // this.localVersion = Fn.ulid();
     }
 
     setRemote(version: string, state: T) {
-        // if (!this.Version || version >= this.Version) {
-        //     this.Version = version;
-            this.set(state);
-        // }
+        this.remoteState = state;
+        this.remoteVersion = version;
+    }
+
+    setLocal(value: T){
+        this.localState = value;
+        this.localVersion = Fn.ulid();
     }
 }

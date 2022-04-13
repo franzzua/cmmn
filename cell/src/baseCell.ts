@@ -1,4 +1,4 @@
-import {EventEmitter} from "./event-emitter";
+import {EventEmitter, EventEmitterBase} from "./event-emitter";
 import {Actualizator} from "./actualizator";
 
 function getDebugName(){
@@ -38,8 +38,7 @@ export class BaseCell<T = any> extends EventEmitter<{
             this.pull = value as () => T;
             this.state = CellState.Dirty;
         } else {
-            this.value = value;
-            this.state = CellState.Actual;
+            this.updateValue(undefined, value);
         }
     }
 
@@ -56,11 +55,31 @@ export class BaseCell<T = any> extends EventEmitter<{
     }
 
     public setError(error: Error){
+        this.updateValue(this.value, undefined, error);
+    }
+
+    protected onValueChanged = (change) => {
+        this.updateValue(this.value, this.value);
+    }
+
+    protected updateValue(oldValue:T, value: T, error?: Error){
         this.error = error;
-        this.value = undefined;
+        this.value = value;
         this.state = CellState.Actual;
-        if (this.isActive)
-            this.emit('error', this.error);
+        if (oldValue !== value) {
+            if (oldValue && oldValue !== value && oldValue instanceof EventEmitterBase) {
+                oldValue.off('change', this.onValueChanged);
+            }
+            if (value && oldValue !== value && value instanceof EventEmitterBase) {
+                value.on('change', this.onValueChanged);
+            }
+        }
+        if (this.isActive) {
+            if (error)
+                this.emit('error', error);
+            else
+                this.notifyChange(value, oldValue);
+        }
         if (this.reactions) {
             for (let reaction of this.reactions) {
                 reaction.state = CellState.Dirty;
@@ -72,17 +91,7 @@ export class BaseCell<T = any> extends EventEmitter<{
     public set(value: T) {
         if (this.compare(value, this.value))
             return;
-        const oldValue = this.value;
-        this.value = value;
-        this.state = CellState.Actual;
-        if (this.isActive)
-            this.notifyChange(value, oldValue);
-        if (this.reactions) {
-            for (let reaction of this.reactions) {
-                reaction.state = CellState.Dirty;
-                Actualizator.Up(reaction);
-            }
-        }
+        this.updateValue(this.value, value);
     }
 
     protected compare(newValue: T, oldValue: T){
