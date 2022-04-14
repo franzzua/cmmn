@@ -4,7 +4,7 @@ import {GlobalStaticState} from "./component";
 import {listenSvgConnectDisconnect} from "./listen-svg-connect-disconnect";
 import {HtmlComponent} from "./htmlComponent";
 import {BoundRectListener} from "./boundRectListener";
-import {Cell, BaseCell} from "@cmmn/cell";
+import {Cell} from "@cmmn/cell";
 import {Fn} from "@cmmn/core";
 
 export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
@@ -41,6 +41,48 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
     private onDisposeSet = new Set<Function>();
 
     public connectedCallback() {
+    }
+
+    public disconnectedCallback() {
+        this.onDisposeSet.forEach(x => x());
+        this.onDisposeSet.clear();
+    }
+
+    public set onDispose(listener) {
+        if (listener && typeof listener === "function")
+            this.onDisposeSet.add(listener);
+    }
+
+    public onError(error, source: 'effect' | 'action' | 'state' | 'template') {
+        console.warn(this, source, error);
+    }
+
+    /** @internal **/
+    public async RunEffects(state: TState) {
+        const effects = (this.constructor as typeof HtmlComponentBase).Effects;
+        if (effects?.length) {
+            for (let effect of effects) {
+                const value = effect.filter(state);
+                if (this.EffectValues.has(effect.effect)) {
+                    const lastValue = this.EffectValues.get(effect.effect);
+                    if (Fn.compare(lastValue, value))
+                        continue;
+                }
+                this.EffectValues.set(effect.effect, value);
+                if (effect.unsubscr && typeof effect.unsubscr === "function")
+                    effect.unsubscr();
+                try {
+                    effect.unsubscr = await effect.effect.call(this, value, state);
+                } catch (e) {
+                    this.onError(e, 'effect');
+                }
+            }
+        }
+    }
+
+    /** @internal **/
+    @HtmlComponentBase.effect()
+    public SubscribeActions() {
         const actions = (this.constructor as typeof HtmlComponentBase).Actions ?? [];
         for (let action of actions) {
             // TODO: unsubscribe
@@ -52,31 +94,18 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
                     action.unsusbscr();
                 try {
                     action.unsusbscr = await action.action.call(this, value);
-                }catch (e){
-
+                } catch (e) {
+                    this.onError(e, 'action');
                 }
             }
             this.onDispose = cell.on('change', invokeAction);
             this.onDispose = () => {
                 if (action.unsusbscr && typeof action.unsusbscr === "function")
                     action.unsusbscr();
+                cell.off('change', invokeAction);
             }
-            try {
-                action.unsusbscr = action.action.call(this, action.filter.call(this));
-            }catch (e){
-
-            }
+            invokeAction({value: cell.get()})
         }
-    }
-
-    public disconnectedCallback() {
-        this.onDisposeSet.forEach(x => x());
-        this.onDisposeSet.clear();
-    }
-
-    public set onDispose(listener) {
-        if (listener && typeof listener === "function")
-            this.onDisposeSet.add(listener);
     }
 
 

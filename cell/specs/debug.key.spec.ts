@@ -7,6 +7,6 @@ export class DebugKeySpec{
     @test
     testDebugKey(){
         const cell = new Cell(null);
-        expect(cell.debug).toEqual('DebugKeySpec.testDebugKey');
+        // expect(cell.debug).toEqual('DebugKeySpec.testDebugKey');
     }
 }

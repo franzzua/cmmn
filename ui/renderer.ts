@@ -78,30 +78,16 @@ export class Renderer<TState, TEvents extends IEvents> {
     private state: TState ;
 
     async _render() {
-        this.template.call(this.component, this.html, this.state, this.handlerProxy);
+        try {
+            this.template.call(this.component, this.html, this.state, this.handlerProxy);
+        }catch (e){
+            this.component.onError(e, 'template');
+        }
         if (this.renderedTask) {
             this.renderedTask.resolve();
             await this.renderedTask;
         }
-        const effects = (this.component.constructor as typeof HtmlComponentBase).Effects;
-        if (effects?.length) {
-            for (let effect of effects) {
-                const value = effect.filter(this.state);
-                if (this.component.EffectValues.has(effect.effect)) {
-                    const lastValue = this.component.EffectValues.get(effect.effect);
-                    if (Fn.compare(lastValue, value))
-                        continue;
-                }
-                this.component.EffectValues.set(effect.effect, value);
-                if (effect.unsubscr && typeof effect.unsubscr === "function")
-                    effect.unsubscr();
-                try {
-                    effect.unsubscr = await effect.effect.call(this.component, value, this.state);
-                }catch (e){
-
-                }
-            }
-        }
+        await this.component.RunEffects(this.state);
     }
 
     private renderedTask: ResolvablePromise;
