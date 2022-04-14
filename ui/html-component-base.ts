@@ -81,7 +81,6 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
     }
 
     /** @internal **/
-    @HtmlComponentBase.effect()
     public SubscribeActions() {
         const actions = (this.constructor as typeof HtmlComponentBase).Actions ?? [];
         for (let action of actions) {
@@ -121,7 +120,10 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
     public static effect<TState>(filter: (this: any, state: TState) => any = () => null): MethodDecorator {
         return (target: { constructor: typeof HtmlComponent }, key, descr) => {
             if (!Object.getOwnPropertyDescriptor(target.constructor, 'Effects'))
-                target.constructor.Effects = [];
+                target.constructor.Effects = [{
+                    filter: () => null,
+                    effect: HtmlComponentBase.prototype.SubscribeActions
+                }];
             target.constructor.Effects.push({
                 filter: filter,
                 effect: descr.value as any

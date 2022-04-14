@@ -1,4 +1,4 @@
-import {bind, Fn, ResolvablePromise} from "@cmmn/core";
+import {bind, ResolvablePromise} from "@cmmn/core";
 import {Renderable, TemplateFunction} from "@cmmn/uhtml";
 import {IEvents, ITemplate} from "./types";
 import {EventHandlerProvider} from "./eventHandlerProvider";
@@ -46,7 +46,7 @@ export class Renderer<TState, TEvents extends IEvents> {
             if (Array.isArray(template))
                 return render(template as any, ...values);
             return render.for(template, ...values);
-        },{
+        }, {
             for: render.for
         });
     }
@@ -71,16 +71,16 @@ export class Renderer<TState, TEvents extends IEvents> {
             renderer._render();
         }
         Renderer.renderTasks.clear();
-        AnimationFrame.off( Renderer.Render);
+        AnimationFrame.off(Renderer.Render);
     }
 
 
-    private state: TState ;
+    private state: TState;
 
     async _render() {
         try {
             this.template.call(this.component, this.html, this.state, this.handlerProxy);
-        }catch (e){
+        } catch (e) {
             this.component.onError(e, 'template');
         }
         if (this.renderedTask) {
@@ -95,7 +95,7 @@ export class Renderer<TState, TEvents extends IEvents> {
     @bind
     render(state) {
         this.state = state;
-        AnimationFrame.on( Renderer.Render);
+        AnimationFrame.on(Renderer.Render);
         Renderer.renderTasks.add(this);
         this.renderedTask ??= new ResolvablePromise();
         return this.renderedTask;
