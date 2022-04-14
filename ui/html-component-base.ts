@@ -51,6 +51,13 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
     public set onDispose(listener) {
         if (listener && typeof listener === "function")
             this.onDisposeSet.add(listener);
+        const effects = (this.constructor as typeof HtmlComponentBase).Effects;
+        if (effects?.length) {
+            for (let effect of effects) {
+                if (effect.unsubscr && typeof effect.unsubscr === "function")
+                    effect.unsubscr();
+            }
+        }
     }
 
     public onError(error, source: 'effect' | 'action' | 'state' | 'template') {
