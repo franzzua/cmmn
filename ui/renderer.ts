@@ -88,6 +88,7 @@ export class Renderer<TState, TEvents extends IEvents> {
             await this.renderedTask;
         }
         await this.component.RunEffects(this.state);
+        await this.component.SubscribeActions();
     }
 
     private renderedTask: ResolvablePromise;

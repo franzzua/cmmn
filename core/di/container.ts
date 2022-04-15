@@ -43,6 +43,10 @@ export class Container {
         return result;
     }
 
+    public withProviders(...providers: Provider[]){
+        return Container.withProviders(...this.getProviders(), ...providers);
+    }
+
     public provide(providers: Provider[] | Container) {
         if (providers instanceof Container) {
             this.store.register(providers.store);

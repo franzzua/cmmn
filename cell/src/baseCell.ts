@@ -30,7 +30,7 @@ export class BaseCell<T = any> extends EventEmitter<{
     state: CellState = CellState.Actual;
     value: T;
     error: Error;
-    // debug = getDebugName();
+    debug = getDebugName();
 
     constructor(value: T | (() => T)) {
         super();
