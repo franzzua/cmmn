@@ -1,9 +1,0 @@
-{
-  "extends": "@cmmn/tools/compile/tsconfig.json",
-  "compilerOptions": {
-  },
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
-}
