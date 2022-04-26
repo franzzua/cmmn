@@ -22,6 +22,7 @@ export class AsyncCell<T, TKey> extends Cell<T, TKey> {
 
     active() {
         this.genCell.on('change', this.onChange)
+        this.onChange({value: this.genCell.get()})
         super.active()
     }
 
