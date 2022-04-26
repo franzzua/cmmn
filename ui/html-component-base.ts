@@ -4,10 +4,14 @@ import {GlobalStaticState} from "./component";
 import {listenSvgConnectDisconnect} from "./listen-svg-connect-disconnect";
 import {HtmlComponent} from "./htmlComponent";
 import {BoundRectListener} from "./boundRectListener";
-import {Cell} from "@cmmn/cell";
-import {Fn} from "@cmmn/core";
+import {EventEmitter} from "@cmmn/core";
+import {effect} from "./effect";
+import {action} from "./action";
 
-export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
+export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> extends EventEmitter<{
+    render: { state: TState },
+    dispose: void
+}> {
     static Name: string;
     static Template: ITemplate<any, any>;
 
@@ -41,116 +45,35 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> {
     private onDisposeSet = new Set<Function>();
 
     public connectedCallback() {
+        HtmlComponentBase.GlobalEvents.emit('connected', this);
     }
 
     public disconnectedCallback() {
         this.onDisposeSet.forEach(x => x());
         this.onDisposeSet.clear();
+        this.emit('dispose');
+        HtmlComponentBase.GlobalEvents.emit('disconnected', this);
     }
 
     public set onDispose(listener) {
         if (listener && typeof listener === "function")
             this.onDisposeSet.add(listener);
-        const effects = (this.constructor as typeof HtmlComponentBase).Effects;
-        if (effects?.length) {
-            for (let effect of effects) {
-                if (effect.unsubscr && typeof effect.unsubscr === "function")
-                    effect.unsubscr();
-            }
-        }
     }
 
-    public onError(error, source: 'effect' | 'action' | 'state' | 'template') {
-        console.warn(this, source, error);
+    public onError(error, source: 'effect' | 'action' | 'state' | 'template', sourceName?) {
+        console.warn(this, source, sourceName, error);
     }
 
-    /** @internal **/
-    public async RunEffects(state: TState) {
-        const effects = (this.constructor as typeof HtmlComponentBase).Effects;
-        if (effects?.length) {
-            for (let effect of effects) {
-                const value = effect.filter(state);
-                if (this.EffectValues.has(effect.effect)) {
-                    const lastValue = this.EffectValues.get(effect.effect);
-                    if (Fn.compare(lastValue, value))
-                        continue;
-                }
-                this.EffectValues.set(effect.effect, value);
-                if (effect.unsubscr && typeof effect.unsubscr === "function")
-                    effect.unsubscr();
-                try {
-                    effect.unsubscr = await effect.effect.call(this, value, state);
-                } catch (e) {
-                    this.onError(e, 'effect');
-                }
-            }
-        }
-    }
-
-    private isSubscribed = false;
-    /** @internal **/
-    public SubscribeActions() {
-        if (this.isSubscribed)
-            return;
-        this.isSubscribed = true;
-        const actions = (this.constructor as typeof HtmlComponentBase).Actions ?? [];
-        for (let action of actions) {
-            // TODO: unsubscribe
-            const cell = new Cell(() => action.filter.call(this), {
-                compare: Fn.compare
-            });
-            const invokeAction = async ({value}) => {
-                if (action.unsusbscr && typeof action.unsusbscr === "function")
-                    action.unsusbscr();
-                try {
-                    action.unsusbscr = await action.action.call(this, value);
-                } catch (e) {
-                    this.onError(e, 'action');
-                }
-            }
-            this.onDispose = cell.on('change', invokeAction);
-            this.onDispose = () => {
-                if (action.unsusbscr && typeof action.unsusbscr === "function")
-                    action.unsusbscr();
-                cell.off('change', invokeAction);
-            }
-            invokeAction({value: cell.get()})
-        }
-    }
+    static GlobalEvents = new EventEmitter<{
+        disconnected: HtmlComponentBase<any, any>,
+        connected: HtmlComponentBase<any, any>,
+        render: { target: HtmlComponentBase<any, any>, state: any }
+    }>();
 
 
-    /** @internal **/
-    static Effects: { filter, effect, unsubscr?: Function }[];
-    /** @internal **/
-    static Actions: { filter, action, unsusbscr?: Function }[];
-    /** @internal **/
-    public EffectValues = new Map<Function, any>();
-    /** @internal **/
-    public ActionValues = new Map<Function, any>();
+    public static effect = effect;
 
-    public static effect<TState>(filter: (this: any, state: TState) => any = () => null): MethodDecorator {
-        return (target: { constructor: typeof HtmlComponent }, key, descr) => {
-            if (!Object.getOwnPropertyDescriptor(target.constructor, 'Effects'))
-                target.constructor.Effects = [];
-            target.constructor.Effects.push({
-                filter: filter,
-                effect: descr.value as any
-            });
-            return descr;
-        }
-    }
-
-    public static action<TState>(filter: (this: any) => any = () => null): MethodDecorator {
-        return (target: { constructor: typeof HtmlComponent }, key, descr) => {
-            if (!Object.getOwnPropertyDescriptor(target.constructor, 'Actions'))
-                target.constructor.Actions = [];
-            target.constructor.Actions.push({
-                filter: filter,
-                action: descr.value as any
-            });
-            return descr;
-        }
-    }
+    public static action = action;
 
     public get ClientRect(): { width; height; left; top; } {
         const listener = BoundRectListener.GetInstance(this.element)

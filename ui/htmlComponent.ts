@@ -33,12 +33,12 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
 
     public connectedCallback() {
         this.DetachChildren();
-        this.isStopped = false;
-        this.$state.on('change', this._render);
+        this.onDispose = this.$state.on('change', this._render);
+        this.onDispose = this.$state.on('error', e => this.onError(e, 'state'));
         try {
             this.render(this.$state.get());
         }catch (e){
-
+            this.onError(e, 'state');
         }
         super.connectedCallback();
     }
@@ -46,23 +46,19 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
     protected _render = ({value}) => this.render(value);
 
     protected async render(state) {
-        if (this.isStopped || !state)
+        if (!state)
             return;
         await this.renderer.render(state);
         this.$render.set(this.$render.get() + 1);
     }
 
-    protected isStopped = true;
-
     public disconnectedCallback() {
         if (HtmlComponent.removing)
             return;
         super.disconnectedCallback();
-        this.isStopped = true;
-        this.$state.off('change', this._render);
     }
 
-    $state: Cell<TState | Promise<TState>> = new Cell(() => this.isStopped ? null : this.State, {
+    $state: Cell<TState | Promise<TState>> = new Cell(() => this.State, {
         compare: Fn.compare
     });
 
