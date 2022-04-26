@@ -9,7 +9,10 @@ export abstract class Model<TState, TActions extends ModelAction = {}> {
     /** @internal **/
     public $remoteSetter = false;
     public $state = new Cell(() => this.State, {
-        put: value => this.State = value,
+        put: value => {
+            // TODO: enable
+            // this.State = value
+        },
         compare: Fn.compare
     })
 
