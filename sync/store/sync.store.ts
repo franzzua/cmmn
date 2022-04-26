@@ -2,7 +2,7 @@ import {Doc} from "yjs";
 import {DocAdapter} from "../index";
 import {Awareness} from "y-protocols/awareness";
 import {ObservableYMap} from "./observable-y-map";
-import {Observable} from "cellx-decorators";
+import {cell} from "@cmmn/cell";
 import {IndexeddbPersistence} from "y-indexeddb";
 
 export class SyncStore<TEntity> {
@@ -14,10 +14,10 @@ export class SyncStore<TEntity> {
     constructor(protected name) {
     }
 
-    @Observable
+    @cell
     public Items = new ObservableYMap<TEntity>(this.items);
 
-    @Observable
+    @cell
     public IsSynced = false;
 
     public useIndexedDB() {

@@ -1,10 +1,9 @@
 import {Map as YMap} from "yjs";
-import {EventEmitter, TListener} from "cellx";
-import {ObservableList, ObservableMap, TObservableMapValueEquals} from "cellx-collections";
+import {EventEmitter} from "@cmmn/cell";
+import {ObservableList, ObservableMap} from "@cmmn/cell";
 import {Fn} from "@cmmn/core";
 
-export class ObservableYMap<TValue> extends EventEmitter
-    implements ObservableMap<string, TValue> {
+export class ObservableYMap<TValue> extends ObservableMap<string, TValue>{
     constructor(private yMap: YMap<TValue>) {
         super();
     }
@@ -26,32 +25,12 @@ export class ObservableYMap<TValue> extends EventEmitter
                 }
             }
         });
-        this.emit({
-            type: 'change',
-            target: this,
-            data: {
-
-            }
-        });
     }
 
     _entries: Map<string, TValue>;
 
     get size(): number {
         return this.yMap.size;
-    }
-
-    _valueEquals: TObservableMapValueEquals<TValue>;
-    get valueEquals(): TObservableMapValueEquals<TValue> {
-        throw new Error("Method not implemented.");
-    }
-
-    onChange(listener: TListener<EventEmitter>, context?: any): this {
-        return this.on(ObservableMap.EVENT_CHANGE, listener, context);
-    }
-
-    offChange(listener: TListener<EventEmitter>, context?: any): this {
-        return this.off(ObservableMap.EVENT_CHANGE, listener, context);
     }
 
     clear(): this {
@@ -90,10 +69,10 @@ export class ObservableYMap<TValue> extends EventEmitter
 
 
     private emitChange(type: 'add' | 'update' | 'delete', key, value, prev) {
-        super.emit(ObservableMap.EVENT_CHANGE, {
-            subtype: type,
+        super.emit('change', {
+            type,
             key,
-            prevValue: prev,
+            oldValue: prev,
             value
         });
     }
@@ -137,35 +116,6 @@ export class ObservableYMap<TValue> extends EventEmitter
 
     [Symbol.iterator] = () => {
         return this.entries();
-    }
-
-    public toList(id: (x: TValue) => string): ObservableList<TValue> {
-        const list = new ObservableList(Array.from(this.values()));
-        list.onChange(e => {
-            switch (e.data.subtype) {
-                case "add":
-                case "update":
-                    this.set(id(e.data.value), e.data.value);
-                    break;
-                case "delete":
-                    this.delete(id(e.data.value));
-                    break;
-            }
-        });
-        this.onChange(e => {
-            switch (e.data.subtype) {
-                case "add":
-                    list.add(e.data.value);
-                    break;
-                case "delete":
-                    list.remove(e.data.value);
-                    break;
-                case "update":
-                    list.set(list.indexOf(e.data.oldValue), e.data.value);
-                    break;
-            }
-        });
-        return list;
     }
 
 }
