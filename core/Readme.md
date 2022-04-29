@@ -1,8 +1,15 @@
 ## Core level libraries and extensions
 
-* Serialization via messagepack
-* Dependency injection container
-* Datetime wrappers
-* Array and map extensions
-* Usefull functions
-* Cellx extensions
+* [Serialization via messagepack](./serialize/index.ts)
+* [Dependency injection container](./di/index.ts)
+* [Datetime wrappers](./helpers/utc.ts) - luxon not included
+* [Array monkey-patching](./helpers/Array.ts)
+* [Map monkey-patching](./helpers/map.ts)
+* [EventEmitter](./helpers/event-emitter.ts)
+* [Usefull functions](./helpers/Fn.ts)
+  * [Ulid](./helpers/ulid.ts)
+  * [deepAssign](./helpers/deepAssign.ts)
+  * [compare](./helpers/compare.ts)
+* [Lazy decorator](./helpers/Lazy.ts)
+* [Resolvable Promise](./helpers/resolvable.promise.ts)
+* [AsyncQueue](./async-queue.ts)

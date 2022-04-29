@@ -14,7 +14,7 @@
   "typesVersions": {
     "*": {
       "index.d.ts": [
-        "dist/typings/index.d.ts"
+        "./dist/typings/index.d.ts"
       ]
     }
   },

@@ -1,3 +1,6 @@
+/**
+ * You may invoke async function and they will be executed one-by-one in a queue
+ */
 export class AsyncQueue {
 
     private queue: Array<() => Promise<any>> = [];
@@ -12,19 +15,12 @@ export class AsyncQueue {
         });
     }
 
-    private emptyTimeout: any = null;
     private run() {
         if (this.isInvoking)
             return;
         if (this.queue.length == 0 && !this.isInvoking) {
-            // this.emptyTimeout = setTimeout(() => {
-            //     if (this.queue.length == 0 && !this.isInvoking)
-            //         this.IsEmpty = true;
-            // }, 100);
             return;
         }
-        // this.emptyTimeout && clearTimeout(this.emptyTimeout);
-        // this.IsEmpty = false;
         this.isInvoking = true;
         const current = this.queue.shift();
         current!().finally(() => {
