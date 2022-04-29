@@ -14,6 +14,8 @@ export {property, propertySymbol} from "./property";
 export {PointerListener, IPoint, PointerEvents} from "./pointer"
 export {Keyboard, KeyboardListener} from "./keyboard";
 export {AnimationFrame} from "./animationFrameListener";
+export * from "./action";
+export * from "./effect";
 //
 // const listeners = globalThis['listeners'] = new Map<string, Map<Function, EventTarget>>();
 //
