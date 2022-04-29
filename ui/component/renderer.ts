@@ -4,7 +4,7 @@ import {IEvents, ITemplate} from "./types";
 import {EventHandlerProvider} from "./eventHandlerProvider";
 import {HtmlComponentBase} from "./html-component-base";
 import {getRender, getTemplate} from "./template";
-import {AnimationFrame} from "./animationFrameListener";
+import {AnimationFrame} from "../user-events/animationFrameListener";
 
 export class Renderer<TState, TEvents extends IEvents> {
     // private stateCell: Cell<TState> = this.component.$state ?? cellx(() => this.stopped ? null : this.component.State).cell;

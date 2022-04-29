@@ -20,7 +20,7 @@ export const Fn = {
     join: (...functions: Function[]) => {
         return function (...args) {
             for (let fn of functions) {
-                fn.apply(this, args);
+                fn && fn.apply(this, args);
             }
         }
     },

@@ -1,7 +1,7 @@
-import {component, GlobalStaticState} from "./component";
-import {HtmlComponent, AsyncHtmlComponent} from "./htmlComponent";
-import "./styleHandler"
-import {Renderer} from "./renderer";
+import {component, GlobalStaticState} from "./component/component";
+import {HtmlComponent, AsyncHtmlComponent} from "./component/htmlComponent";
+import "./uhtml-ext/styleHandler"
+import {Renderer} from "./component/renderer";
 
 export {HtmlComponent, component, AsyncHtmlComponent};
 
@@ -9,13 +9,14 @@ export function setDefaultContainer(container: { get(target): any; }) {
     GlobalStaticState.DefaultContainer = container;
 }
 
-export * from "./types";
-export {property, propertySymbol} from "./property";
-export {PointerListener, IPoint, PointerEvents} from "./pointer"
-export {Keyboard, KeyboardListener} from "./keyboard";
-export {AnimationFrame} from "./animationFrameListener";
-export * from "./action";
-export * from "./effect";
+export * from "./component/types";
+export {property, propertySymbol} from "./component/property";
+export {PointerListener, IPoint, PointerEvents} from "./user-events/pointer"
+export {Keyboard, KeyboardListener} from "./user-events/keyboard";
+export {AnimationFrame} from "./user-events/animationFrameListener";
+export * from "./extensions/action";
+export * from "./extensions/effect";
+export * from "./extensions/react";
 //
 // const listeners = globalThis['listeners'] = new Map<string, Map<Function, EventTarget>>();
 //

@@ -3,14 +3,15 @@ import {Renderer} from "./renderer";
 import {GlobalStaticState} from "./component";
 import {listenSvgConnectDisconnect} from "./listen-svg-connect-disconnect";
 import {HtmlComponent} from "./htmlComponent";
-import {BoundRectListener} from "./boundRectListener";
+import {BoundRectListener} from "../user-events/boundRectListener";
 import {EventEmitter} from "@cmmn/core";
-import {effect} from "./effect";
-import {action} from "./action";
+import {effect, EffectFunction, SubscibeOnEffect} from "../extensions/effect";
+import {action, ActionSubscribeType, SubcribeOnActions} from "../extensions/action";
 
 export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> extends EventEmitter<{
     render: { state: TState },
-    dispose: void
+    dispose: void,
+    connected: void
 }> {
     static Name: string;
     static Template: ITemplate<any, any>;
@@ -46,6 +47,7 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> ex
 
     public connectedCallback() {
         HtmlComponentBase.GlobalEvents.emit('connected', this);
+        this.emit('connected');
     }
 
     public disconnectedCallback() {
@@ -78,5 +80,16 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> ex
     public get ClientRect(): { width; height; left; top; } {
         const listener = BoundRectListener.GetInstance(this.element)
         return listener.Rect;
+    }
+
+    protected async useAction(action, filter = () => null, subscribeAt: ActionSubscribeType = ActionSubscribeType.OnConnected){
+        if (subscribeAt === ActionSubscribeType.OnConnected){
+            await this.onceAsync('connected');
+        }
+        SubcribeOnActions(this, action, filter, subscribeAt);
+    }
+
+    protected useEffect(effect: EffectFunction<TState>, filter: (this: HtmlComponentBase<TState>, state: TState) => any = () => null){
+        SubscibeOnEffect(this, effect, filter);
     }
 }
