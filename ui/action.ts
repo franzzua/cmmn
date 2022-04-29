@@ -6,14 +6,14 @@ type EffectFunction<TState> = (state: TState) => void | Function
 type EffectInfo = {
     unsubscr?: Function;
 }
-export function action<TState>(filter: (this: any) => any = () => null): MethodDecorator {
+export function action<TState>(filter: (this: any) => any = () => null, subscribeAt: ActionSubscribeType = ActionSubscribeType.OnConnected): MethodDecorator {
     return <T>(target: { constructor: typeof HtmlComponentBase }, key, descr) => {
         const actionFn = descr.value as EffectFunction<TState>;
         const actionValues = new Map<HtmlComponentBase<TState>, Map<EffectFunction<TState>, EffectInfo>>();
         target.constructor.GlobalEvents.on('connected', function (component: HtmlComponentBase<TState, any>) {
-            if (component.constructor !== target.constructor)
+            if (!(component instanceof target.constructor))
                 return;
-            component.onDispose = component.once('render',  async () => {
+            async function actionSubscribe(){
                 const cell = new Cell(() => filter.call(component), {
                     compare: Fn.compare
                 });
@@ -40,8 +40,21 @@ export function action<TState>(filter: (this: any) => any = () => null): MethodD
                 } catch (e) {
                     component.onError(e, 'action', actionFn.name);
                 }
-            });
+            }
+            switch (subscribeAt){
+                case ActionSubscribeType.OnConnected:
+                    actionSubscribe();
+                    break;
+                case ActionSubscribeType.OnFirstRender:
+                    component.onDispose = component.once('render',  actionSubscribe);
+                    break;
+            }
         });
         return descr;
     }
+}
+
+export enum ActionSubscribeType {
+    OnConnected = 1,
+    OnFirstRender = 2
 }
