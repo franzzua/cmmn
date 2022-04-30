@@ -5,15 +5,15 @@ export type ICellOptions<T, TKey = T> = {
     compareKey?: (value: T) => TKey;
     filter?: (a: T) => boolean;
     put?: (a: T) => void;
-    value?: T;
+    startValue?: T;
 }
 
 
 export class Cell<T = any, TKey = T> extends BaseCell<T> {
     constructor(value: T | (() => T), protected options: ICellOptions<T, TKey> = {}) {
         super(value);
-        if (options.value) {
-            this.updateValue(this.value, options.value);
+        if (options.startValue) {
+            this.updateValue(this.value, options.startValue);
         }
     }
 
