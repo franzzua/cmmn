@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/cell",
-  "version": "1.5.8",
+  "version": "1.5.9",
   "description": "pull-based state flow",
   "publishConfig": {
     "access": "public"

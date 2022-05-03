@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/domain",
-  "version": "1.5.8",
+  "version": "1.5.9",
   "description": "",
   "type": "module",
   "exports": {
@@ -37,8 +37,8 @@
     "@cmmn/tools": "^1.5.1"
   },
   "dependencies": {
-    "@cmmn/cell": "^1.5.8",
-    "@cmmn/core": "^1.5.8"
+    "@cmmn/cell": "^1.5.9",
+    "@cmmn/core": "^1.5.9"
   },
   "author": "",
   "license": "ISC",
