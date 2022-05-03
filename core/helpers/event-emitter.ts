@@ -62,9 +62,15 @@ export class EventEmitter<TEvents extends {
 
     public static Merge<T>(...emitters: EventEmitterBase<T>[]): EventEmitterBase<T> {
         return new MergeListener(emitters);
-
     }
 
+    public dispose(){
+        for (let [key, value] of this.listeners) {
+            for (let listener of value) {
+                this.off(key, listener.listener);
+            }
+        }
+    }
 }
 
 export class StoppableEventEmitter<TEvents extends {

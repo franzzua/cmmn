@@ -12,6 +12,7 @@ export {ModelProxy} from "../modelProxy";
 export {Stream} from "../streams/stream";
 export {WorkerStream} from "../streams/workerStream";
 export {ModelMap} from "../model-map";
+export {ChildWindowConnector} from "../window/child-window";
 export * from "../shared/types"
 
 export function useDomain(factory: IFactory) {

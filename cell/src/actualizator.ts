@@ -43,7 +43,7 @@ export class Actualizator {
         Actualizator.CurrentCell = prevCell;
         if (oldDependencies) {
             for (let oldDependency of oldDependencies) {
-                if (cell.dependencies.has(oldDependency))
+                if (cell.dependencies?.has(oldDependency))
                     continue;
                 oldDependency.removeReaction(cell);
             }

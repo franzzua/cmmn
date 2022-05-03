@@ -8,7 +8,7 @@ export class BaseStream extends EventEmitter<{
     private performanceDiff = 0;
     private useBinary = true;
 
-    constructor(private target: Worker | typeof globalThis) {
+    constructor(private target: Worker | typeof globalThis | Window) {
         super();
         this.Connected.then(() => this.target.postMessage({
             origin: performance.timeOrigin

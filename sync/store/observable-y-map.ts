@@ -3,7 +3,9 @@ import {EventEmitter} from "@cmmn/cell";
 import {ObservableList, ObservableMap} from "@cmmn/cell";
 import {Fn} from "@cmmn/core";
 
-export class ObservableYMap<TValue> extends ObservableMap<string, TValue>{
+export class ObservableYMap<TValue> extends EventEmitter<{
+    change: { oldValue: TValue, value: TValue, key: string, type: 'add' | 'delete' | 'update' },
+}>{
     constructor(private yMap: YMap<TValue>) {
         super();
     }
@@ -27,8 +29,6 @@ export class ObservableYMap<TValue> extends ObservableMap<string, TValue>{
         });
     }
 
-    _entries: Map<string, TValue>;
-
     get size(): number {
         return this.yMap.size;
     }
@@ -37,36 +37,6 @@ export class ObservableYMap<TValue> extends ObservableMap<string, TValue>{
         this.yMap.clear();
         return this;
     }
-
-    equals(that: any): boolean {
-        if (!(that instanceof ObservableMap) ||
-            !(that instanceof ObservableYMap)) {
-            return false;
-        }
-        if (this.size != that.size) {
-            return false;
-        }
-        for (let [key, value] of this) {
-            const thisValue = this.get(key);
-            const thatValue = that.get(key);
-            if (!Fn.compare(thisValue, thatValue))
-                return false;
-        }
-        return true;
-    }
-
-    clone(deep?: boolean): ObservableMap<string, TValue> {
-        throw new Error("Method not implemented.");
-    }
-
-    absorbFrom(that: any): boolean {
-        throw new Error("Method not implemented.");
-    }
-
-    toData<I = any>(): Record<string, I> {
-        throw new Error("Method not implemented.");
-    }
-
 
     private emitChange(type: 'add' | 'update' | 'delete', key, value, prev) {
         super.emit('change', {
@@ -87,18 +57,23 @@ export class ObservableYMap<TValue> extends ObservableMap<string, TValue>{
 
     delete(key: string): boolean {
         const has = this.yMap.has(key);
+        const prev = this.yMap.get(key);
         this.yMap.delete(key);
+        this.emitChange('delete', key, null, prev);
         return has;
     }
 
     set(key: string, value: TValue) {
+        const has = this.yMap.has(key);
+        const prev = this.yMap.get(key);
         this.yMap.set(key, value);
+        this.emitChange(has ? 'update' : 'add', key, value, prev);
         return this;
     }
 
-    forEach(cb: (value: TValue, key: string, map: this) => void, context?: any) {
+    forEach(cb: (value: TValue, key: string, map: this) => void) {
         for (let x of this.yMap) {
-            cb.call(context, x[1], x[0], this);
+            cb(x[1], x[0], this);
         }
     }
 
