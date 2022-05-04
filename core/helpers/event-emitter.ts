@@ -46,12 +46,10 @@ export class EventEmitter<TEvents extends {
 
     @bind
     public emit<TEventName extends keyof TEvents>(eventName: TEventName, data?: TEvents[TEventName]) {
-        const arr = this.listeners.get(eventName);
+        let arr = this.listeners.get(eventName);
         if (!arr)
             return;
-        for (let i = 0; i < arr.length; i++) {
-            arr[i].listener(data);
-        }
+        arr.slice().forEach(x => x.listener(data));
     }
 
     public static fromEventTarget<TEvents extends {

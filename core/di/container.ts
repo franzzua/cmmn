@@ -24,7 +24,7 @@ export class Container {
                 if (Container.StaticDepsMap.has(provider.useClass)) {
                     const {deps, multiple} = Container.StaticDepsMap.get(provider.useClass);
                     provider.deps = deps;
-                    provider.multi = multiple;
+                    provider.multiple = multiple;
                 }
                 return provider;
             });

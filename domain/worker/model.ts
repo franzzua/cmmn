@@ -44,6 +44,10 @@ export abstract class Model<TState, TActions extends ModelAction = {}> {
     }
 
     public QueryModel<TState, TActions extends ModelAction>(path: ModelPath): Model<TState, TActions> | undefined {
-        return this._queryModel<TState, TActions>(path, this);
+        try {
+            return this._queryModel<TState, TActions>(path.slice(), this);
+        }catch (e){
+            throw new Error('Failed to find model with path ' + path.join(' - '))
+        }
     }
 }

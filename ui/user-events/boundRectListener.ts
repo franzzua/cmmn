@@ -1,5 +1,12 @@
 import {cell} from "@cmmn/cell";
 
+if (!globalThis.ResizeObserver){
+    class ROMock {
+        observe(){}
+    }
+    globalThis.ResizeObserver = ROMock as any;
+}
+
 export class BoundRectListener {
     static onWindowResize() {
         for (let instance of BoundRectListener.Instances.values()) {
@@ -11,7 +18,7 @@ export class BoundRectListener {
         }
     }
 
-    private static observer = new ResizeObserver(this.onResize);
+    private static observer = new globalThis.ResizeObserver(BoundRectListener.onResize);
 
     private static onResize(entries: ResizeObserverEntry[], observer: ResizeObserver) {
         for (let entry of entries) {

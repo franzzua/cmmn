@@ -1,13 +1,14 @@
 import {IEvents} from "./types";
 import {HtmlComponentBase} from "./html-component-base";
 import {Cell} from "@cmmn/cell";
-import {bind, Fn} from "@cmmn/core";
+import {Fn} from "@cmmn/core";
 
 export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extends HtmlComponentBase<TState, TEvents> {
 
     constructor() {
         super();
     }
+
     protected Children: Element[] = Array.from(this.element.children)
         .filter(x => x instanceof Element);
 
@@ -17,17 +18,20 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
      * Removes children element and sets into this.Children
      * So you can render it somewhere inside element
      */
-    private DetachChildren(){
+    private DetachChildren() {
         // Hack: if there are some HtmlComponents in Children
         // their connectedCallbacks will invoke on removeChild (strange but in every browser)
         if (HtmlComponent.removing)
             return;
         if (this.Children.length) {
             HtmlComponent.removing = true;
-            for (let element of this.Children) {
-                this.element.removeChild(element)
+            try {
+                for (let element of this.Children) {
+                    element.remove();
+                }
+            } finally {
+                HtmlComponent.removing = false;
             }
-            HtmlComponent.removing = false;
         }
     }
 
@@ -37,7 +41,7 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
         this.onDispose = this.$state.on('error', e => this.onError(e, 'state'));
         try {
             this.render(this.$state.get());
-        }catch (e){
+        } catch (e) {
             this.onError(e, 'state');
         }
         super.connectedCallback();
@@ -68,11 +72,12 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
 
 }
 
-export abstract class AsyncHtmlComponent<TState, TEvents extends IEvents> extends HtmlComponent<TState, TEvents>{
+export abstract class AsyncHtmlComponent<TState, TEvents extends IEvents> extends HtmlComponent<TState, TEvents> {
 
     abstract patchState(state: TState): AsyncGenerator<TState>;
+
     protected _render = async ({value}) => {
-        for await (let state of this.patchState(value)){
+        for await (let state of this.patchState(value)) {
             this.render(state);
         }
     }

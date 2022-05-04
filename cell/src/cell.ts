@@ -1,4 +1,4 @@
-import {BaseCell, CellState} from "./baseCell";
+import {BaseCell} from "./baseCell";
 
 export type ICellOptions<T, TKey = T> = {
     compare?: (a: TKey, b: TKey) => boolean;
@@ -14,6 +14,15 @@ export class Cell<T = any, TKey = T> extends BaseCell<T> {
         super(value);
         if (options.startValue) {
             this.updateValue(this.value, options.startValue);
+        }
+    }
+
+    public changeOptions(options: ICellOptions<T, TKey>) {
+        if (this.options === options)
+            return;
+        this.options = options;
+        if (options.filter && !options.filter(this.value)){
+            this.setError(new Error('Current cell value is forbidden by filter'))
         }
     }
 
