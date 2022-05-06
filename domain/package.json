@@ -3,6 +3,9 @@
   "version": "1.5.10",
   "description": "",
   "type": "module",
+  "repository": {
+    "url": "https://github.com/franzzua/cmmn/tree/master/domain"
+  },
   "exports": {
     "./proxy": {
       "import": "./dist/proxy.js",

@@ -5,6 +5,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "repository": {
+    "url": "https://github.com/franzzua/cmmn/tree/master/uhtml"
+  },
   "main": "index.js",
   "typings": "index.d.ts",
   "scripts": {

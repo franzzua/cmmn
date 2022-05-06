@@ -4,6 +4,9 @@
   "description": "Compilation, bundling, code generator, testing.",
   "main": "dist/rollup.config.js",
   "type": "module",
+  "repository": {
+    "url": "https://github.com/franzzua/cmmn/tree/master/tools"
+  },
   "publishConfig": {
     "access": "public"
   },

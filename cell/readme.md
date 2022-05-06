@@ -24,7 +24,7 @@
 * value - начальное значение
 
 ### Тесты для понимания:
-* [Решение квадратного уравнения](./spec/long-graph.spec.ts)
+* [Решение квадратного уравнения](./specs/long-graph.spec.ts)
 * [Декораторы](./specs/decorators.spec.ts)
 * [Валидация](./specs/filter.spec.ts)
 * [Функция сравнения](./specs/compare.spec.ts)
