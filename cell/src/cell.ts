@@ -51,4 +51,14 @@ export class Cell<T = any, TKey = T> extends BaseCell<T> {
         super.notifyChange(value, oldValue);
         this.options.put && this.options.put(value);
     }
+
+    public static OnChange<T, TKey>(pull: () => T, options: ICellOptions<T, TKey>, listener: (event: {value: T, oldValue: T}) => void): Function;
+    public static OnChange<T>(pull: () => T, listener: (event: {value: T, oldValue: T}) => void): Function;
+    public static OnChange<T, TKey>(pull: () => T, options: any, listener?: (event: {value: T, oldValue: T}) => void): Function{
+        if (typeof options === "function"){
+            listener = options;
+            options = {};
+        }
+        return new Cell(pull, options).on('change', listener);
+    }
 }

@@ -9,11 +9,17 @@ type EffectInfo = {
 export function action<TState>(filter: (this: any) => any = () => null, subscribeAt: ActionSubscribeType = ActionSubscribeType.OnConnected): MethodDecorator {
     return <T>(target: { constructor: typeof HtmlComponentBase }, key, descr) => {
         const actionFn = descr.value as EffectFunction<TState>;
-        target.constructor.GlobalEvents.on('connected', function (component: HtmlComponentBase<TState, any>) {
-            if (!(component instanceof target.constructor))
-                return;
-            SubcribeOnActions(component, actionFn, filter, subscribeAt);
-        });
+        if (subscribeAt == ActionSubscribeType.InConstructor){
+            target.constructor = Fn.join(target.constructor, function () {
+                SubcribeOnActions(this, actionFn, filter, subscribeAt);
+            }) as any;
+        }else {
+            target.constructor.GlobalEvents.on('connected', function (component: HtmlComponentBase<TState, any>) {
+                if (!(component instanceof target.constructor))
+                    return;
+                SubcribeOnActions(component, actionFn, filter, subscribeAt);
+            });
+        }
         return descr;
     }
 }
@@ -52,6 +58,7 @@ export function SubcribeOnActions<TState>(component: HtmlComponentBase<TState>, 
     }
     switch (subscribeAt){
         case ActionSubscribeType.OnConnected:
+        case ActionSubscribeType.InConstructor:
             actionSubscribe();
             break;
         case ActionSubscribeType.OnFirstRender:
@@ -62,6 +69,7 @@ export function SubcribeOnActions<TState>(component: HtmlComponentBase<TState>, 
 
 export enum ActionSubscribeType {
     OnConnected = 1,
-    OnFirstRender = 2
+    OnFirstRender = 2,
+    InConstructor = 3
 }
 
