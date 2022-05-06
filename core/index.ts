@@ -14,3 +14,4 @@ export {EventEmitter, EventListener} from "./helpers/event-emitter";
 export {ResolvablePromise} from "./helpers/resolvable.promise";
 export {Lazy} from "./helpers/Lazy";
 export {compare} from "./helpers/compare";
+export {Disposable} from "./disposable";
