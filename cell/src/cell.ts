@@ -61,4 +61,12 @@ export class Cell<T = any, TKey = T> extends BaseCell<T> {
         }
         return new Cell(pull, options).on('change', listener);
     }
+
+    public static Merge<T>(...pulls: (() => T)[]): Cell<T>{
+        const cell = new Cell<T>(null);
+        for (let pull of pulls) {
+            Cell.OnChange(pull, x => cell.set(x.value));
+        }
+        return cell;
+    }
 }

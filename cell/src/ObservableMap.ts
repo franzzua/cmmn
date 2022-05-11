@@ -52,9 +52,9 @@ export class ObservableMap<K, V> extends EventEmitter<{
         }
         for (let [key, value] of map.entries()) {
             if (this.map.has(key))
-                update(this.map.get(key), value);
+                update && update(this.map.get(key), value);
             else
-                this.map.set(key, create(value));
+                create && this.map.set(key, create(value));
         }
     }
 }

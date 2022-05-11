@@ -16,15 +16,26 @@ export function registerSerializer<T, U>(type: number, classFunction: Function, 
 }
 
 export function serialize(data: any): Uint8Array {
+    const time = performance.now();
     // const offset = packr.offset;
     const result = packr.encode(data);
+    const dur = performance.now() - time;
+    if (dur > 10){
+        console.warn(dur, data);
+    }
     // const length = packr.offset - offset;
     // return {buffer: result.buffer, byteLength: length, byteOffset: offset, length: result.length} as Uint8Array;
     return  result;
 }
 
 export function deserialize(bytes: Uint8Array) {
-    return packr.decode(bytes);
+    const time = performance.now();
+    const res = packr.decode(bytes);
+    const dur = performance.now() - time;
+    if (dur > 10){
+        console.warn(dur, res);
+    }
+    return res;
 }
 
 // registerSerializer<DateTime, number>(1, DateTime,
