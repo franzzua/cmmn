@@ -35,7 +35,7 @@ export function debounced(wait, immediate){
     return (target, key, descr) => {
         const fn = descr.value;
         return {
-            value: debounce(fn, wait, immediate)
+            value: debounce(fn, wait, immediate) as any
         }
     }
 }
