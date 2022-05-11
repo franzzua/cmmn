@@ -1,4 +1,4 @@
-import {Cell} from "@cmmn/cell";
+import {Cell, ObservableList} from "@cmmn/cell";
 import {ModelAction, ModelPath} from "../shared/types";
 import {Fn} from "@cmmn/core";
 
@@ -36,6 +36,10 @@ export abstract class Model<TState, TActions extends ModelAction = {}> {
         }
         if (Array.isArray(current)) {
             const result = current.find(x => x.id === first || x.Id === first);
+            return this._queryModel(path, result);
+        }
+        if (current instanceof ObservableList){
+            const result = current.toArray().find(x => x.id === first || x.Id === first);
             return this._queryModel(path, result);
         }
         if (first in current)

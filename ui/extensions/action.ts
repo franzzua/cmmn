@@ -7,10 +7,10 @@ type EffectInfo = {
     unsubscr?: Function;
 }
 export function action<TState>(filter: (this: any) => any = () => null, subscribeAt: ActionSubscribeType = ActionSubscribeType.OnConnected): MethodDecorator {
-    return <T>(target: { constructor: typeof HtmlComponentBase }, key, descr) => {
+    return <T>(target: { constructor: typeof HtmlComponentBase, init }, key, descr) => {
         const actionFn = descr.value as EffectFunction<TState>;
         if (subscribeAt == ActionSubscribeType.InConstructor){
-            target.constructor = Fn.join(target.constructor, function () {
+            target.init = Fn.join(target.init, function () {
                 SubcribeOnActions(this, actionFn, filter, subscribeAt);
             }) as any;
         }else {

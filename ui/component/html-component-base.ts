@@ -20,6 +20,7 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> ex
 
     public renderer: Renderer<TState, TEvents>;
 
+
     /** @internal **/
     static Init<TComponent extends HtmlComponent<any>>(element: HTMLElement | SVGElement, type = this as any): ExtendedElement<TComponent> {
         const componentFactory = () => GlobalStaticState.DefaultContainer ? GlobalStaticState.DefaultContainer.get<TComponent>(type) : new type();
@@ -45,9 +46,13 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> ex
     /** @internal **/
     private onDisposeSet = new Set<Function>();
 
+    protected async init(){
+
+    }
     public connectedCallback() {
         HtmlComponentBase.GlobalEvents.emit('connected', this);
         this.emit('connected');
+        this.init();
     }
 
     public disconnectedCallback() {
