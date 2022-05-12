@@ -15,11 +15,12 @@
  */
 export function compare(a: any, b: any): boolean {
   switch (typeof a) {
-    case 'object':    // a{object | null | undefined} and b{any}
     case 'undefined':
-      if (a == null && b == null) // ЕСЛИ и a и b равны null/undefined
+      return a === b; // a === undefined && b === undefined
+    case 'object':    // a{object | null} and b{any}
+      if (a === null && b === null) // ЕСЛИ и a и b равны null
         return true;
-      if (a == null || b == null) // ЕСЛИ либо только a либо только b равен null/undefined
+      if (b === null || b === undefined) // ЕСЛИ либо только a либо только b равен null/undefined
         return false;
       if (typeof b !== 'object')
         return false; // a{object} and b{boolean | number | bigint | string | symbol | function}
