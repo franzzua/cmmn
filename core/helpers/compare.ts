@@ -14,20 +14,11 @@
  *   compare(undefined, null) -> true
  */
 export function compare(a: any, b: any): boolean {
-  switch (typeof a) {
-    case 'undefined':
-      return a === b; // a === undefined && b === undefined
-    case 'object':    // a{object | null} and b{any}
-      if (a === null && b === null) // ЕСЛИ и a и b равны null
-        return true;
-      if (b === null || b === undefined) // ЕСЛИ либо только a либо только b равен null/undefined
-        return false;
-      if (typeof b !== 'object')
-        return false; // a{object} and b{boolean | number | bigint | string | symbol | function}
-      break;
-    default:
-      return a === b; // a{boolean | number | bigint | string | symbol | function} and b{any}
-  }
+  if (typeof a !== "object" || a === null)
+    return a === b; // a{undefined | null | boolean | number | bigint | string | symbol | function} and b{any}
+  if (typeof b !== "object" || b === null)
+    return false;  // a{object} and b{undefined | null | boolean | number | bigint | string | symbol | function}
+
   // здесь и a и b это объекты
   if (a === b)
     return true;

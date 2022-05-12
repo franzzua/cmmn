@@ -50,7 +50,7 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
     protected _render = ({value}) => this.render(value);
 
     protected async render(state) {
-        if (state === null)
+        if (state === undefined)
             return;
         await this.renderer.render(state);
         this.$render.set(this.$render.get() + 1);
