@@ -44,10 +44,8 @@ export class BaseCell<T = any> extends EventEmitter<{
 
     public get(): T {
         Actualizator.imCalled(this);
-        switch (this.state) {
-            case CellState.Dirty:
-                Actualizator.Down(this);
-                break;
+        if (this.state === CellState.Dirty) {
+            Actualizator.Down(this);
         }
         if (this.error)
             throw this.error;

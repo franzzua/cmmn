@@ -30,11 +30,11 @@ export function throttle(func, wait, options = {leading: false, trailing: true})
     };
 }
 
-export function throttled(wait, options = {leading: false, trailing: true}){
+export function throttled(wait, options = {leading: false, trailing: true}): MethodDecorator{
     return (target, key, descr) => {
         const fn = descr.value;
         return {
-            value: throttle(fn, wait, options)
+            value: throttle(fn, wait, options) as any
         }
     }
 }

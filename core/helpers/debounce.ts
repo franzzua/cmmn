@@ -1,7 +1,7 @@
 export function debounce(func, wait, immediate) {
     var timeout, previous, args, result, context;
 
-    var later = function() {
+    var later = function () {
         var passed = +new Date() - previous;
         if (wait > passed) {
             timeout = setTimeout(later, wait - passed);
@@ -13,7 +13,7 @@ export function debounce(func, wait, immediate) {
         }
     };
 
-    var debounced = function(..._args) {
+    var debounced = function (..._args) {
         context = this;
         args = _args;
         previous = +new Date();
@@ -22,16 +22,17 @@ export function debounce(func, wait, immediate) {
             if (immediate) result = func.apply(context, args);
         }
         return result;
-    } as Function & {cancel?();}
+    } as Function & { cancel?(); }
 
-    debounced.cancel = function() {
+    debounced.cancel = function () {
         clearTimeout(timeout);
         timeout = args = context = null;
     };
 
     return debounced;
 }
-export function debounced(wait, immediate){
+
+export function debounced(wait, immediate): MethodDecorator {
     return (target, key, descr) => {
         const fn = descr.value;
         return {
