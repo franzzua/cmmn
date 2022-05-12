@@ -68,7 +68,9 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> ex
     }
 
     public onError(error, source: 'effect' | 'action' | 'state' | 'template', sourceName?) {
-        console.warn(this, source, sourceName, error);
+        console.groupCollapsed(this.constructor.name, `${source} ${sourceName ?? ''}`);
+        console.warn(error);
+        console.groupEnd()
     }
 
     static GlobalEvents = new EventEmitter<{

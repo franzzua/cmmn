@@ -21,8 +21,8 @@ export class Cell<T = any, TKey = T> extends BaseCell<T> {
         if (this.options === options)
             return;
         this.options = options;
-        if (options.filter && !options.filter(this.value)){
-            this.setError(new Error('Current cell value is forbidden by filter'))
+        if (options.filter && !options.filter(this.value)) {
+            this.setError(new CellFilterError(this.value, options.filter, this))
         }
     }
 
@@ -30,7 +30,7 @@ export class Cell<T = any, TKey = T> extends BaseCell<T> {
         const value = super.get();
         if (!this.options.filter || this.options.filter(value))
             return value;
-        throw new Error('Current cell value is forbidden by filter');
+        throw new CellFilterError(this.value, this.options.filter, this);
     }
 
     protected compare(newValue: T, oldValue: T): boolean {
@@ -52,21 +52,29 @@ export class Cell<T = any, TKey = T> extends BaseCell<T> {
         this.options.put && this.options.put(value);
     }
 
-    public static OnChange<T, TKey>(pull: () => T, options: ICellOptions<T, TKey>, listener: (event: {value: T, oldValue: T}) => void): Function;
-    public static OnChange<T>(pull: () => T, listener: (event: {value: T, oldValue: T}) => void): Function;
-    public static OnChange<T, TKey>(pull: () => T, options: any, listener?: (event: {value: T, oldValue: T}) => void): Function{
-        if (typeof options === "function"){
+    public static OnChange<T, TKey>(pull: () => T, options: ICellOptions<T, TKey>, listener: (event: { value: T, oldValue: T }) => void): Function;
+    public static OnChange<T>(pull: () => T, listener: (event: { value: T, oldValue: T }) => void): Function;
+    public static OnChange<T, TKey>(pull: () => T, options: any, listener?: (event: { value: T, oldValue: T }) => void): Function {
+        if (typeof options === "function") {
             listener = options;
             options = {};
         }
         return new Cell(pull, options).on('change', listener);
     }
 
-    public static Merge<T>(...pulls: (() => T)[]): Cell<T>{
+    public static Merge<T>(...pulls: (() => T)[]): Cell<T> {
         const cell = new Cell<T>(null);
         for (let pull of pulls) {
             Cell.OnChange(pull, x => cell.set(x.value));
         }
         return cell;
+    }
+}
+
+export class CellFilterError<T> extends Error {
+    constructor(public value: T,
+                public filter: (x: T) => void,
+                public cell: Cell<T, any>) {
+        super(`Cell have not accepted value: ${value}`);
     }
 }

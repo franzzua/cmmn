@@ -12,69 +12,76 @@ Component example:
 
 @Injectable(true) // enabled DI (1)
 @component({
-  name: 'my-comp', // name of custom element, so use it with <my-comp /> in html 
-  template: (html, state, events) => html` 
+    name: 'my-comp', // name of custom element, so use it with <my-comp /> in html 
+    template: (html, state, events) => html` 
     <div onclick=${events.onClick()}>${state.Version}</div>
   `, // template is just a template literal (2)
-  style, // will be injected in head, no scoping (3)  
+    style, // will be injected in head, no scoping (3)  
 })
 export class MyComponent extends HtmlComponent<IState, IEvents> {
-  // injecting some services  
-  constructor(private api: ApiService) {
-    super();
-    
-    this.useAction(this.someAction, () => [
-      this.Version,
-    ], ActionSubscribeType.OnFirstRender);
-  }
+    // injecting some services  
+    constructor(private api: ApiService) {
+        super();
 
-  // properties are mappend from attributes (2)
-  @property()
-  protected version!: number;
+        this.useAction(this.someAction, () => [
+            this.Version,
+        ], ActionSubscribeType.OnFirstRender);
+    }
 
-  someAction([version]){
-      // it will be called every time the version changes after first render
-  }
-  
-  @action(() => version)
-  otherAction(version){
-      // it will be called every time the version changes after component will be connected
-  }
-  
-  @effect()
-  someEffect(){
-    // it will be called after first render    
-  }
+    // properties are mappend from attributes (2)
+    @property()
+    protected version!: number;
+
+    someAction([version]) {
+        // it will be called every time the version changes after first render
+    }
+
+    @action(() => version)
+    otherAction(version) {
+        // it will be called every time the version changes after component will be connected
+    }
+
+    @effect()
+    someEffect() {
+        // it will be called after first render    
+    }
 
 
-  @effect(() => this.version)
-  otherEffect(){
-    // it will be called after renders, if version have changed    
-  }
+    @effect(() => this.version)
+    otherEffect() {
+        // it will be called after renders, if version have changed    
+    }
 
-  connectedCallback(){
-    super.connectedCallback(); // important, should be called
-    // it will be unsubscribed in disconnectedCallback
-    this.onDispose = this.on('render', console.log);
-  }
-  
-  // render will be after it changed in animationFrame callback
-  // frequent renders will be combined in one animationFrame 
-  // if error will be throwed it will not render
-  // you can try-catch errors here and return other state
-  get State(){
-      return {
-          Version: this.version
-      }
-  }
-  
-  // handle errors in source = effects|aciton|state|template
-  onError(error: Error, source){
-    if (source == 'effect' || source == 'action')
-      return;
-    // by default it will warn in console
-    super.onError(error, source);
-  }
+    connectedCallback() {
+        super.connectedCallback(); // important, should be called
+        // it will be unsubscribed in disconnectedCallback
+        this.onDispose = this.on('render', console.log);
+    }
+
+    // render will be after it changed in animationFrame callback
+    // frequent renders will be combined in one animationFrame
+    // it will not render if:
+    // * error have been thrown
+    // * State returns undefined
+    // * State returns smth comparable to previous result (compare(newValue, oldValue) == true)
+    // you can try-catch errors here and return other error state
+    get State() {
+        try {
+            return {
+                Version: this.version
+            }
+        } catch (e) {
+            return {Version: 'error'}
+        }
+    }
+
+    // handle errors in source = effects|aciton|state|template
+    onError(error: Error, source) {
+        if (source == 'effect' || source == 'action')
+            return;
+        // by default it will warn in console
+        super.onError(error, source);
+    }
 }
 
 
@@ -82,21 +89,21 @@ export class MyComponent extends HtmlComponent<IState, IEvents> {
 
 1. About DI you can read at [@cmmn/core](../core/di/readme.md)
 2. About templates you can read at [uhtml](https://github.com/WebReflection/uhtml), but
-   1. html`...` renders inside current component
-   2. html()`...` will creates new elements every time
-   3. html(key) will creates new elements every time key will change
-   4. html(obj, key) will creates new elements every time key or obj will change
-   5. html has cache which you can see in `html.cache`
+    1. html`...` renders inside current component
+    2. html()`...` will creates new elements every time
+    3. html(key) will creates new elements every time key will change
+    4. html(obj, key) will creates new elements every time key or obj will change
+    5. html has cache which you can see in `html.cache`
 3. Style should be just a string, your bundler should hanlde it, as `@cmmn/tools` for example
 4. Properties are mapped from html attributes of your custom element.
-   1. Naming will change from camelCase to snake-case in dom. (myProp in js <-> my-prop in dom)
-   2. It supports most of js values like objects, functions, numbers, strings...
-   3. It compares value equality by `Fn.compare` from `@cmmn/core`, so it can call `.equals()` of value, f.e.
+    1. Naming will change from camelCase to snake-case in dom. (myProp in js <-> my-prop in dom)
+    2. It supports most of js values like objects, functions, numbers, strings...
+    3. It compares value equality by `Fn.compare` from `@cmmn/core`, so it can call `.equals()` of value, f.e.
 5. Effects are functions that will be called after render have been, like in React.
-   1. You may provide a filtering function: only if result have changed, effect will be called
+    1. You may provide a filtering function: only if result have changed, effect will be called
 6. Actions are functions that will be called if their dependencies will change
-   1. It can be subscribed at onConnected: when element attached to dom
-   2. Or atFirstRender: when it was rendered first
+    1. It can be subscribed at onConnected: when element attached to dom
+    2. Or atFirstRender: when it was rendered first
 7. You can use `this.element` for direct access to dom-element
 8. You can use `this.element.parentElement.component` for access to parent component, if parentElement is root of it.
 9. You can access injected content via `this.Children`. It is stored in connectedCallback.
