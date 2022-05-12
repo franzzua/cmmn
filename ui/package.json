@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/ui",
-  "version": "1.5.13",
+  "version": "1.6.0",
   "description": "",
   "publishConfig": {
     "access": "public"
@@ -33,8 +33,8 @@
     "@cmmn/tools": "^1.5.11"
   },
   "dependencies": {
-    "@cmmn/cell": "^1.5.13",
-    "@cmmn/core": "^1.5.13",
+    "@cmmn/cell": "^1.6.0",
+    "@cmmn/core": "^1.6.0",
     "@cmmn/uhtml": "^1.5.11"
   },
   "files": [
