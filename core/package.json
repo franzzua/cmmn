@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/core",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "repository": {
     "url": "https://github.com/franzzua/cmmn/tree/master/core"
   },
@@ -32,11 +32,11 @@
     "bundle": "cmmn bundle --watch"
   },
   "devDependencies": {
-    "@cmmn/tools": "^1.5.11",
+    "@cmmn/tools": "^1.6.1",
     "crc-32": "1.x.x"
   },
   "dependencies": {
-    "@cmmn/cell": "^1.6.0",
+    "@cmmn/cell": "^1.6.1",
     "@types/luxon": "2.x.x",
     "bind-decorator": "^1.0.11",
     "luxon": "2.x.x",

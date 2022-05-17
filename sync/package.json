@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/sync",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "collaborative with yjs",
   "publishConfig": {
     "access": "public"
@@ -64,8 +64,8 @@
     "dist"
   ],
   "dependencies": {
-    "@cmmn/cell": "^1.6.0",
-    "@cmmn/core": "^1.6.0",
+    "@cmmn/cell": "^1.6.1",
+    "@cmmn/core": "^1.6.1",
     "simple-peer": "9.x.x",
     "y-indexeddb": "9.x.x",
     "y-protocols": "1.x.x",
@@ -74,7 +74,7 @@
     "yjs": "13.x.x"
   },
   "devDependencies": {
-    "@cmmn/tools": "^1.5.11"
+    "@cmmn/tools": "^1.6.1"
   },
   "author": "",
   "license": "ISC",
