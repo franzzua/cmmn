@@ -11,8 +11,8 @@ export function setDefaultContainer(container: { get(target): any; }) {
 
 export * from "./component/types";
 export {property, propertySymbol} from "./component/property";
-export {PointerListener, IPoint, PointerEvents} from "./user-events/pointer"
-export {Keyboard, KeyboardListener} from "./user-events/keyboard";
+export {PointerListener, IPoint, PointerEvents, GestureEvent} from "./user-events/pointer"
+export {KeyboardListener} from "./user-events/keyboard";
 export {AnimationFrame} from "./user-events/animationFrameListener";
 export * from "./extensions/action";
 export * from "./extensions/effect";

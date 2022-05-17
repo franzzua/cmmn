@@ -20,6 +20,12 @@ export type RelativePointerEvent<TEvent = PointerEvent> = { event: TEvent, point
 
 export type PointerEvents = {
     move: RelativePointerEvent,
+    touchmove: TouchEvent,
+    touchstart: TouchEvent,
+    touchend: TouchEvent,
+    gesturechange: GestureEvent,
+    gesturestart: GestureEvent,
+    gestureend: GestureEvent,
     down: RelativePointerEvent,
     up: RelativePointerEvent,
     enter: RelativePointerEvent,
@@ -48,7 +54,7 @@ export class PointerListener extends EventListener<PointerEvents> {
         return this.rectWatcher.Rect;
     }
 
-    public getRelativePoint(event: MouseEvent): IPoint {
+    public getRelativePoint(event: MouseEvent | Touch | PointerEvent | GestureEvent): IPoint {
         const rect = this.rectWatcher.Rect;
         return {
             X: event.pageX - rect.left,
@@ -74,7 +80,12 @@ export class PointerListener extends EventListener<PointerEvents> {
 
         if (downEvent.event.target !== this.root)
             return;
-        const moveListener = event => {
+        if (!downEvent.event.isPrimary)
+            return;
+        const moveListener = (event: RelativePointerEvent) => {
+            event.event.preventDefault();
+            if (!event.event.isPrimary)
+                return;
             const shift = {
                 X: event.event.movementX,
                 Y: event.event.movementY
@@ -89,6 +100,7 @@ export class PointerListener extends EventListener<PointerEvents> {
                     start: downEvent.point,
                     isStart: true,
                 });
+                isStarted = true;
             }
             this.emit('drag', {
                 ...event,
@@ -99,13 +111,16 @@ export class PointerListener extends EventListener<PointerEvents> {
         this.on('move', moveListener)
         this.once('up', event => {
             this.off('move', moveListener);
-            (this.root as HTMLElement).releasePointerCapture(downEvent.event.pointerId);
-            this.emit('drag', {
-                ...event,
-                shift: undefined,
-                start: downEvent.point,
-                isEnd: true,
-            });
+            if (isStarted) {
+                (this.root as HTMLElement).releasePointerCapture(downEvent.event.pointerId);
+                this.emit('drag', {
+                    ...event,
+                    shift: undefined,
+                    start: downEvent.point,
+                    isEnd: true,
+                });
+                isStarted = false;
+            }
         }, {
             Priority: Number.POSITIVE_INFINITY
         });
@@ -125,6 +140,12 @@ export class PointerListener extends EventListener<PointerEvents> {
 
     private emitters = {
         move: event => this.emit('move', {event, point: this.getRelativePoint(event)}),
+        touchmove: event => this.emit('touchmove', event),
+        touchstart: event => this.emit('touchstart', event),
+        touchend: event => this.emit('touchend', event),
+        gesturestart: event => this.emit('gesturestart', event),
+        gestureend: event => this.emit('gestureend', event),
+        gesturechange: event => this.emit('gesturechange', event),
         down: event => this.emit('down', {event, point: this.getRelativePoint(event)}),
         up: event => this.emit('up', {event, point: this.getRelativePoint(event)}),
         enter: event => this.emit('enter', {event, point: this.getRelativePoint(event)}),
@@ -145,14 +166,18 @@ export class PointerListener extends EventListener<PointerEvents> {
             case 'move':
                 this.root.addEventListener('pointer' + eventName, this.emitters[eventName]);
                 break;
+            case 'touchstart':
+            case 'touchend':
+            case 'touchmove':
+            case 'gesturechange':
+            case 'gestureend':
+            case 'gesturestart':
             case 'wheel':
-                this.root.addEventListener('wheel', this.emitters[eventName]);
+            case "dblclick":
+                this.root.addEventListener(eventName, this.emitters[eventName]);
                 break;
             case 'click':
                 this.root.addEventListener('mouseClick', this.emitters[eventName]);
-                break;
-            case "dblclick":
-                this.root.addEventListener('dblclick', this.emitters[eventName]);
                 break;
             case "drag":
                 this.on('down', this.dragListener)
@@ -173,14 +198,18 @@ export class PointerListener extends EventListener<PointerEvents> {
             case 'move':
                 this.root.removeEventListener('pointer' + eventName, this.emitters[eventName]);
                 break;
+            case 'touchstart':
+            case 'touchend':
+            case 'touchmove':
+            case 'gesturechange':
+            case 'gestureend':
+            case 'gesturestart':
             case 'wheel':
-                this.root.removeEventListener('wheel', this.emitters[eventName]);
+            case "dblclick":
+                this.root.removeEventListener(eventName, this.emitters[eventName]);
                 break;
             case 'click':
                 this.root.removeEventListener('mouseClick', this.emitters[eventName]);
-                break;
-            case "dblclick":
-                this.root.removeEventListener('dblclick', this.emitters[eventName]);
                 break;
             case 'directClick':
                 this.off('up', Fn.I);
@@ -199,4 +228,11 @@ export const Pointer = new PointerListener(document);
 export type IPoint = {
     X: number;
     Y: number;
+}
+
+export type GestureEvent = UIEvent & {
+    readonly pageX: number;
+    readonly pageY: number;
+    readonly rotation: number;
+    readonly scale: number;
 }

@@ -5,7 +5,8 @@ export class KeyboardListener extends EventListener<{
     keyup: KeyboardEvent,
     keypress: KeyboardEvent,
 }> {
+    constructor(public element: HTMLElement | SVGElement) {
+        super(document);
+    }
 
 }
-
-export const Keyboard = new KeyboardListener(document);

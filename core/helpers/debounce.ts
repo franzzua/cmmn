@@ -1,4 +1,4 @@
-export function debounce(func, wait, immediate) {
+export function debounce(func: Function, wait: number, immediate= false) {
     var timeout, previous, args, result, context;
 
     var later = function () {
@@ -32,9 +32,9 @@ export function debounce(func, wait, immediate) {
     return debounced;
 }
 
-export function debounced(wait, immediate): MethodDecorator {
+export function debounced(wait: number, immediate = false): MethodDecorator {
     return (target, key, descr) => {
-        const fn = descr.value;
+        const fn = descr.value as any;
         return {
             value: debounce(fn, wait, immediate) as any
         }

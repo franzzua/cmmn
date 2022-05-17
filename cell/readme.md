@@ -21,7 +21,9 @@
 * compareKey - выбор ключа, по которому сравнивать функцией compare, например `compareKey: x => x.Id`, не работает без compare
 * filter - валидация значений. Если значение невалидное, вызывается `.setError`
 * put - вызывается при изменении значения ячейки, не активизируя ее.
-* value - начальное значение
+* startValue - начальное значение. Dangerous, use it only if you understand clearly what you doing. 
+Just one good use-case is for initialize static value-cell. If you will use it with computed cells, they will not change its value never: 
+Cell have initial value, so pull have not executed and there is no dependencies.
 
 ### Тесты для понимания:
 * [Решение квадратного уравнения](./specs/long-graph.spec.ts)
@@ -68,4 +70,4 @@ const t = new TestObject();
 const cell = new Cell(() => t.Computed);
 cell.on('change', x => console.log('computed is ', x));  
 ```
-But you rarely should use this, it's better use wrappers for your UI library, for example [@cmmn/ui](../ui) 
+But you rarely should use this, it's better use wrappers for your UI library, for example [@cmmn/ui](../ui)
