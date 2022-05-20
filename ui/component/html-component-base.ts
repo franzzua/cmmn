@@ -33,7 +33,8 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> ex
     }
 
     static Extend<TComponent extends HtmlComponent<any>>(element: HTMLElement | SVGElement, type = this as any): ExtendedElement<TComponent> {
-        if ('component' in element)
+        // @ts-ignore
+        if ('component' in element && element.component instanceof type)
             return element;
         const extElement = HtmlComponent.Init<TComponent>(element, type);
         element.setAttribute('is', type.Name);

@@ -63,15 +63,24 @@ export class PointerListener extends EventListener<PointerEvents> {
     }
 
     private _position: Cell<RelativePointerEvent>;
+    private onDispose: Function;
 
     public get Position(): RelativePointerEvent {
         if (this._position)
             return this._position.get();
         this._position = new Cell(null);
-        this.on('move', e => this._position.set(e));
-        this.on('enter', e => this._position.set(e));
-        this.on('leave', e => this._position.set(null));
+        this.onDispose = Fn.join(
+            this.on('move', e => this._position.set(e)),
+            this.on('enter', e => this._position.set(e)),
+            this.on('leave', e => this._position.set(null)),
+        );
         return this._position.get();
+    }
+
+    public dispose() {
+        super.dispose();
+        this.onDispose && this.onDispose();
+        this._position.off();
     }
 
     @bind
@@ -92,7 +101,7 @@ export class PointerListener extends EventListener<PointerEvents> {
             };
             if (shift.X == 0 && shift.Y == 0)
                 return;
-            if (!isStarted){
+            if (!isStarted) {
                 (this.root as HTMLElement).setPointerCapture(downEvent.event.pointerId);
                 this.emit('drag', {
                     ...downEvent,
@@ -131,9 +140,9 @@ export class PointerListener extends EventListener<PointerEvents> {
         const upEvent = await this.onceAsync('up', {Priority: Number.POSITIVE_INFINITY});
         if (upEvent.event.timeStamp - downEvent.event.timeStamp > 400)
             return;
-        if (upEvent.event.x - downEvent.event.x > 1)
+        if (Math.abs(upEvent.event.x - downEvent.event.x) > 1)
             return;
-        if (upEvent.event.y - downEvent.event.y > 1)
+        if (Math.abs(upEvent.event.y - downEvent.event.y) > 1)
             return;
         this.emit('directClick', upEvent);
     }
@@ -174,7 +183,7 @@ export class PointerListener extends EventListener<PointerEvents> {
             case 'gesturestart':
             case 'wheel':
             case "dblclick":
-                this.root.addEventListener(eventName, this.emitters[eventName]);
+                this.root.addEventListener(eventName, this.emitters[eventName], {passive: true});
                 break;
             case 'click':
                 this.root.addEventListener('mouseClick', this.emitters[eventName]);
