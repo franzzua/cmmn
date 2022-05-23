@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/app",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "description": "",
   "publishConfig": {
     "access": "public"
@@ -23,8 +23,8 @@
   },
   "dependencies": {
     "@cmmn/cell": "^1.6.1",
-    "@cmmn/core": "^1.6.1",
-    "@cmmn/ui": "^1.6.1",
+    "@cmmn/core": "^1.6.2",
+    "@cmmn/ui": "^1.6.2",
     "router5": "^8.0.1",
     "router5-plugin-browser": "^8.0.1"
   },
