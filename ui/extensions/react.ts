@@ -8,7 +8,7 @@ export interface ILikeReactComponent<T> {
     componentWillUnmount?();
 }
 
-export function useCellState<T>(self: ILikeReactComponent<T>, getters: {
+export function cellState<T>(self: ILikeReactComponent<T>, getters: {
     [key in keyof T]?: T[key] | (() => T[key]);
 }, initial: Partial<T> = {}): T {
     let subscriptions = [];

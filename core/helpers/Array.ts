@@ -10,13 +10,9 @@ declare global {
 
         min(fn?: (item: T) => any): T;
 
-        maxVal(fn: (item: T, index: number) => any): any;
+        maxVal<U>(fn: (item: T, index: number) => U): U;
 
-        minVal(fn: (item: T, index: number) => any): any;
-
-        remove(item: T): boolean;
-
-        removeAll(test: (item: T) => boolean): Array<T>;
+        minVal<U>(fn: (item: T, index: number) => U): U;
 
         range(min: number, max: number, step?: number): Array<number>;
 
@@ -32,7 +28,9 @@ declare global {
     }
 
     interface Array<T> extends ReadonlyArray<T> {
+        remove(item: T): boolean;
 
+        removeAll(test: (item: T) => boolean): Array<T>;
     }
 
 }
@@ -105,7 +103,7 @@ Array.prototype.removeAll = function (test: (item: any) => boolean) {
     this.length = right + 1;
     return this;
 };
-Array.prototype.maxVal = function (this: Array<number>, fn) {
+Array.prototype.maxVal = function <T, U>(this: Array<T>, fn: (x: T, index: number) => U): U {
     if (this.length == 0)
         return null;
     let current = this[0];
@@ -122,7 +120,7 @@ Array.prototype.maxVal = function (this: Array<number>, fn) {
             currentVal = val;
         }
     });
-    return currentVal;
+    return currentVal as U;
 };
 Array.prototype.max = function (this: Array<number>, fn) {
     if (this.length == 0)
@@ -142,7 +140,7 @@ Array.prototype.max = function (this: Array<number>, fn) {
     });
     return current;
 };
-Array.prototype.minVal = function (this: Array<number>, fn) {
+Array.prototype.minVal = function <T, U>(this: Array<T>, fn: (x: T, index: number) => U): U {
     if (this.length == 0)
         return null;
     let current = this[0];
@@ -159,7 +157,7 @@ Array.prototype.minVal = function (this: Array<number>, fn) {
             currentVal = val;
         }
     });
-    return currentVal;
+    return currentVal as U;
 };
 Array.prototype.min = function (this: Array<number>, fn) {
     if (this.length == 0)

@@ -84,7 +84,7 @@ export class Connector<TEvents extends {
     }
 
     private getModel<TState, TActions extends ModelAction>(path: ModelPath): Model<TState, TActions> {
-        return this.model.QueryModel<TState, TActions>(path);
+        return this.model.QueryModel(path) as any;
     }
 
     private toDispose: Function[] = [];

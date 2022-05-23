@@ -66,10 +66,16 @@ export class ModelProxy<TState, TActions extends ModelAction = {}> {
         }));
     }
 
-    public QueryModel(path: (string | number)[]): any {
-        return new ModelProxy(this.stream, [this.path, path].flat());
+    public QueryModel<TState, TActions extends ModelAction>(path: ModelPath): ModelProxy<TState, TActions> | undefined {
+        return new ModelProxy<TState, TActions>(this.stream, [this.path, path].flat());
     }
 
+    public GetSubProxy<TState, TActions extends ModelAction, TModelProxy extends ModelProxy<TState, TActions> = ModelProxy<TState, TActions>>(
+        path: ModelPath, modelProxyConstructor: {
+            new(stream, path): TModelProxy
+        } = ModelProxy as any): TModelProxy {
+        return new modelProxyConstructor(this.stream, [this.path, path].flat());
+    }
     public equals(x: any) {
         return this === x;
     }

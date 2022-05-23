@@ -15,11 +15,6 @@ export {ModelMap} from "../model-map";
 export {ChildWindowConnector} from "../window/child-window";
 export * from "../shared/types"
 
-export function useDomain(factory: IFactory) {
-    return Container.withProviders({
-        provide: IFactory, useValue: factory
-    });
-}
 export function useStreamDomain(Factory: {new(...args: any[]):IFactory}) {
     return Container.withProviders({
         provide: IFactory, useClass: ProxyFactory
