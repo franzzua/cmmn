@@ -1,21 +1,6 @@
-import {Actualizator} from "./actualizator";
-import {EventEmitter, EventEmitterBase} from "@cmmn/core";
-
-function getDebugName() {
-    try {
-        throw new Error();
-    } catch (e) {
-        const sources = e.stack.split('\n').slice(2);
-        return sources.map(s => {
-            const m = s.match(/at\s?(new )?(.*)\s+\(/);
-            if (!m) return null;
-            return m[2];
-        }).filter(x => x)
-            .distinct()
-            .filter(x => !x.match(/BaseCell|Cell/))
-            .join(' ')
-    }
-}
+import {EventEmitter, EventEmitterBase} from '@cmmn/core';
+import {getDebugName} from './util/debug-name';
+import {Actualizator} from './actualizator';
 
 export class BaseCell<T = any> extends EventEmitter<{
     change: { value: T, oldValue: T },
@@ -23,14 +8,14 @@ export class BaseCell<T = any> extends EventEmitter<{
 }> {
 
     /** @internal **/
-    public pull: () => T;
+    pull: () => T;
+    value: T;
+    error: Error;
     dependencies: Set<BaseCell<any>>; // cells on which this cell depends
     private reactions: Set<BaseCell<any>>; // cells dependent on this cell
     isActive = false;
-    state: CellState = CellState.Actual;
-    value: T;
-    error: Error;
-    debug = getDebugName();
+    state = CellState.Actual;
+    debug = getDebugName(/BaseCell|Cell/);
 
     constructor(value: T | (() => T)) {
         super();
