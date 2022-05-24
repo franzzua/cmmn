@@ -7,15 +7,10 @@
  *   - если массивы были предварительно отсортированы;
  *   - если Set содержит только примитивы;
  *   - если ключи Map состоят только из примитивов.
- *
- * Важно!
- * Предполагается, что нет разницы между null и undefined, т.е.:
- *   compare(null, undefined) -> true
- *   compare(undefined, null) -> true
  */
 export function compare(a: any, b: any): boolean {
   if (typeof a !== "object" || a === null)
-    return a === b; // a{undefined | null | boolean | number | bigint | string | symbol | function} and b{any}
+    return Object.is(a, b); // a{undefined | null | boolean | number | bigint | string | symbol | function} and b{any}
   if (typeof b !== "object" || b === null)
     return false;  // a{object} and b{undefined | null | boolean | number | bigint | string | symbol | function}
 

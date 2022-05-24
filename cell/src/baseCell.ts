@@ -93,7 +93,7 @@ export class BaseCell<T = any> extends EventEmitter<{
     }
 
     protected compare(newValue: T, oldValue: T){
-        return newValue === oldValue;
+        return Object.is(newValue, oldValue);
     }
 
     protected notifyChange(value: T, oldValue: T){
