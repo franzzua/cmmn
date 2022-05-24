@@ -91,8 +91,7 @@ export class BaseCell<T = any> extends EventEmitter<{
     }
 
     protected notifyChange(value: T, oldValue: T) {
-        const data = {oldValue, value};
-        this.emit('change', data);
+        this.emit('change', {value, oldValue});
     }
 
     active() {
