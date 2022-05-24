@@ -12,7 +12,7 @@ export class Cell<T = any, TKey = T> extends BaseCell<T> {
     constructor(value: T | (() => T), protected options: ICellOptions<T, TKey> = {}) {
         super(value);
         if (options.startValue) {
-            this.updateValue(this.value, options.startValue);
+            this.update(options.startValue);
         }
     }
 

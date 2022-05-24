@@ -39,6 +39,9 @@ export class BaseCell<T = any> extends EventEmitter<{
             this.state = CellState.Dirty;
         } else {
             this.value = value;
+            if (value instanceof EventEmitterBase) {
+                value.on('change', this.onValueContentChanged);
+            }
             this.state = CellState.Actual;
         }
     }
@@ -56,25 +59,26 @@ export class BaseCell<T = any> extends EventEmitter<{
     public set(value: T) {
         if (this.compare(value, this.value))
             return;
-        this.updateValue(this.value, value);
+        this.update(value);
     }
 
     public setError(error: Error) {
-        this.updateValue(this.value, undefined, error);
+        this.update(undefined, error);
     }
 
     protected onValueContentChanged = (change) => {
-        this.updateValue(this.value, this.value); // e.g. adding a new element to ObservableMap
+        this.update(this.value); // e.g. adding a new element to ObservableMap
     }
 
     /**
-     * Called only when exactly one of the changes has occurred:
+     * Called when only one of the changes has occurred:
      *  - cell value changed;
-     *  - OR the content of the cell value have changed;
+     *  - OR the content of the cell value has changed;
      *  - OR an error has occurred.
      */
-    protected updateValue(oldValue: T, value: T, error?: Error) {
+    protected update(value: T, error?: Error) {
         this.error = error;
+        const oldValue = this.value;
         this.value = value;
         this.state = CellState.Actual;
         if (oldValue !== value) {
