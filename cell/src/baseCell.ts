@@ -52,6 +52,12 @@ export class BaseCell<T = any> extends EventEmitter<{
         return this.value;
     }
 
+    public set(value: T) {
+        if (this.compare(value, this.value))
+            return;
+        this.updateValue(this.value, value);
+    }
+
     public setError(error: Error) {
         this.updateValue(this.value, undefined, error);
     }
@@ -84,12 +90,6 @@ export class BaseCell<T = any> extends EventEmitter<{
                 Actualizator.Up(reaction);
             }
         }
-    }
-
-    public set(value: T) {
-        if (this.compare(value, this.value))
-            return;
-        this.updateValue(this.value, value);
     }
 
     protected compare(newValue: T, oldValue: T) {
