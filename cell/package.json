@@ -28,6 +28,9 @@
     "build": "cmmn compile --watch",
     "bundle": "cmmn bundle --watch"
   },
+  "dependencies": {
+    "@cmmn/core": "^1.6.2"
+  },
   "devDependencies": {
     "@cmmn/tools": "^1.6.1"
   },

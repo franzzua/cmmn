@@ -5,5 +5,10 @@
       "node"
     ]
   },
+  "references": [
+    {
+      "path": "../core"
+    }
+  ],
   "exclude": ["dist", "node_modules", "perf"]
 }

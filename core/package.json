@@ -36,7 +36,6 @@
     "crc-32": "1.x.x"
   },
   "dependencies": {
-    "@cmmn/cell": "^1.6.1",
     "@types/luxon": "2.x.x",
     "bind-decorator": "^1.0.11",
     "luxon": "2.x.x",

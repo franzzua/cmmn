@@ -1,4 +1,4 @@
-import {EventEmitter} from "./event-emitter";
+import {EventEmitter} from "@cmmn/core";
 
 export class ObservableList<T> extends EventEmitter<{
     change: { value: T[] },

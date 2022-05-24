@@ -1,4 +1,4 @@
-import {EventEmitter} from "./event-emitter";
+import {EventEmitter} from "@cmmn/core";
 
 export class ObservableMap<K, V> extends EventEmitter<{
     change: { oldValue: V, value: V, key: K, type: 'add' | 'delete' | 'update' },

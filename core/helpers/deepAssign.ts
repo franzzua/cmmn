@@ -26,3 +26,8 @@ function deepArrayAssign(to, from) {
 		...(Array.isArray(to) ? to.slice(from.length) : [])
 	];
 }
+
+
+export type DeepPartial<T> = {
+	[P in keyof T]?: DeepPartial<T[P]> | T[P];
+};

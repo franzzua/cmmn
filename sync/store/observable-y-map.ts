@@ -1,7 +1,5 @@
 import {Map as YMap} from "yjs";
-import {EventEmitter} from "@cmmn/cell";
-import {ObservableList, ObservableMap} from "@cmmn/cell";
-import {Fn} from "@cmmn/core";
+import {EventEmitter} from "@cmmn/core";
 
 export class ObservableYMap<TValue> extends EventEmitter<{
     change: { oldValue: TValue, value: TValue, key: string, type: 'add' | 'delete' | 'update' },

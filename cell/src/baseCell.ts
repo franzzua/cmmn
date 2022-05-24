@@ -1,5 +1,5 @@
-import {EventEmitter, EventEmitterBase} from "./event-emitter";
 import {Actualizator} from "./actualizator";
+import {EventEmitter, EventEmitterBase} from "@cmmn/core";
 
 function getDebugName(){
     try{
@@ -38,7 +38,8 @@ export class BaseCell<T = any> extends EventEmitter<{
             this.pull = value as () => T;
             this.state = CellState.Dirty;
         } else {
-            this.updateValue(undefined, value);
+            this.value = value;
+            this.state = CellState.Actual;
         }
     }
 
@@ -72,12 +73,10 @@ export class BaseCell<T = any> extends EventEmitter<{
                 value.on('change', this.onValueChanged);
             }
         }
-        if (this.isActive) {
             if (error)
                 this.emit('error', error);
             else
                 this.notifyChange(value, oldValue);
-        }
         if (this.reactions) {
             for (let reaction of this.reactions) {
                 reaction.state = CellState.Dirty;
@@ -146,7 +145,7 @@ export class BaseCell<T = any> extends EventEmitter<{
         this.reactions.delete(cell);
         if (!this.reactions.size) {
             this.reactions = null;
-            if (this.isActive && !this.listeners.get('change')?.size)
+            if (this.isActive && !this.listeners.get('change')?.length)
                 this.disactive();
         }
     }

@@ -5,10 +5,5 @@
       "node"
     ]
   },
-  "references": [
-    {
-      "path": "../cell"
-    }
-  ],
   "exclude": ["dist", "node_modules"]
 }

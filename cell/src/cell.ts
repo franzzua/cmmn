@@ -8,7 +8,6 @@ export type ICellOptions<T, TKey = T> = {
     startValue?: T;
 }
 
-
 export class Cell<T = any, TKey = T> extends BaseCell<T> {
     constructor(value: T | (() => T), protected options: ICellOptions<T, TKey> = {}) {
         super(value);
@@ -62,7 +61,7 @@ export class Cell<T = any, TKey = T> extends BaseCell<T> {
         return new Cell(pull, options).on('change', listener);
     }
 
-    public static Merge<T>(...pulls: (() => T)[]): Cell<T> {
+    public static MergeCells<T>(...pulls: (() => T)[]): Cell<T> {
         const cell = new Cell<T>(null);
         for (let pull of pulls) {
             Cell.OnChange(pull, x => cell.set(x.value));

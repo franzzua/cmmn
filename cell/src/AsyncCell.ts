@@ -27,7 +27,7 @@ export class AsyncCell<T, TKey> extends Cell<T, TKey> {
     }
 
     disactive() {
-        this.genCell.off();
+        this.genCell.dispose();
         super.disactive()
     }
 
