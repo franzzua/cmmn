@@ -24,8 +24,8 @@ export class BaseCell<T = any> extends EventEmitter<{
 
     /** @internal **/
     public pull: () => T;
-    dependencies: Set<BaseCell<any>>;
-    private reactions: Set<BaseCell<any>>;
+    dependencies: Set<BaseCell<any>>; // cells on which this cell depends
+    private reactions: Set<BaseCell<any>>; // cells dependent on this cell
     isActive = false;
     state: CellState = CellState.Actual;
     value: T;
@@ -63,26 +63,32 @@ export class BaseCell<T = any> extends EventEmitter<{
         this.updateValue(this.value, undefined, error);
     }
 
-    protected onValueChanged = (change) => {
-        this.updateValue(this.value, this.value);
+    protected onValueContentChanged = (change) => {
+        this.updateValue(this.value, this.value); // e.g. adding a new element to ObservableMap
     }
 
+    /**
+     * Called only when exactly one of the changes has occurred:
+     *  - cell value changed;
+     *  - OR the content of the cell value have changed;
+     *  - OR an error has occurred.
+     */
     protected updateValue(oldValue: T, value: T, error?: Error) {
         this.error = error;
         this.value = value;
         this.state = CellState.Actual;
         if (oldValue !== value) {
             if (oldValue instanceof EventEmitterBase) {
-                oldValue.off('change', this.onValueChanged);
+                oldValue.off('change', this.onValueContentChanged);
             }
             if (value instanceof EventEmitterBase) {
-                value.on('change', this.onValueChanged);
+                value.on('change', this.onValueContentChanged);
             }
         }
-            if (error)
-                this.emit('error', error);
-            else
-                this.notifyChange(value, oldValue);
+        if (error)
+            this.emit('error', error);
+        else
+            this.notifyChange(value, oldValue);
         if (this.reactions) {
             for (let reaction of this.reactions) {
                 reaction.state = CellState.Dirty;
