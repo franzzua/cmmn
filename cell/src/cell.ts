@@ -32,16 +32,17 @@ export class Cell<T = any, TKey = T> extends BaseCell<T> {
         throw new CellFilterError(this.value, this.options.filter, this);
     }
 
-    protected compare(newValue: T, oldValue: T): boolean {
-        if (newValue === oldValue)
+    protected compare(value: T): boolean {
+        const oldValue = this.value;
+        if (Object.is(value, oldValue))
             return true;
-        if (!newValue && oldValue || newValue && !oldValue)
+        if (!value && oldValue || value && !oldValue)
             return false;
         if (!this.options.compare)
             return false;
         if (!this.options.compareKey)
-            return this.options.compare(newValue as any as TKey, oldValue as any as TKey);
-        return this.options.compare(this.options.compareKey(newValue), this.options.compareKey(oldValue));
+            return this.options.compare(value as any as TKey, oldValue as any as TKey);
+        return this.options.compare(this.options.compareKey(value), this.options.compareKey(oldValue));
     }
 
     protected notifyChange(value: T, oldValue: T) {

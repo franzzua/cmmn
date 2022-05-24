@@ -42,7 +42,7 @@ export class BaseCell<T = any> extends EventEmitter<{
     }
 
     public set(value: T) {
-        if (this.compare(value, this.value))
+        if (this.compare(value))
             return;
         this.update(value);
     }
@@ -86,8 +86,8 @@ export class BaseCell<T = any> extends EventEmitter<{
         }
     }
 
-    protected compare(newValue: T, oldValue: T) {
-        return Object.is(newValue, oldValue);
+    protected compare(value: T) {
+        return Object.is(value, this.value);
     }
 
     protected notifyChange(value: T, oldValue: T) {
