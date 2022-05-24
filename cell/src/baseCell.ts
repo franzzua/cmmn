@@ -1,10 +1,10 @@
 import {Actualizator} from "./actualizator";
 import {EventEmitter, EventEmitterBase} from "@cmmn/core";
 
-function getDebugName(){
-    try{
+function getDebugName() {
+    try {
         throw new Error();
-    }catch (e){
+    } catch (e) {
         const sources = e.stack.split('\n').slice(2);
         return sources.map(s => {
             const m = s.match(/at\s?(new )?(.*)\s+\(/);
@@ -53,7 +53,13 @@ export class BaseCell<T = any> extends EventEmitter<{
         return this.value;
     }
 
-    public setError(error: Error){
+    public set(value: T) {
+        if (this.compare(value, this.value))
+            return;
+        this.updateValue(this.value, value);
+    }
+
+    public setError(error: Error) {
         this.updateValue(this.value, undefined, error);
     }
 
@@ -61,15 +67,15 @@ export class BaseCell<T = any> extends EventEmitter<{
         this.updateValue(this.value, this.value);
     }
 
-    protected updateValue(oldValue:T, value: T, error?: Error){
+    protected updateValue(oldValue: T, value: T, error?: Error) {
         this.error = error;
         this.value = value;
         this.state = CellState.Actual;
         if (oldValue !== value) {
-            if (oldValue && oldValue !== value && oldValue instanceof EventEmitterBase) {
+            if (oldValue instanceof EventEmitterBase) {
                 oldValue.off('change', this.onValueChanged);
             }
-            if (value && oldValue !== value && value instanceof EventEmitterBase) {
+            if (value instanceof EventEmitterBase) {
                 value.on('change', this.onValueChanged);
             }
         }
@@ -85,17 +91,11 @@ export class BaseCell<T = any> extends EventEmitter<{
         }
     }
 
-    public set(value: T) {
-        if (this.compare(value, this.value))
-            return;
-        this.updateValue(this.value, value);
-    }
-
-    protected compare(newValue: T, oldValue: T){
+    protected compare(newValue: T, oldValue: T) {
         return Object.is(newValue, oldValue);
     }
 
-    protected notifyChange(value: T, oldValue: T){
+    protected notifyChange(value: T, oldValue: T) {
         const data = {oldValue, value};
         this.emit('change', data);
     }
