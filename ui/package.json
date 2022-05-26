@@ -42,7 +42,7 @@
   ],
   "author": "",
   "license": "ISC",
-  "gitHead": "2dc32e552dd5877be0ceb18f64cb896f13f15303",
+  "gitHead": "6928ba6c1a71095a9dd985445b7b106aabd57b2a",
   "cmmn": {
     "index": {
       "input": "dist/esm/index.js",
