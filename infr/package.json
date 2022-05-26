@@ -15,13 +15,7 @@
     },
     "./package.json": "./package.json"
   },
-  "typesVersions": {
-    "*": {
-      "index.d.ts": [
-        "./dist/typings/index.d.ts"
-      ]
-    }
-  },
+  "typings": "./dist/typings/index.d.ts",
   "scripts": {
     "bundle": "cmmn bundle -b --watch",
     "build": "cmmn compile -b --watch"
