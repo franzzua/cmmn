@@ -47,12 +47,12 @@ export class BaseCell<T = any> extends EventEmitter<{
         this.update(value);
     }
 
-    public setError(error: Error) {
-        this.update(undefined, error);
-    }
-
     protected onValueContentChanged = (change) => {
         this.update(this.value); // e.g. adding a new element to ObservableMap
+    }
+
+    public setError(error: Error) {
+        this.update(undefined, error);
     }
 
     /**
