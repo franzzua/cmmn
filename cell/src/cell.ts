@@ -9,11 +9,26 @@ export type ICellOptions<T, TKey = T> = {
 }
 
 export class Cell<T = any, TKey = T> extends BaseCell<T> {
-    constructor(value: T | (() => T), protected options: ICellOptions<T, TKey> = {}) {
+    constructor(value: T | (() => T),
+                protected options: ICellOptions<T, TKey> = {}) {
         super(value);
         if (options.startValue) {
             this.update(options.startValue);
         }
+    }
+
+    public get() {
+        const value = super.get();
+        if (!this.options.filter || this.options.filter(value))
+            return value;
+        throw new CellFilterError(this.value, this.options.filter, this);
+    }
+
+    protected notifyChange(value: T, oldValue: T) {
+        if (this.options.filter && !this.options.filter(value))
+            return;
+        super.notifyChange(value, oldValue);
+        this.options.put && this.options.put(value);
     }
 
     public changeOptions(options: ICellOptions<T, TKey>) {
@@ -25,30 +40,17 @@ export class Cell<T = any, TKey = T> extends BaseCell<T> {
         }
     }
 
-    public get() {
-        const value = super.get();
-        if (!this.options.filter || this.options.filter(value))
-            return value;
-        throw new CellFilterError(this.value, this.options.filter, this);
-    }
-
-    protected compare(newValue: T, oldValue: T): boolean {
-        if (newValue === oldValue)
+    protected compare(value: T): boolean {
+        const oldValue = this.value;
+        if (Object.is(value, oldValue))
             return true;
-        if (!newValue && oldValue || newValue && !oldValue)
+        if (!value && oldValue || value && !oldValue)
             return false;
         if (!this.options.compare)
             return false;
         if (!this.options.compareKey)
-            return this.options.compare(newValue as any as TKey, oldValue as any as TKey);
-        return this.options.compare(this.options.compareKey(newValue), this.options.compareKey(oldValue));
-    }
-
-    protected notifyChange(value: T, oldValue: T) {
-        if (this.options.filter && !this.options.filter(value))
-            return;
-        super.notifyChange(value, oldValue);
-        this.options.put && this.options.put(value);
+            return this.options.compare(value as any as TKey, oldValue as any as TKey);
+        return this.options.compare(this.options.compareKey(value), this.options.compareKey(oldValue));
     }
 
     public static OnChange<T, TKey>(pull: () => T, options: ICellOptions<T, TKey>, listener: (event: { value: T, oldValue: T }) => void): Function;
