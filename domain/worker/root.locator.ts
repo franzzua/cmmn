@@ -2,7 +2,7 @@ import {ModelAction, ModelLike, ModelPath} from "../shared/types";
 import {Injectable} from "@cmmn/core";
 import {Model} from "./model";
 import {ObservableList} from "@cmmn/cell";
-import {Locator} from "./locator";
+import {Locator} from "../shared/locator";
 
 @Injectable()
 export class RootLocator implements Locator {

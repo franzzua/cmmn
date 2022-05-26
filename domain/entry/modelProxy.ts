@@ -2,12 +2,15 @@ import {Stream} from "../streams/stream";
 import {ModelAction, ModelLike, ModelPath} from "../shared/types";
 import {AsyncQueue, Injectable} from "@cmmn/core";
 import {VersionState} from "../streams/versionState";
+import {Locator} from "../shared/locator";
+import {EntityLocator} from "./entity-locator.service";
 
 @Injectable(true)
 export class ModelProxy<TState, TActions extends ModelAction = {}> implements ModelLike<TState, TActions>{
-    constructor(
-        /** @internal **/
-        public stream: Stream) {
+
+    constructor(protected stream: Stream,
+                /** @internal **/
+                public locator: Locator) {
     }
     public $state: VersionState<TState> = this.stream.getCell<Readonly<TState>>([]) as VersionState<TState>;
     // public $localState = new Cell(null);
@@ -67,6 +70,12 @@ export class ModelProxy<TState, TActions extends ModelAction = {}> implements Mo
         }));
     }
 
+    public GetSubProxy<TState, TActions extends ModelAction, TModelProxy extends ModelProxy<TState, TActions> = ModelProxy<TState, TActions>>(
+        path: ModelPath, modelProxyConstructor: {
+            new(...args): TModelProxy
+        } = ModelProxy as any): TModelProxy {
+        return this.locator.get<TState, TActions>(path, modelProxyConstructor) as TModelProxy;
+    }
     public equals(x: any) {
         return this === x;
     }

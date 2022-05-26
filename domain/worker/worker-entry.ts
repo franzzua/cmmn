@@ -1,7 +1,7 @@
 import {Injectable} from "@cmmn/core";
+import { Locator } from "../shared/locator";
 import {BaseStream} from "../streams/base.stream";
 import {Connector} from "../streams/connector";
-import {Locator} from "./locator";
 
 @Injectable()
 export class WorkerEntry extends Connector {

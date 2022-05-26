@@ -3,9 +3,9 @@ import {Stream} from "../streams/stream";
 import {DirectStream} from "../streams/direct-stream";
 import {WorkerStream} from "../streams/workerStream";
 import {Transferable} from "../streams/transferable";
-import {EntityLocator} from "./locator";
+import {Locator} from "../shared/locator";
 import {ModelLike} from "../shared/types";
-import {Locator, RootLocator} from "../worker";
+import {EntityLocator} from "./entity-locator.service";
 
 export {proxy} from "../shared/domain.structure";
 export {ModelProxy} from "./modelProxy";
@@ -14,13 +14,13 @@ export {WorkerStream} from "../streams/workerStream";
 export {ModelMap} from "../model-map";
 export {ChildWindowConnector} from "../window/child-window";
 export * from "../shared/types"
-
-export function useStreamDomain(root: ModelLike<any, any>): Container {
-    return Container.withProviders(
-        {provide: Locator, useValue: new RootLocator(root)},
-        {provide: Stream, useClass: DirectStream}
-    );
-}
+//
+// export function useStreamDomain(root: ModelLike<any, any>): Container {
+//     return Container.withProviders(
+//         {provide: Locator, useValue: new RootLocator(root)},
+//         {provide: Stream, useClass: DirectStream}
+//     );
+// }
 
 export function useWorkerDomain(workerUrl: string): Container {
     const stream = new WorkerStream(workerUrl);
@@ -37,4 +37,4 @@ if ('document' in globalThis) {
         index => new Transferable(index)
     );
 }
-export {EntityLocator};
+export {EntityLocator, Locator};
