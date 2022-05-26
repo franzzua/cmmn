@@ -12,11 +12,15 @@ export class Cell<T = any, TKey = T> extends BaseCell<T> {
     constructor(value: T | (() => T),
                 protected options: ICellOptions<T, TKey> = {}) {
         super(value);
-        if (options.startValue) {
+        if (options.startValue !== undefined) {
             this.update(options.startValue);
         }
-        this.handleFilterError(this.value);
-        this.options.put && this.options.put(this.value);
+        if (this.value !== undefined) {
+            this.handleFilterError(this.value);
+            if (options.startValue === undefined) { // startValue -> update -> put
+                this.options.put && this.options.put(this.value);
+            }
+        }
     }
 
     public set(value: T) {
