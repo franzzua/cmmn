@@ -57,8 +57,6 @@ export class Actualizator {
     static imCalled(cell: BaseCell) {
         if (!Actualizator.CurrentCell)
             return;
-        if (!cell.isActive)
-            cell.active();
         Actualizator.CurrentCell.addDependency(cell);
         cell.addReaction(Actualizator.CurrentCell);
     }
