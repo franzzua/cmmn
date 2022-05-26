@@ -1,4 +1,4 @@
-import {BaseCell} from "./baseCell";
+import {BaseCell} from './baseCell';
 
 export type ICellOptions<T, TKey = T> = {
     compare?: (a: TKey, b: TKey) => boolean;
@@ -15,19 +15,19 @@ export class Cell<T = any, TKey = T> extends BaseCell<T> {
         if (options.startValue) {
             this.update(options.startValue);
         }
+        this.handleFilterError(this.value);
+        this.options.put && this.options.put(this.value);
     }
 
-    public get() {
-        const value = super.get();
-        if (!this.options.filter || this.options.filter(value))
-            return value;
-        throw new CellFilterError(this.value, this.options.filter, this);
-    }
-
-    protected notifyChange(value: T, oldValue: T) {
-        if (this.options.filter && !this.options.filter(value))
+    public set(value: T) {
+        if (this.handleFilterError(value)) {
             return;
-        super.notifyChange(value, oldValue);
+        }
+        super.set(value);
+    }
+
+    protected update(value: T, error?: Error) {
+        super.update(value, error);
         this.options.put && this.options.put(value);
     }
 
@@ -35,9 +35,15 @@ export class Cell<T = any, TKey = T> extends BaseCell<T> {
         if (this.options === options)
             return;
         this.options = options;
-        if (options.filter && !options.filter(this.value)) {
-            this.setError(new CellFilterError(this.value, options.filter, this))
+        this.handleFilterError(this.value);
+    }
+
+    handleFilterError(value: T): boolean {
+        if (this.options.filter && !this.options.filter(value)) {
+            this.setError(new CellFilterError(value, this.options.filter, this));
+            return true;
         }
+        return false;
     }
 
     protected compare(value: T): boolean {
@@ -56,7 +62,7 @@ export class Cell<T = any, TKey = T> extends BaseCell<T> {
     public static OnChange<T, TKey>(pull: () => T, options: ICellOptions<T, TKey>, listener: (event: { value: T, oldValue: T }) => void): Function;
     public static OnChange<T>(pull: () => T, listener: (event: { value: T, oldValue: T }) => void): Function;
     public static OnChange<T, TKey>(pull: () => T, options: any, listener?: (event: { value: T, oldValue: T }) => void): Function {
-        if (typeof options === "function") {
+        if (typeof options === 'function') {
             listener = options;
             options = {};
         }
