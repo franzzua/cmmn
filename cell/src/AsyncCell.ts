@@ -31,10 +31,4 @@ export class AsyncCell<T, TKey> extends Cell<T, TKey> {
         super.disactive()
     }
 
-    addReaction(cell: BaseCell) {
-        // @ts-ignore
-        if (!this.isActive)
-            this.active();
-        super.addReaction(cell);
-    }
 }
