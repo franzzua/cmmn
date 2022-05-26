@@ -42,7 +42,7 @@ export class Cell<T = any, TKey = T> extends BaseCell<T> {
         this.handleFilterError(this.value);
     }
 
-    handleFilterError(value: T): boolean {
+    private handleFilterError(value: T): boolean {
         if (this.options.filter && !this.options.filter(value)) {
             this.setError(new CellFilterError(value, this.options.filter, this));
             return true;
