@@ -43,7 +43,7 @@ export class Container {
         return result;
     }
 
-    public withProviders(...providers: Provider[]){
+    public withProviders(...providers: Provider[]) {
         return Container.withProviders(...this.getProviders(), ...providers);
     }
 
@@ -55,16 +55,20 @@ export class Container {
         }
     }
 
+    private getInjectionInfo(classInfo): { deps, multiple } {
+        if (classInfo === Function.prototype)
+            return null;
+        return Container.StaticDepsMap.get(classInfo) ?? Container.StaticDepsMap.get(Object.getPrototypeOf(classInfo));
+    }
+
     private resolve(provider: CommonProvider) {
         if (provider.useValue)
             return provider.useValue;
         if (!provider.useClass) {
             provider.useClass = provider.provide;
         }
-        if (!provider.deps && Container.StaticDepsMap.has(provider.useClass)) {
-            const {deps, multiple} = Container.StaticDepsMap.get(provider.useClass);
-            provider.deps = deps;
-            provider.multiple = multiple;
+        if (!provider.deps) {
+            Object.assign(provider, this.getInjectionInfo(provider.useClass));
         }
 
         if (provider.useClass) {
@@ -73,7 +77,7 @@ export class Container {
                 provider.deps = (provider.useClass && provider.useClass.deps) || provider.provide.deps || [];
             }
             const deps = provider.deps.map(dep => {
-                    return this.get(dep);
+                return this.get(dep);
             });
             const instance = new provider.useClass(...deps);
             if (!provider.multiple) {

@@ -1,6 +1,6 @@
 import {Stream} from "./streams/stream";
 import {ModelKey} from "./shared/types";
-import {ModelProxy} from "./modelProxy";
+import {ModelProxy} from "./entry/modelProxy";
 
 export class ModelMap<TModelProxy extends ModelProxy<TState, TActions>, TState = any, TActions extends {} = {}> {
     constructor(private stream: Stream,

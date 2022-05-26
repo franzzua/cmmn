@@ -1,5 +1,5 @@
 import {ModelKey, ModelPath} from "./types";
-import {ModelProxy} from "../modelProxy";
+import {ModelProxy} from "../entry/modelProxy";
 import {ModelMap} from "../model-map";
 import {Stream} from "../streams/stream";
 

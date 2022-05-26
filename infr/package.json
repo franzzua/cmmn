@@ -8,10 +8,9 @@
   },
   "exports": {
     ".": {
-      "node": "./dist/node.js",
-      "import": "./dist/browser.js",
-      "require": "./dist/browser.cjs",
-      "default": "./dist/browser.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.js"
     },
     "./package.json": "./package.json"
   },
@@ -29,24 +28,12 @@
   "files": [
     "dist"
   ],
-  "bundledDependencies": [
-    "node-fetch-polyfill"
-  ],
-  "devDependencies": {
-    "node-fetch-polyfill": "2.x.x"
-  },
   "author": "",
   "license": "ISC",
   "gitHead": "2dc32e552dd5877be0ceb18f64cb896f13f15303",
   "cmmn": {
-    "node": {
-      "input": "dist/esm/node/index.js",
-      "module": "es,cjs",
-      "external": [
-      ]
-    },
-    "browser": {
-      "input": "dist/esm/browser/index.js",
+    "index": {
+      "input": "dist/esm/index.js",
       "module": "es,cjs",
       "external": [
       ]

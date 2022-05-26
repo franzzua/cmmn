@@ -7,6 +7,7 @@ import {VersionState} from "./versionState";
 
 
 export class WorkerStream extends Stream {
+
     constructor(private workerUrl: string) {
         super();
         this.BaseStream.on('message', message => {

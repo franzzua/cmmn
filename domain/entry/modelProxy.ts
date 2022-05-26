@@ -1,14 +1,15 @@
-import {Stream} from "./streams/stream";
-import {ModelAction, ModelPath} from "./shared/types";
-import {AsyncQueue} from "@cmmn/core";
-import {cell, Cell} from "@cmmn/cell";
-import {VersionState} from "./streams/versionState";
+import {Stream} from "../streams/stream";
+import {ModelAction, ModelLike, ModelPath} from "../shared/types";
+import {AsyncQueue, Injectable} from "@cmmn/core";
+import {VersionState} from "../streams/versionState";
 
-export class ModelProxy<TState, TActions extends ModelAction = {}> {
-
-    constructor(protected stream: Stream, public path: ModelPath) {
+@Injectable(true)
+export class ModelProxy<TState, TActions extends ModelAction = {}> implements ModelLike<TState, TActions>{
+    constructor(
+        /** @internal **/
+        public stream: Stream) {
     }
-    public $state: VersionState<TState> = this.stream.getCell<Readonly<TState>>(this.path) as VersionState<TState>;
+    public $state: VersionState<TState> = this.stream.getCell<Readonly<TState>>([]) as VersionState<TState>;
     // public $localState = new Cell(null);
     // public $state = this.$remoteState;
     // public $state = new Cell<TState>(() => {
@@ -60,22 +61,12 @@ export class ModelProxy<TState, TActions extends ModelAction = {}> {
             this.$state.up();
         const version = this.$state.localVersion;
         return this.asyncQueue.Invoke(() => this.stream.Invoke({
-            path: this.path,
+            path: [],
             version,
             args, action
         }));
     }
 
-    public QueryModel<TState, TActions extends ModelAction>(path: ModelPath): ModelProxy<TState, TActions> | undefined {
-        return new ModelProxy<TState, TActions>(this.stream, [this.path, path].flat());
-    }
-
-    public GetSubProxy<TState, TActions extends ModelAction, TModelProxy extends ModelProxy<TState, TActions> = ModelProxy<TState, TActions>>(
-        path: ModelPath, modelProxyConstructor: {
-            new(stream, path): TModelProxy
-        } = ModelProxy as any): TModelProxy {
-        return new modelProxyConstructor(this.stream, [this.path, path].flat());
-    }
     public equals(x: any) {
         return this === x;
     }

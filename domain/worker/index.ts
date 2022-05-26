@@ -1,11 +1,11 @@
 import {Container, registerSerializer} from "@cmmn/core";
 import {Transferable} from "../streams/transferable";
-import {IFactory} from "../entry/proxy";
+import {ModelLike} from "../entry/proxy";
 import {Model} from "./model";
-import {RootFactory} from "./rootFactory";
+import {RootLocator} from "./root.locator";
+import {Locator} from "./locator";
 
 export {WorkerEntry} from "./worker-entry";
-export {IFactory} from "../shared/factory";
 export {Model} from "./model";
 export * from "../shared/types"
 
@@ -15,9 +15,11 @@ if (!('document' in globalThis)) {
         index => new Transferable(index)
     );
 }
-export {RootFactory}
 
-export function useDomain() {
-    return Container.withProviders(RootFactory);
+export function useDomain(root: Model<any>) {
+    return Container.withProviders([
+        {provide: Locator, useValue: new RootLocator(root)},
+    ]);
 }
 
+export {Locator, RootLocator, ModelLike}

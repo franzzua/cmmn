@@ -13,9 +13,22 @@ export class Request<T> {
         while (true) {
             try {
                 return await Request.fetch(this.url, this.request)
-                    .then(x => x.json());
+                    .then(x => {
+                        if (!x.ok) {
+                            throw new RequestFailedError(this.url, this.request, x);
+                        }
+                        if (x.status == 204)
+                            return undefined;
+                        const type = x.headers.get('content-type');
+                        if (type.match(/json/)) {
+                            return x.json();
+                        } else if (type.match(/text/)) {
+                            return x.text();
+                        }
+                        return x.blob();
+                    });
             } catch (e) {
-                if (this.isAborted){
+                if (this.isAborted) {
                     throw new RequestAbortedError(this.abortReason)
                 }
                 if (--this.retryCount <= 0) {
@@ -32,6 +45,7 @@ export class Request<T> {
 
     isAborted = false;
     abortReason = null;
+
     cancel(reason = null) {
         this.isAborted = true;
         this.abortReason = reason;
@@ -39,9 +53,15 @@ export class Request<T> {
     }
 }
 
-class RequestAbortedError extends Error{
+class RequestAbortedError extends Error {
     constructor(private reason: string) {
         super(["Request aborted by user", reason].filter(x => x).join(' '));
+    }
+}
+
+class RequestFailedError extends Error {
+    constructor(private url: string, private request: RequestInit, private x: Response) {
+        super(`Request to ${url} failed with code ${x.status} (${x.statusText})`)
     }
 
 }

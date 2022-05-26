@@ -17,7 +17,7 @@ App connects to domain through some stream that serializes all data, actions and
   * Contains $state - a cell that changes on every model change and contains all usefull info about it, but not more.
   * Contains Actions that can be used to change a model
   * It can contains sub-models, that can be resolved relatively
-* [ModelProxy](./modelProxy.ts)
+* [ModelProxy](entry/modelProxy.ts)
   * It lays in a main thread
   * It corresponds to some model in domain
   * It also has $state and Actions

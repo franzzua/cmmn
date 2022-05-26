@@ -66,3 +66,8 @@ export type WorkerMessageSerialized = {
 //     buffer: SharedArrayBuffer;
 //     id: string;
 // }
+export type ModelLike<TState, TActions extends ModelAction> = {
+    get State(): TState;
+    set State(state: TState);
+    Actions: TActions;
+}

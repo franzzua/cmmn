@@ -18,6 +18,9 @@
       "path": "./ui"
     },
     {
+      "path": "./infr"
+    },
+    {
       "path": "./app"
     },
     {

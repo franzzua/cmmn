@@ -1,14 +1,15 @@
-import {IFactory} from "../shared/factory";
-import {AsyncQueue, Fn, Injectable} from "@cmmn/core";
+import {Injectable} from "@cmmn/core";
 import {BaseStream} from "../streams/base.stream";
 import {Connector} from "../streams/connector";
+import {Locator} from "./locator";
 
 @Injectable()
-export class WorkerEntry extends Connector{
+export class WorkerEntry extends Connector {
 
-    constructor(private factory: IFactory) {
-        super(new BaseStream(self), factory.Root);
+    constructor(locator: Locator) {
+        super(new BaseStream(self), locator);
     }
+
 }
 
 
