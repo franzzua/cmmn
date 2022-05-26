@@ -15,7 +15,7 @@ export class Cell<T = any, TKey = T> extends BaseCell<T> {
         if (options.startValue !== undefined) {
             this.update(options.startValue);
         }
-        if (this.value !== undefined) {
+        if (this.value !== undefined) { // !function || options.startValue !== undefined
             this.handleFilterError(this.value);
             if (options.startValue === undefined) { // startValue -> update -> put
                 this.options.put && this.options.put(this.value);
