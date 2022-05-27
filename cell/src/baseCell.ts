@@ -14,7 +14,7 @@ export class BaseCell<T = any> extends EventEmitter<{
     dependencies: Set<BaseCell<any>>; // cells on which this cell depends
     private reactions: Set<BaseCell<any>>; // cells dependent on this cell
     isActive = false;
-    state = CellState.Actual;
+    state: CellState;
     debug = getDebugName(/BaseCell|Cell/);
 
     constructor(value: T | (() => T)) {
