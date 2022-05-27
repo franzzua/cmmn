@@ -44,4 +44,12 @@ class CyclicalPullSpec {
         Throw(() => b.get(), 'cyclical pull');
     }
 
+    @test
+    justCell3() {
+        const a = new Cell(() => c.get());
+        const b = new Cell(() => a.get());
+        const c = new Cell(() => b.get());
+        Throw(() => b.get(), 'cyclical pull');
+    }
+
 }
