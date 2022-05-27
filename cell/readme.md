@@ -53,8 +53,7 @@ const b = new Cell(() => a.get());
 b.on('change', ({value}) => {
     if (value > 0)
         console.log(`b`, value);
-})
-
+});
 ```
 
 1. Не использовать фильтр на ячейках
