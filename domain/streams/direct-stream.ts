@@ -22,7 +22,7 @@ export class DirectStream extends Stream {
         const cell = new Cell(() => {
             return model.State as T;
         }, {
-            put: value => model.State = value
+            tap: value => model.State = value
         });
         return cell;
     }

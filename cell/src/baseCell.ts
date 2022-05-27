@@ -96,7 +96,6 @@ export class BaseCell<T = any> extends EventEmitter<{
 
     active() {
         this.isActive = true;
-
     }
 
     protected disactive() {
