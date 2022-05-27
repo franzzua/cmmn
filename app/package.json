@@ -12,7 +12,8 @@
       "require": "./dist/index.cjs"
     }
   },
-  "module": "dist/index-es.js",
+  "module": "./dist/index.js",
+  "main": "./dist/index.js",
   "typings": "dist/typings",
   "scripts": {
     "bundle": "cmmn bundle ./dist/esm/index.js --watch",

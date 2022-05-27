@@ -10,6 +10,7 @@ export class Builder{
 
     public withUI(...components: Function[]){
         this.container.provide(components);
+        setDefaultContainer(this.container);
         return this;
     }
     public with(container: Container){
@@ -27,7 +28,6 @@ export class Builder{
     build<T>(app: {
         new(...args: any[]): T
     }):T {
-        setDefaultContainer(this.container);
         this.container.provide([app]);
         return this.container.get<T>(app)
     }

@@ -14,7 +14,7 @@ import html from '@open-wc/rollup-plugin-html';
 import json from '@rollup/plugin-json';
 import alias from '@rollup/plugin-alias';
 import replace from '@rollup/plugin-replace';
-
+import sourcemaps from 'rollup-plugin-sourcemaps';
 /**
  * @typedef {import(rollup).RollupOptions} RollupOptions
  * @typedef {import(rollup).OutputOptions} OutputOptions
@@ -142,6 +142,7 @@ export class ConfigCreator {
                     'node_modules/ulid/*.js'
                 ]
             }),
+            sourcemaps(),
             builtins(),
             /*this.options.styles === 'modules' ? postCSS({
                 mode: [
@@ -182,6 +183,9 @@ export class ConfigCreator {
         if (this.options.html || this.options.input.endsWith('.html')) {
             result.push(this.html);
         }
+        if (this.options.stats) {
+            result.push(this.visualizer);
+        }
         if (this.options.minify) {
             result.push(terser({
                 module: true,
@@ -197,9 +201,6 @@ export class ConfigCreator {
         }
         if (this.options.devServer) {
             result.push(this.devServer, this.livereload);
-        }
-        if (this.options.stats) {
-            result.push(this.visualizer);
         }
         return result;
     }

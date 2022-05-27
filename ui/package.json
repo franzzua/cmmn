@@ -17,7 +17,8 @@
       "require": "./dist/index.cjs"
     }
   },
-  "module": "dist/index.js",
+  "browser": "./dist/index.js",
+  "module": "./dist/index.js",
   "typesVersions": {
     "*": {
       "typings.d.ts": [
@@ -47,7 +48,8 @@
     "index": {
       "input": "dist/esm/index.js",
       "external": [
-        "@cmmn.*"
+        "@cmmn.cell",
+        "@cmmn.core"
       ],
       "module": "es,cjs"
     }

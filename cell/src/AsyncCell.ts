@@ -1,7 +1,7 @@
 import {Cell, ICellOptions} from "./cell";
 import {BaseCell, CellState} from "./baseCell";
 
-export class AsyncCell<T, TKey> extends Cell<T, TKey> {
+export class AsyncCell<T, TKey = T>  extends Cell<T, TKey> {
     private genCell: BaseCell<AsyncGenerator<T> | Promise<T>>;
 
     constructor(generator: () => AsyncGenerator<T> | Promise<T>, options: ICellOptions<T, TKey> = {}) {

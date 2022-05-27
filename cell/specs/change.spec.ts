@@ -38,4 +38,21 @@ class ChangeSpec {
         expect(onChange.notCalled).toBeTruthy();
     }
 
+    @test
+    async changeEvent3() {
+        const a = new BaseCell(0);
+        const getB = sinon.spy(() => a.get() + 1);
+        const b = new BaseCell(getB);
+        // const b = new BaseCell(() => a.get() + 1);
+        const onChange = sinon.spy(x => {
+            expect(x.value).toBe(2);
+            expect(x.oldValue).toBe(1);
+        });
+        b.on('change', onChange)
+        getB.resetHistory();
+        a.set(1);
+        await Actualizator.wait;
+        expect(getB.callCount).toBe(1);
+    }
+
 }

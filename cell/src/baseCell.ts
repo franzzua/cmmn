@@ -97,7 +97,6 @@ export class BaseCell<T = any> extends EventEmitter<{
     active() {
         this.isActive = true;
 
-        Actualizator.Down(this);
     }
 
     protected disactive() {
@@ -114,8 +113,10 @@ export class BaseCell<T = any> extends EventEmitter<{
     }
 
     protected subscribe(eventName: keyof { change: T }) {
-        if (eventName == 'change' && !this.isActive)
+        if (eventName == 'change' && !this.isActive) {
             this.active();
+            Actualizator.Down(this);
+        }
     }
 
     protected unsubscribe(eventName: keyof { change: T }) {
@@ -136,6 +137,8 @@ export class BaseCell<T = any> extends EventEmitter<{
     }
 
     removeReaction(cell: BaseCell) {
+        if (!this.reactions)
+            return;
         this.reactions.delete(cell);
         if (!this.reactions.size) {
             this.reactions = null;

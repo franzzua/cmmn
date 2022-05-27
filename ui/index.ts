@@ -34,3 +34,4 @@ export * from "./extensions/react";
 //     }
 // );
 export {Renderer};
+export { html } from "@cmmn/uhtml";
