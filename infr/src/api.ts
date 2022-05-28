@@ -12,6 +12,7 @@ export class Api {
 
     private ApiUrl: string = '';
 
+    private static Headers : Headers = {};
     private Headers: Headers = {
         ['Content-Type']: 'application/json'
     };
@@ -23,8 +24,9 @@ export class Api {
             url += `?` + Object.entries(options.params).map(([key, value]) => `${key}=${value}`).join('&');
         }
         const headers = {
+            ...Api.Headers,
+            ...this.Headers,
             ...options.headers,
-            ...this.Headers
         };
         if (body && headers["Content-Type"] === 'application/json')
             body = JSON.stringify(body)
@@ -62,6 +64,12 @@ export class Api {
     addHeaders(headers: Headers){
         this.Headers = {
             ...this.Headers,
+            ...headers
+        };
+    }
+    setGlobalHeaders(headers: Headers){
+        Api.Headers = {
+            ...Api.Headers,
             ...headers
         };
     }

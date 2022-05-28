@@ -1,26 +1,12 @@
-export type Provider = ValueProvider | ClassProvider | FactoryProvider | ProvideProvider | any;
-
-export interface ProvideProvider {
-    provide: any;
-}
-
-export interface ValueProvider {
-    provide: any;
-    useValue?: any;
-}
-
-
-export interface ClassProvider {
+export type Provider = {
     provide: any;
     useClass?: any;
-    deps: Provider[];
-    multiple?: boolean;
-}
-
-export interface FactoryProvider {
-    provide: any;
+    useValue?: any;
     useFactory?: any;
-    deps: Provider[];
+    deps?: any[];
     multiple?: boolean;
-}
+};
 
+export type ProviderOrValue = Provider | {
+    new(...args): any;
+};

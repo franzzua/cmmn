@@ -11,24 +11,24 @@ export interface ILikeReactComponent<T> {
 export function cellState<T>(self: ILikeReactComponent<T>, getters: {
     [key in keyof T]?: T[key] | (() => T[key]);
 }, initial: Partial<T> = {}): T {
-    let subscriptions = [];
+    let subscrsOrUnsubscrs = [];
     for (let key in getters) {
         if (typeof getters[key] !== "function") {
             initial[key] = getters[key] as any;
         } else {
             const cell = new Cell(getters[key]);
-            subscriptions.push(() => cell.on('change', ({value}) => {
+            subscrsOrUnsubscrs.push(() => cell.on('change', ({value}) => {
                 self.setState({[key]: value as any} as Partial<T>);
             }));
             initial[key] = cell.get() as any;
         }
     }
-    if (subscriptions.length){
+    if (subscrsOrUnsubscrs.length){
         self.componentDidMount = Fn.join(self.componentDidMount, function (){
-            subscriptions = subscriptions.map(fn => fn());
+            subscrsOrUnsubscrs = subscrsOrUnsubscrs.map(fn => fn());
         });
         self.componentWillUnmount = Fn.join(self.componentWillUnmount, function (){
-            subscriptions = subscriptions.map(fn => fn());
+            subscrsOrUnsubscrs.forEach(fn => fn());
         });
     }
     return initial as T;

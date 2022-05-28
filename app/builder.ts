@@ -1,4 +1,4 @@
-import {Container} from "@cmmn/core";
+import {Container, Provider, ProviderOrValue} from "@cmmn/core";
 import {IRouterOptions, Router} from "./router";
 import {setDefaultContainer} from "@cmmn/ui";
 
@@ -8,9 +8,8 @@ export class Builder{
     constructor() {
     }
 
-    public withUI(...components: Function[]){
+    public withUI(components:  ProviderOrValue[] | Container){
         this.container.provide(components);
-        setDefaultContainer(this.container);
         return this;
     }
     public with(container: Container){
@@ -29,6 +28,7 @@ export class Builder{
         new(...args: any[]): T
     }):T {
         this.container.provide([app]);
+        setDefaultContainer(this.container);
         return this.container.get<T>(app)
     }
 }

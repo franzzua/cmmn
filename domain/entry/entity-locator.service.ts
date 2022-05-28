@@ -9,7 +9,7 @@ export class EntityLocator implements Locator {
     constructor(private stream: Stream, private container: Container) {
     }
 
-    private cache = new Map<string, { State; Actions; }>();
+    private cache = new Map<string, ModelLike<any, any>>();
 
     public get<TState, TActions extends ModelAction>(path: ModelPath, modelType: {
         new(...args): { State: TState, Actions: TActions };
@@ -28,6 +28,7 @@ export class EntityLocator implements Locator {
         return new SubLocator(this, path)
     }
 }
+
 export class SubLocator implements Locator {
     constructor(private locator: EntityLocator, private path: ModelPath) {
 

@@ -1,4 +1,4 @@
-import {Provider} from "./types";
+import {Provider, ProviderOrValue} from "./types";
 
 
 export class Store {
@@ -14,11 +14,11 @@ export class Store {
 
 
 
-    register(provider: Provider | Store) {
+    register(provider: ProviderOrValue | Store) {
         if (provider instanceof Store) {
             provider.providers.forEach(p => this.register(p));
         } else {
-            if (!provider.provide)
+            if (!('provide' in provider))
                 provider = {provide: provider};
             this.providers.push(provider);
             return provider;

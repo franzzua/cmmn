@@ -20,6 +20,8 @@ export class Request<T> {
                         if (x.status == 204)
                             return undefined;
                         const type = x.headers.get('content-type');
+                        if (!type)
+                            return undefined;
                         if (type.match(/json/)) {
                             return x.json();
                         } else if (type.match(/text/)) {
@@ -60,8 +62,11 @@ class RequestAbortedError extends Error {
 }
 
 class RequestFailedError extends Error {
-    constructor(private url: string, private request: RequestInit, private x: Response) {
-        super(`Request to ${url} failed with code ${x.status} (${x.statusText})`)
+
+    status = this.response.status;
+
+    constructor(private url: string, private request: RequestInit, private response: Response) {
+        super(`Request to ${url} failed with code ${response.status} (${response.statusText})`)
     }
 
 }

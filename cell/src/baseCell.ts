@@ -147,6 +147,12 @@ export class BaseCell<T = any> extends EventEmitter<{
         }
     }
 
+    dispose() {
+        this.disactive();
+        this.reactions = null;
+        this.dependencies = null;
+    }
+
 }
 
 export enum CellState {

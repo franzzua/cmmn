@@ -13,7 +13,6 @@ export class FilterSpec{
         expect(cell.get.bind(cell)).toThrow();
     }
 
-
     @test
     async notChangeIfForbidden() {
         const cell = new Cell(5, {

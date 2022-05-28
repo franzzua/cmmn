@@ -48,8 +48,8 @@
     "index": {
       "input": "dist/esm/index.js",
       "external": [
-        "@cmmn.cell",
-        "@cmmn.core"
+        "@cmmn\/cell",
+        "@cmmn\/core"
       ],
       "module": "es,cjs"
     }

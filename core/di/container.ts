@@ -1,8 +1,5 @@
-import {ClassProvider, FactoryProvider, Provider, ValueProvider} from "./types";
+import {Provider, ProviderOrValue} from "./types";
 import {Store} from "./store";
-
-export type CommonProvider = ValueProvider & ClassProvider & FactoryProvider;
-
 
 export class Container {
 
@@ -34,20 +31,20 @@ export class Container {
         if (target === Container)
             return this as unknown as T;
         const existing = this.store.find(target) ?? {provide: target};
-        return this.resolve(existing as CommonProvider);
+        return this.resolve(existing);
     }
 
-    public static withProviders(...providers: Provider[]) {
+    public static withProviders(...providers: ProviderOrValue[]) {
         const result = new Container();
         result.provide(providers);
         return result;
     }
 
-    public withProviders(...providers: Provider[]) {
+    public withProviders(...providers: ProviderOrValue[]) {
         return Container.withProviders(...this.getProviders(), ...providers);
     }
 
-    public provide(providers: Provider[] | Container) {
+    public provide(providers: ProviderOrValue[] | Container) {
         if (providers instanceof Container) {
             this.store.register(providers.store);
         } else {
@@ -61,7 +58,7 @@ export class Container {
         return Container.StaticDepsMap.get(classInfo) ?? Container.StaticDepsMap.get(Object.getPrototypeOf(classInfo));
     }
 
-    private resolve(provider: CommonProvider) {
+    private resolve(provider: Provider) {
         if (provider.useValue)
             return provider.useValue;
         if (!provider.useClass) {
