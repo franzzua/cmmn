@@ -1,7 +1,8 @@
 import {component, GlobalStaticState} from "./component/component";
-import {HtmlComponent, AsyncHtmlComponent} from "./component/htmlComponent";
+import {AsyncHtmlComponent, HtmlComponent} from "./component/htmlComponent";
 import "./uhtml-ext/styleHandler"
 import {Renderer} from "./component/renderer";
+import {intersectionObserver} from "./user-events/intersectionObserver";
 
 export {HtmlComponent, component, AsyncHtmlComponent};
 
@@ -33,5 +34,5 @@ export * from "./extensions/react";
 //         listeners.get(name).delete(listener);
 //     }
 // );
-export {Renderer};
-export { html } from "@cmmn/uhtml";
+export {Renderer, intersectionObserver};
+export {html} from "@cmmn/uhtml";
