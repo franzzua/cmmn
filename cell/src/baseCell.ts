@@ -1,6 +1,6 @@
 import {EventEmitter, EventEmitterBase} from '@cmmn/core';
 import {getDebugName} from './util/debug-name';
-import {Actualizator} from './actualizator';
+import {Actualizator, CyclicalPullError} from './actualizator';
 
 export class BaseCell<T = any> extends EventEmitter<{
     change: { value: T, oldValue: T },
@@ -34,7 +34,7 @@ export class BaseCell<T = any> extends EventEmitter<{
 
     public get(): T {
         if (this.isPulling) {
-            throw new Error('cyclical pull');
+            throw new CyclicalPullError(this);
         }
         Actualizator.imCalled(this);
         if (this.state === CellState.Dirty) {
