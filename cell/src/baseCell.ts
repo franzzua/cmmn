@@ -30,8 +30,10 @@ export class BaseCell<T = any> extends EventEmitter<{
             this.state = CellState.Actual;
         }
     }
-
+    public isPulling = false;
     public get(): T {
+        if (this.isPulling)
+            throw new Error('cyclical pull');
         Actualizator.imCalled(this);
         if (this.state === CellState.Dirty) {
             Actualizator.Down(this);

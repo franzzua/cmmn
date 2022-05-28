@@ -28,7 +28,7 @@ export class Actualizator {
 
     public static Down(cell: BaseCell) {
         if (Actualizator.CurrentCell === cell)
-            throw new Error('cyclical pull');
+            throw new CyclicalPullError(cell);
         if (cell.state === CellState.Actual)
             return;
         const oldDependencies = cell.dependencies;
@@ -36,7 +36,9 @@ export class Actualizator {
         const prevCell = Actualizator.CurrentCell;
         Actualizator.CurrentCell = cell;
         try {
+            cell.isPulling = true;
             cell.set(cell.pull());
+            cell.isPulling = false;
         } catch (e) {
             cell.setError(e);
         }
@@ -59,5 +61,11 @@ export class Actualizator {
             return;
         Actualizator.CurrentCell.addDependency(cell);
         cell.addReaction(Actualizator.CurrentCell);
+    }
+}
+
+export class CyclicalPullError extends Error{
+    constructor(public cell: BaseCell) {
+        super('cyclical pull');
     }
 }
