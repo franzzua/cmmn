@@ -4,7 +4,7 @@ export type ICellOptions<T, TKey = T> = {
     compare?: (a: TKey, b: TKey) => boolean;
     compareKey?: (value: T) => TKey;
     filter?: (a: T) => boolean;
-    put?: (a: T) => void;
+    tap?: (a: T) => void;
     startValue?: T;
 }
 
@@ -17,8 +17,8 @@ export class Cell<T = any, TKey = T> extends BaseCell<T> {
         }
         if (this.value !== undefined) { // !function || options.startValue !== undefined
             this.handleFilterError(this.value);
-            if (options.startValue === undefined) { // startValue -> update -> put
-                this.options.put && this.options.put(this.value);
+            if (options.startValue === undefined) { // startValue -> update -> tap
+                this.options.tap && this.options.tap(this.value);
             }
         }
     }
@@ -32,7 +32,7 @@ export class Cell<T = any, TKey = T> extends BaseCell<T> {
 
     protected update(value: T, error?: Error) {
         super.update(value, error);
-        this.options.put && this.options.put(value);
+        this.options.tap && this.options.tap(value);
     }
 
     public changeOptions(options: ICellOptions<T, TKey>) {

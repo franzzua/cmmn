@@ -5,7 +5,7 @@ import {Fn} from "@cmmn/core";
 export abstract class Model<TState, TActions extends ModelAction = {}> {
 
     public $state = new Cell(() => this.State, {
-        put: value => {
+        tap: value => {
             // TODO: enable
             // this.State = value
         },

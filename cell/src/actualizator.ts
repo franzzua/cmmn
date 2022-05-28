@@ -27,12 +27,12 @@ export class Actualizator {
     }
 
     public static Down(cell: BaseCell) {
-        if (cell.state == CellState.Actual)
+        if (Actualizator.CurrentCell === cell)
+            throw new Error('cyclical pull');
+        if (cell.state === CellState.Actual)
             return;
         const oldDependencies = cell.dependencies;
         cell.dependencies = null;
-        if (Actualizator.CurrentCell === cell)
-            throw new Error('cyclical pull');
         const prevCell = Actualizator.CurrentCell;
         Actualizator.CurrentCell = cell;
         try {

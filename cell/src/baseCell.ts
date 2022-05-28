@@ -14,7 +14,7 @@ export class BaseCell<T = any> extends EventEmitter<{
     dependencies: Set<BaseCell<any>>; // cells on which this cell depends
     private reactions: Set<BaseCell<any>>; // cells dependent on this cell
     isActive = false;
-    state = CellState.Actual;
+    state: CellState;
     debug = getDebugName(/BaseCell|Cell/);
 
     constructor(value: T | (() => T)) {
@@ -96,10 +96,11 @@ export class BaseCell<T = any> extends EventEmitter<{
 
     active() {
         this.isActive = true;
-
     }
 
     protected disactive() {
+        if (!this.isActive)
+            return;
         this.isActive = false;
         if (this.dependencies) {
             for (let dependency of this.dependencies) {
@@ -120,7 +121,7 @@ export class BaseCell<T = any> extends EventEmitter<{
     }
 
     protected unsubscribe(eventName: keyof { change: T }) {
-        if (eventName == 'change' && !this.reactions && this.isActive)
+        if (eventName == 'change' && this.isActive && !this.reactions)
             this.disactive();
     }
 
