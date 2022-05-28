@@ -13,6 +13,7 @@ export class BaseCell<T = any> extends EventEmitter<{
     error: Error;
     dependencies: Set<BaseCell<any>>; // cells on which this cell depends
     private reactions: Set<BaseCell<any>>; // cells dependent on this cell
+    isPulling = false;
     isActive = false;
     state: CellState;
     debug = getDebugName(/BaseCell|Cell/);
@@ -30,10 +31,11 @@ export class BaseCell<T = any> extends EventEmitter<{
             this.state = CellState.Actual;
         }
     }
-    public isPulling = false;
+
     public get(): T {
-        if (this.isPulling)
+        if (this.isPulling) {
             throw new Error('cyclical pull');
+        }
         Actualizator.imCalled(this);
         if (this.state === CellState.Dirty) {
             Actualizator.Down(this);
@@ -101,8 +103,6 @@ export class BaseCell<T = any> extends EventEmitter<{
     }
 
     protected disactive() {
-        if (!this.isActive)
-            return;
         this.isActive = false;
         if (this.dependencies) {
             for (let dependency of this.dependencies) {
