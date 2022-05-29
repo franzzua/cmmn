@@ -10,7 +10,7 @@ export class Actualizator {
     public static wait: Promise<void>; // await Actualizator.wait; -> дождаться актуализации изменившихся ячеек
 
     public static Up(cell: BaseCell) {
-        if (Actualizator.queue) { // ЕСЛИ произошло cell.update в рамках микрозадачи UpAll
+        if (Actualizator.queue) { // ЕСЛИ обновление ячейки произошло в рамках микрозадачи UpAll
             Actualizator.queue.unshift(cell);
             return;
         }
@@ -19,12 +19,12 @@ export class Actualizator {
     }
     public static UpAll() {
         Actualizator.queue = Array.from(Actualizator.CellsToActualize);
-        Actualizator.wait = null
+        Actualizator.CellsToActualize.clear();
+        Actualizator.wait = null;
         while (Actualizator.queue.length) {
             const cell = Actualizator.queue.pop();
             Actualizator.Down(cell);
         }
-        Actualizator.CellsToActualize.clear();
         Actualizator.queue = null;
     }
 
