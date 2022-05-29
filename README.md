@@ -4,7 +4,7 @@ Web framework for building fast web application with business logic dedicated in
 
 You can read more about:
 * [core libraries](./core/Readme.md)
-* [cell](./cell/readme.md)
+* [cell](./cell/README.ru.md)
 * [ui](./ui/Readme.md)
 * [domain](./domain/Readme.md)
 * [tools](./tools/readme.md)
