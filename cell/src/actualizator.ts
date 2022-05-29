@@ -6,11 +6,11 @@ export class Actualizator {
 
     private static CellsToActualize = new Set<BaseCell>();
     private static queue: Array<BaseCell>;
-    private static ResolvedPromise = Promise.resolve(); // для добавления микрозадачи
-    public static wait: Promise<void>; // await Actualizator.wait; -> дождаться актуализации изменившихся ячеек
+    private static ResolvedPromise = Promise.resolve(); // to add a microtask
+    public static wait: Promise<void>; // await Actualizator.wait; -> to wait for the updated cells to be updated
 
     public static Up(cell: BaseCell) {
-        if (Actualizator.queue) { // ЕСЛИ обновление ячейки произошло в рамках микрозадачи UpAll
+        if (Actualizator.queue) { // IF the cell update occurred as part of a microtask UpAll
             Actualizator.queue.unshift(cell);
             return;
         }
