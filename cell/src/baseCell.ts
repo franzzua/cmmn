@@ -1,6 +1,6 @@
 import {EventEmitter, EventEmitterBase} from '@cmmn/core';
 import {getDebugName} from './util/debug-name';
-import {Actualizator, CyclicalPullError} from './actualizator';
+import {Actualizator} from './actualizator';
 
 export class BaseCell<T = any> extends EventEmitter<{
     change: { value: T, oldValue: T },
@@ -163,4 +163,10 @@ export enum CellState {
     Actual,
     // value is not actual, maybe will update
     Dirty,
+}
+
+export class CyclicalPullError extends Error {
+    constructor(public cell: BaseCell) {
+        super('cyclical pull');
+    }
 }
