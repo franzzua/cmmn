@@ -73,7 +73,7 @@ Cell have initial value, so pull have not executed and there is no dependencies.
 ### Актуализатор
 
 [`cell.get()`](./docs/actualizator/actualizator.get.png)  
-[`set.set(value)`](./docs/actualizator/actualizator.set.png)
+[`cell.set(value)`](./docs/actualizator/actualizator.set.png)
 
 ### Тесты для понимания:
 
