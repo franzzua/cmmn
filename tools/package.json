@@ -66,6 +66,7 @@
     "rollup-plugin-styles": "^4",
     "rollup-plugin-terser": "^7",
     "rollup-plugin-visualizer": "^5.5.4",
+    "servor": "4.x.x",
     "sinon": "10.x.x",
     "ts-jest": "27.x.x",
     "ttypescript": "1.5.13",

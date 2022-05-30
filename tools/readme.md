@@ -29,3 +29,5 @@
         }
     }
     ```
+* `cmmn serve [-b]`
+  serves bundled website (-b serves all websites in monorepo)

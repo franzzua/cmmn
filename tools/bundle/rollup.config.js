@@ -50,10 +50,8 @@ export class ConfigCreator {
         this.options = {
             ...options
         };
-    }
-
-    setRootDir(rootDir) {
-        this.root = rootDir;
+        if (options.rootDir)
+            this.root = options.rootDir;
     }
 
     get outDir() {
@@ -107,7 +105,7 @@ export class ConfigCreator {
 
     get livereload() {
         return livereload({
-            watch: [this.outDir, path.join(this.root, 'assets')],
+            watch: [this.outDir, path.join(this.root, 'assets'), this.options.html],
             verbose: false, // Disable console output
             // other livereload options
             port: 12345,
