@@ -17,6 +17,7 @@ export class Actualizator {
         Actualizator.CellsToActualize.add(cell);
         Actualizator.wait ??= Actualizator.ResolvedPromise.then(Actualizator.UpAll);
     }
+
     public static UpAll() {
         Actualizator.queue = Array.from(Actualizator.CellsToActualize);
         Actualizator.CellsToActualize.clear();
@@ -38,9 +39,9 @@ export class Actualizator {
         try {
             cell.isPulling = true;
             cell.set(cell.pull());
-            cell.isPulling = false;
         } catch (e) {
             cell.setError(e);
+        } finally {
             cell.isPulling = false;
         }
         Actualizator.CurrentCell = prevCell;
