@@ -11,6 +11,6 @@
     "ui",
     "sync"
   ],
-  "version": "1.6.6",
+  "version": "1.6.7",
   "npmClient": "npm"
 }
