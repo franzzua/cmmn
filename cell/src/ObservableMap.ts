@@ -28,11 +28,6 @@ export class ObservableMap<K, V> extends EventEmitter<{
         return this.map.has(key)
     };
 
-
-    emitChange(data) {
-        this.emit('change', data)
-    }
-
     set(key: K, value: V) {
         const old = this.map.get(key);
         const has = this.map.has(key);
@@ -60,6 +55,11 @@ export class ObservableMap<K, V> extends EventEmitter<{
             else
                 create && this.map.set(key, create(value));
         }
+    }
+
+
+    emitChange(data) {
+        this.emit('change', data)
     }
 }
 
