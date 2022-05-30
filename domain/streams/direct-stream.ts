@@ -1,8 +1,9 @@
 import {BaseCell, Cell} from "@cmmn/cell";
-import {Injectable} from "@cmmn/core";
+import {Fn, Injectable} from "@cmmn/core";
 import {Stream} from "./stream";
 import {Action} from "../shared/types";
-import {Locator} from "../worker";
+import {Locator} from "../shared/locator";
+import {VersionState} from "./versionState";
 
 @Injectable()
 export class DirectStream extends Stream {
@@ -19,11 +20,10 @@ export class DirectStream extends Stream {
 
     getCell<T>(path: (string | number)[]): BaseCell {
         const model = this.locator.get(path);
-        const cell = new Cell(() => {
-            return model.State as T;
-        }, {
-            tap: value => model.State = value
-        });
-        return cell;
+        const vs = new VersionState();
+        Cell.OnChange(() => model.State, event => vs.setRemote(Fn.ulid(), event.value));
+        vs.on('change', event => model.State = event.value);
+        vs.setRemote(Fn.ulid(), model.State);
+        return vs;
     }
 }

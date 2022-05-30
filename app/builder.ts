@@ -24,9 +24,7 @@ export class Builder{
         return this;
     }
 
-    build<T>(app: {
-        new(...args: any[]): T
-    }):T {
+    build<T>(app: new(...args: any[]) => T):T {
         this.container.provide([app]);
         setDefaultContainer(this.container);
         return this.container.get<T>(app)

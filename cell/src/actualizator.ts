@@ -41,6 +41,7 @@ export class Actualizator {
             cell.isPulling = false;
         } catch (e) {
             cell.setError(e);
+            cell.isPulling = false;
         }
         Actualizator.CurrentCell = prevCell;
         if (oldDependencies) {

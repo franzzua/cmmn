@@ -1,8 +1,9 @@
 import {Container, registerSerializer} from "@cmmn/core";
 import {Transferable} from "../streams/transferable";
-import {Locator, ModelLike} from "../entry/proxy";
+import {Locator} from "../shared/locator";
 import {Model} from "./model";
 import {RootLocator} from "./root.locator";
+import {ModelLike} from "../shared/types";
 
 export {WorkerEntry} from "./worker-entry";
 export {Model} from "./model";

@@ -21,7 +21,7 @@ export class Request<T> {
                             return undefined;
                         const type = x.headers.get('content-type');
                         if (!type)
-                            return undefined;
+                            throw new Error(`Response without content-type`)
                         if (type.match(/json/)) {
                             return x.json();
                         } else if (type.match(/text/)) {
