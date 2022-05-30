@@ -70,6 +70,11 @@ b.on('change', ({value}) => {
 Just one good use-case is for initialize static value-cell. If you will use it with computed cells, they will not change its value never:
 Cell have initial value, so pull have not executed and there is no dependencies.
 
+### Актуализатор
+
+[`Cell.get()`](./docs/actualizator/actualizator.get.png)  
+[`Cell.set(value)`](./docs/actualizator/actualizator.set.png)
+
 ### Тесты для понимания:
 
 * [Решение квадратного уравнения](./specs/long-graph.spec.ts)
