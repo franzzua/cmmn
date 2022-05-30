@@ -2,15 +2,15 @@ import {Cell, ICellOptions} from "./cell";
 import {BaseCell} from "./baseCell";
 import {throttle} from "@cmmn/core";
 
+export type IAsyncCellOptions<T, TKey = T> = ICellOptions<T, TKey> & {
+    throttle?: { time: number, leading: boolean, trailing: boolean }
+};
+
 export class AsyncCell<T, TKey = T> extends Cell<T, TKey> {
     private genCell: BaseCell<AsyncGenerator<T> | Promise<T>>;
-    protected options: ICellOptions<T, TKey> & {
-        throttle?: { time: number, leading: boolean, trailing: boolean }
-    };
 
-    constructor(generator: () => AsyncGenerator<T> | Promise<T>, options: ICellOptions<T, TKey> & {
-        throttle?: { time: number, leading: boolean, trailing: boolean }
-    } = {}) {
+    constructor(generator: () => AsyncGenerator<T> | Promise<T>,
+                protected options: IAsyncCellOptions<T, TKey> = {}) {
         super(null, options);
         this.genCell = new BaseCell(generator);
     }
