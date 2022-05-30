@@ -100,7 +100,7 @@ export class ConfigCreator {
         return serve({
             open: false,
             contentBase: [this.outDir, path.join(this.root, 'assets')],
-            port: this.options.port ?? 3000,
+            port: this.options.port,
             historyApiFallback: true
         });
     }
@@ -137,10 +137,7 @@ export class ConfigCreator {
                 dedupe: this.options.dedupe || []
             }),
             commonjs({
-                requireReturnsDefault: "namespace",
-                dynamicRequireTargets: [
-                    'node_modules/ulid/*.js'
-                ]
+                requireReturnsDefault: "namespace"
             }),
             sourcemaps(),
             builtins(),
@@ -199,7 +196,7 @@ export class ConfigCreator {
                 }
             }));
         }
-        if (this.options.devServer) {
+        if (this.options.devServer && this.options.port) {
             result.push(this.devServer, this.livereload);
         }
         return result;
