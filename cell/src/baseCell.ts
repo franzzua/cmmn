@@ -135,7 +135,7 @@ export class BaseCell<T = any> extends EventEmitter<{
     addReaction(cell: BaseCell) {
         this.reactions ??= new Set();
         this.reactions.add(cell);
-        if (!this.isActive)
+        if (!this.isActive && cell.isActive)
             this.active();
     }
 

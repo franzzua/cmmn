@@ -12,20 +12,25 @@ export class ObservableObject<T> extends EventEmitter<{
     }
 
     public Set(value: T) {
-        this.emit('change', {
+        this.emitChange({
             oldValue: this.value,
             value,
-        })
+        });
         this.value = value;
     }
 
     public Diff(diff: DeepPartial<T>) {
         const oldValue = this.value;
         const value = Fn.deepAssign(this.value, diff);
-        this.emit('change', {
+        this.emitChange({
             oldValue,
             value,
             keys: Object.keys(diff) as Array<keyof T>
         });
+    }
+
+
+    public emitChange(data) {
+        this.emit('change', data)
     }
 }

@@ -40,9 +40,9 @@ export class Actualizator {
         try {
             cell.isPulling = true;
             value = cell.pull();
-            cell.isPulling = false;
         } catch (e) {
             error = e;
+        }finally {
             cell.isPulling = false;
         }
         if (error) {

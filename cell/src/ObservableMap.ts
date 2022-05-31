@@ -20,14 +20,6 @@ export class ObservableMap<K, V> extends EventEmitter<{
         return this.map.values()
     };
 
-    set(key: K, value: V) {
-        const old = this.map.get(key);
-        const has = this.map.has(key);
-        this.map.set(key, value);
-        this.emit('change', {oldValue: old, value, key, type: has ? 'update' : 'add'})
-    };
-
-
     get(key: K) {
         return this.map.get(key)
     };
@@ -36,16 +28,23 @@ export class ObservableMap<K, V> extends EventEmitter<{
         return this.map.has(key)
     };
 
+    set(key: K, value: V) {
+        const old = this.map.get(key);
+        const has = this.map.has(key);
+        this.map.set(key, value);
+        this.emitChange({oldValue: old, value, key, type: has ? 'update' : 'add'})
+    };
+
     delete(key: K) {
         const has = this.map.has(key);
         if (!has)
             return;
         const old = this.map.get(key);
-        this.map.delete(key)
-        this.emit('change', {oldValue: old, value: undefined, key, type: 'delete'})
+        this.map.delete(key);
+        this.emitChange({oldValue: old, value: undefined, key, type: 'delete'});
     };
 
-    mergeFrom<U>(map: Map<K, U>, create: (value: U) => V, update: (item: V, value: U) => void){
+    mergeFrom<U>(map: Map<K, U>, create: (value: U) => V, update: (item: V, value: U) => void) {
         for (let existed of this.map.keys()) {
             if (!map.has(existed))
                 this.map.delete(existed);
@@ -56,6 +55,11 @@ export class ObservableMap<K, V> extends EventEmitter<{
             else
                 create && this.map.set(key, create(value));
         }
+    }
+
+
+    emitChange(data) {
+        this.emit('change', data)
     }
 }
 

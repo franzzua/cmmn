@@ -13,11 +13,12 @@ const getCell = (self: { [KEY_VALUE_CELLS]?: { [key: string]: BaseCell } }, prop
     self[KEY_VALUE_CELLS] ??= {};
     let pull = null; // if simple observable
     if (descr) {
-        if (descr.get) pull = descr.get.bind(self); // if computed observable
+        if (descr.get)
+            pull = descr.get.bind(self); // if computed observable
         if (typeof descr.value === "function") // if function-computed observable
             pull = descr.value.bind(self);
     }
-    return self[KEY_VALUE_CELLS][prop] ??= options ? new Cell(pull, options) : new BaseCell(pull);
+    return self[KEY_VALUE_CELLS][prop] = options ? new Cell(pull, options) : new BaseCell(pull);
 }
 
 export const cell: CellDecorator = ((options: ICellOptions<any>, prop?, descr?) => {
@@ -25,9 +26,9 @@ export const cell: CellDecorator = ((options: ICellOptions<any>, prop?, descr?) 
         return cell(null)(options, prop, descr);
     }
     return function cellDecorator(target, prop, descr) {
-        if (descr && typeof descr.value === "function"){
+        if (descr && typeof descr.value === "function") {
             return {
-                value(){
+                value() {
                     const cell = getCell(this, prop, descr, options);
                     return cell.get();
                 }
