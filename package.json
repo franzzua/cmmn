@@ -3,7 +3,7 @@
   "version": "1.2.3",
   "description": "",
   "scripts": {
-    "leaveOnlySrc": "dwfeFs cleanDirs --dirPaths=\";app;cell;core;domain;server;sync;tools;ui\" --fileNames=\"dist;node_modules;package-lock.json\"",
+    "leaveOnlySrc": "dwfeFs cleanDirs --dirPaths=\";app;cell;core;domain;infr;server;sync;tools;ui\" --fileNames=\"dist;node_modules;package-lock.json\"",
     "bootstrap": "lerna bootstrap --hoist",
     "compile": "cmmn compile -b --watch",
     "bundle": "cmmn bundle -b --watch",
@@ -15,6 +15,7 @@
   "license": "ISC",
   "files": [],
   "devDependencies": {
+    "@do-while-for-each/fs": "1.2.21",
     "@cmmn/tools": "file:./tools",
     "lerna": "^4.0.0"
   },
