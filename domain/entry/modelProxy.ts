@@ -49,6 +49,11 @@ export class ModelProxy<TState, TActions extends ModelAction = {}> implements Mo
 
     public Actions: TActions = new Proxy({} as any as TActions, {
         get: (target: any, key: string) => {
+            // для примитивов
+            if (typeof key !== "string")
+                return () => null;
+            if (key === "then") // работает await, тут надо сообщить, что нет метода .then
+                return undefined;
             if (key in target)
                 return target[key];
             return target[key] = function () {
