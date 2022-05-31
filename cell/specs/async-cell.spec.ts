@@ -29,6 +29,7 @@ export class AsyncCellSpec{
             x => x + ' world')
         );
         const cell = new Cell(() => asyncCell.get());
+        cell.active();
         cell.get();
         await new Promise(r => setTimeout(r, 20));
         expect(cell.get()).toEqual('hello world');
