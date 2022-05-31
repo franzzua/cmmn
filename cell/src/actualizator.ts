@@ -17,6 +17,7 @@ export class Actualizator {
         Actualizator.CellsToActualize.add(cell);
         Actualizator.wait ??= Actualizator.ResolvedPromise.then(Actualizator.UpAll);
     }
+
     public static UpAll() {
         Actualizator.queue = Array.from(Actualizator.CellsToActualize);
         Actualizator.CellsToActualize.clear();
@@ -35,13 +36,19 @@ export class Actualizator {
         cell.dependencies = null;
         const prevCell = Actualizator.CurrentCell;
         Actualizator.CurrentCell = cell;
+        let value, error;
         try {
             cell.isPulling = true;
-            cell.set(cell.pull());
+            value = cell.pull();
             cell.isPulling = false;
         } catch (e) {
-            cell.setError(e);
+            error = e;
             cell.isPulling = false;
+        }
+        if (error) {
+            cell.setError(error)
+        } else {
+            cell.set(value);
         }
         Actualizator.CurrentCell = prevCell;
         if (oldDependencies) {

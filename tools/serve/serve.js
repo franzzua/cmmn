@@ -7,7 +7,7 @@ export function serve(...options) {
         project: options.includes('-b'),
     });
     configs.filter(x => x.port).forEach(x => {
-        const root = relative(process.cwd(), join(x.rootDir, 'dist'));
+        const root = relative(process.cwd(), join(x.rootDir, x.outDir));
         console.log(`serve ${root} at localhost:${x.port}`);
         servor({
             root,

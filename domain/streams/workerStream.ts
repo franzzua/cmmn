@@ -1,4 +1,4 @@
-import {Fn, ResolvablePromise} from "@cmmn/core";
+import {Fn, Lazy, ResolvablePromise} from "@cmmn/core";
 import {BaseCell} from "@cmmn/cell";
 import {Stream} from "./stream";
 import {Action, ModelPath, WorkerMessage, WorkerMessageType} from "../shared/types";
@@ -8,7 +8,7 @@ import {VersionState} from "./versionState";
 
 export class WorkerStream extends Stream {
 
-    constructor(private workerUrl: string) {
+    constructor(private workerUrlOrString: string | Worker) {
         super();
         this.BaseStream.on('message', message => {
             if (message.type == WorkerMessageType.Response) {
@@ -34,8 +34,12 @@ export class WorkerStream extends Stream {
 
     private _baseStream: BaseStream;
 
+    @Lazy
+    protected get Worker(){
+        return typeof this.workerUrlOrString === "string" ? new Worker(this.workerUrlOrString) : this.workerUrlOrString;
+    }
     protected get BaseStream() {
-        return this._baseStream ?? (this._baseStream = new BaseStream(new Worker(this.workerUrl)));
+        return this._baseStream ?? (this._baseStream = new BaseStream(this.Worker));
     }
 
     private models = new Map<string, VersionState<any>>();

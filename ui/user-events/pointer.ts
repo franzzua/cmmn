@@ -48,7 +48,7 @@ export class PointerListener extends EventListener<PointerEvents> {
         super(root);
     }
 
-    private rectWatcher = BoundRectListener.GetInstance(this.root);
+    private rectWatcher = BoundRectListener.Observe(this.root);
 
     public get Rect() {
         return this.rectWatcher.Rect;
