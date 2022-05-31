@@ -10,9 +10,9 @@
   },
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "default": "./dist/index.js"
+      "import": "./dist/bundle/index.js",
+      "require": "./dist/bundle/index.cjs",
+      "default": "./dist/bundle/index.js"
     },
     "./webrtc/client": {
       "import": "./dist/webrtc.js",

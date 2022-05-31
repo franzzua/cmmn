@@ -9,16 +9,16 @@
     "url": "https://github.com/franzzua/cmmn/tree/master/ui"
   },
   "type": "module",
-  "main": "./dist/index.js",
+  "main": "./dist/bundle/index.js",
   "typings": "typings.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "import": "./dist/bundle/index.js",
+      "require": "./dist/bundle/index.cjs"
     }
   },
-  "browser": "./dist/index.js",
-  "module": "./dist/index.js",
+  "browser": "./dist/bundle/index.js",
+  "module": "./dist/bundle/index.js",
   "typesVersions": {
     "*": {
       "typings.d.ts": [

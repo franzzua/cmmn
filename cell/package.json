@@ -9,7 +9,7 @@
     "dist"
   ],
   "type": "module",
-  "main": "./dist/index.js",
+  "main": "./dist/bundle/index.js",
   "typings": "index.d.ts",
   "typesVersions": {
     "*": {
@@ -20,8 +20,8 @@
   },
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "import": "./dist/bundle/index.js",
+      "require": "./dist/bundle/index.cjs"
     }
   },
   "scripts": {

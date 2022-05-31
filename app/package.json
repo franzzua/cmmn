@@ -8,12 +8,12 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "import": "./dist/bundle/index.js",
+      "require": "./dist/bundle/index.cjs"
     }
   },
-  "module": "./dist/index.js",
-  "main": "./dist/index.js",
+  "module": "./dist/bundle/index.js",
+  "main": "./dist/bundle/index.js",
   "typings": "dist/typings",
   "scripts": {
     "bundle": "cmmn bundle ./dist/esm/index.js --watch",

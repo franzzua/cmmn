@@ -17,8 +17,8 @@
   ],
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "import": "./dist/bundle/index.js",
+      "require": "./dist/bundle/index.cjs"
     }
   },
   "devDependencies": {
