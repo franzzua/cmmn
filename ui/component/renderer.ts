@@ -28,6 +28,37 @@ export class Renderer<TState, TEvents extends IEvents> {
         return this.cache.getOrAdd(target, () => new Map()).getOrAdd(key, factory);
     }
 
+    /**
+     * удаляет закешированные элементы
+     * @param target
+     */
+    public clearCacheFor(target: object | string, key?: string){
+        if (typeof target === "string"){
+            key = target;
+            target = this;
+        }
+        if (!this.cache.has(target))
+            return;
+        for (let [k, value] of this.cache.get(target)) {
+            if (key !== undefined && key !== k)
+                continue;
+            if (!value.cache)
+                continue;
+            if (value.cache instanceof Element){
+                value.cache.remove();
+                continue;
+            }
+            let current = value.cache.firstChild as Element;
+            while (current !== value.cache.lastChild){
+                let next = current.nextElementSibling;
+                current.remove();
+                current = next;
+            }
+            current.remove();
+        }
+        this.cache.delete(target);
+    }
+
     private getRenderFor = (type) => (target, ...keys) => {
         if (target === undefined) {
             return getTemplate(type)

@@ -22,8 +22,8 @@ export function useStreamDomain(locator: Locator): Container {
     );
 }
 
-export function useWorkerDomain(workerUrl: string): Container {
-    const stream = new WorkerStream(workerUrl);
+export function useWorkerDomain(workerUrlOrString: string | Worker): Container {
+    const stream = new WorkerStream(workerUrlOrString);
     return Container.withProviders({
         provide: Locator, useClass: EntityLocator
     }, {

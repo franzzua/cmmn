@@ -1,9 +1,11 @@
 import {cell} from "@cmmn/cell";
 
-if (!globalThis.ResizeObserver){
+if (!globalThis.ResizeObserver) {
     class ROMock {
-        observe(){}
+        observe() {
+        }
     }
+
     globalThis.ResizeObserver = ROMock as any;
 }
 
@@ -12,7 +14,7 @@ export class BoundRectListener {
         for (let instance of BoundRectListener.Instances.values()) {
             if (instance.root === document) {
                 instance.Rect = {left: 0, top: 0, width: window.innerWidth, height: window.innerHeight};
-            }else {
+            } else {
                 instance.Rect = (instance.root as Element).getBoundingClientRect();
             }
         }
@@ -30,19 +32,34 @@ export class BoundRectListener {
 
     private static Instances = new Map<Element | Document, BoundRectListener>();
 
-    public static GetInstance(root: Element | Document) {
+    public static Observe(root: Element | Document) {
         return this.Instances.getOrAdd(root, el => new BoundRectListener(el));
+    }
+
+    public static Unobserve(root: Element | Document) {
+        this.Instances.get(root)?.dispose();
+        this.Instances.delete(root);
     }
 
     private constructor(private root: Element | Document) {
         if (root instanceof Document) {
-            window.addEventListener('resize', event => {
+            this.rootListener = event => {
                 this.Rect = {left: 0, top: 0, width: window.innerWidth, height: window.innerHeight};
-            });
+            }
+            window.addEventListener('resize', this.rootListener);
         } else {
             BoundRectListener.observer.observe(root);
             this.Rect = root.getBoundingClientRect();
-            BoundRectListener.Instances.set(root, this);
+        }
+    }
+
+    private rootListener;
+
+    dispose() {
+        if (this.root instanceof Document) {
+            window.addEventListener('resize', this.rootListener);
+        } else {
+            BoundRectListener.observer.unobserve(this.root);
         }
     }
 

@@ -8,7 +8,7 @@ function visitExportNode(exportNode, sourceFile) {
         return ;
     }
     const file = exportNode.moduleSpecifier?.text ?? exportNode.test;
-    if (!file)
+    if (!file || !file.startsWith('.'))
         return;
     const sourceFileDir = path.dirname(sourceFile.path);
     const abs = path.resolve(sourceFileDir, file);
@@ -28,7 +28,7 @@ function visitExportNode(exportNode, sourceFile) {
 
 function visitImportNode(importNode, sourceFile, options) {
     const file = importNode.moduleSpecifier?.text;
-    if (!file)
+    if (!file || !file.startsWith('.'))
         return;
     const sourceFileDir = path.dirname(sourceFile.path);
     const abs = path.resolve(sourceFileDir, file);

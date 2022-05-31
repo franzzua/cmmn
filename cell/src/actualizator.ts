@@ -36,13 +36,19 @@ export class Actualizator {
         cell.dependencies = null;
         const prevCell = Actualizator.CurrentCell;
         Actualizator.CurrentCell = cell;
+        let value, error;
         try {
             cell.isPulling = true;
-            cell.set(cell.pull());
+            value = cell.pull();
         } catch (e) {
-            cell.setError(e);
-        } finally {
+            error = e;
+        }finally {
             cell.isPulling = false;
+        }
+        if (error) {
+            cell.setError(error)
+        } else {
+            cell.set(value);
         }
         Actualizator.CurrentCell = prevCell;
         if (oldDependencies) {

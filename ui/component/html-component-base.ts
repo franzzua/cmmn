@@ -61,6 +61,7 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> ex
         this.onDisposeSet.clear();
         this.emit('dispose');
         HtmlComponentBase.GlobalEvents.emit('disconnected', this);
+        BoundRectListener.Unobserve(this.element);
     }
 
     public set onDispose(listener) {
@@ -86,7 +87,7 @@ export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> ex
     public static action = action;
 
     public get ClientRect(): { width; height; left; top; } {
-        const listener = BoundRectListener.GetInstance(this.element)
+        const listener = BoundRectListener.Observe(this.element)
         return listener.Rect;
     }
 

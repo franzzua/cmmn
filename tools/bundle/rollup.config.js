@@ -15,6 +15,7 @@ import json from '@rollup/plugin-json';
 import alias from '@rollup/plugin-alias';
 import replace from '@rollup/plugin-replace';
 import sourcemaps from 'rollup-plugin-sourcemaps';
+
 /**
  * @typedef {import(rollup).RollupOptions} RollupOptions
  * @typedef {import(rollup).OutputOptions} OutputOptions
@@ -48,12 +49,14 @@ export class ConfigCreator {
 
     constructor(options) {
         this.options = {
+            module: 'es',
+            external: [],
+            name: 'index',
+            outDir: 'dist/bundle',
             ...options
         };
-    }
-
-    setRootDir(rootDir) {
-        this.root = rootDir;
+        if (options.rootDir)
+            this.root = options.rootDir;
     }
 
     get outDir() {
@@ -107,7 +110,7 @@ export class ConfigCreator {
 
     get livereload() {
         return livereload({
-            watch: [this.outDir, path.join(this.root, 'assets')],
+            watch: [this.outDir, path.join(this.root, 'assets'), this.options.html],
             verbose: false, // Disable console output
             // other livereload options
             port: 12345,
@@ -214,12 +217,6 @@ export class ConfigCreator {
      * @returns {RollupOptions[]}
      */
     getConfig() {
-        Object.assign(this.options, {
-            module: this.options.module || 'es',
-            external: this.options.external || [],
-            name: this.options.name || 'index',
-            outDir: this.options.outDir || 'dist'
-        });
         if (this.options.external && typeof this.options.external === "string")
             this.options.external = [this.options.external]
         console.log(this.options.name, this.options);
@@ -248,6 +245,9 @@ export class ConfigCreator {
             },
             plugins: this.plugins,
             treeshake: this.options.minify ? "smallest" : "recommended",
+            watch: {
+                exclude: this.getExternals().concat(path.join(this.root, this.outDir)),
+            }
         }]
     }
 }
