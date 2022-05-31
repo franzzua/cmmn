@@ -29,7 +29,10 @@ export class AsyncCell<T, TKey = T> extends Cell<T, TKey> {
 
     active() {
         const onChange = this.options.throttle
-            ? throttle(this.onChange, this.options.throttle.time, this.options.throttle)
+            ? throttle(
+                this.onChange,
+                this.options.throttle.time, // TODO throttle некорректно работает с wait равным undefined
+                this.options.throttle)
             : this.onChange;
         this.genCell.on('change', onChange)
         this.onChange({value: this.genCell.get()})
