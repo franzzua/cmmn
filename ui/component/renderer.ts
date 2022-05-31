@@ -28,6 +28,23 @@ export class Renderer<TState, TEvents extends IEvents> {
         return this.cache.getOrAdd(target, () => new Map()).getOrAdd(key, factory);
     }
 
+    public clearCacheFor(target){
+        if (!this.cache.has(target))
+            return;
+        for (let [key, value] of this.cache.get(target)) {
+            if (!value.cache)
+                continue;
+            let current = value.cache.firstChild;
+            while (current !== value.cache.lastChild){
+                let next = current.nextSibling;
+                current.remove();
+                current = next;
+            }
+            current.remove();
+        }
+        this.cache.delete(target);
+    }
+
     private getRenderFor = (type) => (target, ...keys) => {
         if (target === undefined) {
             return getTemplate(type)
