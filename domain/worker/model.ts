@@ -2,6 +2,10 @@ import {Cell, ObservableList} from "@cmmn/cell";
 import {ModelAction, ModelPath} from "../shared/types";
 import {Fn} from "@cmmn/core";
 
+/**
+ * @deprecated
+ *   instead use ModelLike
+ */
 export abstract class Model<TState, TActions extends ModelAction = {}> {
 
     public $state = new Cell(() => this.State, {

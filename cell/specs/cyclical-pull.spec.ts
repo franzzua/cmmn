@@ -1,6 +1,7 @@
 import {expect, suite, test} from '@cmmn/tools/test';
 import {cell} from '../src/decorators';
 import {Cell} from '../src/cell';
+import {compare} from '@cmmn/core';
 
 function Throw(fn: Function, message: string) {
     try {
@@ -28,6 +29,38 @@ class CyclicalPullSpec {
 
         const check = new Check();
         Throw(() => check.b, 'cyclical pull');
+    }
+
+    @test
+    classFields2() {
+        class Check {
+            $state = new Cell(() => this.State);
+
+            get State() {
+                return this.$state.get();
+            }
+        }
+
+        const check = new Check();
+        Throw(() => check.$state.get(), 'cyclical pull');
+        Throw(() => check.State, 'cyclical pull');
+    }
+
+    @test
+    classFields3() {
+        class Check {
+            $state = new Cell(() => this.State, {
+                compare,
+            });
+
+            get State() {
+                return this.$state.get();
+            }
+        }
+
+        const check = new Check();
+        Throw(() => check.$state.get(), 'cyclical pull');
+        Throw(() => check.State, 'cyclical pull');
     }
 
     @test
