@@ -8,14 +8,14 @@
   },
   "exports": {
     "./proxy": {
-      "import": "./dist/proxy.js",
-      "require": "./dist/proxy.cjs",
-      "default": "./dist/proxy.js"
+      "import": "./dist/bundle/proxy.js",
+      "require": "./dist/bundle/proxy.cjs",
+      "default": "./dist/bundle/proxy.js"
     },
     "./worker": {
-      "import": "./dist/worker.js",
-      "require": "./dist/worker.cjs",
-      "default": "./dist/worker.js"
+      "import": "./dist/bundle/worker.js",
+      "require": "./dist/bundle/worker.cjs",
+      "default": "./dist/bundle/worker.js"
     },
     "./package.json": "./package.json"
   },

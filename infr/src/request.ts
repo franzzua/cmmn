@@ -13,21 +13,12 @@ export class Request<T> {
         while (true) {
             try {
                 return await Request.fetch(this.url, this.request)
-                    .then(x => {
+                    .then(async x => {
+                        const body = await readBody(x);
                         if (!x.ok) {
-                            throw new RequestFailedError(this.url, this.request, x);
+                            throw new RequestFailedError(this.url, this.request, x, body);
                         }
-                        if (x.status == 204)
-                            return undefined;
-                        const type = x.headers.get('content-type');
-                        if (!type)
-                            throw new Error(`Response without content-type`)
-                        if (type.match(/json/)) {
-                            return x.json();
-                        } else if (type.match(/text/)) {
-                            return x.text();
-                        }
-                        return x.blob();
+                        return body;
                     });
             } catch (e) {
                 if (this.isAborted) {
@@ -55,17 +46,34 @@ export class Request<T> {
     }
 }
 
-class RequestAbortedError extends Error {
+async function readBody(response: Response) {
+    if (response.status == 204)
+        return undefined;
+    const type = response.headers.get('content-type');
+    if (!type) {
+        console.warn(`Response without content-type`, response);
+        return undefined;
+    }
+    if (type.match(/json/)) {
+        return response.json();
+    } else if (type.match(/text/)) {
+        return response.text();
+    }
+    return response.blob();
+}
+
+export class RequestAbortedError extends Error {
     constructor(private reason: string) {
         super(["Request aborted by user", reason].filter(x => x).join(' '));
     }
 }
 
-class RequestFailedError extends Error {
+export class RequestFailedError extends Error {
 
     status = this.response.status;
 
-    constructor(private url: string, private request: RequestInit, private response: Response) {
+
+    constructor(private url: string, private request: RequestInit, private response: Response, private result: any) {
         super(`Request to ${url} failed with code ${response.status} (${response.statusText})`)
     }
 
