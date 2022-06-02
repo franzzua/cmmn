@@ -1,7 +1,7 @@
 import {Fn, ResolvablePromise} from "@cmmn/core";
-import {cell, Cell} from "@cmmn/cell";
+import {BaseCell, cell} from '@cmmn/cell';
 
-export class VersionState<T> extends Cell<T> {
+export class VersionState<T> extends BaseCell<T> {
     @cell
     remoteVersion: string;
     @cell

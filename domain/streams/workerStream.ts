@@ -1,5 +1,4 @@
 import {Fn, Lazy, ResolvablePromise} from "@cmmn/core";
-import {BaseCell} from "@cmmn/cell";
 import {Stream} from "./stream";
 import {Action, ModelPath, WorkerMessage, WorkerMessageType} from "../shared/types";
 import {BaseStream} from "./base.stream";
@@ -7,6 +6,9 @@ import {VersionState} from "./versionState";
 
 
 export class WorkerStream extends Stream {
+
+    private models = new Map<string, VersionState<any>>();
+    private responses = new Map<string, ResolvablePromise<void>>();
 
     constructor(private workerUrlOrString: string | Worker) {
         super();
@@ -28,22 +30,25 @@ export class WorkerStream extends Stream {
         })
     }
 
+    @Lazy
+    protected get BaseStream() {
+        return new BaseStream(this.Worker);
+    }
+
+    @Lazy
+    protected get Worker() {
+        return typeof this.workerUrlOrString === 'string' ? new Worker(this.workerUrlOrString) : this.workerUrlOrString;
+    }
+
+
+    private postMessage(msg: WorkerMessage['data']) {
+        this.BaseStream.send(msg);
+    }
+
     private pathToStr(path: ModelPath) {
         return path.join(':');
     }
 
-    private _baseStream: BaseStream;
-
-    @Lazy
-    protected get Worker(){
-        return typeof this.workerUrlOrString === "string" ? new Worker(this.workerUrlOrString) : this.workerUrlOrString;
-    }
-    protected get BaseStream() {
-        return this._baseStream ?? (this._baseStream = new BaseStream(this.Worker));
-    }
-
-    private models = new Map<string, VersionState<any>>();
-    private responses = new Map<string, ResolvablePromise<void>>();
 
     async Invoke(action: Action) {
         const actionId = Fn.ulid();
@@ -76,8 +81,5 @@ export class WorkerStream extends Stream {
         return cell;
     }
 
-    private postMessage(msg: WorkerMessage["data"]) {
-        this.BaseStream.send(msg);
-    }
 }
 
