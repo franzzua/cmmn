@@ -40,7 +40,7 @@ export class BaseStream extends EventEmitter<{
             const message = this.useBinary
                 ? Transferable.Join<WorkerMessage["data"]>(deserialize(event.data.data as Uint8Array), event.data.transferables)
                 : event.data.data as WorkerMessage["data"];
-            const sendTime = performance.now() - event.data.start - this.performanceDiff;
+            // const sendTime = performance.now() - event.data.start - this.performanceDiff;
             // console.log('send time:', sendTime, message);
             // if (sendTime > 50){
             //     console.warn(message);
