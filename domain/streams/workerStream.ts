@@ -4,13 +4,15 @@ import {Action, ModelPath, WorkerMessage, WorkerMessageType} from "../shared/typ
 import {BaseStream} from "./base.stream";
 import {VersionState} from "./versionState";
 
-
+/**
+ * Stream находится на стороне Main-thread и связан с воркером
+ */
 export class WorkerStream extends Stream {
 
     private models = new Map<string, VersionState<any>>();
     private responses = new Map<string, ResolvablePromise<void>>();
 
-    constructor(private workerUrlOrString: string | Worker) {
+    constructor(private workerOrUrlString: string | Worker) {
         super();
         this.BaseStream.on('message', message => {
             if (message.type == WorkerMessageType.Response) {
@@ -37,7 +39,7 @@ export class WorkerStream extends Stream {
 
     @Lazy
     protected get Worker() {
-        return typeof this.workerUrlOrString === 'string' ? new Worker(this.workerUrlOrString) : this.workerUrlOrString;
+        return typeof this.workerOrUrlString === 'string' ? new Worker(this.workerOrUrlString) : this.workerOrUrlString;
     }
 
 
