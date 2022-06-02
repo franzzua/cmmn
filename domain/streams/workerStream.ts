@@ -17,11 +17,15 @@ export class WorkerStream extends Stream {
         this.BaseStream.on('message', message => {
             if (message.type == WorkerMessageType.Response) {
                 const promise = this.responses.get(message.actionId);
+                if (!promise) {
+                    console.error('Response not found', message);
+                    throw new Error('WorkerStream');
+                }
                 this.responses.delete(message.actionId);
                 if (message.error)
-                    promise?.reject(message.error);
+                    promise.reject(message.error);
                 else
-                    promise?.resolve(message.response);
+                    promise.resolve(message.response);
                 return;
             }
             if (message.type !== WorkerMessageType.State)
