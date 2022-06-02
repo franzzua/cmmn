@@ -58,8 +58,16 @@ async function readBody(response: Response) {
         return response.json();
     } else if (type.match(/text/)) {
         return response.text();
+    } else if (type.match(/(image)/)) {
+        return response.blob();
+    } else if (type.match(/(protobuf)/)) {
+        return response.arrayBuffer();
     }
-    return response.blob();
+    try {
+        return response.json();
+    } catch (e) {
+        return response.text();
+    }
 }
 
 export class RequestAbortedError extends Error {
