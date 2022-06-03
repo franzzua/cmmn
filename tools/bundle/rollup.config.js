@@ -1,9 +1,7 @@
 import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
-import image from "rollup-plugin-img";
 import {terser} from "rollup-plugin-terser"
 import {visualizer} from 'rollup-plugin-visualizer';
-import styles from "rollup-plugin-styles";
 import {string} from "rollup-plugin-string";
 import serve from 'rollup-plugin-serve';
 import builtins from 'rollup-plugin-node-builtins';
@@ -15,7 +13,9 @@ import json from '@rollup/plugin-json';
 import alias from '@rollup/plugin-alias';
 import replace from '@rollup/plugin-replace';
 import sourcemaps from 'rollup-plugin-sourcemaps';
+import {Styles} from "./styles.js";
 
+// import postcssPresetEnv from 'postcss-preset-env'
 /**
  * @typedef {import(rollup).RollupOptions} RollupOptions
  * @typedef {import(rollup).OutputOptions} OutputOptions
@@ -135,6 +135,7 @@ export class ConfigCreator {
                 'process.env.NODE_ENV': JSON.stringify('development'),
                 preventAssignment: true
             }),
+            ...Styles(this.options),
             nodeResolve({
                 browser: this.options.browser,
                 dedupe: this.options.dedupe || []
@@ -158,15 +159,10 @@ export class ConfigCreator {
                 namedExports: false,
                 autoModules: true,
             }) : */
-            styles({
-                mode: "emit"
-            }),
-            image({
-                output: `/assets`, // default the root
-                extensions: /\.(png|jpg|jpeg|gif)$/, // support png|jpg|jpeg|gif|svg, and it's alse the default value
-                limit: 8192,  // default 8192(8k)
-                exclude: 'node_modules/**'
-            }),
+            // styles({
+            //     autoModules: true,
+            // }),
+
             string({
                 include: /\.(html|svg|less)$/,
                 exclude: /\.module\.css/
