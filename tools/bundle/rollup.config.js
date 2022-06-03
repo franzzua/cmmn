@@ -87,6 +87,7 @@ export class ConfigCreator {
             sourcemap: true,
             format: module,
             globals: Array.isArray(this.options.external) ? Object.fromEntries(this.options.external.map(x => [x, x])) : this.options.external,
+            assetFileNames: "assets/[name][extname]",
             name: this.options.global ?? 'global',
         }));
     }
@@ -95,7 +96,17 @@ export class ConfigCreator {
         return html({
             publicPath: '/',
             dir: this.outDir,
-            template: () => fs.readFileSync(path.join(this.root, this.options.html), 'utf8')
+            inject: false,
+            template: ({bundle}) => {
+                const inject = Object.keys(bundle.bundle).map(key => {
+                    if (key.endsWith('css'))
+                        return `<link rel="stylesheet" href="${key}" >`;
+                    if (key.endsWith('js'))
+                        return `<script defer src="${key}"></script>`;
+                })
+                const html = fs.readFileSync(path.join(this.root, this.options.html), 'utf8')
+                return html.replace('</head>', inject.join('\n') + '</head>');
+            }
         });
     }
 
@@ -132,7 +143,7 @@ export class ConfigCreator {
     get plugins() {
         const result = [
             replace({
-                'process.env.NODE_ENV': JSON.stringify('development'),
+                'process.env.NODE_ENV': JSON.stringify(this.options.minify ? 'production' : 'development'),
                 preventAssignment: true
             }),
             ...Styles(this.options),

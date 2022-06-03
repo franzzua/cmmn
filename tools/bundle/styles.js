@@ -1,10 +1,10 @@
-import postcss from 'rollup-plugin-postcss'
-import postcssModules from 'postcss-modules'
 import loader from 'postcss-modules/build/css-loader-core/loader.js';
 import image from "rollup-plugin-img";
 // import postCssDuplicates from 'postcss-delete-duplicate-css';
 import postCssImport from 'postcss-import';
-import {terser} from 'rollup-plugin-terser';
+import cssModules from '@modular-css/rollup';
+import slug from "unique-slug";
+import styles from "rollup-plugin-styles";
 
 class Loader extends loader.default {
     failStart = '/' + process.cwd();
@@ -25,31 +25,42 @@ class Loader extends loader.default {
 export function Styles(options) {
     return [
         image({
-             output: `/assets`, // default the root
+            output: `/assets`, // default the root
             extensions: /\.(png|jpg|jpeg|gif)$/, // support png|jpg|jpeg|gif|svg, and it's alse the default value
             // exclude: 'node_modules/**'
         }),
-        postcss({
-            extract: 'output.css',
-            ident: 'postcss',
-            modules: {
-                root: '',
-                generateScopedName: `[name]_[local]_[hash:base64:5]`,
-                Loader: Loader
-            },
-            use: ['sass'],
-            plugins: [
-                // postCssDuplicates(),
-                postCssImport()
-                // postcssModules({
-                //     generateScopedName: '[local]',
-                //     root: '',
-                //     Loader: Loader
-                // }),
-                // postcssPresetEnv({
-                //     stage: 0,
-                // }),
-            ],
+        options.styles === "modules" ? cssModules({
+            common: 'common.css',
+            before: [postCssImport],
+            namer: function (file, selector) {
+                return selector + "_" +
+                    file.replace(/([\/\\]index)?(\.module)?\.css$/, "").split(/[\\\/]/).pop() + "_" +
+                    slug(file)
+            }
+        }): styles({
+            mode: "emit"
         }),
+        // postcss({
+        //     extract: 'output.css',
+        //     ident: 'postcss',
+        //     modules: {
+        //         root: '',
+        //         generateScopedName: `[name]_[local]_[hash:base64:5]`,
+        //         Loader: Loader
+        //     },
+        //     use: ['sass'],
+        //     plugins: [
+        //         // postCssDuplicates(),
+        //         postCssImport()
+        //         // postcssModules({
+        //         //     generateScopedName: '[local]',
+        //         //     root: '',
+        //         //     Loader: Loader
+        //         // }),
+        //         // postcssPresetEnv({
+        //         //     stage: 0,
+        //         // }),
+        //     ],
+        // }),
     ];
 }
