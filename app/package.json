@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/app",
-  "version": "1.6.10",
+  "version": "1.6.11",
   "description": "",
   "publishConfig": {
     "access": "public"
@@ -20,12 +20,12 @@
     "build": "cmmn compile ./index.ts --watch"
   },
   "devDependencies": {
-    "@cmmn/tools": "^1.6.9"
+    "@cmmn/tools": "^1.6.11"
   },
   "dependencies": {
-    "@cmmn/cell": "^1.6.10",
-    "@cmmn/core": "^1.6.10",
-    "@cmmn/ui": "^1.6.10",
+    "@cmmn/cell": "^1.6.11",
+    "@cmmn/core": "^1.6.11",
+    "@cmmn/ui": "^1.6.11",
     "router5": "^8.0.1",
     "router5-plugin-browser": "^8.0.1"
   },
@@ -34,7 +34,7 @@
   ],
   "author": "",
   "license": "ISC",
-  "gitHead": "6928ba6c1a71095a9dd985445b7b106aabd57b2a",
+  "gitHead": "2755b333808bf97f1d9454601c2a2c9a88e4a021",
   "cmmn": {
     "index": {
       "input": "dist/esm/index.js",

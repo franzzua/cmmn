@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/core",
-  "version": "1.6.10",
+  "version": "1.6.11",
   "repository": {
     "url": "https://github.com/franzzua/cmmn/tree/master/core"
   },
@@ -32,7 +32,7 @@
     "bundle": "cmmn bundle --watch"
   },
   "devDependencies": {
-    "@cmmn/tools": "^1.6.9",
+    "@cmmn/tools": "^1.6.11",
     "crc-32": "1.x.x"
   },
   "dependencies": {
@@ -43,7 +43,7 @@
   },
   "author": "",
   "license": "ISC",
-  "gitHead": "243f055fb8f34cdcb9e27a656e6bc6cccef80ae1",
+  "gitHead": "2755b333808bf97f1d9454601c2a2c9a88e4a021",
   "cmmn": {
     "index": {
       "input": "dist/esm/index.js",

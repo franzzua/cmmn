@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/cell",
-  "version": "1.6.10",
+  "version": "1.6.11",
   "description": "pull-based state flow",
   "publishConfig": {
     "access": "public"
@@ -29,14 +29,14 @@
     "bundle": "cmmn bundle --watch"
   },
   "dependencies": {
-    "@cmmn/core": "^1.6.10"
+    "@cmmn/core": "^1.6.11"
   },
   "devDependencies": {
-    "@cmmn/tools": "^1.6.9"
+    "@cmmn/tools": "^1.6.11"
   },
   "author": "",
   "license": "ISC",
-  "gitHead": "6928ba6c1a71095a9dd985445b7b106aabd57b2a",
+  "gitHead": "2755b333808bf97f1d9454601c2a2c9a88e4a021",
   "repository": {
     "url": "https://github.com/franzzua/cmmn/tree/master/cell"
   },

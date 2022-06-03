@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/tools",
-  "version": "1.6.9",
+  "version": "1.6.11",
   "description": "Compilation, bundling, code generator, testing.",
   "main": "dist/rollup.config.js",
   "type": "module",
@@ -40,9 +40,11 @@
   ],
   "dependencies": {
     "@jest/globals": "27.x.x",
+    "@modular-css/rollup": "28",
     "@open-wc/rollup-plugin-html": "^1.2.5",
     "@rollup/plugin-alias": "3",
     "@rollup/plugin-commonjs": "^21",
+    "@rollup/plugin-image": "2",
     "@rollup/plugin-json": "4",
     "@rollup/plugin-node-resolve": "^13",
     "@rollup/plugin-replace": "4.x.x",
@@ -55,26 +57,28 @@
     "fast-glob": "^3.2.11",
     "jest": "27.x.x",
     "less": "^4",
+    "live-server": "1",
+    "postcss-import": "14",
+    "postcss-modules": "*",
     "rollup": "^2",
-    "rollup-plugin-img": "1.x.x",
+    "rollup-plugin-img": "1",
     "rollup-plugin-livereload": "^2.0.5",
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "^1.4.0",
-    "rollup-plugin-postcss": "4.x.x",
     "rollup-plugin-serve": "^1.1.0",
     "rollup-plugin-sourcemaps": "^0.6.3",
     "rollup-plugin-string": "^3.0.0",
     "rollup-plugin-styles": "^4",
     "rollup-plugin-terser": "^7",
     "rollup-plugin-visualizer": "^5.5.4",
-    "servor": "4.x.x",
     "sinon": "10.x.x",
     "ts-jest": "27.x.x",
     "ttypescript": "1.5.13",
     "typescript": "4.6.x",
-    "typescript-transform-paths": "^3.3.1"
+    "typescript-transform-paths": "^3.3.1",
+    "unique-slug": "*"
   },
   "author": "",
   "license": "ISC",
-  "gitHead": "989b528853a43381e69f33bd3e2bddf955390b07"
+  "gitHead": "2755b333808bf97f1d9454601c2a2c9a88e4a021"
 }
