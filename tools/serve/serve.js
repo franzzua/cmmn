@@ -1,7 +1,6 @@
 import {getConfigOptions} from "../bundle/getConfigs.js";
-import {join, relative} from "path";
+import {join, relative, resolve} from "path";
 import liveServer from "live-server";
-import path from "path";
 
 export function serve(...options) {
     const configs = getConfigOptions({
@@ -14,7 +13,7 @@ export function serve(...options) {
             file: 'index.html',
             port: x.port,
             open: false,
-            mount: x.mount && Object.entries(x.mount).map(([from, to]) => [from, path.resolve(x.rootDir, to)])
+            mount: x.mount && Object.entries(x.mount).map(([from, to]) => [from, resolve(x.rootDir, to)])
         });
 
     })

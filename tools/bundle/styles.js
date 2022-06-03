@@ -1,6 +1,5 @@
 import loader from 'postcss-modules/build/css-loader-core/loader.js';
 import image from "rollup-plugin-img";
-// import postCssDuplicates from 'postcss-delete-duplicate-css';
 import postCssImport from 'postcss-import';
 import cssModules from '@modular-css/rollup';
 import slug from "unique-slug";
