@@ -4,7 +4,8 @@ import {BaseStream} from "../streams/base.stream";
 import {Connector} from "../streams/connector";
 
 /**
- * Обертка над Stream, который находится на стороне Worker-thread
+ * Обертка над Stream на стороне Worker-thread.
+ * Со стороны Main-thread работает WorkerStream.
  */
 @Injectable()
 export class WorkerEntry extends Connector {
