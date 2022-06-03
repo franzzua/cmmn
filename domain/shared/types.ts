@@ -56,11 +56,8 @@ export type WorkerMessage = {
     start?: number,
     origin?: number,
 };
-export type WorkerMessageSerialized = {
-    start: number,
-    origin?: number,
+export type WorkerMessageSerialized = Omit<WorkerMessage, "data"> & {
     data: Uint8Array;
-    transferables: any[];
 }
 // | {
 //     buffer: SharedArrayBuffer;

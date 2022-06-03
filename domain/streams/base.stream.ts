@@ -2,17 +2,30 @@ import {WorkerMessage, WorkerMessageSerialized, WorkerMessageType} from "../shar
 import {deserialize, EventEmitter, ResolvablePromise, serialize} from "@cmmn/core";
 import {Transferable} from "./transferable";
 
+
+/**
+ *  @param target
+ *    For Main-thread execution context:
+ *      Worker | Window | SharedWorker | ServiceWorkerContainer
+ *
+ *    For Worker-thread execution context, usually this is reference inside 'self' variable:
+ *      DedicatedWorkerGlobalScope | SharedWorkerGlobalScope | ServiceWorkerGlobalScope
+ */
 export class BaseStream extends EventEmitter<{
     message: WorkerMessage["data"]
 }> {
-    private performanceDiff = 0;
     private useBinary = true;
+    private performanceDiff = 0;
+    public Connected = new ResolvablePromise<void>();
 
     constructor(private target: Worker | typeof globalThis | Window) {
         super();
+
+        // only for performance measurement
         this.Connected.then(() => this.target.postMessage({
             origin: performance.timeOrigin
-        }));
+        } as WorkerMessage));
+
         this.target.addEventListener('message', (event: MessageEvent<WorkerMessage | WorkerMessageSerialized>) => {
             if (event.data.origin) {
                 this.performanceDiff = -performance.timeOrigin + event.data.origin;
@@ -25,8 +38,8 @@ export class BaseStream extends EventEmitter<{
             // const buffer = this.SharedArrayBuffers.get(event.data.data.bufferId);
             // try {
             const message = this.useBinary
-                ? Transferable.Join(deserialize(event.data.data as Uint8Array), event.data.transferables) as WorkerMessage["data"]
-                : event.data.data as WorkerMessage["data"];// ;
+                ? Transferable.Join<WorkerMessage["data"]>(deserialize(event.data.data as Uint8Array), event.data.transferables)
+                : event.data.data as WorkerMessage["data"];
             // const sendTime = performance.now() - event.data.start - this.performanceDiff;
             // console.log('send time:', sendTime, message);
             // if (sendTime > 50){
@@ -46,7 +59,6 @@ export class BaseStream extends EventEmitter<{
             this.Connected.resolve();
     }
 
-    public Connected = new ResolvablePromise<void>();
 
     // public SharedArrayBuffers = new Map<string, SharedArrayBuffer>();
     // public ArrayBuffers = new Map<ArrayBuffer, string>();
@@ -55,7 +67,7 @@ export class BaseStream extends EventEmitter<{
         await this.Connected;
         const start = performance.now();
         const transferables = Transferable.Split(message);
-        const data = this.useBinary ? serialize(message): message;
+        const data = this.useBinary ? serialize(message) : message;
         // console.log('send:', message);
         // const info = {
         //     length: data.byteLength,
@@ -79,6 +91,7 @@ export class BaseStream extends EventEmitter<{
         //     Atomics.store(target, index, source[index]);
         // }
         // console.log(info, message, source);
+
         try {
             this.target.postMessage({
                 data, transferables, start
@@ -86,12 +99,16 @@ export class BaseStream extends EventEmitter<{
                 transfer: transferables
             });
         } catch (err) {
+            const about = `BaseStream ${this.target}`;
             switch (err.name) {
                 case 'DataCloneError':
                     // debugger;
-                    console.log('could not clone', err.message, message);
+                    console.error(`${about}. Could not clone`, err.message, message);
                     break;
+                default:
+                    console.error(`${about}. Failed to postMessage`, err, message);
             }
         }
     }
+
 }

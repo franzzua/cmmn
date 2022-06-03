@@ -1,23 +1,31 @@
 import {Fn, Lazy, ResolvablePromise} from "@cmmn/core";
-import {BaseCell} from "@cmmn/cell";
 import {Stream} from "./stream";
 import {Action, ModelPath, WorkerMessage, WorkerMessageType} from "../shared/types";
 import {BaseStream} from "./base.stream";
 import {VersionState} from "./versionState";
 
-
+/**
+ * Stream находится на стороне Main-thread и связан с воркером
+ */
 export class WorkerStream extends Stream {
 
-    constructor(private workerUrlOrString: string | Worker) {
+    private models = new Map<string, VersionState<any>>();
+    private responses = new Map<string, ResolvablePromise<void>>();
+
+    constructor(private workerOrUrlString: string | Worker) {
         super();
         this.BaseStream.on('message', message => {
             if (message.type == WorkerMessageType.Response) {
                 const promise = this.responses.get(message.actionId);
+                if (!promise) {
+                    console.error('Response not found', message);
+                    throw new Error('WorkerStream');
+                }
                 this.responses.delete(message.actionId);
                 if (message.error)
-                    promise?.reject(message.error);
+                    promise.reject(message.error);
                 else
-                    promise?.resolve(message.response);
+                    promise.resolve(message.response);
                 return;
             }
             if (message.type !== WorkerMessageType.State)
@@ -28,22 +36,25 @@ export class WorkerStream extends Stream {
         })
     }
 
+    @Lazy
+    protected get BaseStream() {
+        return new BaseStream(this.Worker);
+    }
+
+    @Lazy
+    protected get Worker() {
+        return typeof this.workerOrUrlString === 'string' ? new Worker(this.workerOrUrlString) : this.workerOrUrlString;
+    }
+
+
+    private postMessage(msg: WorkerMessage['data']) {
+        this.BaseStream.send(msg);
+    }
+
     private pathToStr(path: ModelPath) {
         return path.join(':');
     }
 
-    private _baseStream: BaseStream;
-
-    @Lazy
-    protected get Worker(){
-        return typeof this.workerUrlOrString === "string" ? new Worker(this.workerUrlOrString) : this.workerUrlOrString;
-    }
-    protected get BaseStream() {
-        return this._baseStream ?? (this._baseStream = new BaseStream(this.Worker));
-    }
-
-    private models = new Map<string, VersionState<any>>();
-    private responses = new Map<string, ResolvablePromise<void>>();
 
     async Invoke(action: Action) {
         const actionId = Fn.ulid();
@@ -76,8 +87,5 @@ export class WorkerStream extends Stream {
         return cell;
     }
 
-    private postMessage(msg: WorkerMessage["data"]) {
-        this.BaseStream.send(msg);
-    }
 }
 
