@@ -1,4 +1,6 @@
-import {expect, suite, test} from '@cmmn/tools/test';
+import '../helpers/Array';
+import {expect, suite, test, timeout} from '@cmmn/tools/test';
+import { Fn } from '../helpers/Fn';
 import {ulid} from '../helpers/ulid';
 
 // import {monotonicFactory} from 'ulid';
@@ -7,13 +9,17 @@ import {ulid} from '../helpers/ulid';
 @suite
 export class UlidSpec {
 
-    @test
-    monotonic() {
-        const a = Array.from(Array(1_000).keys()).map(() => ulid());
-        const b = [...a].sort((y, z) => y.localeCompare(z));
-        for (let i = 0; i < a.length; i++) {
+    @test()
+    @timeout(20000)
+    async monotonic() {
+        const a = Array(1000);
+        for (let i = 0; i < a.length; i++){
+            a[i] = Fn.ulid();
+            await Fn.asyncDelay(5);
+        }
+        for (let i = 1; i < a.length; i++) {
             // console.log(`i[${i}]`, a[i], b[i]); // на каком элементе не сошлось?
-            expect(a[i]).toBe(b[i]);
+            expect(a[i] > a[i-1]).toBeTruthy();
         }
     }
 }

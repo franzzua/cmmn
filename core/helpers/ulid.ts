@@ -1,6 +1,6 @@
 const Base = Array.from("0123456789@ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz");
 
-const origin = 150000000000;
+const origin = 160000000000;
 
 export function ulid() {
     let value = +new Date() - origin;
