@@ -32,8 +32,7 @@ export async function bundle(...options) {
     watcher.on('event', (event) => {
         switch (event.code) {
             case 'START':
-                console.clear();
-                console.log('START BUNDLING');
+                console.log(`START BUNDLING at ${new Date().toTimeString().substring(0,8)}`);
                 break;
             case 'END':
                 console.log(`FINISH at ${new Date().toTimeString().substring(0,8)}`);
@@ -45,7 +44,7 @@ export async function bundle(...options) {
                 break;
             case 'BUNDLE_END':
                 for (let key in event.input){
-                    console.log(`\t${key} -> ${event.output}, (${event.duration / 1000}s)`);
+                    console.log(`\t\t(${event.duration / 1000}s)`);
                 }
                 break;
 

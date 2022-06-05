@@ -254,7 +254,10 @@ export class ConfigCreator {
             plugins: this.plugins,
             treeshake: this.options.minify ? "smallest" : "safest",
             watch: {
+                buildDelay: 300,
+                clearScreen: false,
                 exclude: this.getExternals().concat(path.join(this.root, this.outDir)),
+                // include: path.join(this.root, 'dist/esm')
             }
         }]
     }

@@ -14,7 +14,8 @@ export function compile(...flags) {
 
     const builder = builderFactory(host, [rootDir], {
         incremental: true,
-        dry: false
+        dry: false,
+        assumeChangesOnlyAffectDirectDependencies: true
     }, {
         excludeDirectories: ["node_modules", "dist"],
     });
@@ -26,6 +27,7 @@ function createProgram(rootNames, options, host, oldProgram, configFileParsingDi
     options.outDir = resolve(options.configFilePath, '../dist/esm');
     options.declarationDir = resolve(options.configFilePath, '../dist/typings');
     options.baseUrl = resolve(options.configFilePath, '../');
+    options.tsBuildInfoFile = resolve(options.configFilePath, '../dist/ts.buildinfo');
     console.log('\t', relative(process.cwd(), options.baseUrl));
     return ts.createEmitAndSemanticDiagnosticsBuilderProgram(
         rootNames, options, host, oldProgram, configFileParsingDiagnostics, projectReferences
