@@ -5,7 +5,8 @@ import {BaseStream} from "./base.stream";
 import {VersionState} from "./versionState";
 
 /**
- * Stream находится на стороне Main-thread и связан с воркером
+ * Stream находится на стороне Main-thread и связан с воркером.
+ * Со стороны Worker-thread работает WorkerEntry.
  */
 export class WorkerStream extends Stream {
 
