@@ -15,7 +15,6 @@ import replace from '@rollup/plugin-replace';
 import sourcemaps from 'rollup-plugin-sourcemaps';
 import {Styles} from "./styles.js";
 
-// import postcssPresetEnv from 'postcss-preset-env'
 /**
  * @typedef {import(rollup).RollupOptions} RollupOptions
  * @typedef {import(rollup).OutputOptions} OutputOptions
@@ -84,9 +83,9 @@ export class ConfigCreator {
             entryFileNames: this.getOutputFileName(module, this.options.minify),
             // file: output,
             dir: this.outDir,
-            sourcemap: true,
+            sourcemap: this.options.minify ? false : 'inline',
             format: module,
-            globals: Array.isArray(this.options.external) ? Object.fromEntries(this.options.external.map(x => [x, x])) : this.options.external,
+            globals: module === 'umd' ? (Array.isArray(this.options.external) ? Object.fromEntries(this.options.external.map(x => [x, x])) : this.options.external) : [],
             assetFileNames: "assets/[name][extname]",
             name: this.options.global ?? 'global',
         }));
@@ -100,9 +99,9 @@ export class ConfigCreator {
             template: ({bundle}) => {
                 const inject = Object.keys(bundle.bundle).map(key => {
                     if (key.endsWith('css'))
-                        return `<link rel="stylesheet" href="${key}" >`;
+                        return `<link rel="stylesheet" href="/${key}" >`;
                     if (key.endsWith('js'))
-                        return `<script defer src="${key}"></script>`;
+                        return `<script type="module" defer src="/${key}"></script>`;
                 })
                 const html = fs.readFileSync(path.join(this.root, this.options.html), 'utf8')
                 return html.replace('</head>', inject.join('\n') + '</head>');
@@ -147,12 +146,14 @@ export class ConfigCreator {
                 preventAssignment: true
             }),
             ...Styles(this.options),
+            commonjs({
+                requireReturnsDefault: "namespace",
+                transformMixedEsModules: true,
+                defaultIsModuleExports: true
+            }),
             nodeResolve({
                 browser: this.options.browser,
                 dedupe: this.options.dedupe || []
-            }),
-            commonjs({
-                requireReturnsDefault: "namespace"
             }),
             sourcemaps(),
             builtins(),
@@ -251,7 +252,7 @@ export class ConfigCreator {
 
             },
             plugins: this.plugins,
-            treeshake: this.options.minify ? "smallest" : "recommended",
+            treeshake: this.options.minify ? "smallest" : "safest",
             watch: {
                 exclude: this.getExternals().concat(path.join(this.root, this.outDir)),
             }

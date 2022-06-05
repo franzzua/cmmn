@@ -57,7 +57,7 @@
     "fast-glob": "^3.2.11",
     "jest": "27.x.x",
     "less": "^4",
-    "live-server": "1",
+    "live-server": "1.2.2",
     "postcss-import": "14",
     "postcss-modules": "*",
     "rollup": "^2",

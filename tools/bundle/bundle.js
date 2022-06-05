@@ -1,7 +1,8 @@
 import {rollup, watch} from "rollup";
 import {getConfigOptions} from "./getConfigs.js";
 import {ConfigCreator} from "./rollup.config.js";
-
+import fs from "fs";
+import path from "path";
 
 export async function bundle(...options) {
     const configOptions = getConfigOptions({
@@ -19,7 +20,9 @@ export async function bundle(...options) {
             }
             const build = await rollup(config);
             for (let out of config.output){
-                console.log(`SUCCESS: ${out.dir} ${out.entryFileNames.replace('[name]', Object.keys(config.input)[0])}`);
+                const file = path.join(out.dir, out.entryFileNames.replace('[name]', Object.keys(config.input)[0]));
+                const stat = fs.statSync(file);
+                console.log(`SUCCESS: ${file} (${(stat.size/1024/1024).toFixed(3)}Mb)`);
                 await build.write(out);
             }
         }

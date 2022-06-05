@@ -43,7 +43,7 @@ export class WorkerStream extends Stream {
 
     @Lazy
     protected get Worker() {
-        return typeof this.workerOrUrlString === 'string' ? new Worker(this.workerOrUrlString) : this.workerOrUrlString;
+        return typeof this.workerOrUrlString === 'string' ? new Worker(this.workerOrUrlString, {type: 'module'}) : this.workerOrUrlString;
     }
 
 
