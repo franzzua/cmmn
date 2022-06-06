@@ -89,6 +89,10 @@ export class ConfigCreator {
             assetFileNames: "assets/[name][extname]",
             chunkFileNames: "chunks/[name].js",
             name: this.options.global ?? 'global',
+            sourcemapPathTransform: sourceMap => {
+                const p = path.relative(this.root, path.resolve(this.outDir, sourceMap));
+                return path.join('/',this.options.package, p);
+            }
         }));
     }
 

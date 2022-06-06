@@ -4,7 +4,7 @@
     "moduleResolution": "Node",
     "target": "ES2019",
     "composite": true,
-    "sourceMap": true,
+    "sourceMap": false,
     "baseUrl": "./",
     "experimentalDecorators": true,
     "checkJs": false,

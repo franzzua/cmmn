@@ -1,4 +1,4 @@
-import {Cell} from "@cmmn/cell";
+import {BaseCell, Cell} from "@cmmn/cell";
 import { Fn } from "@cmmn/core";
 
 export interface ILikeReactComponent<T> {
@@ -11,24 +11,31 @@ export interface ILikeReactComponent<T> {
 export function cellState<T>(self: ILikeReactComponent<T>, getters: {
     [key in keyof T]?: T[key] | (() => T[key]);
 }, initial: Partial<T> = {}): T {
-    let subscrsOrUnsubscrs = [];
+    const cells: Array<BaseCell<Partial<T>>> = [];
     for (let key in getters) {
-        if (typeof getters[key] !== "function") {
+        const getter =getters[key];
+        if (typeof getter !== "function") {
             initial[key] = getters[key] as any;
         } else {
-            const cell = new Cell(getters[key]);
-            subscrsOrUnsubscrs.push(() => cell.on('change', ({value}) => {
-                self.setState({[key]: value as any} as Partial<T>);
-            }));
-            initial[key] = cell.get() as any;
+            const cell = new Cell<Partial<T>>(() => ({
+                [key] : getter()
+            } as Partial<T>));
+            cells.push(cell);
+            initial[key] = getter() as any;
         }
     }
-    if (subscrsOrUnsubscrs.length){
+    if (cells.length){
         self.componentDidMount = Fn.join(self.componentDidMount, function (){
-            subscrsOrUnsubscrs = subscrsOrUnsubscrs.map(fn => fn());
+            for (let cell of cells) {
+                cell.on('change', ({value}) => {
+                    self.setState(value);
+                });
+            }
         });
         self.componentWillUnmount = Fn.join(self.componentWillUnmount, function (){
-            subscrsOrUnsubscrs.forEach(fn => fn());
+            for (let cell of cells) {
+                cell.dispose();
+            }
         });
     }
     return initial as T;
