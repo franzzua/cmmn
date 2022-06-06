@@ -26,7 +26,11 @@ export class Store {
     }
 
     find(type: any) {
-        return this.providers.filter(p => p.provide == type).pop();
+        let result = this.providers.filter(p => p.provide == type).pop();
+        if (!result){
+            this.providers.push(result = {provide: type});
+        }
+        return result;
     }
 
     public getProviders() {

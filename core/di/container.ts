@@ -30,7 +30,7 @@ export class Container {
     public get<T>(target: any): T {
         if (target === Container)
             return this as unknown as T;
-        const existing = this.store.find(target) ?? {provide: target};
+        const existing = this.store.find(target);
         return this.resolve(existing);
     }
 
