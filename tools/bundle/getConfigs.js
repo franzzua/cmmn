@@ -19,13 +19,15 @@ function getPackageConfigs(rootDir, options, name = null) {
     if (name) {
         results.push(getProjectConfig(rootDir, pkg.cmmn[name], {
             ...options,
-            name
+            name,
+            package: pkg.name,
         }));
     } else {
         for (let name in pkg.cmmn) {
             results.push(getProjectConfig(rootDir, pkg.cmmn[name], {
                 ...options,
-                name
+                name,
+                package: pkg.name,
             }));
         }
     }

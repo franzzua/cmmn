@@ -21,9 +21,10 @@ export async function bundle(...options) {
             const build = await rollup(config);
             for (let out of config.output){
                 const file = path.join(out.dir, out.entryFileNames.replace('[name]', Object.keys(config.input)[0]));
-                const stat = fs.statSync(file);
-                console.log(`SUCCESS: ${file} (${(stat.size/1024/1024).toFixed(3)}Mb)`);
-                await build.write(out);
+                 await build.write(out);
+                const stat = fs.existsSync(file) ? fs.statSync(file) : 0;
+                console.log(`SUCCESS: ${file} (${(stat.size/1024).toFixed(0)} Kb)`);
+
             }
         }
         return;

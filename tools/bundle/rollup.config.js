@@ -87,6 +87,7 @@ export class ConfigCreator {
             format: module,
             globals: module === 'umd' ? (Array.isArray(this.options.external) ? Object.fromEntries(this.options.external.map(x => [x, x])) : this.options.external) : [],
             assetFileNames: "assets/[name][extname]",
+            chunkFileNames: "chunks/[name].js",
             name: this.options.global ?? 'global',
         }));
     }
@@ -96,15 +97,20 @@ export class ConfigCreator {
             publicPath: '/',
             dir: this.outDir,
             inject: false,
-            template: ({bundle}) => {
-                const inject = Object.keys(bundle.bundle).map(key => {
+            template: (x) => {
+                const inject = Object.keys(x.bundle.bundle).map(key => {
                     if (key.endsWith('css'))
                         return `<link rel="stylesheet" href="/${key}" >`;
                     if (key.endsWith('js'))
                         return `<script type="module" defer src="/${key}"></script>`;
-                })
+                });
+                const importMaps = Object.fromEntries(Object.entries(this.options.external)
+                    .map(([key,value]) => [key.replace('.*', '/'), `/external/${value}`]));
+                const injectImportMaps = `<script type="importmap" >${JSON.stringify({
+                    imports: importMaps
+                })}</script>`;
                 const html = fs.readFileSync(path.join(this.root, this.options.html), 'utf8')
-                return html.replace('</head>', inject.join('\n') + '</head>');
+                return html.replace('</head>', injectImportMaps + inject.join('\n') + '</head>');
             }
         });
     }
@@ -234,6 +240,7 @@ export class ConfigCreator {
             },
             output: this.output,
             external: this.getExternals(),
+            manualChunks: this.options.chunks,
             onwarn(warning) {
                 switch (warning.code) {
                     case 'CIRCULAR_DEPENDENCY':
