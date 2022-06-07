@@ -5,6 +5,9 @@ import {EventEmitter, Fn} from "@cmmn/core";
 import {BaseCell, Cell} from "@cmmn/cell";
 import {Locator} from "../shared/locator";
 
+/**
+ * Работает на стороне Worker-thread.
+ */
 export class Connector<TEvents extends {
     disconnect: void;
 } = { disconnect: void }> extends EventEmitter<TEvents> {
