@@ -64,7 +64,7 @@ export class BaseStream extends EventEmitter<{
     }
 
     onMessageError(event) {
-        console.error(`BaseStream ${this.target}. Error receiving from "messageerror" listener: ${event}`);
+        console.error(`BaseStream ${this.target}. Error receiving from "messageerror" listener:`, event);
     }
 
 
