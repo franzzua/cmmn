@@ -27,6 +27,7 @@ export class BaseStream extends EventEmitter<{
         } as WorkerMessage));
 
         this.target.addEventListener('message', this.onMessage);
+        this.target.addEventListener('messageerror', this.onMessageError);
 
         if (!(this.target instanceof Worker))
             this.Connected.resolve();
@@ -60,6 +61,10 @@ export class BaseStream extends EventEmitter<{
         //     console.error(e);
         //     console.log('error', event.data.data, uint8);
         // }
+    }
+
+    onMessageError(event) {
+        console.error(`BaseStream ${this.target}. Error receiving from "messageerror" listener: ${event}`);
     }
 
 
@@ -116,6 +121,7 @@ export class BaseStream extends EventEmitter<{
 
     dispose() {
         this.target.removeEventListener('message', this.onMessage);
+        this.target.removeEventListener('messageerror', this.onMessageError);
         super.dispose();
     }
 
