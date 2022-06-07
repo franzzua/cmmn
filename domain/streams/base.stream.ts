@@ -8,8 +8,8 @@ import {Transferable} from "./transferable";
  *    For Main-thread execution context:
  *      Worker | Window | SharedWorker | ServiceWorkerContainer
  *
- *    For Worker-thread execution context, usually this is reference inside 'self' variable:
- *      DedicatedWorkerGlobalScope | SharedWorkerGlobalScope | ServiceWorkerGlobalScope
+ *    For OtherSide-thread execution context, usually this is reference inside 'self' variable:
+ *      DedicatedWorkerGlobalScope | WindowProxy | SharedWorkerGlobalScope | ServiceWorkerGlobalScope
  */
 export class BaseStream extends EventEmitter<{
     message: WorkerMessage["data"]
@@ -26,37 +26,40 @@ export class BaseStream extends EventEmitter<{
             origin: performance.timeOrigin
         } as WorkerMessage));
 
-        this.target.addEventListener('message', (event: MessageEvent<WorkerMessage | WorkerMessageSerialized>) => {
-            if (event.data.origin) {
-                this.performanceDiff = -performance.timeOrigin + event.data.origin;
-                return;
-            }
-            // if ('buffer' in event.data) {
-            //     this.SharedArrayBuffers.set(event.data.id, event.data.buffer);
-            //     return;
-            // }
-            // const buffer = this.SharedArrayBuffers.get(event.data.data.bufferId);
-            // try {
-            const message = this.useBinary
-                ? Transferable.Join<WorkerMessage["data"]>(deserialize(event.data.data as Uint8Array), event.data.transferables)
-                : event.data.data as WorkerMessage["data"];
-            // const sendTime = performance.now() - event.data.start - this.performanceDiff;
-            // console.log('send time:', sendTime, message);
-            // if (sendTime > 50){
-            //     console.warn(message);
-            // }
-            // console.log(event.data.data, message);
-            if (message.type === WorkerMessageType.Connected)
-                this.Connected.resolve();
-            else
-                this.emit('message', message);
-            // } catch (e) {
-            //     console.error(e);
-            //     console.log('error', event.data.data, uint8);
-            // }
-        });
+        this.target.addEventListener('message', this.onMessage);
+
         if (!(this.target instanceof Worker))
             this.Connected.resolve();
+    }
+
+    onMessage(event: MessageEvent<WorkerMessage | WorkerMessageSerialized>) {
+        if (event.data.origin) {
+            this.performanceDiff = -performance.timeOrigin + event.data.origin;
+            return;
+        }
+        // if ('buffer' in event.data) {
+        //     this.SharedArrayBuffers.set(event.data.id, event.data.buffer);
+        //     return;
+        // }
+        // const buffer = this.SharedArrayBuffers.get(event.data.data.bufferId);
+        // try {
+        const message = this.useBinary
+            ? Transferable.Join<WorkerMessage["data"]>(deserialize(event.data.data as Uint8Array), event.data.transferables)
+            : event.data.data as WorkerMessage["data"];
+        // const sendTime = performance.now() - event.data.start - this.performanceDiff;
+        // console.log('send time:', sendTime, message);
+        // if (sendTime > 50){
+        //     console.warn(message);
+        // }
+        // console.log(event.data.data, message);
+        if (message.type === WorkerMessageType.Connected)
+            this.Connected.resolve();
+        else
+            this.emit('message', message);
+        // } catch (e) {
+        //     console.error(e);
+        //     console.log('error', event.data.data, uint8);
+        // }
     }
 
 
@@ -109,6 +112,11 @@ export class BaseStream extends EventEmitter<{
                     console.error(`${about}. Failed to postMessage`, err, message);
             }
         }
+    }
+
+    dispose() {
+        this.target.removeEventListener('message', this.onMessage);
+        super.dispose();
     }
 
 }
