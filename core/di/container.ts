@@ -68,6 +68,13 @@ export class Container {
             Object.assign(provider, this.getInjectionInfo(provider.useClass));
         }
 
+        if (provider.useFactory){
+            const instance = provider.useFactory(this);
+            if (!provider.multiple) {
+                provider.useValue = instance;
+            }
+            return instance;
+        }
         if (provider.useClass) {
             if (!provider.deps) {
 // console.warn('no deps in provider', provider.provide, provider.useClass);
