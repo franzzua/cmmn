@@ -1,6 +1,6 @@
 import ts from "ttypescript";
 import {resolve, relative} from 'path';
-
+import fs from "fs";
 const rootDir = process.cwd();
 
 export function compile(...flags) {
@@ -22,12 +22,18 @@ export function compile(...flags) {
         builder.clean(rootDir);
         builder.build(rootDir);
 }
-
+const cleanedBaseDirs = new Set();
 function createProgram(rootNames, options, host, oldProgram, configFileParsingDiagnostics, projectReferences) {
     options.outDir = resolve(options.configFilePath, '../dist/esm');
     options.declarationDir = resolve(options.configFilePath, '../dist/typings');
     options.baseUrl = resolve(options.configFilePath, '../');
     options.tsBuildInfoFile = resolve(options.configFilePath, '../dist/ts.buildinfo');
+    if (!cleanedBaseDirs.has(options.baseUrl)){
+        fs.rmSync(options.outDir, {recursive: true, force: true});
+        fs.rmSync(options.declarationDir, {recursive: true, force: true});
+        fs.rmSync(options.tsBuildInfoFile, {force: true});
+        cleanedBaseDirs.add(options.baseUrl);
+    }
     console.log('\t', relative(process.cwd(), options.baseUrl));
     return ts.createEmitAndSemanticDiagnosticsBuilderProgram(
         rootNames, options, host, oldProgram, configFileParsingDiagnostics, projectReferences
