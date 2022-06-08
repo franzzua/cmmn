@@ -90,7 +90,7 @@ export class ConfigCreator {
             name: this.options.global ?? 'global',
             sourcemapPathTransform: sourceMap => {
                 const p = path.relative(this.root, path.resolve(this.outDir, sourceMap));
-                return path.join('/',this.options.package, p);
+                return path.join('/', this.options.package, p);
             }
         }));
     }
@@ -101,20 +101,22 @@ export class ConfigCreator {
             dir: this.outDir,
             inject: false,
             template: (x) => {
-                const inject = Object.keys(x.bundle.bundle).map(key => {
+                let inject = Object.keys(x.bundle.bundle).map(key => {
                     if (key.endsWith('css'))
                         return `<link rel="stylesheet" href="/${key}" >`;
                     if (key.endsWith('js'))
                         return `<script type="module" defer src="/${key}"></script>`;
-                });
-                const importMaps = Object.fromEntries(this.options.external
-                    .map(key => key.replace('.*', '/'))
-                    .map(key => [key, `/external/${this.options.alias[key] ?? key}`]));
-                const injectImportMaps = `<script type="importmap" >${JSON.stringify({
-                    imports: importMaps
-                })}</script>`;
+                }).join('\n');
+                if (!this.options.minify) {
+                    const importMaps = Object.fromEntries(this.options.external
+                        .map(key => key.replace('.*', '/'))
+                        .map(key => [key, `/external/${this.options.alias[key] ?? key}`]));
+                    inject = `<script type="importmap" >${JSON.stringify({
+                        imports: importMaps
+                    })}</script>` + inject;
+                }
                 const html = fs.readFileSync(path.join(this.root, this.options.html), 'utf8')
-                return html.replace('</head>', injectImportMaps + inject.join('\n') + '</head>');
+                return html.replace('</head>', inject + '</head>');
             }
         });
     }
@@ -194,7 +196,7 @@ export class ConfigCreator {
         ];
         if (this.options.alias) {
             result.unshift(alias({
-                entries: Object.entries(this.options.alias).map(([key,value])=>({
+                entries: Object.entries(this.options.alias).map(([key, value]) => ({
                     find: key,
                     replacement: value
                 }))
@@ -245,7 +247,7 @@ export class ConfigCreator {
                 [this.options.name]: path.join(this.root, this.options.input)
             },
             output: this.output,
-            external: this.getExternals(),
+            external: (this.options.minify && this.options.browser) ? [] : this.getExternals(),
             manualChunks: this.options.chunks,
             onwarn(warning) {
                 switch (warning.code) {
