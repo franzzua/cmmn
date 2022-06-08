@@ -69,7 +69,9 @@ export class BaseCell<T = any> extends EventEmitter<{
         this.error = error;
         const oldValue = this.value;
         this.value = value;
-        this.state = CellState.Actual;
+        if (this.isActive) {
+            this.state = CellState.Actual;
+        }
         if (oldValue !== value) {
             if (oldValue instanceof EventEmitterBase) {
                 oldValue.off('change', this.onValueContentChanged);
