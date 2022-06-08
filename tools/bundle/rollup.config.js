@@ -14,7 +14,6 @@ import alias from '@rollup/plugin-alias';
 import replace from '@rollup/plugin-replace';
 import sourcemaps from 'rollup-plugin-sourcemaps';
 import {Styles} from "./styles.js";
-
 /**
  * @typedef {import(rollup).RollupOptions} RollupOptions
  * @typedef {import(rollup).OutputOptions} OutputOptions
@@ -108,8 +107,9 @@ export class ConfigCreator {
                     if (key.endsWith('js'))
                         return `<script type="module" defer src="/${key}"></script>`;
                 });
-                const importMaps = Object.fromEntries(Object.entries(this.options.external)
-                    .map(([key,value]) => [key.replace('.*', '/'), `/external/${value}`]));
+                const importMaps = Object.fromEntries(this.options.external
+                    .map(key => key.replace('.*', '/'))
+                    .map(key => [key, `/external/${this.options.alias[key] ?? key}`]));
                 const injectImportMaps = `<script type="importmap" >${JSON.stringify({
                     imports: importMaps
                 })}</script>`;
@@ -194,9 +194,11 @@ export class ConfigCreator {
         ];
         if (this.options.alias) {
             result.unshift(alias({
-                entries: this.options.alias
+                entries: Object.entries(this.options.alias).map(([key,value])=>({
+                    find: key,
+                    replacement: value
+                }))
             }));
-            console.log(this.options.alias)
         }
         if (this.options.html || this.options.input.endsWith('.html')) {
             result.push(this.html);
