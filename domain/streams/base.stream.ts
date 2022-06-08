@@ -1,5 +1,5 @@
 import {WorkerMessage, WorkerMessageSerialized, WorkerMessageType} from "../shared/types";
-import {deserialize, EventEmitter, ResolvablePromise, serialize} from "@cmmn/core";
+import {bind, deserialize, EventEmitter, ResolvablePromise, serialize} from "@cmmn/core";
 import {Transferable} from "./transferable";
 
 
@@ -33,6 +33,7 @@ export class BaseStream extends EventEmitter<{
             this.Connected.resolve();
     }
 
+    @bind
     onMessage(event: MessageEvent<WorkerMessage | WorkerMessageSerialized>) {
         if (event.data.origin) {
             this.performanceDiff = -performance.timeOrigin + event.data.origin;
@@ -63,6 +64,7 @@ export class BaseStream extends EventEmitter<{
         // }
     }
 
+    @bind
     onMessageError(event) {
         console.error(`BaseStream ${this.target}. Error receiving from "messageerror" listener:`, event);
     }
