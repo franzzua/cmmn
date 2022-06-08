@@ -28,15 +28,20 @@ export class BaseStream extends EventEmitter<{
             origin: performance.timeOrigin
         } as WorkerMessage));
 
-        this.target.addEventListener('message', this.onMessage);
-        this.target.addEventListener('messageerror', this.onMessageError);
-
         if (!(this.target instanceof Worker))
             this.Connected.resolve();
     }
 
+    protected subscribe(eventName: keyof { message: WorkerMessage["data"] }) {
+        this.target.addEventListener('message', this.onMessage);
+        this.target.addEventListener('messageerror', this.onMessageError);
+        super.subscribe(eventName);
+    }
+
     @bind
     protected onMessage(event: MessageEvent<WorkerMessage | WorkerMessageSerialized>) {
+        if (!event.data.data) // react-dev-tools sends 'hello' message for something
+            return;
         if (event.data.origin) {
             this.performanceDiff = -performance.timeOrigin + event.data.origin;
             return;
@@ -47,6 +52,7 @@ export class BaseStream extends EventEmitter<{
         // }
         // const buffer = this.SharedArrayBuffers.get(event.data.data.bufferId);
         // try {
+
         const message = this.useBinary
             ? Transferable.Join<WorkerMessage["data"]>(deserialize(event.data.data as Uint8Array), event.data.transferables)
             : event.data.data as WorkerMessage["data"];
@@ -67,7 +73,7 @@ export class BaseStream extends EventEmitter<{
     }
 
     @bind
-    private onMessageError(event) {
+    protected onMessageError(event) {
         console.error(`${this.about}. Error receiving from "messageerror" listener:`, event);
     }
 

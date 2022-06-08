@@ -204,6 +204,7 @@ export class ConfigCreator {
         }
         if (this.options.html || this.options.input.endsWith('.html')) {
             result.push(this.html);
+            result.push(watcher([path.join(this.root, this.options.html)]))
         }
         if (this.options.stats) {
             result.push(this.visualizer);
@@ -272,8 +273,15 @@ export class ConfigCreator {
                 buildDelay: 300,
                 clearScreen: false,
                 exclude: this.getExternals().concat(path.join(this.root, this.outDir)),
-                // include: path.join(this.root, 'dist/esm')
             }
         }]
     }
 }
+
+const watcher = (files) => ({
+    buildStart() {
+        for (const file of files) {
+            this.addWatchFile(file);
+        }
+    },
+});

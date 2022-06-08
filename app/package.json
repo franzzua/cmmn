@@ -14,7 +14,14 @@
   },
   "module": "./dist/bundle/index.js",
   "main": "./dist/bundle/index.js",
-  "typings": "dist/typings",
+  "typings": "typings.d.ts",
+  "typesVersions": {
+    "*": {
+      "typings.d.ts": [
+        "./dist/typings/index.d.ts"
+      ]
+    }
+  },
   "scripts": {
     "bundle": "cmmn bundle ./dist/esm/index.js --watch",
     "build": "cmmn compile ./index.ts --watch"

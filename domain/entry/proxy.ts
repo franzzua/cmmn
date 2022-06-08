@@ -5,6 +5,7 @@ import {WorkerStream} from "../streams/workerStream";
 import {Transferable} from "../streams/transferable";
 import {Locator} from "../shared/locator";
 import {EntityLocator} from "./entity-locator.service";
+import {ChildWindowStream} from "../streams/childWindowStream";
 
 export {proxy} from "../shared/domain.structure";
 export {ModelProxy} from "./modelProxy";
@@ -22,8 +23,16 @@ export function useStreamDomain(locator: Locator): Container {
     );
 }
 
-export function useWorkerDomain(workerUrlOrString: string | Worker): Container {
-    const stream = new WorkerStream(workerUrlOrString);
+export function useWorkerDomain(worker: Worker): Container {
+    const stream = new WorkerStream(worker);
+    return Container.withProviders({
+        provide: Locator, useClass: EntityLocator
+    }, {
+        provide: Stream, useValue: stream
+    });
+}
+export function useOpenerDomain(opener: Window): Container {
+    const stream = new ChildWindowStream(opener);
     return Container.withProviders({
         provide: Locator, useClass: EntityLocator
     }, {

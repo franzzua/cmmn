@@ -13,7 +13,7 @@ export class WorkerStream extends Stream {
     private models = new Map<string, VersionState<any>>();
     private responses = new Map<string, ResolvablePromise<void>>();
 
-    constructor(private workerOrUrlString: string | Worker) {
+    constructor(protected target: Worker | Window) {
         super();
         this.BaseStream.on('message', message => {
             if (message.type == WorkerMessageType.Response) {
@@ -39,14 +39,8 @@ export class WorkerStream extends Stream {
 
     @Lazy
     protected get BaseStream() {
-        return new BaseStream(this.Worker);
+        return new BaseStream(this.target);
     }
-
-    @Lazy
-    protected get Worker() {
-        return typeof this.workerOrUrlString === 'string' ? new Worker(this.workerOrUrlString, {type: 'module'}) : this.workerOrUrlString;
-    }
-
 
     private postMessage(msg: WorkerMessage['data']) {
         this.BaseStream.send(msg);

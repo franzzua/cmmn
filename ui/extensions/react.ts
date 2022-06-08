@@ -21,7 +21,11 @@ export function cellState<T>(self: ILikeReactComponent<T>, getters: {
                 [key] : getter()
             } as Partial<T>));
             cells.push(cell);
-            initial[key] = getter() as any;
+            try {
+                initial[key] = getter() as any;
+            }catch (e){
+                console.warn(self, key, e);
+            }
         }
     }
     if (cells.length){
