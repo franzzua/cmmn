@@ -17,9 +17,11 @@ export class BaseStream extends EventEmitter<{
     private useBinary = true;
     private performanceDiff = 0;
     public Connected = new ResolvablePromise<void>();
+    public about: string;
 
     constructor(private target: Worker | typeof globalThis | Window) {
         super();
+        this.about = `BaseStream ${this.target}`;
 
         // only for performance measurement
         this.Connected.then(() => this.target.postMessage({
@@ -34,7 +36,7 @@ export class BaseStream extends EventEmitter<{
     }
 
     @bind
-    onMessage(event: MessageEvent<WorkerMessage | WorkerMessageSerialized>) {
+    protected onMessage(event: MessageEvent<WorkerMessage | WorkerMessageSerialized>) {
         if (event.data.origin) {
             this.performanceDiff = -performance.timeOrigin + event.data.origin;
             return;
@@ -65,8 +67,8 @@ export class BaseStream extends EventEmitter<{
     }
 
     @bind
-    onMessageError(event) {
-        console.error(`BaseStream ${this.target}. Error receiving from "messageerror" listener:`, event);
+    private onMessageError(event) {
+        console.error(`${this.about}. Error receiving from "messageerror" listener:`, event);
     }
 
 
@@ -103,23 +105,27 @@ export class BaseStream extends EventEmitter<{
         // console.log(info, message, source);
 
         try {
-            this.target.postMessage({
+            this.postMessage({
                 data, transferables, start
             } as WorkerMessage, {
                 transfer: transferables
             });
         } catch (err) {
-            const about = `BaseStream ${this.target}`;
             switch (err.name) {
                 case 'DataCloneError':
                     // debugger;
-                    console.error(`${about}. Could not clone`, err.message, message);
+                    console.error(`${this.about}. Could not clone`, err.message, message);
                     break;
                 default:
-                    console.error(`${about}. Failed to postMessage`, err, message);
+                    console.error(`${this.about}. Failed to postMessage`, err, message);
             }
         }
     }
+
+    protected postMessage(data, opt?: IPostOpt) {
+        this.target.postMessage(data, opt);
+    }
+
 
     dispose() {
         this.target.removeEventListener('message', this.onMessage);
@@ -127,4 +133,9 @@ export class BaseStream extends EventEmitter<{
         super.dispose();
     }
 
+}
+
+export interface IPostOpt {
+    transfer?: any[];
+    targetOrigin?: string; // for Window
 }
