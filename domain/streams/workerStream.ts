@@ -1,12 +1,14 @@
-import {Fn, Lazy, ResolvablePromise} from "@cmmn/core";
-import {Stream} from "./stream";
-import {Action, ModelPath, WorkerMessage, WorkerMessageType} from "../shared/types";
-import {BaseStream} from "./base.stream";
-import {VersionState} from "./versionState";
+import {Fn, Lazy, ResolvablePromise} from '@cmmn/core';
+import {Action, ModelPath, WorkerMessage, WorkerMessageType} from '../shared/types';
+import {VersionState} from './versionState';
+import {BaseStream} from './base.stream';
+import {Stream} from './stream';
 
 /**
- * Stream находится на стороне Main-thread и связан с воркером.
- * Со стороны Worker-thread работает WorkerEntry.
+ * Stream находится на стороне Main-thread и связан с другой стороной.
+ * На другой стороне может быть:
+ *   - Worker-thread и там будет работать WorkerEntry;
+ *   - Parent-окно и там будет работать ChildWindowConnector.
  */
 export class WorkerStream extends Stream {
 
