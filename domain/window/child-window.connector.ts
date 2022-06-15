@@ -9,8 +9,8 @@ import {ModelAction} from '../shared/types';
  *   Child-окно <=> Parent-окно <=> домен (находится в воркере)
  *
  * СХЕМА ОБМЕНА:
- *   - [onMessage,    targetIn: Window Parent-окна] - сообщения из Child-окна(в основном Actions) перенаправляет -> в воркер.
- *   - [postMessage, targetOut: WindowProxy       ] - состояние из воркера перенаправляет -> в Child-окно.
+ *   - [onMessage,    targetIn: Window Parent-окна]     - сообщения из Child-окна(в основном Actions) перенаправляет -> в воркер.
+ *   - [postMessage, targetOut: WindowProxy Child-окна] - состояние из воркера перенаправляет -> в Child-окно.
  * здесь WindowProxy - это то, что возвращает функция window.open(...).
  */
 export class ChildWindowConnector<TState, TActions extends ModelAction = {}> extends Connector {
