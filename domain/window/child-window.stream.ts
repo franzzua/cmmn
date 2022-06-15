@@ -10,7 +10,7 @@ import {WorkerStream} from '../streams/workerStream';
  *
  * СХЕМА ОБМЕНА:
  *   - [onMessage,    targetIn: Window Child-окна] - из Parent-окна пришло сообщение -> в Child-окно;
- *   - [postMessage, targetOut: Window.opener    ] - из Child-окна отправляю сообщение -> в Parent-окно
+ *   - [postMessage, targetOut: Window.opener    ] - из Child-окна перенаправляет сообщение -> в Parent-окно.
  *
  */
 export class ChildWindowStream extends WorkerStream {
