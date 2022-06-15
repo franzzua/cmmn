@@ -109,11 +109,12 @@ export class StoppableEventEmitter<TEvents extends {
         if (!arr)
             return;
         let isStopped = false;
+        const ordered = arr.orderBy(x => x.options.Priority, true);
         const stopAction = () => isStopped = true;
-        for (let i = 0; i < arr.length; i++) {
+        for (let i = 0; i < ordered.length; i++) {
             if (isStopped)
                 return;
-            arr[i].listener(data, stopAction);
+            ordered[i].listener(data, stopAction);
         }
     }
 }

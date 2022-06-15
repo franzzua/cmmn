@@ -14,9 +14,6 @@ export class Connector<TEvents extends {
     constructor(protected baseStream: BaseStream,
                 protected locator: Locator) {
         super();
-        this.postMessage({
-            type: WorkerMessageType.Connected,
-        });
         this.baseStream.on('message', message => {
             switch (message.type) {
                 case WorkerMessageType.Subscribe:

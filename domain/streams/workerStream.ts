@@ -1,4 +1,4 @@
-import {Fn, Lazy, ResolvablePromise} from "@cmmn/core";
+import {Fn, Lazy, log, ResolvablePromise} from "@cmmn/core";
 import {Stream} from "./stream";
 import {Action, ModelPath, WorkerMessage, WorkerMessageType} from "../shared/types";
 import {BaseStream} from "./base.stream";
@@ -51,6 +51,10 @@ export class WorkerStream extends Stream {
     }
 
 
+    // @log((self,args: [Action], result) => ({
+    //     message: [...args[0].path, args[0].action].join(':'),
+    //     result
+    // }))
     async Invoke(action: Action) {
         const actionId = Fn.ulid();
         const version = this.models.get(this.pathToStr(action.path)).localVersion;

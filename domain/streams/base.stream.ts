@@ -1,4 +1,4 @@
-import {WorkerMessage, WorkerMessageSerialized, WorkerMessageType} from "../shared/types";
+import {WorkerMessage, WorkerMessageSerialized} from "../shared/types";
 import {bind, deserialize, EventEmitter, ResolvablePromise, serialize} from "@cmmn/core";
 import {Transferable} from "./transferable";
 
@@ -27,9 +27,9 @@ export class BaseStream extends EventEmitter<{
         this.Connected.then(() => this.target.postMessage({
             origin: performance.timeOrigin
         } as WorkerMessage));
-
-        if (!(this.target instanceof Worker))
-            this.Connected.resolve();
+        // it's unclear who will connects first, worker or main thread
+        // so everybody send connected
+        this.postMessage('Connected');
     }
 
     protected subscribe(eventName: keyof { message: WorkerMessage["data"] }) {
@@ -39,7 +39,15 @@ export class BaseStream extends EventEmitter<{
     }
 
     @bind
-    protected onMessage(event: MessageEvent<WorkerMessage | WorkerMessageSerialized>) {
+    protected onMessage(event: MessageEvent<WorkerMessage | WorkerMessageSerialized | 'Connected'>) {
+        if (typeof event.data === "string") {
+            if (!this.Connected.isResolved) {
+                console.log('Connected', this.target);
+                this.Connected.resolve()
+                this.postMessage('Connected');
+            }
+            return;
+        }
         if (!event.data.data) // react-dev-tools sends 'hello' message for something
             return;
         if (event.data.origin) {
@@ -62,10 +70,7 @@ export class BaseStream extends EventEmitter<{
         //     console.warn(message);
         // }
         // console.log(event.data.data, message);
-        if (message.type === WorkerMessageType.Connected)
-            this.Connected.resolve();
-        else
-            this.emit('message', message);
+        this.emit('message', message);
         // } catch (e) {
         //     console.error(e);
         //     console.log('error', event.data.data, uint8);
