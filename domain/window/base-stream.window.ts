@@ -3,16 +3,16 @@ import {BaseStream, IPostOpt} from '../streams/base.stream';
 
 export class BaseStreamWindow extends BaseStream {
 
-    constructor(target: Window, // target.addEventListener('message', this.onMessage)
-                private childId,
-                private targetToPost: Window) {
+    constructor(targetIn: Window,          // to receive messages
+                private targetOut: Window, // to send messages
+                private childId) {
         if (!childId) {
             throw new Error('BaseStreamWindow. Not defined "childId"');
         }
-        if (!targetToPost) {
-            throw new Error('BaseStreamWindow. Not defined "targetToPost"');
+        if (!targetOut) {
+            throw new Error('BaseStreamWindow. Not defined "targetOut"');
         }
-        super(target);
+        super(targetIn);
     }
 
     @bind
@@ -34,7 +34,7 @@ export class BaseStreamWindow extends BaseStream {
             ...opt,
             targetOrigin: globalThis.origin,
         })
-        this.targetToPost.postMessage({
+        this.targetOut.postMessage({
             ...data,
             childId: this.childId,
         }, {

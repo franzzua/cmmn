@@ -7,8 +7,8 @@ import {Stream} from './stream';
 /**
  * Stream находится на стороне Main-thread и связан с другой стороной.
  * На другой стороне может быть:
- *   - Worker-thread и там будет работать WorkerEntry;
- *   - Parent-окно и там будет работать ChildWindowConnector.
+ *   - WorkerEntry в Worker-thread;
+ *   - ChildWindowConnector в Parent-окне.
  */
 export class WorkerStream extends Stream {
 
