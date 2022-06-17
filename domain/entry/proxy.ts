@@ -5,14 +5,14 @@ import {WorkerStream} from "../streams/workerStream";
 import {Transferable} from "../streams/transferable";
 import {Locator} from "../shared/locator";
 import {EntityLocator} from "./entity-locator.service";
-import {ChildWindowStream} from "../streams/childWindowStream";
+import {ChildWindowStream} from "../streams/child-window.stream";
 
 export {proxy} from "../shared/domain.structure";
 export {ModelProxy} from "./modelProxy";
 export {Stream} from "../streams/stream";
 export {WorkerStream} from "../streams/workerStream";
 export {ModelMap} from "../model-map";
-export {ChildWindowConnector} from "../window/child-window";
+export {ChildWindowConnector} from "../window/child-window.connector";
 export * from "../shared/types"
 
 //
