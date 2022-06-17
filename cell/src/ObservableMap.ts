@@ -52,16 +52,18 @@ export class ObservableMap<K, V> extends EventEmitter<{
         this.emitChange({oldValue: old, value: undefined, key, type: 'delete'});
     }
 
-    mergeFrom<U>(map: Map<K, U>, create: (value: U) => V, update: (item: V, value: U) => void) {
-        for (let existed of this.map.keys()) {
-            if (!map.has(existed))
+    mergeFrom<U>(map: Map<K, U>, create: (value: U) => V, update?: (item: V, value: U) => void, onDelete?: (item: V) => void) {
+        for (let [existed, value] of this.map.entries()) {
+            if (!map.has(existed)) {
                 this.map.delete(existed);
+                onDelete && onDelete(value);
+            }
         }
         for (let [key, value] of map.entries()) {
             if (this.map.has(key))
                 update && update(this.map.get(key), value);
             else
-                create && this.map.set(key, create(value));
+                this.map.set(key, create(value));
         }
         this.emit('change', {
             value: this.map

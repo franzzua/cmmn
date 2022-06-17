@@ -1,4 +1,4 @@
-import {Fn, Lazy, log, ResolvablePromise} from "@cmmn/core";
+import {Fn, Lazy, ResolvablePromise} from "@cmmn/core";
 import {Stream} from "./stream";
 import {Action, ModelPath, WorkerMessage, WorkerMessageType} from "../shared/types";
 import {BaseStream} from "./base.stream";
@@ -73,15 +73,15 @@ export class WorkerStream extends Stream {
                 type: WorkerMessageType.Subscribe,
                 path,
             });
-            return new VersionState();
+            return new VersionState({
+                onExternal: state => this.postMessage({
+                    type: WorkerMessageType.State,
+                    path, state, version: null,
+                })
+            });
         });
         // cell.on('change', ({value})=>{
-        //     this.postMessage({
-        //         type: WorkerMessageType.State,
-        //         path,
-        //         state: value,
-        //         version: null,
-        //     });
+        //
         // })
         return cell;
     }

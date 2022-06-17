@@ -43,7 +43,10 @@
   "cmmn": {
     "index": {
       "input": "dist/esm/index.js",
-      "module": "es,cjs,umd"
+      "module": "es,cjs,umd",
+      "external": [
+        "@cmmn"
+      ]
     }
   }
 }

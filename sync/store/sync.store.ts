@@ -20,12 +20,9 @@ export class SyncStore<TEntity> {
     @cell
     public IsSynced = false;
 
-    public useIndexedDB() {
+    public async useIndexedDB() {
         const indexeddbProvider = new IndexeddbPersistence(this.name, this.doc);
-        indexeddbProvider.whenSynced.then(() => {
-            this.Items.subscribe();
-            this.IsSynced = true;
-        })
+        await indexeddbProvider.whenSynced;
     }
 }
 

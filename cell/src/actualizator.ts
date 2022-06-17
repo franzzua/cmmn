@@ -48,7 +48,7 @@ export class Actualizator {
         if (error) {
             cell.setError(error)
         } else {
-            cell.set(value);
+            cell.setInternal(value);
         }
         Actualizator.CurrentCell = prevCell;
         if (oldDependencies) {

@@ -157,7 +157,7 @@ export class ConfigCreator {
                 'process.env.NODE_ENV': JSON.stringify(this.options.minify ? 'production' : 'development'),
                 preventAssignment: true
             }),
-            ...Styles(this.options),
+            ...Styles(this),
             commonjs({
                 requireReturnsDefault: "namespace",
                 transformMixedEsModules: true,

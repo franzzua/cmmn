@@ -1,9 +1,10 @@
 import loader from 'postcss-modules/build/css-loader-core/loader.js';
-import image from "rollup-plugin-img";
 import postCssImport from 'postcss-import';
+import postCssAssets from 'postcss-assets';
 import cssModules from '@modular-css/rollup';
 import slug from "unique-slug";
 import styles from "rollup-plugin-styles";
+import {images} from "./images.js";
 
 class Loader extends loader.default {
     failStart = '/' + process.cwd();
@@ -21,16 +22,21 @@ class Loader extends loader.default {
     }
 }
 
-export function Styles(options) {
+/**
+ *
+ * @param {ConfigCreator} config
+ * @returns {(*)[]}
+ * @constructor
+ */
+export function Styles(config) {
     return [
-        image({
-            output: `/assets`, // default the root
-            extensions: /\.(png|jpg|jpeg|gif)$/, // support png|jpg|jpeg|gif|svg, and it's alse the default value
+        images({
+            output: 'assets'
             // exclude: 'node_modules/**'
         }),
-        options.styles === "modules" ? cssModules({
+        config.options.styles === "modules" ? cssModules({
             common: 'common.css',
-            before: [postCssImport],
+            before: [postCssImport, postCssAssets],
             namer: function (file, selector) {
                 return selector + "_" +
                     file.replace(/([\/\\]index)?(\.module)?\.css$/, "").split(/[\\\/]/).pop() + "_" +
@@ -63,3 +69,5 @@ export function Styles(options) {
         // }),
     ];
 }
+
+

@@ -83,7 +83,6 @@
     "index": {
       "input": "./dist/esm/index.js",
       "external": [
-        "cellx.*",
         "@cmmn.*"
       ],
       "module": "es,cjs"
@@ -91,7 +90,6 @@
     "webrtc": {
       "input": "./dist/esm/webrtc/client/index.js",
       "external": [
-        "cellx.*",
         "@cmmn.*"
       ]
     },
@@ -106,7 +104,6 @@
     "websocket": {
       "input": "./dist/esm/websocket/client/index.js",
       "external": [
-        "cellx.*",
         "@cmmn.*"
       ]
     },

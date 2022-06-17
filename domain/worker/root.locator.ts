@@ -1,7 +1,7 @@
 import {ModelAction, ModelLike, ModelPath} from "../shared/types";
 import {Injectable} from "@cmmn/core";
 import {Model} from "./model";
-import {ObservableList} from "@cmmn/cell";
+import {ObservableList, ObservableMap} from "@cmmn/cell";
 import {Locator} from "../shared/locator";
 
 @Injectable()
@@ -17,7 +17,7 @@ export class RootLocator implements Locator {
         if (path.length == 0)
             return current as ModelLike<TState, TActions>;
         const first = path.shift()!;
-        if (current instanceof Map) {
+        if (current instanceof Map || current instanceof ObservableMap) {
             return this._queryModel(path, current.get(first));
         }
         if (Array.isArray(current)) {

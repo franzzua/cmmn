@@ -5,6 +5,7 @@ export type ICellOptions<T, TKey = T> = {
     compareKey?: (value: T) => TKey;
     filter?: (a: T) => boolean;
     tap?: (a: T) => void;
+    onExternal?: (a: T) => void;
     startValue?: T;
 }
 
@@ -23,11 +24,16 @@ export class Cell<T = any, TKey = T> extends BaseCell<T> {
         }
     }
 
-    public set(value: T) {
+    public setInternal(value: T) {
         if (this.handleFilterError(value)) {
             return;
         }
+        super.setInternal(value);
+    }
+
+    public set(value: T) {
         super.set(value);
+        this.options.onExternal && this.options.onExternal(value);
     }
 
     protected update(value: T, error?: Error) {

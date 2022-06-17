@@ -3,10 +3,11 @@ import {EventEmitter} from "@cmmn/core";
 
 export class ObservableYMap<TValue> extends EventEmitter<{
     change: { oldValue: TValue, value: TValue, key: string, type: 'add' | 'delete' | 'update' },
-}>{
+}> {
     constructor(private yMap: YMap<TValue>) {
         super();
     }
+
     public subscribe() {
         this.yMap.observe((event, transaction) => {
             // if (event.transaction.local)
@@ -79,16 +80,20 @@ export class ObservableYMap<TValue> extends EventEmitter<{
         return this.yMap.keys();
     }
 
-    values() {
+    values(): IterableIterator<TValue> {
         return this.yMap.values();
     }
 
-    entries() {
+    entries(): IterableIterator<[string, TValue]> {
         return this.yMap.entries();
     }
 
     [Symbol.iterator] = () => {
         return this.entries();
+    }
+
+    toMap(): Map<string, TValue> {
+        return new Map(this.entries());
     }
 
 }
