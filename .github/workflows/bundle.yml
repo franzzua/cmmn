@@ -19,6 +19,6 @@ jobs:
           scope: '@cmmn'
       - run: npm run bootstrap
       - run: npm run ci
-      - run: lerna publish from-package -y --no-verify-access
+      - run: lerna publish from-package -y --no-verify-access --no-push
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
