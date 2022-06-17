@@ -11,11 +11,13 @@ export function images(options = {}) {
     let images = [];
 
     function generateBundle(outputOptions, rendered) {
+        if (!images.length)
+            return;
         const outDir =
             outputOptions.dir || dirname(outputOptions.dest || outputOptions.file);
         const distDir = join(outDir, assetsDir);
         if (!existsSync(distDir)) {
-            mkdirSync(distDir);
+            mkdirSync(distDir, {recursive: true});
         }
         images.forEach(id => {
             writeFileSync(`${distDir}/${basename(id)}`, readFileSync(id));
