@@ -1,3 +1,4 @@
+import "@cmmn/core";
 import {ModelKey, ModelPath} from "./types";
 import {ModelProxy} from "../entry/modelProxy";
 import {ModelMap} from "../model-map";
@@ -104,7 +105,7 @@ export namespace proxy {
                     id => {
                         const path = definition.getPath(id, this);
                         return definition.instances.getOrAdd(path.join(':'), () =>
-                            new definition.target(this.stream, path));
+                            this.locator.get(path, definition.target) as ModelProxy<any>);
                     });
             }
         });
@@ -128,7 +129,7 @@ export namespace proxy {
                 if (!key) return null;
                 const definition = getDefinition(model);
                 const path = definition.getPath(key, this);
-                return definition.instances.getOrAdd(path.join(':'), () => new definition.target(this.stream, path));
+                return definition.instances.getOrAdd(path.join(':'), () => this.locator.get(path, definition.target) as ModelProxy<any>);
             }
         });
     }

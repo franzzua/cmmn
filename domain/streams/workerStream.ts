@@ -53,6 +53,10 @@ export class WorkerStream extends Stream {
     }
 
 
+    // @log((self,args: [Action], result) => ({
+    //     message: [...args[0].path, args[0].action].join(':'),
+    //     result
+    // }))
     async Invoke(action: Action) {
         const actionId = Fn.ulid();
         const version = this.models.get(this.pathToStr(action.path)).localVersion;
@@ -71,15 +75,15 @@ export class WorkerStream extends Stream {
                 type: WorkerMessageType.Subscribe,
                 path,
             });
-            return new VersionState();
+            return new VersionState({
+                onExternal: state => this.postMessage({
+                    type: WorkerMessageType.State,
+                    path, state, version: null,
+                })
+            });
         });
         // cell.on('change', ({value})=>{
-        //     this.postMessage({
-        //         type: WorkerMessageType.State,
-        //         path,
-        //         state: value,
-        //         version: null,
-        //     });
+        //
         // })
         return cell;
     }

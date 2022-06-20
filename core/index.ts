@@ -25,3 +25,4 @@ export {debounce, debounced} from "./helpers/debounce";
 export {throttle, throttled} from "./helpers/throttle";
 export {DeepPartial} from "./helpers/deepAssign";
 export {Disposable} from "./disposable";
+export {useLogger, log} from "./logs";

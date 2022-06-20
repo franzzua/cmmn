@@ -2,7 +2,7 @@ export enum WorkerMessageType {
     State = 0,
     Action = 1,
     Response = 2,
-    Connected = 3,
+    // Connected = 3,
     Subscribe = 4
 }
 
@@ -36,9 +36,9 @@ export type WorkerState = {
     state: any;
     version: string;
 };
-export type WorkerConnected = {
-    type: WorkerMessageType.Connected;
-};
+// export type WorkerConnected = {
+//     type: WorkerMessageType.Connected;
+// };
 export type ModelStructure = {
 
 }
@@ -49,8 +49,8 @@ export type WorkerMessage = {
     data: WorkerState
         | WorkerAction
         | WorkerResponse
-        | WorkerSubscribe
-        | WorkerConnected,
+        | WorkerSubscribe,
+        // | WorkerConnected,
     transferables: any[]
 } & {
     start?: number,

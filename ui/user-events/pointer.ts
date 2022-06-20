@@ -186,7 +186,7 @@ export class PointerListener extends EventListener<PointerEvents> {
                 this.root.addEventListener(eventName, this.emitters[eventName], {passive: true});
                 break;
             case 'click':
-                this.root.addEventListener('mouseClick', this.emitters[eventName]);
+                this.root.addEventListener('click', this.emitters[eventName]);
                 break;
             case "drag":
                 this.on('down', this.dragListener)
@@ -218,7 +218,7 @@ export class PointerListener extends EventListener<PointerEvents> {
                 this.root.removeEventListener(eventName, this.emitters[eventName]);
                 break;
             case 'click':
-                this.root.removeEventListener('mouseClick', this.emitters[eventName]);
+                this.root.removeEventListener('click', this.emitters[eventName]);
                 break;
             case 'directClick':
                 this.off('up', Fn.I);

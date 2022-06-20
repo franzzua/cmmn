@@ -1,5 +1,6 @@
-import {Fn, ResolvablePromise} from "@cmmn/core";
-import {BaseCell, cell} from '@cmmn/cell';
+import {EventEmitter, EventEmitterBase, Fn, ResolvablePromise} from "@cmmn/core";
+import {BaseCell, Cell, cell, ICellOptions} from '@cmmn/cell';
+import { ModelLike } from "../shared/types";
 
 /**
  * Есть два состояния одной сущности - в воркере и в мейне. Они должны быть одинаковыми (consistency),
@@ -15,7 +16,7 @@ import {BaseCell, cell} from '@cmmn/cell';
  * Поэтому большой поток diff, например, изменения названия слайда, можем хранить прямо в proxy.State (см. ModelProxy#set State())
  * Он будет всегда актуальный и не будут попадаться старые состояния.
  */
-export class VersionState<T> extends BaseCell<T> {
+export class VersionState<T> extends Cell<T> {
     @cell
     remoteVersion: string;
     @cell
@@ -26,12 +27,13 @@ export class VersionState<T> extends BaseCell<T> {
     remoteState: T;
     public waitLoaded = new ResolvablePromise<void>();
     private isLoaded: boolean;
-    constructor() {
+
+    constructor(options: ICellOptions<T>) {
         super(() => {
             if (this.localVersion && this.remoteVersion < this.localVersion)
                 return this.localState;
             return this.remoteState;
-        });
+        }, options);
     }
 
     public up() {
@@ -49,5 +51,10 @@ export class VersionState<T> extends BaseCell<T> {
     setLocal(value: T){
         this.localState = value;
         this.localVersion = Fn.ulid();
+    }
+
+    LinkRemote(model: ModelLike<T, any>) {
+        Cell.OnChange(() => model.State, event => this.setRemote(Fn.ulid(), event.value));
+        this.setRemote(Fn.ulid(), model.State);
     }
 }

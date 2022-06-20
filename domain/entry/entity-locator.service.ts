@@ -16,11 +16,10 @@ export class EntityLocator implements Locator {
     } = ModelProxy): ModelLike<TState, TActions> {
         return this.cache.getOrAdd(path.join(':'), () => {
             const subStream = this.stream.getSubStream(path);
-            return this.container.withProviders(
-                {provide: Stream, useValue: subStream},
-                {provide: Locator, useValue: this.getSubLocator(path)}
-            )
-                .get<ModelLike<TState, TActions>>(modelType);
+            return this.container.get<ModelLike<TState, TActions>>(modelType, [
+                    {provide: Stream, useValue: subStream},
+                    {provide: Locator, useValue: this.getSubLocator(path)}
+                ]);
         });
     }
 

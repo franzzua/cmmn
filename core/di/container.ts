@@ -27,21 +27,17 @@ export class Container {
             });
     }
 
-    public get<T>(target: any): T {
+    public get<T>(target: any, overrides: Provider[] = []): T {
         if (target === Container)
             return this as unknown as T;
-        const existing = this.store.find(target);
-        return this.resolve(existing);
+        const existing = overrides.find(x => x.provide == target) ?? this.store.find(target);
+        return this.resolve(existing, overrides);
     }
 
     public static withProviders(...providers: ProviderOrValue[]) {
         const result = new Container();
         result.provide(providers);
         return result;
-    }
-
-    public withProviders(...providers: ProviderOrValue[]) {
-        return Container.withProviders(...this.getProviders(), ...providers);
     }
 
     public provide(providers: ProviderOrValue[] | Container) {
@@ -58,7 +54,7 @@ export class Container {
         return Container.StaticDepsMap.get(classInfo) ?? Container.StaticDepsMap.get(Object.getPrototypeOf(classInfo));
     }
 
-    private resolve(provider: Provider) {
+    private resolve(provider: Provider, overrides: Provider[]) {
         if (provider.useValue)
             return provider.useValue;
         if (!provider.useClass) {
@@ -81,7 +77,7 @@ export class Container {
                 provider.deps = (provider.useClass && provider.useClass.deps) || provider.provide.deps || [];
             }
             const deps = provider.deps.map(dep => {
-                return this.get(dep);
+                return this.get(dep, overrides);
             });
             const instance = new provider.useClass(...deps);
             if (!provider.multiple) {

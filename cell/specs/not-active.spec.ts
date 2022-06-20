@@ -15,4 +15,5 @@ class NotActiveSpec {
         a.set(9);
         expect(b.get()).toEqual(a.get());
     }
+
 }

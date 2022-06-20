@@ -16,10 +16,9 @@ export {ChildWindowConnector} from "../window/child-window.connector";
 export * from "../shared/types"
 
 //
-export function useStreamDomain(locator: Locator): Container {
-    const stream = new DirectStream(locator)
+export function useStreamDomain(): Container {
     return Container.withProviders(
-        {provide: Stream, useValue: stream}
+        {provide: Stream, useClass: DirectStream}
     );
 }
 

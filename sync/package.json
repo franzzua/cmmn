@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/sync",
-  "version": "1.6.17",
+  "version": "1.6.18",
   "description": "collaborative with yjs",
   "publishConfig": {
     "access": "public"
@@ -64,8 +64,8 @@
     "dist"
   ],
   "dependencies": {
-    "@cmmn/cell": "^1.6.17",
-    "@cmmn/core": "^1.6.17",
+    "@cmmn/cell": "^1.6.18",
+    "@cmmn/core": "^1.6.18",
     "simple-peer": "9.x.x",
     "y-indexeddb": "9.x.x",
     "y-protocols": "1.x.x",
@@ -74,7 +74,7 @@
     "yjs": "13.x.x"
   },
   "devDependencies": {
-    "@cmmn/tools": "^1.6.17"
+    "@cmmn/tools": "^1.6.18"
   },
   "author": "",
   "license": "ISC",
@@ -83,7 +83,6 @@
     "index": {
       "input": "./dist/esm/index.js",
       "external": [
-        "cellx.*",
         "@cmmn.*"
       ],
       "module": "es,cjs"
@@ -91,7 +90,6 @@
     "webrtc": {
       "input": "./dist/esm/webrtc/client/index.js",
       "external": [
-        "cellx.*",
         "@cmmn.*"
       ]
     },
@@ -106,7 +104,6 @@
     "websocket": {
       "input": "./dist/esm/websocket/client/index.js",
       "external": [
-        "cellx.*",
         "@cmmn.*"
       ]
     },
