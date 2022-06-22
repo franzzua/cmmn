@@ -5,10 +5,7 @@ import {BaseStream} from './base.stream';
 import {Stream} from './stream';
 
 /**
- * Stream находится на стороне Main-thread и связан с другой стороной.
- * На другой стороне может быть:
- *   - WorkerEntry в Worker-thread;
- *   - ChildWindowConnector в Parent-окне.
+ * Находится на стороне Main-thread.
  */
 export class WorkerStream extends Stream {
 
@@ -18,7 +15,7 @@ export class WorkerStream extends Stream {
     constructor(protected target: Worker | Window) {
         super();
         this.BaseStream.on('message', message => {
-            if (message.type == WorkerMessageType.Response) {
+            if (message.type === WorkerMessageType.Response) {
                 const promise = this.responses.get(message.actionId);
                 if (!promise) {
                     console.error('Response not found', message);
@@ -31,8 +28,13 @@ export class WorkerStream extends Stream {
                     promise.resolve(message.response);
                 return;
             }
-            if (message.type !== WorkerMessageType.State)
+            if (message.type === WorkerMessageType.Disconnect) {
+                this.onDisconnect();
                 return;
+            }
+            if (message.type !== WorkerMessageType.State) {
+                return;
+            }
             const cell = this.models.get(this.pathToStr(message.path));
             // console.log(this.pathToStr(message), state);
             cell.setRemote(message.version, message.state);
@@ -44,7 +46,7 @@ export class WorkerStream extends Stream {
         return new BaseStream(this.target);
     }
 
-    private postMessage(msg: WorkerMessage['data']) {
+    protected postMessage(msg: WorkerMessage['data']) {
         this.BaseStream.send(msg);
     }
 
@@ -86,6 +88,10 @@ export class WorkerStream extends Stream {
         //
         // })
         return cell;
+    }
+
+    protected onDisconnect() {
+
     }
 
 }

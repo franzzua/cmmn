@@ -3,7 +3,8 @@ export enum WorkerMessageType {
     Action = 1,
     Response = 2,
     // Connected = 3,
-    Subscribe = 4
+    Subscribe = 4,
+    Disconnect = 5,
 }
 
 export type WorkerResponse = {
@@ -39,6 +40,9 @@ export type WorkerState = {
 // export type WorkerConnected = {
 //     type: WorkerMessageType.Connected;
 // };
+export type WorkerDisconnect = {
+    type: WorkerMessageType.Disconnect;
+};
 export type ModelStructure = {
 
 }
@@ -49,8 +53,9 @@ export type WorkerMessage = {
     data: WorkerState
         | WorkerAction
         | WorkerResponse
-        | WorkerSubscribe,
+        | WorkerSubscribe
         // | WorkerConnected,
+        | WorkerDisconnect,
     transferables: any[]
 } & {
     start?: number,

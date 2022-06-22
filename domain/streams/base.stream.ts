@@ -30,6 +30,10 @@ export class BaseStream extends EventEmitter<{
         // it's unclear who will connects first, worker or main thread
         // so everybody send connected
         this.postMessage('Connected');
+
+        // const where = globalThis.toString() !== '[object Window]' ? `[worker]` :``;
+        // this.on('message', message => console.log(`in${where}`, getMessageTypeStr(message.type), message));
+        // this.on('post', message => console.log(`out${where}`, getMessageTypeStr(message.type), message));
     }
 
     protected subscribe(eventName: keyof { message: WorkerMessage["data"] }) {
@@ -89,6 +93,7 @@ export class BaseStream extends EventEmitter<{
     public async send(message: WorkerMessage["data"]) {
         await this.Connected;
         const start = performance.now();
+        // this.emit('post', {...message});
         const transferables = Transferable.Split(message);
         const data = this.useBinary ? serialize(message) : message;
         // console.log('send:', message);
