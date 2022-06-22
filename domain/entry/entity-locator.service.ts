@@ -17,9 +17,9 @@ export class EntityLocator implements Locator {
         return this.cache.getOrAdd(path.join(':'), () => {
             const subStream = this.stream.getSubStream(path);
             return this.container.get<ModelLike<TState, TActions>>(modelType, [
-                    {provide: Stream, useValue: subStream},
-                    {provide: Locator, useValue: this.getSubLocator(path)}
-                ]);
+                {provide: Stream, useValue: subStream},
+                {provide: Locator, useValue: this.getSubLocator(path)}
+            ]);
         });
     }
 
@@ -29,16 +29,29 @@ export class EntityLocator implements Locator {
 }
 
 export class SubLocator implements Locator {
-    constructor(private locator: EntityLocator, private path: ModelPath) {
-
+    constructor(public rootLocator: EntityLocator, public path: ModelPath) {
     }
-
-    private cache: Map<string, { State; Actions }>;
 
     get<TState, TActions extends ModelAction>(path: ModelPath, modelType: {
         new(...args): { State: TState; Actions: TActions }
     }): ModelLike<TState, TActions> {
-        return this.locator.get(this.path.concat(path), modelType);
+
+        /**
+         * Может так оказаться, что запрашиваемая модель находится
+         * по пути относительно НЕ this.path этого SubLocator'а.
+         * Например, такие запросы могут приходить из Child-окна в Parent-окно.
+         */
+        let isOutside = this.path.length === 0;
+        if (!isOutside) {
+            isOutside = (
+                path.length >= this.path.length
+                && this.path.every((x, i) => x === path[i])
+            );
+        }
+        return this.rootLocator.get(
+            isOutside ? path : this.path.concat(path),
+            modelType
+        );
     }
 
 }

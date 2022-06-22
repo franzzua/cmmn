@@ -1,12 +1,12 @@
 import {BaseStream} from "./base.stream";
-import type {Model, ModelLike} from "../worker";
+import type {ModelLike} from "../worker";
 import {ModelAction, ModelPath, WorkerAction, WorkerMessage, WorkerMessageType} from "../shared/types";
 import {EventEmitter, Fn} from "@cmmn/core";
 import {BaseCell, Cell} from "@cmmn/cell";
 import {Locator} from "../shared/locator";
 
 /**
- * Работает на стороне Worker-thread.
+ * Работает на стороне Worker-thread / Main-thread Parent-окна.
  */
 export class Connector<TEvents extends {
     disconnect: void;
@@ -64,6 +64,9 @@ export class Connector<TEvents extends {
                         });
                     break;
                 }
+                case WorkerMessageType.Disconnect:
+                    this.emit('disconnect');
+                    break;
             }
         })
     }
@@ -78,7 +81,7 @@ export class Connector<TEvents extends {
         }
     }
 
-    private postMessage(message: WorkerMessage["data"]) {
+    protected postMessage(message: WorkerMessage["data"]) {
         this.baseStream.send(message);
     }
 
@@ -103,7 +106,6 @@ export class Connector<TEvents extends {
     }
 
     public dispose() {
-        this.emit('disconnect');
         this.baseStream.dispose();
         this.toDispose.forEach(f => f());
         super.dispose();

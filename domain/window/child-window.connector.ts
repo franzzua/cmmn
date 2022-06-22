@@ -1,12 +1,32 @@
-import {BaseStreamWindow} from '../streams/base-stream.window';
-import {ModelProxy} from "../entry/modelProxy";
-import {Connector} from "../streams/connector";
-import {ModelAction} from "../shared/types";
+import {BaseStreamWindow} from './base-stream.window';
+import {WorkerMessageType} from '../shared/types';
+import {Connector} from '../streams/connector';
+import {Locator} from '../shared/locator';
 
-export class ChildWindowConnector<TState, TActions extends ModelAction = {}> extends Connector{
-    constructor(child: Window, proxy: ModelProxy<TState, TActions>) {
-        super(new BaseStreamWindow(child), proxy.locator);
-        child.addEventListener('beforeunload', this.dispose)
-        this.on('disconnect', () => child.removeEventListener('beforeunload', this.dispose));
+/**
+ * Находится на стороне Main-thread Parent-окна.
+ * Выступает в роли прокси:
+ *   Child-окно <=> Parent-окно <=> Домен (locator -> WorkerStream)
+ *
+ * СХЕМА ОБМЕНА:
+ *   - [onMessage,    targetIn: Window Parent-окна    ] - сообщения из Child-окна(в основном Actions) перенаправляет -> в воркер.
+ *   - [postMessage, targetOut: WindowProxy Child-окна] - состояние из воркера перенаправляет -> в Child-окно.
+ * здесь WindowProxy - это то, что возвращает функция window.open(...).
+ */
+export class ChildWindowConnector extends Connector {
+
+    constructor(childId: any,
+                childWindowProxy: WindowProxy,
+                locator: Locator) {
+        super(
+            new BaseStreamWindow(window, childWindowProxy, childId),
+            locator
+        );
+        window.addEventListener('beforeunload', this.closeChild.bind(this));
     }
+
+    closeChild() {
+        this.postMessage({type: WorkerMessageType.Disconnect})
+    }
+
 }
