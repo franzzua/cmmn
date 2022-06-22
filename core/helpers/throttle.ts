@@ -7,6 +7,7 @@ export function throttle(func: Function, wait: number, options = {leading: false
         timeout = null;
         result = func.apply(context, args);
         if (!timeout) context = args = null;
+        return result;
     };
     return function () {
         var now = +new Date();
@@ -23,7 +24,15 @@ export function throttle(func: Function, wait: number, options = {leading: false
             result = func.apply(context, args);
             if (!timeout) context = args = null;
         } else if (!timeout && options.trailing !== false) {
-            timeout = setTimeout(later, remaining);
+            result = new Promise((resolve, reject) => {
+                timeout = setTimeout(() => {
+                    try {
+                        resolve(later());
+                    } catch (e) {
+                        reject(e);
+                    }
+                }, remaining);
+            });
         }
         return result;
     };
