@@ -58,7 +58,6 @@ export class Actualizator {
                 oldDependency.removeReaction(cell);
             }
         }
-        cell.state = CellState.Actual;
     }
 
     /* @internal */
