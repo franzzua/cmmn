@@ -47,6 +47,10 @@
       "external": [
         "@cmmn"
       ]
+    },
+    "lib": {
+      "input": "dist/esm/index.js",
+      "module": "es"
     }
   }
 }
