@@ -1,4 +1,4 @@
-import {BaseCell, CellState} from './baseCell';
+import {BaseCell} from './baseCell';
 
 export class Actualizator {
 
@@ -11,7 +11,9 @@ export class Actualizator {
 
     public static Up(cell: BaseCell) {
         if (Actualizator.queue) { // IF the cell update occurred as part of a microtask UpAll
-            Actualizator.queue.unshift(cell);
+            if (!Actualizator.queue.includes(cell)) {
+                Actualizator.queue.unshift(cell);
+            }
             return;
         }
         Actualizator.CellsToActualize.add(cell);
@@ -30,7 +32,7 @@ export class Actualizator {
     }
 
     public static Down(cell: BaseCell) {
-        if (cell.state === CellState.Actual)
+        if (cell.isActual)
             return;
         const oldDependencies = cell.dependencies;
         cell.dependencies = null;

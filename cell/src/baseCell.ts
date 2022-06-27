@@ -15,20 +15,20 @@ export class BaseCell<T = any> extends EventEmitter<{
     private reactions: Set<BaseCell<any>>; // cells dependent on this cell
     isPulling = false;
     isActive = false;
-    state: CellState;
+    isActual: boolean;
     debug = getDebugName(/BaseCell|Cell/);
 
     constructor(value: T | (() => T)) {
         super();
         if (typeof value === "function") {
             this.pull = value as () => T;
-            this.state = CellState.Dirty;
+            this.isActual = false;
         } else {
             this.value = value;
             if (value instanceof EventEmitterBase) {
                 value.on('change', this.onValueContentChanged);
             }
-            this.state = CellState.Actual;
+            this.isActual = true;
         }
     }
 
@@ -37,7 +37,7 @@ export class BaseCell<T = any> extends EventEmitter<{
             throw new CyclicalPullError(this);
         }
         Actualizator.imCalled(this);
-        if (this.state === CellState.Dirty) {
+        if (!this.isActual) {
             Actualizator.Down(this);
         }
         if (this.error)
@@ -74,7 +74,7 @@ export class BaseCell<T = any> extends EventEmitter<{
         this.error = error;
         const oldValue = this.value;
         this.value = value;
-        this.state = CellState.Actual;
+        this.isActual = true;
         if (oldValue !== value) {
             if (oldValue instanceof EventEmitterBase) {
                 oldValue.off('change', this.onValueContentChanged);
@@ -89,7 +89,7 @@ export class BaseCell<T = any> extends EventEmitter<{
             this.notifyChange(value, oldValue);
         if (this.reactions) {
             for (let reaction of this.reactions) {
-                reaction.state = CellState.Dirty;
+                reaction.isActual = false;
                 Actualizator.Up(reaction);
             }
         }
@@ -116,7 +116,7 @@ export class BaseCell<T = any> extends EventEmitter<{
             this.dependencies = null;
         }
         if (this.pull) {
-            this.state = CellState.Dirty;
+            this.isActual = false;
         }
     }
 
@@ -157,12 +157,12 @@ export class BaseCell<T = any> extends EventEmitter<{
 
 }
 
-export enum CellState {
-    // value is actual
-    Actual,
-    // value is not actual, maybe will update
-    Dirty,
-}
+// export const CellState = {
+//     // value is actual
+//     Actual: true,
+//     // value is not actual, maybe will update
+//     Dirty: false,
+// }
 
 export class CyclicalPullError extends Error {
     constructor(public cell: BaseCell) {
