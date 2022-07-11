@@ -26,7 +26,7 @@ export class ModelProxy<TState, TActions extends ModelAction = {}> implements Mo
     // @cell
     // protected isInvoking = false;
 
-    public get State(): TState {
+    public get State(): Readonly<TState> {
         return this.$state.get();
     }
 

@@ -31,7 +31,11 @@ export class Container {
         if (target === Container)
             return this as unknown as T;
         const existing = overrides.find(x => x.provide == target) ?? this.store.find(target);
-        return this.resolve(existing, overrides);
+        try {
+            return this.resolve(existing, overrides);
+        }catch (e){
+            throw new Error(`Could not resolve provider ${target}` +'\n' + e.message)
+        }
     }
 
     public static withProviders(...providers: ProviderOrValue[]) {
@@ -71,7 +75,7 @@ export class Container {
             }
             return instance;
         }
-        if (provider.useClass) {
+        if (provider.useClass && typeof provider.useClass === "function") {
             if (!provider.deps) {
 // console.warn('no deps in provider', provider.provide, provider.useClass);
                 provider.deps = (provider.useClass && provider.useClass.deps) || provider.provide.deps || [];
@@ -85,6 +89,6 @@ export class Container {
             }
             return instance;
         }
-        throw new Error('need useClass or useValue')
+        throw new Error(`Could not resolve provider ${JSON.stringify(provider)}`)
     }
 }

@@ -80,7 +80,7 @@ export class PointerListener extends EventListener<PointerEvents> {
     public dispose() {
         super.dispose();
         this.onDispose && this.onDispose();
-        this._position.dispose();
+        this._position?.dispose();
     }
 
     @bind

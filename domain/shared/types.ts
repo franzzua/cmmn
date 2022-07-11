@@ -69,7 +69,7 @@ export type WorkerMessageSerialized = Omit<WorkerMessage, "data"> & {
 //     id: string;
 // }
 export type ModelLike<TState, TActions extends ModelAction = {}> = {
-    get State(): TState;
+    get State(): Readonly<TState>;
     set State(state: TState);
     Actions: TActions;
 };

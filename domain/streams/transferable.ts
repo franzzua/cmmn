@@ -1,4 +1,4 @@
-import {Fn, registerSerializer} from "@cmmn/core";
+import {Fn} from "@cmmn/core";
 
 /**
  * Список объектов, которые могут быть Transferable:
@@ -6,8 +6,8 @@ import {Fn, registerSerializer} from "@cmmn/core";
  */
 const transferableConstructors = new Set([
     globalThis.OffscreenCanvas,
-    ImageBitmap, ArrayBuffer, ReadableStream, WritableStream,
-    TransformStream, MessagePort, globalThis.AudioData, globalThis.VideoFrame
+    globalThis.ImageBitmap, globalThis.ArrayBuffer, globalThis.ReadableStream, globalThis.WritableStream,
+    globalThis.TransformStream, globalThis.MessagePort, globalThis.AudioData, globalThis.VideoFrame
 ].filter(Fn.Ib));
 
 

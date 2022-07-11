@@ -110,7 +110,7 @@ export class ConfigCreator {
                 if (!this.options.minify) {
                     const importMaps = Object.fromEntries(this.options.external
                         .map(key => key.replace('.*', '/'))
-                        .map(key => [key, `/external/${this.options.alias[key] ?? key}`]));
+                        .map(key => [key, `/external/${this.options.alias?.[key] ?? key}`]));
                     inject = `<script type="importmap" >${JSON.stringify({
                         imports: importMaps
                     })}</script>` + inject;

@@ -12,7 +12,7 @@ export class EntityLocator implements Locator {
     private cache = new Map<string, ModelLike<any, any>>();
 
     public get<TState, TActions extends ModelAction>(path: ModelPath, modelType: {
-        new(...args): { State: TState, Actions: TActions };
+        new(...args): ModelLike<TState, TActions>;
     } = ModelProxy): ModelLike<TState, TActions> {
         return this.cache.getOrAdd(path.join(':'), () => {
             const subStream = this.stream.getSubStream(path);
