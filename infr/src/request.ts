@@ -49,8 +49,8 @@ export class Request<T> {
 async function readBody(response: Response) {
     if (response.status == 204)
         return undefined;
-    const length = +response.headers.get('content-length');
-    if (length == 0){
+    const length = response.headers.get('content-length');
+    if (length == "0"){
         return null;
     }
     const type = response.headers.get('content-type');
