@@ -6,8 +6,9 @@ import {string} from "rollup-plugin-string";
 import serve from 'rollup-plugin-serve';
 import builtins from 'rollup-plugin-node-builtins';
 import livereload from 'rollup-plugin-livereload';
+import copy from 'rollup-plugin-copy';
 import fs from "fs";
-import path from "path";
+import path, {join} from "path";
 import html from '@open-wc/rollup-plugin-html';
 import json from '@rollup/plugin-json';
 import alias from '@rollup/plugin-alias';
@@ -200,6 +201,14 @@ export class ConfigCreator {
                     find: key,
                     replacement: value
                 }))
+            }));
+        }
+        if (this.options.minify && this.options.mount){
+            const toCopy = Object.entries(this.options.mount).map(([to, from]) => {
+                return {src: from, dest: join(this.outDir, to)}
+            });
+            result.push(copy({
+                targets: toCopy
             }));
         }
         if (this.options.html || this.options.input.endsWith('.html')) {

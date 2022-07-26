@@ -64,6 +64,7 @@
     "postcss-modules": "*",
     "rollup": "^2",
     "rollup-plugin-livereload": "^2.0.5",
+    "rollup-plugin-copy": "3",
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "^1.4.0",
     "rollup-plugin-serve": "^1.1.0",
