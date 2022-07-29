@@ -280,7 +280,7 @@ export class ConfigCreator {
 
             },
             plugins: this.plugins,
-            treeshake: this.options.minify ? "smallest" : "safest",
+            treeshake: this.options.minify ? "recommended" : "safest",
             watch: {
                 buildDelay: 300,
                 clearScreen: false,
