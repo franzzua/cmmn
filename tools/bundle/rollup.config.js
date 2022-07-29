@@ -104,9 +104,9 @@ export class ConfigCreator {
             template: (x) => {
                 let inject = Object.keys(x.bundle.bundle).map(key => {
                     if (key.endsWith('css'))
-                        return `<link rel="stylesheet" href="/${key}" >`;
+                        return `<link rel="stylesheet" href="${this.options.base ?? ''}/${key}" >`;
                     if (key.endsWith('js'))
-                        return `<script type="module" defer src="/${key}"></script>`;
+                        return `<script type="module" defer src="${this.options.base ?? ''}/${key}"></script>`;
                 }).join('\n');
                 if (!this.options.minify) {
                     const importMaps = Object.fromEntries(this.options.external
@@ -115,6 +115,9 @@ export class ConfigCreator {
                     inject = `<script type="importmap" >${JSON.stringify({
                         imports: importMaps
                     })}</script>` + inject;
+                }
+                if (this.options.base){
+                    inject = `<base href="${this.options.base}">` + inject;
                 }
                 const html = fs.readFileSync(path.join(this.root, this.options.html), 'utf8')
                 return html.replace('</head>', inject + '</head>');
