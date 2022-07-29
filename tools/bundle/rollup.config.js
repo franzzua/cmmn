@@ -165,11 +165,12 @@ export class ConfigCreator {
             commonjs({
                 requireReturnsDefault: "namespace",
                 transformMixedEsModules: true,
-                defaultIsModuleExports: true
+                defaultIsModuleExports: true,
             }),
             nodeResolve({
                 browser: this.options.browser,
-                dedupe: this.options.dedupe || []
+                dedupe: this.options.dedupe || [],
+                preferBuiltins: true,
             }),
             sourcemaps(),
             builtins(),
@@ -280,6 +281,7 @@ export class ConfigCreator {
 
             },
             plugins: this.plugins,
+            preserveEntrySignatures: true,
             treeshake: this.options.minify ? "recommended" : "safest",
             watch: {
                 buildDelay: 300,
