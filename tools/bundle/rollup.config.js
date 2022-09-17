@@ -170,7 +170,6 @@ export class ConfigCreator {
             nodeResolve({
                 browser: this.options.browser,
                 dedupe: this.options.dedupe || [],
-                preferBuiltins: true,
             }),
             sourcemaps(),
             builtins(),
