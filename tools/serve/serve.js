@@ -3,6 +3,7 @@ import path from "path";
 import fs from "fs";
 import liveServer from "live-server";
 import {resolve, moduleResolve} from 'import-meta-resolve';
+import uri2path from "file-uri-to-path";
 
 export function serve(...options) {
     const configs = getConfigOptions({
@@ -56,7 +57,7 @@ const resolveESModule = (rootDir, configs) => async function (req, res, next) {
         ? await getFileName(refererModule, 'file://' + rootDir + '/package.json')
         : 'file://' + rootDir + '/package.json';
     try {
-        const file = (await getFileName(name, root)).substring('file:///'.length);
+        const file = uri2path(await getFileName(name, root));
         var stat = fs.statSync(file);
 
         res.writeHead(200, {
