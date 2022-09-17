@@ -42,7 +42,7 @@ export class ModelProxy<TState, TActions extends ModelAction = {}> implements Mo
     }
 
     public set State(state: TState) {
-        this.Diff(() => state);
+        this.$state.setLocal(state);
     }
 
     private asyncQueue = new AsyncQueue();

@@ -129,7 +129,7 @@ export namespace proxy {
                 if (!key) return null;
                 const definition = getDefinition(model);
                 const path = definition.getPath(key, this);
-                return definition.instances.getOrAdd(path.join(':'), () => this.locator.get(path, definition.target) as ModelProxy<any>);
+                return definition.instances.getOrAdd(path.join(':'), () => this.locator['rootLocator'].get(path, definition.target) as ModelProxy<any>);
             }
         });
     }
