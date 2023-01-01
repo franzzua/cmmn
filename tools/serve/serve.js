@@ -36,15 +36,23 @@ function getModuleName(path) {
 
 const mappingCache = {};
 
-async function getFileName(moduleName, root){
+// for resolve modules and files inside modules
+async function getFileName(moduleName, root) {
     // console.log(moduleName, root);
     if (moduleName in mappingCache)
         return mappingCache[moduleName];
-    const file = (await moduleResolve(moduleName, root, new Set(['module','import', 'browser', 'node'])));
-    mappingCache[moduleName] = file.href;
-    return file.href;
+    let file;
+    if (moduleName.match('\.[cm]?js')) {
+        const module = moduleName.match(/^(@[^/]+\/)?[^/]+/)[0];
+        const main = (await moduleResolve(module, root, new Set(['module', 'import', 'browser', 'main', 'node'])));
+        const file = main.href.replace(new RegExp('node_modules/' + module + '.*$'), 'node_modules/' + moduleName);
+        console.log(file)
+        return mappingCache[moduleName] = file;
+    } else {
+        const file = (await moduleResolve(moduleName, root, new Set(['module', 'import', 'browser', 'main', 'node'])));
+        return mappingCache[moduleName] = file.href;
+    }
 }
-
 const resolveESModule = (rootDir, configs) => async function (req, res, next) {
     const name = getModuleName(req.url);
     if (!name)
