@@ -33,7 +33,7 @@ export class FastifyWrapper {
 
     async start(port: number) {
         console.log('listen', port);
-        await this.fastify.listen(port);
+        await this.fastify.listen(port, '0.0.0.0');
         return this.fastify.server;
     }
 }
