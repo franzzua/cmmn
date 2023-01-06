@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/server",
-  "version": "1.6.26",
+  "version": "1.6.27",
   "description": "server libs for building rest api",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -22,8 +22,8 @@
     }
   },
   "devDependencies": {
-    "@cmmn/core": "^1.6.26",
-    "@cmmn/tools": "^1.6.26",
+    "@cmmn/core": "^1.6.27",
+    "@cmmn/tools": "^1.6.27",
     "fastify": "^3.27.0",
     "fastify-websocket": "^4.0.0"
   },
