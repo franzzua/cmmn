@@ -15,7 +15,7 @@ export function serve(...options) {
         const server = await liveServer.start({
             root: root,
             file: 'index.html',
-            port: x.port,
+            port: process.env.PORT || x.port,
             open: false,
             mount: x.mount && Object.entries(x.mount)
                 .map(([from, to]) => [from, path.resolve(x.rootDir, to)])

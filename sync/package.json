@@ -15,24 +15,24 @@
       "default": "./dist/bundle/index.js"
     },
     "./webrtc/client": {
-      "import": "./dist/webrtc.js",
-      "require": "./dist/webrtc.cjs",
-      "default": "./dist/webrtc.js"
+      "import": "./dist/bundle/webrtc.js",
+      "require": "./dist/bundle/webrtc.cjs",
+      "default": "./dist/bundle/webrtc.js"
     },
     "./webrtc/server": {
-      "import": "./dist/webrtc-server.js",
-      "require": "./dist/webrtc-server.cjs",
-      "default": "./dist/webrtc-server.js"
+      "import": "./dist/bundle/webrtc-server.js",
+      "require": "./dist/bundle/webrtc-server.cjs",
+      "default": "./dist/bundle/webrtc-server.js"
     },
     "./websocket/client": {
-      "import": "./dist/websocket.js",
-      "require": "./dist/websocket.cjs",
-      "default": "./dist/websocket.js"
+      "import": "./dist/bundle/websocket.js",
+      "require": "./dist/bundle/websocket.cjs",
+      "default": "./dist/bundle/websocket.js"
     },
     "./websocket/server": {
-      "import": "./dist/websocket-server.js",
-      "require": "./dist/websocket-server.cjs",
-      "default": "./dist/websocket-server.js"
+      "import": "./dist/bundle/websocket-server.js",
+      "require": "./dist/bundle/websocket-server.cjs",
+      "default": "./dist/bundle/websocket-server.js"
     },
     "./package.json": "./package.json"
   },

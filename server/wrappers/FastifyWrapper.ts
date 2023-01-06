@@ -1,4 +1,4 @@
-import {FastifyInstance, HTTPMethods} from "fastify";
+import type {FastifyInstance, HTTPMethods} from "fastify";
 import {RouteInfo} from "../decorators/controller";
 import {Container} from "@cmmn/core";
 import wsPlugin from "fastify-websocket";
@@ -17,8 +17,23 @@ export class FastifyWrapper {
                 };
                 if (route.options.webSocket){
                     console.warn('register web socket', path);
-                    // @ts-ignore
-                    fastify.get(path, {websocket: true}, handler);
+                    fastify.register(function (fastify) {
+                        fastify.get(path, {
+                            // @ts-ignore
+                            websocket: true,
+                            exposeHeadRoute: false
+                        }, function handler(connection, request) {
+                            try {
+                                const instance = container.get(controller);
+                                route.action(instance)(connection, request);
+                            } catch (e) {
+                                // @ts-ignore
+                                connection.send('exception: ' + e.message);
+                                // @ts-ignore
+                                connection.close();
+                            }
+                        });
+                    });
                 }else {
                     console.warn(`register ${route.method}: ${path}`);
                     fastify.route({
