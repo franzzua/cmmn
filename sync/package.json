@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/sync",
-  "version": "1.6.27",
+  "version": "1.6.28",
   "description": "collaborative with yjs",
   "publishConfig": {
     "access": "public"
