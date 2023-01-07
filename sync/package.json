@@ -66,11 +66,8 @@
   "dependencies": {
     "@cmmn/cell": "^1.6.27",
     "@cmmn/core": "^1.6.27",
-    "simple-peer": "9.x.x",
     "y-indexeddb": "9.x.x",
     "y-protocols": "1.x.x",
-    "y-websocket": "1.x.x",
-    "y-websocket-server": "1.x.x",
     "yjs": "13.x.x"
   },
   "devDependencies": {

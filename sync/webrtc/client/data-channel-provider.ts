@@ -1,7 +1,7 @@
 import {UserInfo} from "./signaling-connection";
-import {SignalData} from "simple-peer";
 import {EventEmitter} from "../shared/observable";
 import {PeerConnection} from "./peer-connection";
+import { SignalData } from "../shared/types";
 
 export class DataChannelProvider {
 
