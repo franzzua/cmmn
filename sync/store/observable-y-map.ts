@@ -10,8 +10,8 @@ export class ObservableYMap<TValue> extends EventEmitter<{
 
     public subscribe() {
         this.yMap.observe((event, transaction) => {
-            // if (event.transaction.local)
-            //     return;
+            if (event.transaction.local)
+                return;
             for (let [id, change] of event.changes.keys) {
                 switch (change.action) {
                     case "add":
@@ -38,6 +38,7 @@ export class ObservableYMap<TValue> extends EventEmitter<{
     }
 
     private emitChange(type: 'add' | 'update' | 'delete', key, value, prev) {
+        console.log(type, key, value, prev);
         super.emit('change', {
             type,
             key,

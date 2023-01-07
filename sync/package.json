@@ -74,7 +74,8 @@
     "yjs": "13.x.x"
   },
   "devDependencies": {
-    "@cmmn/tools": "^1.6.27"
+    "@cmmn/tools": "^1.6.27",
+    "@types/ws": "^8.5.4"
   },
   "author": "",
   "license": "ISC",

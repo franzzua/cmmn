@@ -1,23 +1,16 @@
 import type {FastifyInstance, HTTPMethods} from "fastify";
 import {RouteInfo} from "../decorators/controller";
 import {Container} from "@cmmn/core";
-import wsPlugin from "fastify-websocket";
+
 export class FastifyWrapper {
 
     constructor(private fastify: FastifyInstance, private container: Container) {
-        fastify.register(wsPlugin);
-
         for (let [controller, info] of RouteInfo) {
             for (let route of info.routes) {
                 const path = [info.baseRoute, route.route].filter(x => x).join('/');
-
-                async function handler(request, reply) {
-                    const instance = container.get(controller);
-                    return await route.action(instance)(request, reply);
-                };
                 if (route.options.webSocket){
                     console.warn('register web socket', path);
-                    fastify.register(function (fastify) {
+                    fastify.register(async function (fastify) {
                         fastify.get(path, {
                             // @ts-ignore
                             websocket: true,
@@ -35,6 +28,10 @@ export class FastifyWrapper {
                         });
                     });
                 }else {
+                    function handler(request, reply) {
+                        const instance = container.get(controller);
+                        return route.action(instance)(request, reply);
+                    }
                     console.warn(`register ${route.method}: ${path}`);
                     fastify.route({
                         url: path, handler,

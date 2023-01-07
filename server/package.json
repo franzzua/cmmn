@@ -24,8 +24,7 @@
   "devDependencies": {
     "@cmmn/core": "^1.6.27",
     "@cmmn/tools": "^1.6.27",
-    "fastify": "^3.27.0",
-    "fastify-websocket": "^4.0.0"
+    "fastify": "4"
   },
   "type": "module",
   "cmmn": {

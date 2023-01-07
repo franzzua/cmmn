@@ -1,5 +1,4 @@
-import { DocAdapter } from "./shared/doc-adapter";
-import { TokenParser } from "./shared/token-parser";
-import {SyncStore} from "./store/sync.store";
-
-export {SyncStore, TokenParser, DocAdapter};
+export * from "./shared";
+export {SyncStore} from "./store/sync.store";
+export {LocalSyncProvider} from "./store/local.sync-provider";
+export {ObservableYMap} from "./store/observable-y-map";
