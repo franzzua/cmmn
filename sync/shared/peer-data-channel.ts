@@ -1,4 +1,4 @@
-import {EventEmitter} from "../webrtc/shared/observable";
+import {EventEmitter} from "@cmmn/core";
 import {MessageType} from "../webrtc/shared/types";
 
 export abstract class PeerDataChannel extends EventEmitter<{

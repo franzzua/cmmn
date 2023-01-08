@@ -4,7 +4,7 @@ import { MessageType } from "../shared/types";
 
 export class PeerConnection extends PeerDataChannel {
 
-    public constructor(private dataChannel: RTCDataChannel, private user: UserInfo) {
+    public constructor(private dataChannel: RTCDataChannel, public user: UserInfo) {
         super(user.accessMode);
         console.log('connected', user.user, user.accessMode, dataChannel.label);
         let type: MessageType = null;

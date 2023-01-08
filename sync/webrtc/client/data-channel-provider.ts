@@ -74,7 +74,7 @@ export class DataChannelProvider {
                 signal: offer,
                 to: user.user
             });
-            const answer = await fromFirstEvent(user.signaling, 'signal');
+            const answer = await user.signaling.onceAsync('signal');
             if (!(answer.from.user == user.user && answer.signal.type == 'answer')) {
                 throw new Error();
             }

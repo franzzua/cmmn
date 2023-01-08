@@ -3,16 +3,20 @@ import {bind} from '@cmmn/core';
 import {SignalClientMessage} from "../shared/types";
 import {Room, RoomOptions} from "./room";
 import {DataChannelProvider} from "./data-channel-provider";
+import {cell, Cell} from "@cmmn/cell";
 
+export type ConnectionState = 'disconnected' | 'connecting' | 'connected';
 export class WebRtcProvider {
     private readonly signalingConnections: ReadonlyArray<SignalingConnection>;
     private readonly rooms: Map<string, Room> = new Map<string, Room>();
     private peerInitiator = new DataChannelProvider({
         ...this.rtcOptions
-    })
+    });
+    @cell
+    public ServerState: Readonly<Record<string, ConnectionState>> = Object.fromEntries(this.signallingServers.map(x => [x, 'disconnected']));
 
     constructor(
-        signallingServers: string[],
+        private signallingServers: string[],
         private rtcOptions: RTCConfiguration = undefined
     ) {
         this.signalingConnections = signallingServers.map(this.createSignallingConnection)
@@ -21,8 +25,7 @@ export class WebRtcProvider {
     public joinRoom(roomName: string, options: RoomOptions) {
         const room = new Room(roomName, options, this.peerInitiator);
         this.rooms.set(roomName, room);
-        const regInfo = room.getRegistrationInfo();
-        this.signalingConnections.forEach(x => x.register(regInfo));
+        this.signalingConnections.forEach(x => room.addSignalingConnection(x));
         return room;
     }
 
@@ -41,7 +44,7 @@ export class WebRtcProvider {
 
     @bind
     private onAnnounce(msg: AnnounceEvent) {
-        this.rooms.get(msg.room).addUsers(msg.users);
+        this.rooms.get(msg.room).setUsers(msg.users);
     }
 
     /** @internal **/
@@ -51,9 +54,21 @@ export class WebRtcProvider {
 
     @bind
     private createSignallingConnection(url: string): SignalingConnection {
-        const connection = new SignalingConnection(new WebSocket(url));
+        const connection = new SignalingConnection(url);
         connection.on('signal', this.onSignal);
         connection.on('announce', this.onAnnounce);
+        connection.on('disconnected', () => this.ServerState = {
+            ...this.ServerState,
+            [url]: 'disconnected'
+        });
+        connection.on('connected', () => this.ServerState = {
+            ...this.ServerState,
+            [url]: 'connected'
+        });
+        connection.on('connecting', () => this.ServerState = {
+            ...this.ServerState,
+            [url]: 'connected'
+        });
         return connection;
     }
 

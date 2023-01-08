@@ -1,8 +1,8 @@
-import {WebSocketConnection} from "../../shared/web-socket-connection";
+import {ServerSocketConnection} from "../../shared/server-socket-connection";
 import {SignalingMessage, SignalServerMessage} from "../shared/types";
 import {bind} from "@cmmn/core";
 
-export class SignalingConnection extends WebSocketConnection<{
+export class SignalingConnection extends ServerSocketConnection<{
     signal: SignalServerMessage
 }>{
 

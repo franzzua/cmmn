@@ -5,7 +5,7 @@ import {ObservableYMap} from "./observable-y-map";
 import {BaseCell, Cell, cell} from "@cmmn/cell";
 import {IndexeddbPersistence} from "y-indexeddb";
 import {ISyncProvider} from "../shared/provider";
-import { compare } from "@cmmn/core";
+import {compare} from "@cmmn/core";
 
 export class SyncStore<TEntity> {
     private doc = new Doc();
@@ -55,6 +55,12 @@ export class SyncStore<TEntity> {
             }
         });
         return cell;
+    }
+
+
+    public dispose(){
+        this.doc.destroy();
+        this.adapter.dispose();
     }
 }
 

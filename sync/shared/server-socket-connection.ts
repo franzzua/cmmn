@@ -1,7 +1,7 @@
 import {WebSocket} from "ws";
 import {EventEmitter} from "../webrtc/shared/observable";
 
-export abstract class WebSocketConnection<TEvents> extends EventEmitter<TEvents & {
+export abstract class ServerSocketConnection<TEvents> extends EventEmitter<TEvents & {
     close: void
 }> {
     constructor(private socket: WebSocket,

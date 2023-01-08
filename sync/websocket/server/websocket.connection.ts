@@ -1,8 +1,8 @@
 import { bind } from "@cmmn/core";
-import {WebSocketConnection} from "../../shared/web-socket-connection";
+import {ServerSocketConnection} from "../../shared/server-socket-connection";
 import {WebSocketDataMessage} from "../shared/types";
 
-export class WebsocketConnection extends WebSocketConnection<{
+export class WebsocketConnection extends ServerSocketConnection<{
     message: WebSocketDataMessage
 }>{
 

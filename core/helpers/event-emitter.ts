@@ -141,7 +141,7 @@ export class EventListener<TEvents extends {
     [key in string]: any | void;
 }> extends StoppableEventEmitter<TEvents> {
 
-    constructor(private target: EventTarget) {
+    constructor(private target: Omit<EventTarget, "dispatchEvent">) {
         super();
     }
 

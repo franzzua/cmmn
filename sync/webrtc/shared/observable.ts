@@ -13,7 +13,7 @@ export class EventEmitter<T extends {
             this.off(event, onceListener);
             listener(data);
         }
-        this.on(event, onceListener);
+        return this.on(event, onceListener);
     }
 
     public off<TEventName extends keyof T>(event: TEventName, listener: (data: T[TEventName]) => void | any) {

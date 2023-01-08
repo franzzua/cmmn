@@ -1,1 +1,1 @@
-export {WebRtcProvider} from "./web-rtc-provider";
+export {WebRtcProvider, ConnectionState} from "./web-rtc-provider";

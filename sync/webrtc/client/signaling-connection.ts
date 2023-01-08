@@ -1,52 +1,30 @@
 import {
     SignalClientMessage,
-    SignalingMessage,
     SignalingRegistrationInfo,
     SignalingServerMessage,
     SignalData
 } from "../shared/types";
 import {bind} from "@cmmn/core";
-import {EventEmitter} from "../shared/observable";
+import {ClientWebsocketConnection} from "../../shared/client-websocket-connection";
 
-export class SignalingConnection extends EventEmitter<{
-    signal: SignalEvent,
-    announce: AnnounceEvent
+export class SignalingConnection extends ClientWebsocketConnection<{
+    signal: SignalEvent;
+    announce: AnnounceEvent;
+    error: Event;
 }> {
 
-
-    private connected$ = new Promise(resolve => this.socket.onopen = resolve);
-
-
-    constructor(private socket: WebSocket) {
-        super();
-        this.socket.onmessage = this.onMessage;
-        this.socket.onclose = console.log;
-        this.socket.onerror = console.log;
-    }
-
-    public async connect() {
-        return await this.connected$;
+    constructor(url: string) {
+        super(url);
+        this.reconnect();
     }
 
     public async disconnect() {
     }
 
-    private encoder = new TextEncoder();
-
-    private send(data: SignalingMessage) {
-        if (this.socket.readyState == WebSocket.CLOSED ||
-            this.socket.readyState == WebSocket.CLOSING) {
-            console.log('closing or closed state')
-            return;
-        }
-        // const buffer = this.encoder.encode(JSON.stringify(data));
-        this.socket.send(JSON.stringify(data));
-    }
-
     private decoder = new TextDecoder();
 
     @bind
-    private onMessage(event: MessageEvent) {
+    protected onMessage(event: MessageEvent) {
         const stringData = typeof event.data === "string" ? event.data : this.decoder.decode(event.data);
         const message = JSON.parse(stringData) as SignalingServerMessage;
         switch (message.type) {
@@ -71,9 +49,7 @@ export class SignalingConnection extends EventEmitter<{
                 break;
         }
     };
-
     public async register(info: SignalingRegistrationInfo) {
-        await this.connected$;
         this.send({
             type: 'register',
             info
@@ -83,6 +59,7 @@ export class SignalingConnection extends EventEmitter<{
     public sendSignal(msg: SignalClientMessage) {
         this.send(msg);
     }
+
 }
 
 export type SignalEvent = {
