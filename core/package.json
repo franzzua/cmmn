@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/core",
-  "version": "1.6.29",
+  "version": "1.7.0",
   "repository": {
     "url": "https://github.com/franzzua/cmmn/tree/master/core"
   },
@@ -32,7 +32,7 @@
     "bundle": "cmmn bundle --watch"
   },
   "devDependencies": {
-    "@cmmn/tools": "^1.6.27",
+    "@cmmn/tools": "^1.7.0",
     "crc-32": "1.x.x"
   },
   "dependencies": {
