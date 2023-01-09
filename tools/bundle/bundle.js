@@ -27,9 +27,9 @@ export async function bundle(...options) {
 
             }
         }
+    }else {
+        await runWatching(configs)
     }
-
-    await runWatching(configs)
 }
 
 async function runWatching(configs){
