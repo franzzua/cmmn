@@ -27,13 +27,18 @@ export async function bundle(...options) {
 
             }
         }
-        return;
     }
-    let missed = await checkMissed(configs);
+
+    await runWatching(configs)
+}
+
+async function runWatching(configs){
     let counter = 0;
-    while(missed.length){
+    while(true){
         console.log('Check input existence');
-        let missed = await checkMissed(configs);
+        const missed = await checkMissed(configs);
+        if (!missed.length)
+            break;
         console.log('missed files:');
         missed.forEach(x => console.log('\t', relative(process.cwd(), x)));
         counter = Math.min(++counter, 5);
@@ -74,6 +79,11 @@ export async function bundle(...options) {
                         break;
                     case 'MISSING_EXPORT':
                         console.warn('MISSING_EXPORT: \t', event.error.message);
+                        break;
+                    case 'UNRESOLVED_ENTRY':
+                        console.warn('UNRESOLVED_ENTRY:\t',event.error.message);
+                        watcher.close();
+                        runWatching(configs);
                         break;
                     default:
                         console.warn('Unknown error:', event.error.code);

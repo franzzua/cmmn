@@ -3,7 +3,6 @@ import {platform} from "os";
 
 export function spawn(...options){
     const commands = [];
-    console.log(options)
     for (let i = 0; i < options.length; i++) {
         if (options[i].startsWith('-')){
             commands[commands.length - 1].push(options[i]);
@@ -12,6 +11,7 @@ export function spawn(...options){
         }
     }
     for (let command of commands) {
+        console.log('run: ', command.join(' '));
         spawnCommand('npx cmmn '+command.join(' '), command[0]+'\t', {
             color: 'red',
             shell: true,
