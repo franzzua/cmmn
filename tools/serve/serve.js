@@ -9,13 +9,13 @@ export function serve(...options) {
     const configs = getConfigOptions({
         project: options.includes('-b'),
     });
-    configs.filter(x => x.port).forEach(async x => {
+    configs.filter(x => x.port).forEach(async (x,i) => {
         const absRoot = path.join(x.rootDir, x.outDir ?? 'dist/bundle');
         const root = path.relative(process.cwd(), absRoot);
         const server = await liveServer.start({
             root: root,
             file: 'index.html',
-            port: process.env.PORT || x.port,
+            port: process.env.PORT ? (process.env.PORT + i) : x.port,
             open: false,
             mount: x.mount && Object.entries(x.mount)
                 .map(([from, to]) => [from, path.resolve(x.rootDir, to)])

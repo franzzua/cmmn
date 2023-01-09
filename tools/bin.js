@@ -4,11 +4,12 @@ import {bundle} from "./bundle/bundle.js";
 import {serve} from "./serve/serve.js";
 import {compile} from "./compile/compile.js";
 import {gen} from "./gen/gen.js";
+import {spawn} from "./spawn/index.js";
 
 const [action, ...args] = process.argv.slice(2);
 
 const actions = {
-    bundle, compile, gen, serve
+    bundle, compile, gen, serve, spawn
 }
 
 if (action in actions) {

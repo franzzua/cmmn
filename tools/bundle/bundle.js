@@ -2,7 +2,7 @@ import {rollup, watch} from "rollup";
 import {getConfigOptions} from "./getConfigs.js";
 import {ConfigCreator} from "./rollup.config.js";
 import fs from "fs";
-import path from "path";
+import path, {relative} from "path";
 
 export async function bundle(...options) {
     const configOptions = getConfigOptions({
@@ -28,6 +28,18 @@ export async function bundle(...options) {
             }
         }
         return;
+    }
+    let missed = await checkMissed(configs);
+    let counter = 0;
+    while(missed.length){
+        console.log('Check input existence');
+        let missed = await checkMissed(configs);
+        console.log('missed files:');
+        missed.forEach(x => console.log('\t', relative(process.cwd(), x)));
+        counter = Math.min(++counter, 5);
+        console.log(`wait ${counter} sec...`);
+        await new Promise(resolve => setTimeout(resolve, 1000 * counter));
+        console.clear();
     }
     const watcher = watch(configs);
     watcher.on('event', (event) => {
@@ -73,4 +85,21 @@ export async function bundle(...options) {
                 console.warn('WARNING:', event)
         }
     });
+}
+
+/**
+ * @param configs {RollupOptions[]}
+ */
+async function checkMissed(configs) {
+    const missed = [];
+    for (let config of configs) {
+        for (let key in config.input) {
+            try {
+                await fs.promises.stat(config.input[key]);
+            }catch (e) {
+                missed.push(config.input[key]);
+            }
+        }
+    }
+    return missed;
 }
