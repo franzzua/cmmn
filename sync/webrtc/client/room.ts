@@ -29,6 +29,9 @@ export class Room {
         });
         connection.once('disconnected', () => {
         });
+        if (connection.isConnected){
+            connection.register(this.getRegistrationInfo());
+        }
     }
 
 

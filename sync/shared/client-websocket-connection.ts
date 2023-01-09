@@ -15,6 +15,7 @@ export abstract class ClientWebsocketConnection<TEvents> extends EventEmitter<On
     protected ws!: WebSocket;
     private listener!: EventListener<WebSocketEventMap>;
     public connected$: Promise<Event>;
+    public isConnected: boolean = false;
     private reconnectCount = 0;
 
     protected constructor(protected url: string) {
@@ -31,6 +32,7 @@ export abstract class ClientWebsocketConnection<TEvents> extends EventEmitter<On
             this.listener.on('message', this.onMessage);
             // this.listener.on('error', e => this.emit('error', new Error(`Unknown error`)));
             this.listener.once('close', e => {
+                this.isConnected = false;
                 const reason = getWebSocketCloseReason(e);
                 this.emit('disconnected');
                 this.emit('error', new Error(reason));
@@ -38,7 +40,10 @@ export abstract class ClientWebsocketConnection<TEvents> extends EventEmitter<On
                 Fn.asyncDelay(100 * Math.min(this.reconnectCount**2, 600)).then(this.reconnect);
             });
             this.connected$ = this.listener.onceAsync('open');
-            this.connected$.then(() => this.emit('connected'));
+            this.connected$.then(() =>{
+                this.emit('connected');
+                this.isConnected = true;
+            });
         }catch (e){
             this.emit('error', new Error(e.message));
             Fn.asyncDelay(100 *Math.min(this.reconnectCount**2, 600)).then(this.reconnect);

@@ -26,7 +26,10 @@ export class WebrtcController {
                 room.addClient(connection);
                 connections.set(connection, room);
             } catch (e) {
-                return;
+                socket.send(JSON.stringify({
+                    type: 'exception',
+                    message: e.message
+                }));
             }
         });
     }
@@ -42,7 +45,7 @@ export class WebrtcController {
         }
         const token = await this.parser.Parse(message.info.token);
         if (!token) {
-            throw new Error('unauthorized');
+            throw new Error(`Unauthorized access ${message.info.room}`);
         }
         return ({
             room: message.info.room, token: token
