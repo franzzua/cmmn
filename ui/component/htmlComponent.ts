@@ -12,26 +12,13 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
     protected Children: Element[] = Array.from(this.element.children)
         .filter(x => x instanceof Element);
 
-    static removing = false;
-
     /**
      * Removes children element and sets into this.Children
      * So you can render it somewhere inside element
      */
     private DetachChildren() {
-        // Hack: if there are some HtmlComponents in Children
-        // their connectedCallbacks will invoke on removeChild (strange but in every browser)
-        if (HtmlComponent.removing)
-            return;
-        if (this.Children.length) {
-            HtmlComponent.removing = true;
-            try {
-                for (let element of this.Children) {
-                    element.remove();
-                }
-            } finally {
-                HtmlComponent.removing = false;
-            }
+        for (let element of this.Children) {
+            element.remove();
         }
     }
 
@@ -54,12 +41,6 @@ export abstract class HtmlComponent<TState, TEvents extends IEvents = {}> extend
             return;
         await this.renderer.render(state);
         this.$render.set(this.$render.get() + 1);
-    }
-
-    public disconnectedCallback() {
-        if (HtmlComponent.removing)
-            return;
-        super.disconnectedCallback();
     }
 
     $state: Cell<TState | Promise<TState>> = new Cell(() => this.State, {
