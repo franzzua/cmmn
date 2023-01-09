@@ -10,7 +10,6 @@ export class ServerRoom {
 
     }
 
-
     public addClient(connection: SignalingConnection) {
         this.users.forEach(c => c.send({
             type: "announce",
@@ -30,8 +29,9 @@ export class ServerRoom {
             this.users.delete(connection.userInfo.user);
             for (let userConnection of this.users.values()) {
                 userConnection.send({
-                    type: 'disconnected',
-                    user: connection.userInfo.user
+                    type: "announce",
+                    room: this.name,
+                    users: Array.from(this.users.values()).filter(x => x != userConnection).map(x => x.userInfo)
                 });
             }
         })

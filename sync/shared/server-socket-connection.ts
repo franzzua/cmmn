@@ -11,7 +11,10 @@ export abstract class ServerSocketConnection<TEvents> extends EventEmitter<TEven
         super();
         this.listenPingPong();
         this.socket.on('message', this.onMessage);
-        this.socket.on('close', () => this.emit('close'));
+        this.socket.on('close', () => {
+            this.emit('close');
+            this.dispose();
+        });
     }
 
     private listenPingPong() {
