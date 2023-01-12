@@ -54,7 +54,7 @@ export class DataChannelProvider {
             //     id: 0
             // })
             // console.log('create channel', e.signal.id);
-            onPeerConnection(new PeerConnection(e.channel, user), e.channel.label.split('-').pop());
+            onPeerConnection(new PeerConnection(e.channel, user, true), e.channel.label.split('-').pop());
         })
         return peerConnection;
         //
@@ -127,7 +127,7 @@ export class DataChannelProvider {
         const dc = await this.initiate(user, room, currentUser);
         if (!dc)
             debugger;
-        return new PeerConnection(dc, user);
+        return new PeerConnection(dc, user, false);
     }
 
     public dispose() {
