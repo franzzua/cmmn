@@ -46,7 +46,6 @@ export class BaseStream extends EventEmitter<{
     protected onMessage(event: MessageEvent<WorkerMessage | WorkerMessageSerialized | 'Connected'>) {
         if (typeof event.data === "string") {
             if (!this.Connected.isResolved) {
-                console.log('Connected', this.target);
                 this.Connected.resolve()
                 this.postMessage('Connected');
             }

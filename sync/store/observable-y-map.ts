@@ -38,7 +38,6 @@ export class ObservableYMap<TValue> extends EventEmitter<{
     }
 
     private emitChange(type: 'add' | 'update' | 'delete', key, value, prev) {
-        console.log(type, key, value, prev);
         super.emit('change', {
             type,
             key,
