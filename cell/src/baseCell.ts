@@ -26,7 +26,7 @@ export class BaseCell<T = any> extends EventEmitter<{
         } else {
             this.value = value;
             if (value instanceof EventEmitterBase) {
-                value.on('change', this.onValueContentChanged);
+                (value as any).on('change', this.onValueContentChanged);
             }
             this.isActual = true;
         }

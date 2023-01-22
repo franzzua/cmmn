@@ -2,8 +2,9 @@
   "extends": "@cmmn/tools/compile/tsconfig.json",
   "compilerOptions": {
     "types": [
-      "node"
-    ]
+      "node",
+    ],
+    "typeRoots": ["typings.d.ts"]
   },
   "references": [
     {

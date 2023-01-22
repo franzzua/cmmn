@@ -6,9 +6,9 @@ export class PeerConnection extends PeerDataChannel {
 
     public constructor(private dataChannel: RTCDataChannel, public user: UserInfo, public incoming: boolean) {
         super(user.accessMode);
-        console.log('connected', user.user, user.accessMode, dataChannel.label);
+        // console.log('connected', user.user, user.accessMode, dataChannel.label);
         let type: MessageType = null;
-        this.dataChannel.addEventListener('close', () => this.emit('close'));
+        this.dataChannel.addEventListener('close', () => this.dispose());
         this.dataChannel.addEventListener('message', event => {
             const data: Uint8Array = new Uint8Array(event.data);
             if (type == null)
@@ -29,10 +29,19 @@ export class PeerConnection extends PeerDataChannel {
         this.dataChannel.send(Uint8Array.of(type));
         this.dataChannel.send(data);
     }
+    //
+    // public disconnect() {
+    //     super.disconnect();
+    // }
 
-    public disconnect() {
+    private isDisposing = false;
+    public dispose(){
+        if (this.isDisposing)
+            return;
+        this.isDisposing = true;
         this.dataChannel.close();
-        super.disconnect();
+        this.emit('close');
+        super.dispose();
     }
 }
 

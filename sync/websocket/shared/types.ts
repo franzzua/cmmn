@@ -1,5 +1,3 @@
-import {UserInfo} from "../../shared/token-parser";
-
 export type WebSocketRegisterMessage = {
     type: 'register';
     token: string;

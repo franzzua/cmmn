@@ -33,6 +33,7 @@ export class Room extends EventEmitter<{
             connection.register(this.getRegistrationInfo());
         });
         connection.once('disconnected', () => {
+            // disconnected from server... but connected to users? ok.
         });
         if (connection.isConnected) {
             connection.register(this.getRegistrationInfo());
@@ -83,9 +84,10 @@ export class Room extends EventEmitter<{
             for (let adapter of this.adapters) {
                 adapter.disconnect(connection);
             }
-            this.network.setDisconnected(connection.user.user, connection.incoming);
+            if (this.network.isConnectedTo(connection.user.user)) {
+                this.network.setDisconnected(connection.user.user, connection.incoming);
+            }
             this.connections.delete(connection);
-            connection.dispose();
             if (!connection.incoming && this.network.isConnectedTo(connection.user.user)) {
                 this.connectTo(connection.user);
             }

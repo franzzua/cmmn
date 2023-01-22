@@ -22,10 +22,10 @@ export abstract class PeerDataChannel extends EventEmitter<{
         }
         super.emit(type, data);
     }
-
-    public disconnect(){
-        super.dispose();
-    }
+    //
+    // public disconnect(){
+    //     super.dispose();
+    // }
 }
 
 export type PeerDataChannelMessage = {}

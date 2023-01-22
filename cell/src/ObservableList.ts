@@ -48,10 +48,25 @@ export class ObservableList<T> extends EventEmitter<{
         this.removeRange(index,1);
         this.emitChange();
     }
+    remove(item: T){
+        this.removeAt(this.items.indexOf(item));
+    }
+    splice(index: number, deleteCnt: number, ...items: T[]){
+        this.items.splice(index, deleteCnt, ...items);
+        this.emitChange();
+    }
     clear(){
         this.items.length = 0;
         this.emitChange();
     }
 
+    filter: Array<T>["filter"] = this.items.filter.bind(this.items);
+    indexOf: Array<T>["indexOf"] = this.items.indexOf.bind(this.items);
+    map: Array<T>["map"] = this.items.map.bind(this.items);
+    forEach: Array<T>["forEach"] = this.items.forEach.bind(this.items);
+    reduce: Array<T>["reduce"] = this.items.reduce.bind(this.items);
+    every: Array<T>["every"] = this.items.every.bind(this.items);
+    some: Array<T>["some"] = this.items.some.bind(this.items);
+    at: Array<T>["at"] = this.items.at.bind(this.items);
 
 }

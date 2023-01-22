@@ -21,6 +21,7 @@ export class DocAdapter extends EventEmitter<{
     }
 
     public connect(connection: PeerDataChannel) {
+        console.log('doc connected to', connection.accessMode);
         const onDispose = Fn.pipe(
             connection.on(MessageType.UpdateRequest, stateVector => {
                 connection.send(MessageType.Update, Y.encodeStateAsUpdate(this.doc, stateVector));
