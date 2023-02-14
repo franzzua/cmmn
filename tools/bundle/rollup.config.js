@@ -200,7 +200,7 @@ export class ConfigCreator {
             result.unshift(alias({
                 entries: Object.entries(this.options.alias).map(([key, value]) => ({
                     find: key,
-                    replacement: value
+                    replacement: value.replace('<root>', this.root)
                 }))
             }));
         }
