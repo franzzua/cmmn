@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/core",
-  "version": "1.7.4",
+  "version": "1.7.5",
   "repository": {
     "url": "https://github.com/franzzua/cmmn/tree/master/core"
   },
@@ -32,7 +32,7 @@
     "bundle": "cmmn bundle --watch"
   },
   "devDependencies": {
-    "@cmmn/tools": "^1.7.3",
+    "@cmmn/tools": "^1.7.5",
     "crc-32": "1.x.x"
   },
   "dependencies": {
@@ -50,7 +50,7 @@
       "module": "es,cjs",
       "external": [
         "luxon",
-        "msgpackr\/pack",
+        "msgpackr/pack",
         "@cmmn"
       ]
     }
