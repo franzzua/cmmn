@@ -61,7 +61,7 @@
       "input": "dist/esm/min.js",
       "module": "es",
       "alias": {
-        "@cmmn/core": "./dist/esm/core-polyfill/index.js"
+        "@cmmn/core": "./core-polyfill/index.js"
       }
     }
   }
