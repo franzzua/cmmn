@@ -1,4 +1,6 @@
 import {compare, DeepPartial, EventEmitter, Fn} from "@cmmn/core";
+import {ICellOptions} from "./cell";
+import {CellDecorator, getCell} from "./decorators";
 
 export class ObservableObject<T> extends EventEmitter<{
     change: { oldValue: T, value: T, keys?: Array<(keyof T) & string> }
@@ -35,3 +37,25 @@ export class ObservableObject<T> extends EventEmitter<{
         this.emit('change', data)
     }
 }
+
+
+
+export const cellObject: CellDecorator = ((options: ICellOptions<any>, prop?, descr?) => {
+    if (prop !== undefined) {
+        return cellObject(null)(options, prop, descr);
+    }
+    return function cellDecorator(target, prop, descr) {
+        const descriptor = {
+            get() {
+                const cell = getCell<ObservableObject<any>>(this, prop, descr, options, new ObservableObject<any>(null));
+                return cell.get().Value;
+            },
+            set(value) {
+                const cell = getCell<ObservableObject<any>>(this, prop, descr, options, new ObservableObject<any>(null));
+                cell.get().Set(value);
+            },
+            configurable: true
+        };
+        return descriptor;
+    }
+}) as CellDecorator;

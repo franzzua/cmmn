@@ -27,6 +27,10 @@ export class ObservableList<T> extends EventEmitter<{
         this.items[index] = value;
         this.emitChange();
     }
+    push(...values: T[]){
+        this.items.push(...values)
+        this.emitChange();
+    }
     insert(index, value:T){
         this.items.splice(index, 0, value);
         this.emitChange();
@@ -68,5 +72,6 @@ export class ObservableList<T> extends EventEmitter<{
     every: Array<T>["every"] = this.items.every.bind(this.items);
     some: Array<T>["some"] = this.items.some.bind(this.items);
     at: Array<T>["at"] = this.items.at.bind(this.items);
+    includes: Array<T>["includes"] = this.items.includes.bind(this.items);
 
 }

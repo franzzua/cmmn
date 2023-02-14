@@ -10,11 +10,15 @@
   ],
   "type": "module",
   "main": "./dist/bundle/index.js",
+  "browser": "./dist/bundle/lib.js",
   "typings": "index.d.ts",
   "typesVersions": {
     "*": {
       "index.d.ts": [
         "./dist/typings/index.d.ts"
+      ],
+      "lib": [
+        "./dist/typings/min.d.ts"
       ]
     }
   },
@@ -22,11 +26,16 @@
     ".": {
       "import": "./dist/bundle/index.js",
       "require": "./dist/bundle/index.cjs"
+    },
+    "./lib": {
+      "default": "./dist/bundle/lib.js"
     }
   },
   "scripts": {
     "build": "cmmn compile --watch",
-    "bundle": "cmmn bundle --watch"
+    "bundle": "cmmn bundle --watch",
+    "bundle:lib": "cmmn bundle lib --watch",
+    "bundle:lib:prod": "cmmn bundle lib --prod"
   },
   "dependencies": {
     "@cmmn/core": "^1.7.4"
@@ -49,8 +58,11 @@
       ]
     },
     "lib": {
-      "input": "dist/esm/index.js",
-      "module": "es"
+      "input": "dist/esm/min.js",
+      "module": "es",
+      "alias": {
+        "@cmmn/core": "./dist/esm/core-polyfill/index.js"
+      }
     }
   }
 }

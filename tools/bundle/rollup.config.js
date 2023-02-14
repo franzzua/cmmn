@@ -187,9 +187,7 @@ export class ConfigCreator {
                 namedExports: false,
                 autoModules: true,
             }) : */
-            // styles({
-            //     autoModules: true,
-            // }),
+            Styles(this),
 
             string({
                 include: /\.(html|svg|less)$/,

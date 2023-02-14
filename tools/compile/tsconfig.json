@@ -31,13 +31,13 @@
       "DOM"
     ],
     "plugins": [
-      {
-        "transform": "@cmmn/tools/plugins/absolute-plugin.cjs",
-        "after": true
-      },
       //       Transform paths in output .js files
       {
         "transform": "typescript-transform-paths"
+      },
+      {
+        "transform": "@cmmn/tools/plugins/absolute-plugin.cjs",
+        "after": true
       },
       //       Transform paths in output .d.ts files (Include this line if you output declarations files)
       {

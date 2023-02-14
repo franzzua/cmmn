@@ -50,6 +50,7 @@
       "module": "es,cjs",
       "external": [
         "luxon",
+        "msgpackr\/pack",
         "@cmmn"
       ]
     }

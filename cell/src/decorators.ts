@@ -8,11 +8,12 @@ export type CellDecorator =
     & PropertyDecorator
     & MethodDecorator;
 
-const getCell = <T = any>(self: { [KEY_VALUE_CELLS]?: { [key: string]: BaseCell } }, prop, descr: PropertyDescriptor, options, defaultValue = null) : BaseCell<T> => {
+export const getCell = <T = any>(self: { [KEY_VALUE_CELLS]?: { [key: string]: BaseCell } }, prop, descr: PropertyDescriptor, options, defaultValue = null) : BaseCell<T> => {
     if (self[KEY_VALUE_CELLS] && self[KEY_VALUE_CELLS][prop])
         return self[KEY_VALUE_CELLS][prop];
     self[KEY_VALUE_CELLS] ??= {};
-    let pull = defaultValue; // if simple observable
+    // @ts-ignore FIX FOR REACT
+    let pull = defaultValue ?? descr.initializer?.(); // if simple observable
     if (descr) {
         if (descr.get)
             pull = descr.get.bind(self); // if computed observable
@@ -50,24 +51,3 @@ export const cell: CellDecorator = ((options: ICellOptions<any>, prop?, descr?, 
     }
 }) as CellDecorator;
 
-
-
-export const cellObject: CellDecorator = ((options: ICellOptions<any>, prop?, descr?) => {
-    if (prop !== undefined) {
-        return cellObject(null)(options, prop, descr);
-    }
-    return function cellDecorator(target, prop, descr) {
-        const descriptor = {
-            get() {
-                const cell = getCell<ObservableObject<any>>(this, prop, descr, options, new ObservableObject<any>(null));
-                return cell.get().Value;
-            },
-            set(value) {
-                const cell = getCell<ObservableObject<any>>(this, prop, descr, options, new ObservableObject<any>(null));
-                cell.get().Set(value);
-            },
-            configurable: true
-        };
-        return descriptor;
-    }
-}) as CellDecorator;
