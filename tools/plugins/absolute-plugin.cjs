@@ -17,7 +17,7 @@ function visitExportNode(exportNode, sourceFile) {
         const relFile = path.relative(absSource, abs).replaceAll(path.sep, '/');
         return ts.updateExportDeclaration(exportNode, exportNode.decorators, exportNode.modifiers, exportNode.exportClause, ts.createStringLiteral(relFile), exportNode.typeOnly);
     }
-    if (fs.existsSync(abs + '.ts')) {
+    if (fs.existsSync(abs + '.ts') || fs.existsSync(abs + '.tsx')) {
         return ts.updateExportDeclaration(exportNode, exportNode.decorators, exportNode.modifiers, exportNode.exportClause, ts.createStringLiteral(file + '.js'), exportNode.typeOnly);
     }
     if (fs.existsSync(abs + '/')) {
@@ -39,7 +39,7 @@ function visitImportNode(importNode, sourceFile, options) {
     }
     if (/\.(json|tsx?|jsx?)$/.test(file))
         return;
-    if (fs.existsSync(abs + '.ts')) {
+    if (fs.existsSync(abs + '.ts') || fs.existsSync(abs + '.tsx')) {
         return ts.updateImportDeclaration(importNode, importNode.decorators, importNode.modifiers, importNode.importClause, ts.createStringLiteral(file + '.js'));
     }
     if (fs.existsSync(abs + '/')) {

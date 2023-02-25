@@ -13,7 +13,7 @@ export const getCell = <T = any>(self: { [KEY_VALUE_CELLS]?: { [key: string]: Ba
         return self[KEY_VALUE_CELLS][prop];
     self[KEY_VALUE_CELLS] ??= {};
     // @ts-ignore FIX FOR REACT
-    let pull = defaultValue ?? descr.initializer?.(); // if simple observable
+    let pull = defaultValue ?? descr?.initializer?.(); // if simple observable
     if (descr) {
         if (descr.get)
             pull = descr.get.bind(self); // if computed observable

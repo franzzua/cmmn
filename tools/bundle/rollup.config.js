@@ -83,7 +83,7 @@ export class ConfigCreator {
             entryFileNames: this.getOutputFileName(module, this.options.minify),
             // file: output,
             dir: this.outDir,
-            sourcemap: this.options.minify ? false : 'inline',
+            sourcemap: this.options.minify ? true : 'inline',
             format: module,
             globals: module === 'umd' ? (Array.isArray(this.options.external) ? Object.fromEntries(this.options.external.map(x => [x, x])) : this.options.external) : [],
             assetFileNames: "assets/[name][extname]",
