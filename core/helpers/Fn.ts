@@ -1,5 +1,4 @@
 import {ulid} from "./ulid";
-import * as crc32 from "crc-32";
 import {compare} from "./compare";
 import {deepAssign} from "./deepAssign";
 import {debounce} from "./debounce";
@@ -48,9 +47,6 @@ export const Fn = {
             };
             return descr;
         }
-    },
-    crc32(value) {
-        return crc32.str(JSON.stringify(value));
     },
     debounce: debounce,
     throttle: throttle,

@@ -35,7 +35,8 @@ export class ConfigCreator {
      *     outDir: string,
      *     html: string,
      *     browser: boolean,
-     *     dedupe: string[]
+     *     dedupe: string[],
+     *     target: string
      * }}
      */
     options;
@@ -170,6 +171,7 @@ export class ConfigCreator {
             nodeResolve({
                 browser: this.options.browser,
                 dedupe: this.options.dedupe || [],
+                preferBuiltins: !this.options.browser
             }),
             sourcemaps(),
             builtins(),

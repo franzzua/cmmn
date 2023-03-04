@@ -18,6 +18,9 @@
     "*": {
       "index.d.ts": [
         "dist/typings/index.d.ts"
+      ],
+      "min": [
+        "dist/typings/min.d.ts"
       ]
     }
   },
@@ -25,6 +28,10 @@
     ".": {
       "import": "./dist/bundle/index.js",
       "require": "./dist/bundle/index.cjs"
+    },
+    "./min": {
+      "import": "./dist/bundle/min.js",
+      "require": "./dist/bundle/min.cjs"
     }
   },
   "scripts": {
@@ -32,8 +39,7 @@
     "bundle": "cmmn bundle --watch"
   },
   "devDependencies": {
-    "@cmmn/tools": "^1.7.7",
-    "crc-32": "1.x.x"
+    "@cmmn/tools": "^1.7.7"
   },
   "dependencies": {
     "@types/luxon": "2.x.x",
@@ -53,6 +59,10 @@
         "msgpackr/pack",
         "@cmmn"
       ]
+    },
+    "min": {
+      "input": "dist/esm/min.js",
+      "module": "es,cjs"
     }
   }
 }

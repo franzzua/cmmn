@@ -1,5 +1,4 @@
 import {EventEmitter, EventEmitterBase} from '@cmmn/core';
-import {getDebugName} from './util/debug-name';
 import {Actualizator} from './actualizator';
 
 export class BaseCell<T = any> extends EventEmitter<{
@@ -16,7 +15,7 @@ export class BaseCell<T = any> extends EventEmitter<{
     isPulling = false;
     isActive = false;
     isActual: boolean;
-    debug = getDebugName(/BaseCell|Cell/);
+    // debug = getDebugName(/BaseCell|Cell/);
 
     constructor(value: T | (() => T)) {
         super();
