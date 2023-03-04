@@ -21,13 +21,13 @@ export function serve(...options) {
                 .map(([from, to]) => [from, path.resolve(x.rootDir, to)])
                 .concat(configs.map(x => [`/external/${x.package}`,
                     path.join(x.rootDir, x.outDir ?? `dist/bundle/${x.name}.js`)])),
-            middleware: [resolveESModule(x.rootDir, configs)]
+            proxy: Object.entries(x.proxy),
+            middleware: [resolveESModule(x.rootDir, configs)].filter(x => x)
         });
 
     })
 
 }
-
 function getModuleName(path) {
     if (!path.startsWith('/external/'))
         return null;
