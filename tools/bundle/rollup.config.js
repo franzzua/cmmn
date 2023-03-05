@@ -37,6 +37,7 @@ export class ConfigCreator {
      *     browser: boolean,
      *     dedupe: string[],
      *     target: string
+     *     inject: string
      * }}
      */
     options;
@@ -103,7 +104,9 @@ export class ConfigCreator {
             dir: this.outDir,
             inject: false,
             template: (x) => {
-                let inject = Object.keys(x.bundle.bundle).map(key => {
+                let inject = (this.options.inject === "json") ? `<script>
+                       globalThis.assets = ${JSON.stringify(Object.keys(x.bundle.bundle))};
+                   </script>`: Object.keys(x.bundle.bundle).map(key => {
                     if (key.endsWith('css'))
                         return `<link rel="stylesheet" href="${this.options.base ?? ''}/${key}" >`;
                     if (key.endsWith('js'))
