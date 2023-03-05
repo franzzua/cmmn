@@ -124,7 +124,8 @@ export class ConfigCreator {
                     inject = `<base href="${this.options.base}">` + inject;
                 }
                 const html = fs.readFileSync(path.join(this.root, this.options.html), 'utf8')
-                return html.replace('</head>', inject + '</head>');
+                const interpolated = new Function(...Object.keys(this.options), `return \`${html}\`;`)(...Object.values(this.options));
+                return interpolated.replace('</head>', inject + '</head>');
             }
         });
     }
