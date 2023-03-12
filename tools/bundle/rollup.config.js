@@ -212,7 +212,7 @@ export class ConfigCreator {
         }
         if (this.options.minify && this.options.mount){
             const toCopy = Object.entries(this.options.mount).map(([to, from]) => {
-                return {src: from, dest: join(this.outDir, to)}
+                return {src: from + '/*', dest: join(this.outDir, to)}
             });
             result.push(copy({
                 targets: toCopy
