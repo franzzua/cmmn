@@ -1,4 +1,5 @@
-import "../di/reflect";
+import {Fn} from "./Fn";
+
 // @ts-ignore
 globalThis.global = globalThis;
 function __decorate(decorators, target, key, desc) {
@@ -18,7 +19,7 @@ function __param(paramIndex, decorator) {
 
 Object.assign(globalThis, {
     __decorate,
-    __metadata: Reflect.metadata,
+    __metadata: Reflect?.metadata ?? Fn.I,
     __exportStar,
     __param
 });
