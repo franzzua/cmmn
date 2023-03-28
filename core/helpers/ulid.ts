@@ -3,7 +3,7 @@ const Base = Array.from("0123456789@ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopq
 const origin = 160000000000;
 
 export function ulid() {
-    let value = +new Date() - origin;
+    let value = +new Date()+new Date().getTimezoneOffset()*60_000 - origin;
     let res = "";
     while (value > 0) {
         const mod = value % 64;
