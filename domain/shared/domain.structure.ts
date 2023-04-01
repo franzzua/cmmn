@@ -78,7 +78,11 @@ function getDefinition(model: any): Def {
 }
 
 export namespace proxy {
-
+    export function clear(){
+        for (let definition of definitions.values()) {
+            definition.instances.clear();
+        }
+    }
     export const of = <TModel>(model: {
         new(...args: any[]): TModel;
     }, getPath?: (key: ModelKey, self: ModelProxy<any, any>) => ModelPath): ClassDecorator => {
@@ -98,15 +102,19 @@ export namespace proxy {
     ): PropertyDecorator => (target, propertyKey) => {
         Object.defineProperty(target, propertyKey, {
             get(this: ModelProxy<TModel, any>) {
+                if (Object.hasOwn(this, propertyKey))
+                    return this[propertyKey];
                 const definition = getDefinition(model);
-                // @ts-ignore
-                return new ModelMap(this.stream,
-                    () => getKeys(this.State),
-                    id => {
-                        const path = definition.getPath(id, this);
-                        return definition.instances.getOrAdd(path.join(':'), () =>
-                            this.locator.get(path, definition.target) as ModelProxy<any>);
-                    });
+                Object.defineProperty(this, propertyKey, {
+                    value: new ModelMap(this.stream,
+                        () => getKeys(this.State),
+                        id => {
+                            const path = definition.getPath(id, this);
+                            return definition.instances.getOrAdd(path.join(':'), () =>
+                                this.locator.get(path, definition.target) as ModelProxy<any>);
+                        })
+                });
+                return this[propertyKey];
             }
         });
     }

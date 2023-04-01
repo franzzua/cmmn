@@ -55,6 +55,7 @@ export class VersionState<T> extends Cell<T> {
 
     LinkRemote(model: ModelLike<T, any>) {
         Cell.OnChange(() => model.State, event => this.setRemote(Fn.ulid(), event.value));
+        Cell.OnChange(() => this.localState, event => model.State = event.value);
         this.setRemote(Fn.ulid(), model.State);
     }
 }

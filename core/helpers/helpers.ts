@@ -1,3 +1,4 @@
+import "../di/reflect";
 import {Fn} from "./Fn";
 
 // @ts-ignore
