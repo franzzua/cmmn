@@ -36,12 +36,15 @@ export class BaseCell<T = any> extends EventEmitter<{
             throw new CyclicalPullError(this);
         }
         Actualizator.imCalled(this);
-        if (!this.isActual) {
+        if (this.isActive && !this.isActual) {
             Actualizator.Down(this);
         }
-        if (this.error)
-            throw this.error;
-        return this.value;
+        if (this.isActual){
+            if (this.error)
+                throw this.error;
+            return this.value;
+        }
+        return this.pull();
     }
 
     /** @internal **/
@@ -53,6 +56,7 @@ export class BaseCell<T = any> extends EventEmitter<{
 
     public set(value: T) {
         this.setInternal(value);
+        this.isActual = true;
     }
 
     protected onValueContentChanged = (change) => {

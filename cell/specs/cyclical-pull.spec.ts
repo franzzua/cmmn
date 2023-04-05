@@ -28,6 +28,7 @@ class CyclicalPullSpec {
         }
 
         const check = new Check();
+        Cell.OnChange(() => check.b, () => {});
         Throw(() => check.b, 'cyclical pull');
     }
 
@@ -40,8 +41,8 @@ class CyclicalPullSpec {
                 return this.$state.get();
             }
         }
-
         const check = new Check();
+        check.$state.on('change', () => {});
         Throw(() => check.$state.get(), 'cyclical pull');
         Throw(() => check.State, 'cyclical pull');
     }
@@ -59,6 +60,7 @@ class CyclicalPullSpec {
         }
 
         const check = new Check();
+        check.$state.on('change', () => {});
         Throw(() => check.$state.get(), 'cyclical pull');
         Throw(() => check.State, 'cyclical pull');
     }
@@ -67,6 +69,7 @@ class CyclicalPullSpec {
     justCell1() {
         const a = new Cell(1);
         const b = new Cell(() => a.get() + b.get());
+        b.active();
         Throw(() => b.get(), 'cyclical pull');
     }
 
@@ -74,6 +77,7 @@ class CyclicalPullSpec {
     justCell2() {
         const a = new Cell(() => b.get());
         const b = new Cell(() => a.get());
+        b.active();
         Throw(() => b.get(), 'cyclical pull');
     }
 
@@ -82,6 +86,7 @@ class CyclicalPullSpec {
         const a = new Cell(() => c.get());
         const b = new Cell(() => a.get());
         const c = new Cell(() => b.get());
+        c.active();
         Throw(() => b.get(), 'cyclical pull');
     }
 
