@@ -26,14 +26,16 @@ function visitExportNode(exportNode, sourceFile) {
     }
 }
 
-function visitImportNode(importNode, sourceFile, options) {
+function visitImportNode(importNode, sourceFile, options, context) {
     const file = importNode.moduleSpecifier?.text;
     if (!file || !file.startsWith('.'))
         return;
+    const caseSensitiveFileNames = context.getEmitHost().useCaseSensitiveFileNames();
+    const formatPath = caseSensitiveFileNames ? x => x : x => x.toLowerCase();
     const sourceFileDir = path.dirname(sourceFile.path);
-    const abs = path.resolve(sourceFileDir, file);
+    const abs = formatPath(path.resolve(sourceFileDir, formatPath(file)));
     if (/\.(less|css|scss|sass|svg|png|html)$/.test(file)) {
-        const absSource = path.join(options.outDir, path.relative(options.baseUrl, sourceFileDir));
+        const absSource = formatPath(path.join(options.outDir, formatPath(path.relative(options.baseUrl, sourceFileDir))));
         const relFile = path.relative(absSource, abs).replaceAll(path.sep, '/');
         return ts.updateImportDeclaration(importNode, importNode.decorators, importNode.modifiers, importNode.importClause, ts.createStringLiteral(relFile));
     }
@@ -78,7 +80,7 @@ const lessToStringTransformer = function (context) {
                     return result;
             }
             if (ts.isImportDeclaration(node)) {
-                const result = visitImportNode(node, sourceFile, options);
+                const result = visitImportNode(node, sourceFile, options, context);
                 if (result)
                     return result;
             }
