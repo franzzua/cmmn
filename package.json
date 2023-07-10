@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "leaveOnlySrc": "dwfeFs cleanDirs --dirPaths=\";app;cell;core;domain;infr;server;sync;tools;ui\" --fileNames=\"dist;node_modules;package-lock.json\"",
-    "bootstrap": "lerna bootstrap --hoist",
+    "bootstrap": "npm i",
     "compile": "cmmn compile -b --watch",
     "bundle": "cmmn bundle -b --watch",
     "prod": "cmmn bundle -b --prod",
