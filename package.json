@@ -18,7 +18,7 @@
     "@do-while-for-each/fs": "1.2.21",
     "@cmmn/tools": "file:./tools",
     "@lerna/legacy-package-management": "7.1.1",
-    "lerna": "^4.0.0"
+    "lerna": "4.0.0"
   },
   "dependencies": {
   },
