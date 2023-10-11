@@ -10,26 +10,31 @@
   },
   "exports": {
     ".": {
+      "types": "./dist/typings/index.d.ts",
       "import": "./dist/bundle/index.js",
       "require": "./dist/bundle/index.cjs",
       "default": "./dist/bundle/index.js"
     },
     "./webrtc/client": {
+      "types": "./dist/typings/webrtc/client/index.d.ts",
       "import": "./dist/bundle/webrtc.js",
       "require": "./dist/bundle/webrtc.cjs",
       "default": "./dist/bundle/webrtc.js"
     },
     "./webrtc/server": {
+      "types": "./dist/typings/webrtc/server/index.d.ts",
       "import": "./dist/bundle/webrtc-server.js",
       "require": "./dist/bundle/webrtc-server.cjs",
       "default": "./dist/bundle/webrtc-server.js"
     },
     "./websocket/client": {
+      "types": "./dist/typings/websocket/client/index.d.ts",
       "import": "./dist/bundle/websocket.js",
       "require": "./dist/bundle/websocket.cjs",
       "default": "./dist/bundle/websocket.js"
     },
     "./websocket/server": {
+      "types": "./dist/typings/websocket/server/index.d.ts",
       "import": "./dist/bundle/websocket-server.js",
       "require": "./dist/bundle/websocket-server.cjs",
       "default": "./dist/bundle/websocket-server.js"
