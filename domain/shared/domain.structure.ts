@@ -1,8 +1,8 @@
 import "@cmmn/core";
-import {ModelKey, ModelPath} from "./types";
-import {ModelProxy} from "../entry/modelProxy";
-import {ModelMap} from "../model-map";
-import {Stream} from "../streams/stream";
+import {ModelKey, ModelPath} from "./types.js";
+import {ModelProxy} from "../entry/modelProxy.js";
+import {ModelMap} from "../model-map.js";
+import {Stream} from "../streams/stream.js";
 
 
 type DefMapping = {

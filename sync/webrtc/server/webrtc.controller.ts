@@ -1,9 +1,9 @@
 import {Injectable} from "@cmmn/core";
 import {WebSocket} from "ws";
-import {SignalingMessage, UserInfo} from "../shared/types";
-import {ServerRoom} from "./server-room";
-import {TokenParser} from "../../shared";
-import {SignalingConnection} from "./signaling.connection";
+import {SignalingMessage, UserInfo} from "../shared/types.js";
+import {ServerRoom} from "./server-room.js";
+import {TokenParser} from "../../shared/index.js";
+import {SignalingConnection} from "./signaling.connection.js";
 
 @Injectable()
 export class WebrtcController {

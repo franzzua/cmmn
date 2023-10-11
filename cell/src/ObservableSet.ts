@@ -1,4 +1,4 @@
-import {EventEmitter, Fn} from "@cmmn/core";
+import {EventEmitter} from "@cmmn/core";
 
 export class ObservableSet<T> extends EventEmitter<{
     change: {value: Set<T>; add?: T[]; delete?: T[];}
@@ -25,8 +25,8 @@ export class ObservableSet<T> extends EventEmitter<{
         res && this.emit('change', {value: this.base, delete: [value]});
         return res;
     }
-    forEach(callbackfn: (value: T, value2: T, set: Set<T>) => void, thisArg?: any): void {
-        this.base.forEach(callbackfn, thisArg);
+    forEach(callbackFn: (value: T, value2: T, set: Set<T>) => void, thisArg?: any): void {
+        this.base.forEach(callbackFn, thisArg);
     }
     has(value: T): boolean {
         return this.base.has(value);

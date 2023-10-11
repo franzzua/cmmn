@@ -1,6 +1,6 @@
-import {ISyncProvider} from "../shared/provider";
+import {ISyncProvider} from "../shared/provider.js";
 import {IndexeddbPersistence} from "y-indexeddb";
-import {DocAdapter} from "../shared/doc-adapter";
+import {DocAdapter} from "../shared/doc-adapter.js";
 
 export class LocalSyncProvider implements ISyncProvider{
 

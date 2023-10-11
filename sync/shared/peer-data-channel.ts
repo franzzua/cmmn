@@ -1,5 +1,5 @@
 import {EventEmitter} from "@cmmn/core";
-import {MessageType} from "../webrtc/shared/types";
+import {MessageType} from "../webrtc/shared/types.js";
 
 export abstract class PeerDataChannel extends EventEmitter<{
     [key in MessageType]: Uint8Array;

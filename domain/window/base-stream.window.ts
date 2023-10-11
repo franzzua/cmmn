@@ -1,5 +1,5 @@
 import {bind} from '@cmmn/core';
-import {BaseStream, IPostOpt} from '../streams/base.stream';
+import {BaseStream, IPostOpt} from '../streams/base.stream.js';
 
 
 export class BaseStreamWindow extends BaseStream {

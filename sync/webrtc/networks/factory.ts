@@ -1,6 +1,6 @@
-import {Network} from "./network";
-import {FullNetwork} from "./full-network";
-import {MultiCircleNetwork} from "./circle-network";
+import {Network} from "./network.js";
+import {FullNetwork} from "./full-network.js";
+import {MultiCircleNetwork} from "./circle-network.js";
 
 export function networkFactory(me:string, users: string[]): Network{
     if (users.length < 10){

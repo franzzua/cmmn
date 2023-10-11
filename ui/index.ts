@@ -1,8 +1,8 @@
-import {component, GlobalStaticState} from "./component/component";
-import {AsyncHtmlComponent, HtmlComponent} from "./component/htmlComponent";
+import {component, GlobalStaticState} from "./component/component.js";
+import {AsyncHtmlComponent, HtmlComponent} from "./component/htmlComponent.js";
 import "./uhtml-ext/styleHandler"
-import {Renderer} from "./component/renderer";
-import {intersectionObserver} from "./user-events/intersectionObserver";
+import {Renderer} from "./component/renderer.js";
+import {intersectionObserver} from "./user-events/intersectionObserver.js";
 
 export {HtmlComponent, component, AsyncHtmlComponent};
 
@@ -10,14 +10,14 @@ export function setDefaultContainer(container: { get(target): any; }) {
     GlobalStaticState.DefaultContainer = container;
 }
 
-export * from "./component/types";
-export {property, propertySymbol} from "./component/property";
-export {PointerListener, IPoint, PointerEvents, GestureEvent} from "./user-events/pointer"
-export {KeyboardListener} from "./user-events/keyboard";
-export {AnimationFrame} from "./user-events/animationFrameListener";
-export * from "./extensions/action";
-export * from "./extensions/effect";
-export * from "./extensions/react";
+export * from "./component/types.js";
+export {property, propertySymbol} from "./component/property.js";
+export {PointerListener, IPoint, PointerEvents, GestureEvent} from "./user-events/pointer.js"
+export {KeyboardListener} from "./user-events/keyboard.js";
+export {AnimationFrame} from "./user-events/animationFrameListener.js";
+export * from "./extensions/action.js";
+export * from "./extensions/effect.js";
+export * from "./extensions/react.js";
 //
 // const listeners = globalThis['listeners'] = new Map<string, Map<Function, EventTarget>>();
 //

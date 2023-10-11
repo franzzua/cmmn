@@ -1,40 +1,6 @@
-import {Fn} from "./Fn";
+import {Fn} from "./Fn.js";
 
 export {};
-
-declare global {
-    interface ReadonlyArray<T> {
-        filter(callbackfn: (value: T, index: number) => boolean): Array<T>;
-
-        max(fn?: (item: T) => any): T;
-
-        min(fn?: (item: T) => any): T;
-
-        maxVal<U>(fn: (item: T, index: number) => U): U;
-
-        minVal<U>(fn: (item: T, index: number) => U): U;
-
-        range(min: number, max: number, step?: number): Array<number>;
-
-        sum(): T;
-
-        average(): T;
-
-        distinct(selector?: (t: T) => any): Array<T>;
-
-        orderBy(selector: (t: T) => (string | number), descending?: boolean): Array<T>;
-
-        groupBy<K>(selector: (t: T) => K): Map<K, Array<T>>;
-    }
-
-    interface Array<T> extends ReadonlyArray<T> {
-        remove(item: T): boolean;
-
-        removeAll(test: (item: T) => boolean): Array<T>;
-    }
-
-}
-
 
 Array.prototype.groupBy = function <T, K>(selector: (t: T) => K) {
     return this.reduce((result: Map<K, Array<T>>, item: T) => {

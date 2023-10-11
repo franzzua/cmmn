@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "module": "esnext",
-    "moduleResolution": "Node",
-    "target": "ES2020",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ESNext",
     "composite": true,
     "sourceMap": false,
     "baseUrl": "./",
@@ -21,26 +21,14 @@
     "emitDecoratorMetadata": true ,
     "noEmitHelpers": true,
     "declarationDir": "./dist/typings",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "useDefineForClassFields": false,
     "declaration": true,
     "lib": [
       "ES2020.BigInt",
       "ESNext",
       "DOM"
-    ],
-    "plugins": [
-      //       Transform paths in output .js files
-      {
-        "transform": "typescript-transform-paths"
-      },
-      {
-        "transform": "@cmmn/tools/plugins/absolute-plugin.cjs",
-        "after": true
-      },
-      //       Transform paths in output .d.ts files (Include this line if you output declarations files)
-      {
-        "transform": "typescript-transform-paths",
-        "afterDeclarations": true
-      }
     ]
   },
   "exclude": [

@@ -1,5 +1,5 @@
-import {BaseNetwork} from "./base-network";
-import {ConnectionDirection} from "./network";
+import {BaseNetwork} from "./base-network.js";
+import {ConnectionDirection} from "./network.js";
 
 /**
  * Connects every user to next {size} users and previous {size} users to him.

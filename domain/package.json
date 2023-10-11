@@ -8,11 +8,13 @@
   },
   "exports": {
     "./proxy": {
+      "types": "./dist/typings/entry/proxy.d.ts",
       "import": "./dist/bundle/proxy.js",
       "require": "./dist/bundle/proxy.cjs",
       "default": "./dist/bundle/proxy.js"
     },
     "./worker": {
+      "types": "./dist/typings/worker/index.d.ts",
       "import": "./dist/bundle/worker.js",
       "require": "./dist/bundle/worker.cjs",
       "default": "./dist/bundle/worker.js"

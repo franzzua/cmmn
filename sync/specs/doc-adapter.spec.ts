@@ -1,8 +1,8 @@
 import {suite, test, expect} from "@cmmn/tools/test";
 import { Doc } from "yjs";
-import {ChannelMock} from "./mocks/channel.mock";
-import {DocAdapter} from "../shared/doc-adapter";
-import { Awareness } from "y-protocols/awareness";
+import {ChannelMock} from "./mocks/channel.mock.js";
+import {DocAdapter} from "../shared/doc-adapter.js";
+import { Awareness } from "y-protocols/awareness.js";
 
 @suite
 export class DocAdapterSpec{

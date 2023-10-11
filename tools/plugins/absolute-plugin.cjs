@@ -67,6 +67,7 @@ function visitRequireNode(importNode, sourceFile) {
 
 const lessToStringTransformer = function (context) {
     const options = context.getCompilerOptions();
+    console.log(context);
     return (sourceFile) => {
         function visitor(node) {
             // if (node && node.kind == ts.SyntaxKind.ImportDeclaration) {

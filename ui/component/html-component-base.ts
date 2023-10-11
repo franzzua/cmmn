@@ -1,12 +1,12 @@
-import {ExtendedElement, IEvents, ITemplate} from "./types";
-import {Renderer} from "./renderer";
-import {GlobalStaticState} from "./component";
-import {listenSvgConnectDisconnect} from "./listen-svg-connect-disconnect";
-import {HtmlComponent} from "./htmlComponent";
-import {BoundRectListener} from "../user-events/boundRectListener";
+import {ExtendedElement, IEvents, ITemplate} from "./types.js";
+import {Renderer} from "./renderer.js";
+import {GlobalStaticState} from "./component.js";
+import {listenSvgConnectDisconnect} from "./listen-svg-connect-disconnect.js";
+import {HtmlComponent} from "./htmlComponent.js";
+import {BoundRectListener} from "../user-events/boundRectListener.js";
 import {EventEmitter} from "@cmmn/core";
-import {effect, EffectFunction, SubscibeOnEffect} from "../extensions/effect";
-import {action, ActionSubscribeType, SubcribeOnActions} from "../extensions/action";
+import {effect, EffectFunction, SubscibeOnEffect} from "../extensions/effect.js";
+import {action, ActionSubscribeType, SubcribeOnActions} from "../extensions/action.js";
 
 export abstract class HtmlComponentBase<TState, TEvents extends IEvents = {}> extends EventEmitter<{
     render: { state: TState },

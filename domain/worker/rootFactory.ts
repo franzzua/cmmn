@@ -1,6 +1,6 @@
-// import {IFactory} from "../shared/factory";
-// import {Model} from "./model";
-// import {ModelAction, ModelPath} from "../shared/types";
+// import {IFactory} from "../shared/factory.js";
+// import {Model} from "./model.js";
+// import {ModelAction, ModelPath} from "../shared/types.js";
 // import {Injectable} from "@cmmn/core";
 //
 // @Injectable()

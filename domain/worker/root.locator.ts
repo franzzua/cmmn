@@ -1,8 +1,8 @@
-import {ModelAction, ModelLike, ModelPath} from "../shared/types";
+import {ModelAction, ModelLike, ModelPath} from "../shared/types.js";
 import {Injectable} from "@cmmn/core";
-import {Model} from "./model";
+import {Model} from "./model.js";
 import {ObservableList, ObservableMap} from "@cmmn/cell";
-import {Locator} from "../shared/locator";
+import {Locator} from "../shared/locator.js";
 
 @Injectable()
 export class RootLocator implements Locator {

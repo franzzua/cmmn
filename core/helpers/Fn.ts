@@ -1,8 +1,8 @@
-import {ulid} from "./ulid";
-import {compare} from "./compare";
-import {deepAssign} from "./deepAssign";
-import {debounce} from "./debounce";
-import {throttle} from "./throttle";
+import {ulid} from "./ulid.js";
+import {compare} from "./compare.js";
+import {deepAssign} from "./deepAssign.js";
+import {debounce} from "./debounce.js";
+import {throttle} from "./throttle.js";
 //
 // import { generator, BASE } from "flexid";
 // const ulid = generator(BASE["58"]);

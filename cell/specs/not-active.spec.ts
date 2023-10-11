@@ -1,6 +1,6 @@
 import {expect, suite, test} from '@cmmn/tools/test';
-import {Actualizator} from '../src/actualizator';
-import {Cell} from '../src/cell';
+import {Actualizator} from '../src/actualizator.js';
+import {Cell} from '../src/cell.js';
 
 const noop = () => {
 };

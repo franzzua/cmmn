@@ -1,1 +1,1 @@
-export {WebSocketController} from "./web-socket.controller";
+export {WebSocketController} from "./web-socket.controller.js";

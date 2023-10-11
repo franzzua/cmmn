@@ -1,6 +1,6 @@
-import {UserInfo} from "./signaling-connection";
-import {PeerDataChannel} from "../../shared/peer-data-channel";
-import { MessageType } from "../shared/types";
+import {UserInfo} from "./signaling-connection.js";
+import {PeerDataChannel} from "../../shared/peer-data-channel.js";
+import { MessageType } from "../shared/types.js";
 
 export class PeerConnection extends PeerDataChannel {
 

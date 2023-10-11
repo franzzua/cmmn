@@ -2,14 +2,6 @@ export {};
 declare global {
 
 
-    interface ReadonlyMap<K, V> {
-        map<U>(selector: (value: V, key?: K) => U): Map<K, U>;
-
-        cast<U>(): Map<K, U>;
-    }
-    interface Map<K, V> extends ReadonlyMap<K, V>{
-        getOrAdd(key: K, factory: (key?: K) => V): V;
-    }
 }
 function *getMapSelectorIterator<K,V,U>(map: Map<K,V>, selector: (value: V, key?: K) => U): Iterable<[K, U]>{
     for (let [key, value] of map.entries()) {

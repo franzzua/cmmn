@@ -1,7 +1,7 @@
 import {expect, sinon, suite, test} from "@cmmn/tools/test";
-import {AsyncCell} from "../src/AsyncCell";
+import {AsyncCell} from "../src/AsyncCell.js";
 import {ResolvablePromise} from "@cmmn/core";
-import {Cell} from '../src/cell';
+import {Cell} from '../src/cell.js';
 
 @suite
 export class AsyncCellSpec{

@@ -1,4 +1,4 @@
-import {HtmlComponentBase} from "../component/html-component-base";
+import {HtmlComponentBase} from "../component/html-component-base.js";
 import {Fn} from "@cmmn/core";
 import {Cell} from "@cmmn/cell";
 

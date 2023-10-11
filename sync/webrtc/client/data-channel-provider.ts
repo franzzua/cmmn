@@ -1,7 +1,8 @@
-import {UserInfo} from "./signaling-connection";
-import {EventEmitter} from "../shared/observable";
-import {PeerConnection} from "./peer-connection";
-import { SignalData } from "../shared/types";
+import "@cmmn/core";
+import {UserInfo} from "./signaling-connection.js";
+import {EventEmitter} from "../shared/observable.js";
+import {PeerConnection} from "./peer-connection.js";
+import { SignalData } from "../shared/types.js";
 
 export class DataChannelProvider {
 

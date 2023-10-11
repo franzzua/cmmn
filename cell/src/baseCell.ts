@@ -1,5 +1,5 @@
 import {EventEmitter, EventEmitterBase} from '@cmmn/core';
-import {Actualizator} from './actualizator';
+import {Actualizator} from './actualizator.js';
 
 export class BaseCell<T = any> extends EventEmitter<{
     change: { value: T, oldValue: T },

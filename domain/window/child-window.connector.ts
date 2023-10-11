@@ -1,7 +1,7 @@
-import {BaseStreamWindow} from './base-stream.window';
-import {WorkerMessageType} from '../shared/types';
-import {Connector} from '../streams/connector';
-import {Locator} from '../shared/locator';
+import {BaseStreamWindow} from './base-stream.window.js';
+import {WorkerMessageType} from '../shared/types.js';
+import {Connector} from '../streams/connector.js';
+import {Locator} from '../shared/locator.js';
 
 /**
  * Находится на стороне Main-thread Parent-окна.

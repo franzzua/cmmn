@@ -1,8 +1,8 @@
 import {Fn, Lazy, ResolvablePromise} from '@cmmn/core';
-import {Action, ModelPath, WorkerMessage, WorkerMessageType} from '../shared/types';
-import {VersionState} from './versionState';
-import {BaseStream} from './base.stream';
-import {Stream} from './stream';
+import {Action, ModelPath, WorkerMessage, WorkerMessageType} from '../shared/types.js';
+import {VersionState} from './versionState.js';
+import {BaseStream} from './base.stream.js';
+import {Stream} from './stream.js';
 
 /**
  * Находится на стороне Main-thread.

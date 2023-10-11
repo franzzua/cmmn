@@ -12,22 +12,14 @@
   "main": "./dist/bundle/index.js",
   "browser": "./dist/bundle/lib.js",
   "typings": "index.d.ts",
-  "typesVersions": {
-    "*": {
-      "index.d.ts": [
-        "./dist/typings/index.d.ts"
-      ],
-      "lib": [
-        "./dist/typings/min.d.ts"
-      ]
-    }
-  },
   "exports": {
     ".": {
+      "types": "./dist/typings/index.d.ts",
       "import": "./dist/bundle/index.js",
       "require": "./dist/bundle/index.cjs"
     },
     "./lib": {
+      "types": "./dist/typings/index.d.ts",
       "default": "./dist/bundle/lib.js"
     }
   },
@@ -52,7 +44,7 @@
   "cmmn": {
     "index": {
       "input": "dist/esm/index.js",
-      "module": "es,cjs,umd",
+      "module": "es,cjs",
       "external": [
         "@cmmn.*"
       ]

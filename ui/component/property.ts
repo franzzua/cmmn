@@ -1,8 +1,8 @@
 import {useCustomHandler} from "@cmmn/uhtml";
 import {Cell, ICellOptions} from "@cmmn/cell";
-import {ExtendedElement} from "./types";
+import {ExtendedElement} from "./types.js";
 import {Fn} from "@cmmn/core";
-import {HtmlComponentBase} from "./html-component-base";
+import {HtmlComponentBase} from "./html-component-base.js";
 
 export const propertySymbol = Symbol('properties');
 

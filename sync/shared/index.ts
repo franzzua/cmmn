@@ -1,3 +1,3 @@
-export  { DocAdapter } from "./doc-adapter";
-export  { TokenParser } from "./token-parser";
-export type { ISyncProvider } from "./provider";
+export  { DocAdapter } from "./doc-adapter.js";
+export  { TokenParser } from "./token-parser.js";
+export type { ISyncProvider } from "./provider.js";

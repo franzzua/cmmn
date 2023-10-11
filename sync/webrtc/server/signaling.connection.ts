@@ -1,5 +1,5 @@
-import {ServerSocketConnection} from "../../shared/server-socket-connection";
-import {SignalingMessage, SignalServerMessage} from "../shared/types";
+import {ServerSocketConnection} from "../../shared/server-socket-connection.js";
+import {SignalingMessage, SignalServerMessage} from "../shared/types.js";
 import {bind} from "@cmmn/core";
 
 export class SignalingConnection extends ServerSocketConnection<{

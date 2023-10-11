@@ -1,6 +1,6 @@
 import {expect, suite, test} from '@cmmn/tools/test';
-import {cell} from '../src/decorators';
-import {Cell} from '../src/cell';
+import {cell} from '../src/decorators.js';
+import {Cell} from '../src/cell.js';
 import {compare} from '@cmmn/core';
 
 function Throw(fn: Function, message: string) {

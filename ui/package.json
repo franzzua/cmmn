@@ -13,6 +13,7 @@
   "typings": "typings.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/typings/index.d.ts",
       "import": "./dist/bundle/index.js",
       "require": "./dist/bundle/index.cjs"
     }

@@ -1,5 +1,5 @@
 import {WebSocket} from "ws";
-import {EventEmitter} from "../webrtc/shared/observable";
+import {EventEmitter} from "../webrtc/shared/observable.js";
 
 export abstract class ServerSocketConnection<TEvents> extends EventEmitter<TEvents & {
     close: void

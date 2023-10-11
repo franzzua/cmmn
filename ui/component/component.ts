@@ -1,7 +1,7 @@
-import {HtmlComponent} from "./htmlComponent";
-import {IEvents, ITemplate} from "./types";
-import {importStyle} from "./importStyle";
-import {componentHandler, propertySymbol} from "./property";
+import {HtmlComponent} from "./htmlComponent.js";
+import {IEvents, ITemplate} from "./types.js";
+import {importStyle} from "./importStyle.js";
+import {componentHandler, propertySymbol} from "./property.js";
 
 export const GlobalStaticState = new class {
     _defaultContainer: {get<T>(target): T;} = null;

@@ -56,8 +56,10 @@ export class ObservableArray<T> extends ArrayAndEventEmitter<T> {
 }
 
 const keys: Exclude<keyof Array<any>, keyof ReadonlyArray<any>>[] = [
-    'pop', 'splice', 'push', 'remove', 'sort', 'unshift',
-    'reverse', 'removeAll' , 'shift',  'fill'
+    'pop', 'splice', 'push', 'sort', 'unshift',
+// @ts-ignore
+    'removeAll' ,'remove',
+    'reverse', 'shift',  'fill'
 ];
 for (let key of keys) {
     ObservableArray.prototype[key] = function (this: ObservableArray<any>, ...args){

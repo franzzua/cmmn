@@ -1,6 +1,6 @@
-import {WorkerMessage, WorkerMessageSerialized} from "../shared/types";
+import {WorkerMessage, WorkerMessageSerialized} from "../shared/types.js";
 import {bind, deserialize, EventEmitter, ResolvablePromise, serialize} from "@cmmn/core";
-import {Transferable} from "./transferable";
+import {Transferable} from "./transferable.js";
 
 
 /**

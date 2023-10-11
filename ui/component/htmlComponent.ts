@@ -1,5 +1,5 @@
-import {IEvents} from "./types";
-import {HtmlComponentBase} from "./html-component-base";
+import {IEvents} from "./types.js";
+import {HtmlComponentBase} from "./html-component-base.js";
 import {Cell} from "@cmmn/cell";
 import {Fn} from "@cmmn/core";
 

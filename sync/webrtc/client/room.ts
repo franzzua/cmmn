@@ -1,11 +1,11 @@
-import {SignalingRegistrationInfo} from "../shared/types";
-import {SignalingConnection, UserInfo} from "./signaling-connection";
-import {DocAdapter} from "../../shared";
-import {DataChannelProvider} from "./data-channel-provider";
-import {PeerConnection} from "./peer-connection";
-import {Network, networkFactory} from "../networks";
+import {SignalingRegistrationInfo} from "../shared/types.js";
+import {SignalingConnection, UserInfo} from "./signaling-connection.js";
+import {DocAdapter} from "../../shared/index.js";
+import {DataChannelProvider} from "./data-channel-provider.js";
+import {PeerConnection} from "./peer-connection.js";
+import {Network, networkFactory} from "../networks/index.js";
 import {EventEmitter} from "@cmmn/core";
-import {ConnectionDirection} from "../networks/network";
+import {ConnectionDirection} from "../networks/network.js";
 
 export class Room extends EventEmitter<{
     network: Network

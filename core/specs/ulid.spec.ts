@@ -1,7 +1,7 @@
 import '../helpers/Array';
 import {expect, suite, test, timeout} from '@cmmn/tools/test';
-import { Fn } from '../helpers/Fn';
-import {ulid} from '../helpers/ulid';
+import { Fn } from '../helpers/Fn.js';
+import {ulid} from '../helpers/ulid.js';
 
 // import {monotonicFactory} from 'ulid';
 // const ulid = monotonicFactory();

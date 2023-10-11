@@ -1,6 +1,6 @@
 import {expect, suite, test} from "@cmmn/tools/test";
-import {SyncStore} from "../store/sync.store";
-import {ChannelMock} from "./mocks/channel.mock";
+import {SyncStore} from "../store/sync.store.js";
+import {ChannelMock} from "./mocks/channel.mock.js";
 
 @suite
 export class StoreSpec {

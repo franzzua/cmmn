@@ -1,10 +1,10 @@
 import {bind, ResolvablePromise} from "@cmmn/core";
 import {Renderable, TemplateFunction} from "@cmmn/uhtml";
-import {IEvents, ITemplate} from "./types";
-import {EventHandlerProvider} from "./eventHandlerProvider";
-import {HtmlComponentBase} from "./html-component-base";
-import {getRender, getTemplate} from "./template";
-import {AnimationFrame} from "../user-events/animationFrameListener";
+import {IEvents, ITemplate} from "./types.js";
+import {EventHandlerProvider} from "./eventHandlerProvider.js";
+import {HtmlComponentBase} from "./html-component-base.js";
+import {getRender, getTemplate} from "./template.js";
+import {AnimationFrame} from "../user-events/animationFrameListener.js";
 
 export class Renderer<TState, TEvents extends IEvents> {
     // private stateCell: Cell<TState> = this.component.$state ?? cellx(() => this.stopped ? null : this.component.State).cell;

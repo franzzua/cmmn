@@ -1,2 +1,2 @@
-export {Network} from "./network";
-export {networkFactory} from "./factory";
+export {Network} from "./network.js";
+export {networkFactory} from "./factory.js";

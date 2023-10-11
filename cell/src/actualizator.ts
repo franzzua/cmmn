@@ -1,4 +1,4 @@
-import {BaseCell} from './baseCell';
+import {BaseCell} from './baseCell.js';
 
 export class Actualizator {
 

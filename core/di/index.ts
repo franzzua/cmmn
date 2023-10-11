@@ -1,5 +1,5 @@
 import "./reflect";
-export * from './container';
-export * from './decorators';
-export * from './token';
-export * from './types';
+export * from './container.js';
+export * from './decorators.js';
+export * from './token.js';
+export * from './types.js';

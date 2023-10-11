@@ -14,7 +14,7 @@ export type StoppableEvent<T> = T & {
 
 export abstract class EventEmitterBase<TEvents extends {
     [key in string]: any | void;
-}> {
+} = {}> {
     public abstract on<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void, ...rest): () => void;
 
     public abstract off<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void): void;

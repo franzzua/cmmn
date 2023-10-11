@@ -9,6 +9,7 @@
   "private": false,
   "exports": {
     ".": {
+      "types": "./dist/typings/index.d.ts",
       "import": "./dist/bundle/index.js",
       "require": "./dist/bundle/index.cjs",
       "default": "./dist/bundle/index.js"

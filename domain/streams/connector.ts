@@ -1,9 +1,9 @@
-import {BaseStream} from "./base.stream";
-import type {ModelLike} from "../worker";
-import {ModelAction, ModelPath, WorkerAction, WorkerMessage, WorkerMessageType} from "../shared/types";
+import {BaseStream} from "./base.stream.js";
+import type {ModelLike} from "../worker/index.js";
+import {ModelAction, ModelPath, WorkerAction, WorkerMessage, WorkerMessageType} from "../shared/types.js";
 import {EventEmitter, Fn} from "@cmmn/core";
 import {BaseCell, Cell} from "@cmmn/cell";
-import {Locator} from "../shared/locator";
+import {Locator} from "../shared/locator.js";
 
 /**
  * Работает на стороне Worker-thread / Main-thread Parent-окна.

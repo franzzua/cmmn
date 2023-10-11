@@ -1,5 +1,5 @@
 import {expect, suite, test} from "@cmmn/tools/test";
-import {BaseCell} from '../src/baseCell';
+import {BaseCell} from '../src/baseCell.js';
 
 @suite
 class ReadSpec {

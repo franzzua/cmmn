@@ -1,4 +1,4 @@
-import ts from "typescript";
+import ts from "typescript/lib/typescript.js";
 import {resolve, relative} from 'path';
 import fs from "fs";
 const rootDir = process.cwd();

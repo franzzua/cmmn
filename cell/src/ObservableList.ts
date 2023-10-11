@@ -6,6 +6,9 @@ export class ObservableList<T> extends EventEmitter<{
 }>{
     constructor(private items: T[] = []) {
         super();
+        for (let key of ['filter', 'indexOf', 'map', 'forEach', 'reduce', 'every', 'some', 'at', 'includes']) {
+            this[key] = this.items[key].bind(this.items);
+        }
     }
 
     get(index){
@@ -64,14 +67,14 @@ export class ObservableList<T> extends EventEmitter<{
         this.emitChange();
     }
 
-    filter: Array<T>["filter"] = this.items.filter.bind(this.items);
-    indexOf: Array<T>["indexOf"] = this.items.indexOf.bind(this.items);
-    map: Array<T>["map"] = this.items.map.bind(this.items);
-    forEach: Array<T>["forEach"] = this.items.forEach.bind(this.items);
-    reduce: Array<T>["reduce"] = this.items.reduce.bind(this.items);
-    every: Array<T>["every"] = this.items.every.bind(this.items);
-    some: Array<T>["some"] = this.items.some.bind(this.items);
-    at: Array<T>["at"] = this.items.at.bind(this.items);
-    includes: Array<T>["includes"] = this.items.includes.bind(this.items);
+    filter: Array<T>["filter"];
+    indexOf: Array<T>["indexOf"];
+    map: Array<T>["map"];
+    forEach: Array<T>["forEach"];
+    reduce: Array<T>["reduce"];
+    every: Array<T>["every"];
+    some: Array<T>["some"];
+    at: Array<T>["at"];
+    includes: Array<T>["includes"];
 
 }

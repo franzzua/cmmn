@@ -1,7 +1,7 @@
 import {expect, suite, test} from "@cmmn/tools/test";
-import {cell} from "../src/decorators";
-import {Actualizator} from "../src/actualizator";
-import {Cell} from "../src/cell";
+import {cell} from "../src/decorators.js";
+import {Actualizator} from "../src/actualizator.js";
+import {Cell} from "../src/cell.js";
 
 class Evalutator {
     constructor(a: number, b: number, c: number) {

@@ -1,7 +1,7 @@
 import {Injectable} from "@cmmn/core";
-import { Locator } from "../shared/locator";
-import {BaseStream} from "../streams/base.stream";
-import {Connector} from "../streams/connector";
+import { Locator } from "../shared/locator.js";
+import {BaseStream} from "../streams/base.stream.js";
+import {Connector} from "../streams/connector.js";
 
 /**
  * Обертка над Stream на стороне Worker-thread.

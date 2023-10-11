@@ -1,7 +1,7 @@
 import {Lazy} from '@cmmn/core';
-import {BaseStreamWindow} from './base-stream.window';
-import {WorkerStream} from '../streams/workerStream';
-import {WorkerMessageType} from '../shared/types';
+import {BaseStreamWindow} from './base-stream.window.js';
+import {WorkerStream} from '../streams/workerStream.js';
+import {WorkerMessageType} from '../shared/types.js';
 
 /**
  * Находится на стороне Main-thread Child-окна.

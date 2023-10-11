@@ -1,6 +1,6 @@
 import {suite, test, expect} from "@cmmn/tools/test";
 
-import {utc} from "../helpers/utc";
+import {utc} from "../helpers/utc.js";
 
 @suite
 export class UtcSpec {

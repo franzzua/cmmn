@@ -1,6 +1,6 @@
-import {IEvents, SingleArg} from "./types";
+import {IEvents, SingleArg} from "./types.js";
 import {bind, Fn} from "@cmmn/core";
-import {HtmlComponentBase} from "./html-component-base";
+import {HtmlComponentBase} from "./html-component-base.js";
 
 export class EventHandlerProvider<TEvents extends IEvents> {
     constructor(private component: HtmlComponentBase<any, TEvents>) {

@@ -1,5 +1,5 @@
 import {expect, suite, test} from "@cmmn/tools/test";
-import { Cell } from "../src/cell";
+import { Cell } from "../src/cell.js";
 
 @suite
 export class DebugKeySpec{

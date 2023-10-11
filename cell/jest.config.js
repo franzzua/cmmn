@@ -1,5 +1,5 @@
 import "@cmmn/core";
-import config from "@cmmn/tools/test/config";
+import config from "@cmmn/tools/test/jest.config.js";
 import path from "path";
 
 export default {

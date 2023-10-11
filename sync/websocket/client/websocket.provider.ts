@@ -1,6 +1,6 @@
-import {RoomOptions} from "../../webrtc/client/room";
-import {WebsocketConnection} from "./websocket-connection";
-import {Room} from "./room";
+import {RoomOptions} from "../../webrtc/client/room.js";
+import {WebsocketConnection} from "./websocket-connection.js";
+import {Room} from "./room.js";
 
 export class WebsocketProvider {
     private connection = new WebsocketConnection(this.server);

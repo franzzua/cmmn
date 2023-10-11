@@ -13,25 +13,22 @@
   ],
   "type": "module",
   "main": "./dist/bundle/index.js",
-  "typings": "index.d.ts",
-  "typesVersions": {
-    "*": {
-      "index.d.ts": [
-        "dist/typings/index.d.ts"
-      ],
-      "min": [
-        "dist/typings/min.d.ts"
-      ]
-    }
-  },
+  "types": "typings.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/typings/index.d.ts",
       "import": "./dist/bundle/index.js",
-      "require": "./dist/bundle/index.cjs"
+      "require": "./dist/bundle/index.cjs",
+      "default": "./dist/bundle/index.js"
     },
     "./min": {
+      "types": "./dist/typings/min.d.ts",
       "import": "./dist/bundle/min.js",
-      "require": "./dist/bundle/min.cjs"
+      "require": "./dist/bundle/min.cjs",
+      "default": "./dist/bundle/min.js"
+    },
+    "./typings.d.ts": {
+      "default": "./typings.d.ts"
     }
   },
   "scripts": {

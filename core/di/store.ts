@@ -1,4 +1,4 @@
-import {Provider, ProviderOrValue} from "./types";
+import {Provider, ProviderOrValue} from "./types.js";
 
 
 export class Store {

@@ -1,4 +1,4 @@
-import {ExtendedElement} from "./types";
+import {ExtendedElement} from "./types.js";
 
 
 const waitForAttach = new Set<ExtendedElement>();

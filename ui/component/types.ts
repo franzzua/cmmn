@@ -1,7 +1,7 @@
-import {HtmlComponent} from "./htmlComponent";
+import {HtmlComponent} from "./htmlComponent.js";
 import {Hole, Renderable, TemplateFunction} from "@cmmn/uhtml";
 import { Cell } from "@cmmn/cell";
-import {propertySymbol} from "./property";
+import {propertySymbol} from "./property.js";
 
 export type SingleArgumentsOf<TFunction> = TFunction extends (arg: infer T) => any ? T : void;
 

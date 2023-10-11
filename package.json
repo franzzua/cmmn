@@ -3,7 +3,7 @@
   "version": "1.2.3",
   "description": "",
   "scripts": {
-    "bootstrap": "lerna bootstrap && ts-patch install -s",
+    "bootstrap": "lerna bootstrap  --ignore-scripts --hoist && ts-patch install -s",
     "compile": "cmmn compile -b --watch",
     "bundle": "cmmn bundle -b --watch",
     "prod": "cmmn bundle -b --prod",
@@ -15,7 +15,6 @@
   "files": [],
   "devDependencies": {
     "@cmmn/tools": "file:./tools",
-    "@lerna/legacy-package-management": "7.1.1",
     "lerna": "4.0.0",
     "ts-patch": "3.0.2",
     "typescript": "5.2.2"

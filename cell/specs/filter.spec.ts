@@ -1,6 +1,6 @@
 import {expect, sinon, suite, test} from "@cmmn/tools/test";
-import {Cell} from '../src/cell';
-import {Actualizator} from "../src/actualizator";
+import {Cell} from '../src/cell.js';
+import {Actualizator} from "../src/actualizator.js";
 
 @suite
 export class FilterSpec{
