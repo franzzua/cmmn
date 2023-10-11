@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/cell",
-  "version": "1.7.20",
+  "version": "1.7.21",
   "description": "pull-based state flow",
   "publishConfig": {
     "access": "public"
@@ -38,10 +38,10 @@
     "bundle:lib:prod": "cmmn bundle lib --prod"
   },
   "dependencies": {
-    "@cmmn/core": "^1.7.20"
+    "@cmmn/core": "^1.7.21"
   },
   "devDependencies": {
-    "@cmmn/tools": "^1.7.19"
+    "@cmmn/tools": "^1.7.21"
   },
   "author": "",
   "license": "ISC",
