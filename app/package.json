@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/app",
-  "version": "1.7.21",
+  "version": "1.8.0",
   "description": "",
   "publishConfig": {
     "access": "public"
@@ -27,12 +27,12 @@
     "build": "cmmn compile ./index.ts --watch"
   },
   "devDependencies": {
-    "@cmmn/tools": "^1.7.21"
+    "@cmmn/tools": "^1.8.0"
   },
   "dependencies": {
-    "@cmmn/cell": "^1.7.21",
-    "@cmmn/core": "^1.7.21",
-    "@cmmn/ui": "^1.7.21",
+    "@cmmn/cell": "^1.8.0",
+    "@cmmn/core": "^1.8.0",
+    "@cmmn/ui": "^1.8.0",
     "router5": "^8.0.1",
     "router5-plugin-browser": "^8.0.1"
   },
