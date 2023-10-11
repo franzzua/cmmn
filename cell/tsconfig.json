@@ -1,4 +1,7 @@
 {
   "extends": "@cmmn/tools/compile/tsconfig.json",
+  "references": [{
+    "path": "../core"
+  }],
   "exclude": ["dist", "node_modules", "perf"]
 }
