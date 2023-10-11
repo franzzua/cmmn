@@ -20,7 +20,7 @@ export class EventHandlerProvider<TEvents extends IEvents> {
 
     public getEventHandler<TKey extends keyof TEvents = keyof TEvents>(type: TKey) {
         return (mapping: (event: Event) => SingleArg<TEvents[TKey]> = Fn.I as any) => {
-            const key = `${type}.${mapping}`;
+            const key = `${String(type)}.${mapping}`;
             if (key in this.eventHandlers)
                 return this.eventHandlers[key];
             const listener = (event: Event) => {

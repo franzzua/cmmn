@@ -15,6 +15,7 @@
     "cmmn": "bin.js"
   },
   "exports": {
+    "./compile/tsconfig.json": "./compile/tsconfig.json",
     "./test": "./test/index.js",
     "./test/config": "./test/jest.config.js"
   },
@@ -58,7 +59,7 @@
     "fast-glob": "^3.2.11",
     "file-uri-to-path": "2.x.x",
     "import-meta-resolve": "2",
-    "jest": "27.x.x",
+    "jest": "29.x.x",
     "less": "^4",
     "live-server": "1.2.2",
     "postcss-assets": "6",
@@ -76,10 +77,8 @@
     "rollup-plugin-terser": "^7",
     "rollup-plugin-visualizer": "^5.5.4",
     "sinon": "10.x.x",
-    "ts-jest": "27.x.x",
-    "ttypescript": "1.5.15",
-    "typescript": "4.6.x",
-    "typescript-transform-paths": "^3.3.1",
+    "ts-jest": "29.x.x",
+    "typescript-transform-paths": "3.4.6",
     "unique-slug": "*"
   },
   "author": "",

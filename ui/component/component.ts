@@ -72,7 +72,7 @@ export function component<TState, TEvents extends IEvents = IEvents>(opts: IComp
                 extends: opts.is
             });
             if (opts.style) {
-                if (typeof opts.style === "object" && 'default' in opts.style){
+                if (typeof opts.style === "object" && 'default' in (opts.style as object)){
                     // @ts-ignore
                     opts.style = opts.style.default;
                 }

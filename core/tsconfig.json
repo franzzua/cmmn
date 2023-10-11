@@ -3,8 +3,7 @@
   "compilerOptions": {
     "types": [
       "node"
-    ],
-    "noEmitHelpers": false
+    ]
   },
   "exclude": ["dist", "node_modules"]
 }
