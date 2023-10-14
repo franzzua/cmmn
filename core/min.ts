@@ -1,3 +1,4 @@
+import "./helpers/helpers.js";
 export * from "./extensions.js";
 import "./helpers/Array";
 import "./helpers/map";

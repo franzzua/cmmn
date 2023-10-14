@@ -20,7 +20,8 @@
     },
     "./lib": {
       "types": "./dist/typings/index.d.ts",
-      "default": "./dist/bundle/lib.js"
+      "import": "./dist/bundle/lib.js",
+      "require": "./dist/bundle/lib.js"
     }
   },
   "scripts": {
