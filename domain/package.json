@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/domain",
-  "version": "1.8.1",
+  "version": "1.8.2",
   "description": "",
   "type": "module",
   "repository": {
@@ -42,7 +42,7 @@
     "@cmmn/tools": "^1.8.1"
   },
   "dependencies": {
-    "@cmmn/cell": "^1.8.1",
+    "@cmmn/cell": "^1.8.2",
     "@cmmn/core": "^1.8.1"
   },
   "author": "",
