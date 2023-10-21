@@ -6,6 +6,7 @@ export {
     EventEmitter, compare, debounce, debounced, EventEmitterBase,
     bind, Fn, throttled, throttle, StoppableEvent, AsyncQueue, DeepPartial,
     EventListener, EventListenerOptions, StoppableEventEmitter, Disposable,
-    Lazy, ResolvablePromise
+    Lazy, ResolvablePromise,
+    Provider, Inject, Injectable, InjectionToken, ProviderOrValue, Container
 } from "@cmmn/core";
 export {ObservableList} from "./src/ObservableList.js";

@@ -21,3 +21,4 @@ export {debounce, debounced} from "./helpers/debounce.js";
 export {throttle, throttled} from "./helpers/throttle.js";
 export {DeepPartial} from "./helpers/deepAssign.js";
 export {Disposable} from "./disposable.js";
+export {Provider, Inject, Injectable, InjectionToken, ProviderOrValue, Container} from "./di/index.js";

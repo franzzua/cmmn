@@ -11,7 +11,6 @@
   "type": "module",
   "main": "./dist/bundle/index.js",
   "browser": "./dist/bundle/lib.js",
-  "typings": "index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/typings/index.d.ts",
@@ -19,7 +18,7 @@
       "require": "./dist/bundle/index.cjs"
     },
     "./lib": {
-      "types": "./dist/typings/index.d.ts",
+      "types": "./dist/typings/min.d.ts",
       "import": "./dist/bundle/lib.js",
       "require": "./dist/bundle/lib.js"
     }
@@ -51,7 +50,7 @@
       ]
     },
     "lib": {
-      "input": "dist/esm/min.js",
+      "input": "dist/esm/lib.js",
       "module": "es",
       "alias": {
         "@cmmn/core": "@cmmn/core/min"

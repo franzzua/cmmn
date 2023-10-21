@@ -13,7 +13,6 @@
   ],
   "type": "module",
   "main": "./dist/bundle/index.js",
-  "types": "typings.d.ts",
   "exports": {
     ".": {
       "types": "./dist/typings/index.d.ts",
@@ -26,9 +25,12 @@
       "import": "./dist/bundle/min.js",
       "require": "./dist/bundle/min.cjs",
       "default": "./dist/bundle/min.js"
-    },
-    "./typings.d.ts": {
-      "default": "./typings.d.ts"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "min": ["dist/typings/min.d.ts"],
+      "*": ["dist/typings/index.d.ts"]
     }
   },
   "scripts": {
