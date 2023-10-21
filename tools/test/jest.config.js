@@ -18,7 +18,7 @@ export default {
                     decoratorMetadata: true,
                 },
                 paths: options.paths,
-                baseUrl: '.'
+                baseUrl: process.cwd()
             },
         }],
     },
