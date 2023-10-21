@@ -65,7 +65,6 @@ export class EventEmitter<TEvents extends {
     protected unsubscribe(eventName: keyof TEvents) {
     }
 
-    @bind
     public emit<TEventName extends keyof TEvents>(eventName: TEventName, data?: TEvents[TEventName]) {
         let arr = this.listeners.get(eventName);
         if (!arr)

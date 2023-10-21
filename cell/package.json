@@ -23,6 +23,12 @@
       "require": "./dist/bundle/lib.js"
     }
   },
+  "typesVersions": {
+    "*": {
+      "lib": ["dist/typings/lib.d.ts"],
+      "*": ["dist/typings/index.d.ts"]
+    }
+  },
   "scripts": {
     "build": "cmmn compile --watch",
     "bundle": "cmmn bundle --watch",
