@@ -1,6 +1,6 @@
-const ts = require("typescript");
-const path = require("path");
-const fs = require("fs");
+import ts from "typescript";
+import path from "path";
+import fs from "fs";
 
 function visitExportNode(exportNode, sourceFile) {
     if (exportNode.typeOnly){
@@ -27,6 +27,7 @@ function visitExportNode(exportNode, sourceFile) {
 }
 
 function visitImportNode(importNode, sourceFile, options, context) {
+    const factory = context.factory;
     const file = importNode.moduleSpecifier?.text;
     if (!file || !file.startsWith('.'))
         return;
@@ -37,16 +38,16 @@ function visitImportNode(importNode, sourceFile, options, context) {
     if (/\.(less|css|scss|sass|svg|png|html)$/.test(file)) {
         const absSource = formatPath(path.join(options.outDir, formatPath(path.relative(options.baseUrl, sourceFileDir))));
         const relFile = path.relative(absSource, abs).replaceAll(path.sep, '/');
-        return ts.updateImportDeclaration(importNode, importNode.decorators, importNode.modifiers, importNode.importClause, ts.createStringLiteral(relFile));
+        return factory.updateImportDeclaration(importNode, importNode.decorators, importNode.modifiers, importNode.importClause, factory.createStringLiteral(relFile));
     }
     if (/\.(json|tsx?|jsx?)$/.test(file))
         return;
     if (fs.existsSync(abs + '.ts') || fs.existsSync(abs + '.tsx')) {
-        return ts.updateImportDeclaration(importNode, importNode.decorators, importNode.modifiers, importNode.importClause, ts.createStringLiteral(file + '.js'));
+        return factory.updateImportDeclaration(importNode, importNode.decorators, importNode.modifiers, importNode.importClause, factory.createStringLiteral(file + '.js'));
     }
     if (fs.existsSync(abs + '/')) {
         const indexFile = `${file}/index.js`;
-        return ts.updateImportDeclaration(importNode, importNode.decorators, importNode.modifiers, importNode.importClause, ts.createStringLiteral(indexFile));
+        return factory.updateImportDeclaration(importNode, importNode.decorators, importNode.modifiers, importNode.importClause, factory.createStringLiteral(indexFile));
     }
 }
 
@@ -65,9 +66,8 @@ function visitRequireNode(importNode, sourceFile) {
     }
 }
 
-const lessToStringTransformer = function (context) {
+export const lessToStringTransformer = function (context) {
     const options = context.getCompilerOptions();
-    console.log(context);
     return (sourceFile) => {
         function visitor(node) {
             // if (node && node.kind == ts.SyntaxKind.ImportDeclaration) {
@@ -96,6 +96,3 @@ const lessToStringTransformer = function (context) {
         return ts.visitEachChild(sourceFile, visitor, context);
     };
 };
-exports.default = function (program, pluginOptions) {
-    return lessToStringTransformer;
-}
