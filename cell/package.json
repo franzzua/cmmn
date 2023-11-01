@@ -18,7 +18,7 @@
       "require": "./dist/bundle/index.cjs"
     },
     "./lib": {
-      "types": "./dist/typings/min.d.ts",
+      "types": "./dist/typings/lib.d.ts",
       "import": "./dist/bundle/lib.js",
       "require": "./dist/bundle/lib.js"
     }

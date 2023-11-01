@@ -59,7 +59,7 @@ export class Container {
     }
 
     private resolve(provider: Provider, overrides: Provider[]) {
-        if (provider.useValue)
+        if ('useValue' in provider)
             return provider.useValue;
         if (!provider.useClass) {
             provider.useClass = provider.provide;
