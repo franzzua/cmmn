@@ -1,11 +1,23 @@
 import ts from "typescript/lib/typescript.js";
 import {resolve, relative} from 'path';
 import fs from "fs";
+import { lessToStringTransformer } from "./absolute-plugin.js";
+import * as pathTransform from "typescript-transform-paths";
+
 const rootDir = process.cwd();
 
 export function compile(...flags) {
 
     const host = ts.createSolutionBuilderWithWatchHost(ts.sys, createProgram);
+    host.getCustomTransformers = () => ({
+        before: [
+            pathTransform,
+            lessToStringTransformer
+        ],
+        afterDeclarations: [
+            pathTransform
+        ]
+    });
     host.useCaseSensitiveFileNames();
 
     const builderFactory = flags.includes('--watch') ?
