@@ -8,6 +8,7 @@ const rootDir = process.cwd();
 export function compile(...flags) {
 
     const host = ts.createSolutionBuilderWithWatchHost(ts.sys, createProgram);
+    console.log()
     host.getCustomTransformers = () => ({
         before: [
             lessToStringTransformer
