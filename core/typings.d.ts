@@ -1,4 +1,4 @@
-
+declare module "*.txt";
 declare interface ReadonlyArray<T> {
     filter(callbackfn: (value: T, index: number) => boolean): Array<T>;
 
@@ -34,6 +34,7 @@ declare interface ReadonlyMap<K, V> {
 
     cast<U>(): Map<K, U>;
 }
-declare interface Map<K, V> extends ReadonlyMap<K, V>{
+
+declare interface Map<K, V> extends ReadonlyMap<K, V> {
     getOrAdd(key: K, factory: (key?: K) => V): V;
 }

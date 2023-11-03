@@ -1,5 +1,5 @@
 declare global {
-    interface ReadonlyArray<T> {
+    export interface ReadonlyArray<T> {
         filter(callbackfn: (value: T, index: number) => boolean): Array<T>;
 
         max(fn?: (item: T) => any): T;
@@ -35,8 +35,10 @@ declare global {
         cast<U>(): Map<K, U>;
     }
 
-    interface Map<K, V> extends ReadonlyMap<K, V> {
+    export interface Map<K, V> extends ReadonlyMap<K, V> {
         getOrAdd(key: K, factory: (key?: K) => V): V;
     }
 
 }
+
+export {}

@@ -1,6 +1,6 @@
-import ts from "typescript/lib/typescript.js";
-import {resolve, relative} from 'path';
-import fs from "fs";
+import ts from "typescript";
+import {resolve, relative} from 'node:path';
+import fs from "node:fs";
 import { lessToStringTransformer } from "./absolute-plugin.js";
 
 const rootDir = process.cwd();
@@ -8,12 +8,12 @@ const rootDir = process.cwd();
 export function compile(...flags) {
 
     const host = ts.createSolutionBuilderWithWatchHost(ts.sys, createProgram);
-    console.log()
-    host.getCustomTransformers = () => ({
+    host.getCustomTransformers = (pkg) => ({
         before: [
             lessToStringTransformer
         ],
         afterDeclarations: [
+            lessToStringTransformer
         ]
     });
     host.useCaseSensitiveFileNames();

@@ -56,6 +56,7 @@
     "@types/jest": "27.x.x",
     "@types/sinon": "10.x.x",
     "@web/rollup-plugin-html": "^1.10.1",
+    "@zerollup/ts-helpers": "1.7.18",
     "fast-glob": "^3.2.11",
     "file-uri-to-path": "2.x.x",
     "import-meta-resolve": "2",

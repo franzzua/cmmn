@@ -3,7 +3,10 @@
   "compilerOptions": {
     "types": [
       "node"
-    ]
+    ],
+    "paths": {
+      "@async-queue": ["./async-queue"]
+    }
   },
   "exclude": ["dist", "node_modules"]
 }

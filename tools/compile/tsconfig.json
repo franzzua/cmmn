@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "target": "ESNext",
     "composite": true,
     "sourceMap": false,

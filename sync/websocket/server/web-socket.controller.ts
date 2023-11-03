@@ -4,7 +4,7 @@ import {ServerRoom} from "./server-room.js";
 import {UserInfo} from "../../webrtc/shared/types.js";
 import {WebSocketMessage} from "../shared/types.js";
 import {WebsocketConnection} from "./websocket.connection.js";
-import {TokenParser} from "../../shared/index.js";
+import {TokenParser} from "../../shared";
 
 @Injectable()
 export class WebSocketController {

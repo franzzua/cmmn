@@ -1,98 +1,202 @@
 import ts from "typescript";
 import path from "path";
 import fs from "fs";
+import { ImportPathsResolver } from '@zerollup/ts-helpers'
 
-function visitExportNode(exportNode, sourceFile) {
-    if (exportNode.typeOnly){
-        console.log('type olnly')
-        return ;
+class Visitor {
+    /**
+     * @type {ImportPathsResolver}
+     */
+    resolver;
+    /**
+     * @type {ts.TransformationContext}
+     */
+    context;
+    /**
+     * @type {ts.CompilerOptions}
+     */
+    options;
+    constructor(context, config) {
+        this.context = context;
+        this.options = context.getCompilerOptions();
+        this.resolver = new ImportPathsResolver({
+            paths: this.options.paths,
+            baseUrl: this.options.baseUrl,
+            exclude: []
+        });
     }
-    const file = exportNode.moduleSpecifier?.text ?? exportNode.test;
-    if (!file || !file.startsWith('.'))
-        return;
-    const sourceFileDir = path.dirname(sourceFile.path);
-    const abs = path.resolve(sourceFileDir, file);
-    if (/\.(less|css|scss|sass|svg|png|html)$/.test(file)) {
-        const absSource = path.join(options.outDir, path.relative(options.baseUrl, sourceFileDir));
-        const relFile = path.relative(absSource, abs).replaceAll(path.sep, '/');
-        return ts.updateExportDeclaration(exportNode, exportNode.decorators, exportNode.modifiers, exportNode.exportClause, ts.createStringLiteral(relFile), exportNode.typeOnly);
-    }
-    if (fs.existsSync(abs + '.ts') || fs.existsSync(abs + '.tsx')) {
-        return ts.updateExportDeclaration(exportNode, exportNode.decorators, exportNode.modifiers, exportNode.exportClause, ts.createStringLiteral(file + '.js'), exportNode.typeOnly);
-    }
-    if (fs.existsSync(abs + '/')) {
-        const indexFile = `${file}/index.js`;
-        return ts.updateExportDeclaration(exportNode, exportNode.decorators, exportNode.modifiers, exportNode.exportClause, ts.createStringLiteral(indexFile), exportNode.typeOnly);
-    }
-}
 
-function visitImportNode(importNode, sourceFile, options, context) {
-    const factory = context.factory;
-    const file = importNode.moduleSpecifier?.text;
-    if (!file || !file.startsWith('.'))
-        return;
-    const caseSensitiveFileNames = context.getEmitHost().useCaseSensitiveFileNames();
-    const formatPath = caseSensitiveFileNames ? x => x : x => x.toLowerCase();
-    const sourceFileDir = path.dirname(sourceFile.path);
-    const abs = formatPath(path.resolve(sourceFileDir, formatPath(file)));
-    if (/\.(less|css|scss|sass|svg|png|html)$/.test(file)) {
-        const absSource = formatPath(path.join(options.outDir, formatPath(path.relative(options.baseUrl, sourceFileDir))));
-        const relFile = path.relative(absSource, abs).replaceAll(path.sep, '/');
-        return factory.updateImportDeclaration(importNode, importNode.decorators, importNode.modifiers, importNode.importClause, factory.createStringLiteral(relFile));
-    }
-    if (/\.(json|tsx?|jsx?)$/.test(file))
-        return;
-    if (fs.existsSync(abs + '.ts') || fs.existsSync(abs + '.tsx')) {
-        return factory.updateImportDeclaration(importNode, importNode.decorators, importNode.modifiers, importNode.importClause, factory.createStringLiteral(file + '.js'));
-    }
-    if (fs.existsSync(abs + '/')) {
-        const indexFile = `${file}/index.js`;
-        return factory.updateImportDeclaration(importNode, importNode.decorators, importNode.modifiers, importNode.importClause, factory.createStringLiteral(indexFile));
-    }
-}
-
-function visitRequireNode(importNode, sourceFile) {
-    if (!(importNode.expression.kind == ts.SyntaxKind.Identifier &&
-        importNode.expression.escapedText == "require")) {
-        return;
-    }
-    const file = importNode.arguments[0].text;
-    if (/\.(less|css|scss|sass|svg|png|html)/.test(file)) {
+    /**
+     * @param file {string}
+     * @param sourceFile {ts.SourceFile}
+     */
+    resolve(file, sourceFile){
+        const caseSensitiveFileNames = this.context.getEmitHost().useCaseSensitiveFileNames();
+        const formatPath = caseSensitiveFileNames ? x => x : x => x.toLowerCase();
         const sourceFileDir = path.dirname(sourceFile.path);
-        const abs = path.join(sourceFileDir, file);
-        const absSource = path.join(options.outDir, path.relative(options.baseUrl, sourceFileDir));
+        const absSource = path.join(this.options.outDir, path.relative(this.options.baseUrl, sourceFileDir));
+        const suggestions = this.resolver.getImportSuggestions(file, sourceFileDir) ?? [];
+        for (let suggestion of suggestions) {
+            console.log('\t', suggestion)
+            if (fs.existsSync(path.join(sourceFileDir, suggestion)))
+                return suggestion;
+        }
+
+        const abs = path.resolve(sourceFileDir, file);
         const relFile = path.relative(absSource, abs).replaceAll(path.sep, '/');
-        return ts.updateCall(importNode, importNode.expression, undefined, [ts.createStringLiteral(relFile)]);
+        if (/\.(less|css|scss|sass|svg|png|html|txt)$/.test(file)) {
+            const content = fs.readFileSync(path.resolve(sourceFileDir, file), 'utf-8');
+            const outFile = path.resolve(absSource, file).replaceAll(path.sep, '/') + '.js';
+            fs.mkdirSync(path.dirname(outFile), {recursive: true});
+            fs.writeFileSync(outFile, 'export default `'+content.replaceAll('`','\\`')+'`', 'utf-8');
+            return outFile;
+        }
+        if (fs.existsSync(abs + '.ts') || fs.existsSync(abs + '.tsx')) {
+            return `${file}.js`;
+        }
+        if (fs.existsSync(abs + '/')) {
+            return `${file}/index.js`;
+        }
+        return file;
+    }
+
+    visitSourceFile = sourceFile => ts.visitEachChild(sourceFile, node => this.visit(node,sourceFile), this.context);
+
+    /**
+     * @param node {ts.Node}
+     * @param sourceFile {ts.SourceFile}
+     */
+    visit(node,sourceFile){
+        // if (node && node.kind == SyntaxKind.ImportDeclaration) {
+        //     return visitImportNode(node as ts.ImportDeclaration);
+        // }
+        if (!node)
+            return ts.visitEachChild(node, this.visit, this.context);
+        if (ts.isCallExpression(node)) {
+            const result = this.visitRequireNode(node, sourceFile);
+            if (result)
+                return result;
+        }
+        if (ts.isImportDeclaration(node)) {
+            const result = this.visitImportNode(node, sourceFile);
+            if (result)
+                return result;
+        }
+        if (ts.isExportDeclaration(node)) {
+            const result = this.visitExportNode(node, sourceFile);
+            if (result)
+                return result;
+        }
+        return ts.visitEachChild(node, node => this.visit(node, sourceFile), this.context);
+    }
+
+
+    /**
+     * @param exportNode {ts.ExportDeclaration}
+     * @param sourceFile {ts.SourceFile}
+     */
+    visitExportNode(exportNode, sourceFile) {
+        if (exportNode.typeOnly){
+            console.log('type olnly')
+            return ;
+        }
+        const file = exportNode.moduleSpecifier?.text ?? exportNode.text;
+        if (!file)
+            return;
+
+        const resolved = this.resolve(file, sourceFile);
+
+        return this.context.factory.updateExportDeclaration(
+            exportNode,
+            exportNode.decorators,
+            exportNode.modifiers,
+            exportNode.exportClause,
+            this.context.factory.createStringLiteral(resolved),
+            exportNode.typeOnly
+        );
+
+    }
+
+    /**
+     * @param importNode {ts.ImportDeclaration}
+     * @param sourceFile {ts.SourceFile}
+     */
+    visitImportNode(importNode, sourceFile) {
+        const file = importNode.moduleSpecifier?.text;
+        if (!file)
+            return;
+
+        const resolved = this.resolve(file, sourceFile);
+
+        return this.context.factory.updateImportDeclaration(
+            importNode,
+            importNode.modifiers,
+            importNode.importClause,
+            this.context.factory.createStringLiteral(resolved),
+            importNode.assertClause,
+        );
+        // const caseSensitiveFileNames = this.context.getEmitHost().useCaseSensitiveFileNames();
+        // const formatPath = caseSensitiveFileNames ? x => x : x => x.toLowerCase();
+        // const sourceFileDir = path.dirname(sourceFile.path);
+        // const abs = formatPath(path.resolve(sourceFileDir, formatPath(file)));
+        // if (/\.(less|css|scss|sass|svg|png|html)$/.test(file)) {
+        //     const absSource = formatPath(path.join(this.options.outDir, formatPath(path.relative(this.options.baseUrl, sourceFileDir))));
+        //     const relFile = path.relative(absSource, abs).replaceAll(path.sep, '/');
+        //     return this.context.factory.updateImportDeclaration(
+        //         importNode,
+        //         importNode.decorators,
+        //         importNode.modifiers,
+        //         importNode.importClause,
+        //         importNode.assertClause,
+        //         this.context.factory.createStringLiteral(relFile)
+        //     );
+        // }
+        // if (/\.(json|tsx?|jsx?)$/.test(file))
+        //     return;
+        // if (fs.existsSync(abs + '.ts') || fs.existsSync(abs + '.tsx')) {
+        //     return this.context.factory.updateImportDeclaration(
+        //         importNode,
+        //         importNode.decorators,
+        //         importNode.modifiers,
+        //         importNode.importClause,
+        //         importNode.assertClause,
+        //         this.context.factory.createStringLiteral(file + '.js')
+        //     );
+        // }
+        // if (fs.existsSync(abs + '/')) {
+        //     const indexFile = `${file}/index.js`;
+        //     return this.context.factory.updateImportDeclaration(
+        //         importNode,
+        //         importNode.decorators,
+        //         importNode.modifiers,
+        //         importNode.importClause,
+        //         importNode.assertClause,
+        //         this.context.factory.createStringLiteral(indexFile)
+        //     );
+        // }
+    }
+
+    /**
+     * @param importNode {ts.Node}
+     * @param sourceFile {ts.SourceFile}
+     */
+    visitRequireNode(importNode, sourceFile) {
+        if (importNode.expression.kind !== ts.SyntaxKind.Identifier ||
+            importNode.expression.escapedText !== "require") {
+            return;
+        }
+        const file = importNode.arguments[0].text;
+        const resolved = this.resolve(file, sourceFile);
+        return this.context.factory.updateCallExpression(
+            importNode,
+            importNode.expression,
+            undefined,
+            [this.context.factory.createStringLiteral(resolved)]
+        );
     }
 }
 
 export const lessToStringTransformer = function (context) {
-    const options = context.getCompilerOptions();
-    return (sourceFile) => {
-        function visitor(node) {
-            // if (node && node.kind == ts.SyntaxKind.ImportDeclaration) {
-            //     return visitImportNode(node as ts.ImportDeclaration);
-            // }
-            if (!node)
-                return ts.visitEachChild(node, visitor, context);
-            if (ts.isCallExpression(node)) {
-                const result = visitRequireNode(node, sourceFile);
-                if (result)
-                    return result;
-            }
-            if (ts.isImportDeclaration(node)) {
-                const result = visitImportNode(node, sourceFile, options, context);
-                if (result)
-                    return result;
-            }
-            if (ts.isExportDeclaration(node)) {
-                const result = visitExportNode(node, sourceFile);
-                if (result)
-                    return result;
-            }
-            return ts.visitEachChild(node, visitor, context);
-        }
-
-        return ts.visitEachChild(sourceFile, visitor, context);
-    };
+    const visitor = new Visitor(context);
+    return visitor.visitSourceFile;
 };

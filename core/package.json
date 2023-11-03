@@ -30,10 +30,12 @@
   "typesVersions": {
     "*": {
       "min": [
-        "dist/typings/min.d.ts"
+        "dist/typings/min.d.ts",
+        "extensions.d.ts"
       ],
       "*": [
-        "dist/typings/index.d.ts"
+        "dist/typings/index.d.ts",
+        "extensions.d.ts"
       ]
     }
   },

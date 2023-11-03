@@ -1,10 +1,9 @@
-import "./helpers/helpers.js";
-export * from "./extensions.js";
+// import "./helpers/helpers";
 import "./helpers/Array";
 import "./helpers/map";
-
-export {Fn} from "./helpers/Fn.js";
-export {AsyncQueue} from "./async-queue.js";
+export type * from "./extensions.ts";
+export {Fn} from "./helpers/Fn";
+export {AsyncQueue} from "@async-queue";
 export {bind} from "bind-decorator";
 export {
     EventEmitter,
@@ -13,12 +12,13 @@ export {
     EventListenerOptions,
     StoppableEvent,
     StoppableEventEmitter
-} from "./helpers/event-emitter.js";
-export {ResolvablePromise} from "./helpers/resolvable.promise.js";
-export {Lazy} from "./helpers/Lazy.js";
-export {compare} from "./helpers/compare.js";
-export {debounce, debounced} from "./helpers/debounce.js";
-export {throttle, throttled} from "./helpers/throttle.js";
-export {DeepPartial} from "./helpers/deepAssign.js";
-export {Disposable} from "./disposable.js";
-export {Provider, Inject, Injectable, InjectionToken, ProviderOrValue, Container} from "./di/index.js";
+} from "./helpers/event-emitter";
+export {ResolvablePromise} from "./helpers/resolvable.promise";
+export {Lazy} from "./helpers/Lazy";
+export {compare} from "./helpers/compare";
+export {debounce, debounced} from "./helpers/debounce";
+export {throttle, throttled} from "./helpers/throttle";
+export {DeepPartial} from "./helpers/deepAssign";
+export {Disposable} from "./disposable";
+export {Provider, Inject, Injectable, InjectionToken, ProviderOrValue, Container} from "./di/index";
+import txt from "./file.txt";
