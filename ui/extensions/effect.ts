@@ -1,6 +1,6 @@
-import {HtmlComponentBase} from "../component/html-component-base.js";
+import {HtmlComponentBase} from "../component/html-component-base";
 import {Fn} from "@cmmn/core";
-import {Html} from "../component/types.js";
+import {Html} from "../component/types";
 
 export type EffectFunction<TState> = (state: TState) => void | Function
 type EffectInfo = {

@@ -1,6 +1,6 @@
-import {PeerDataChannel} from "../../shared/peer-data-channel.js";
-import {WebsocketConnection} from "./websocket-connection.js";
-import {MessageType} from "../../webrtc/shared/types.js";
+import {PeerDataChannel} from "../../shared/peer-data-channel";
+import {WebsocketConnection} from "./websocket-connection";
+import {MessageType} from "../../webrtc/shared/types";
 
 export class DataConnection extends PeerDataChannel {
     constructor(private connection: WebsocketConnection,

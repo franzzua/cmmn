@@ -1,9 +1,9 @@
 import {BaseCell, Cell} from "@cmmn/cell";
 import {EventEmitter, Fn, Injectable} from "@cmmn/core";
-import {Stream} from "./stream.js";
-import {Action} from "../shared/types.js";
-import {Locator} from "../shared/locator.js";
-import {VersionState} from "./versionState.js";
+import {Stream} from "./stream";
+import {Action} from "../shared/types";
+import {Locator} from "../shared/locator";
+import {VersionState} from "./versionState";
 
 @Injectable()
 export class DirectStream extends Stream {

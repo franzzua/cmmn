@@ -1,5 +1,5 @@
 import {Container} from "@cmmn/core";
-import {Router} from "./router.js";
+import {Router} from "./router";
 
 export class Application {
 

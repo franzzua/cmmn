@@ -1,5 +1,5 @@
-import {Api} from "./src/api.js";
-import {Request, RequestFailedError, RequestAbortedError} from "./src/request.js";
+import {Api} from "./src/api";
+import {Request, RequestFailedError, RequestAbortedError} from "./src/request";
 
 export {Api, Request, RequestFailedError, RequestAbortedError};
 export function useApi(fetch, baseUrl: string){

@@ -1,1 +1,1 @@
-export {WebsocketProvider} from "./websocket.provider.js";
+export {WebsocketProvider} from "./websocket.provider";

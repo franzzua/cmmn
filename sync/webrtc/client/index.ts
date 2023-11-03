@@ -1,3 +1,3 @@
-export {WebRtcProvider, ConnectionState} from "./web-rtc-provider.js";
-export {Room} from "./room.js";
-export * from "../networks/network.js";
+export {WebRtcProvider, ConnectionState} from "./web-rtc-provider";
+export {Room} from "./room";
+export * from "../networks/network";

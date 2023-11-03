@@ -1,5 +1,5 @@
 import {suite, test, expect} from "@cmmn/tools/test";
-import {Fn} from "../helpers/Fn.js";
+import {Fn} from "../helpers/Fn";
 
 @suite
 export class ExtendSpec {

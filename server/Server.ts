@@ -1,6 +1,6 @@
 import type {FastifyInstance, FastifyServerOptions} from "fastify";
 import {Container} from "@cmmn/core";
-import {FastifyWrapper} from "./wrappers/FastifyWrapper.js";
+import {FastifyWrapper} from "./wrappers/FastifyWrapper";
 import http from "http";
 
 export class Server extends http.Server {

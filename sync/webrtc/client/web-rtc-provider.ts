@@ -1,8 +1,8 @@
-import {AnnounceEvent, SignalEvent, SignalingConnection} from "./signaling-connection.js";
+import {AnnounceEvent, SignalEvent, SignalingConnection} from "./signaling-connection";
 import {bind} from '@cmmn/core';
-import {SignalClientMessage} from "../shared/types.js";
-import {Room, RoomOptions} from "./room.js";
-import {DataChannelProvider} from "./data-channel-provider.js";
+import {SignalClientMessage} from "../shared/types";
+import {Room, RoomOptions} from "./room";
+import {DataChannelProvider} from "./data-channel-provider";
 import {cell, Cell} from "@cmmn/cell";
 
 export type ConnectionState = 'disconnected' | 'connecting' | 'connected';

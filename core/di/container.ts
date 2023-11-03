@@ -1,5 +1,5 @@
-import {Provider, ProviderOrValue} from "./types.js";
-import {Store} from "./store.js";
+import {Provider, ProviderOrValue} from "./types";
+import {Store} from "./store";
 
 export class Container {
 

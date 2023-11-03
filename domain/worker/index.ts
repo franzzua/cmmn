@@ -1,13 +1,13 @@
 import {Container, registerSerializer} from "@cmmn/core";
-import {Transferable} from "../streams/transferable.js";
-import {Locator} from "../shared/locator.js";
-import {Model} from "./model.js";
-import {RootLocator} from "./root.locator.js";
-import {ModelLike} from "../shared/types.js";
+import {Transferable} from "../streams/transferable";
+import {Locator} from "../shared/locator";
+import {Model} from "./model";
+import {RootLocator} from "./root.locator";
+import {ModelLike} from "../shared/types";
 
-export {WorkerEntry} from "./worker-entry.js";
-export {Model} from "./model.js";
-export * from "../shared/types.js"
+export {WorkerEntry} from "./worker-entry";
+export {Model} from "./model";
+export * from "../shared/types"
 
 if (!('document' in globalThis)) {
     registerSerializer<Transferable, number>(10, Transferable,

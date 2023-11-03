@@ -1,6 +1,6 @@
 import {compare, DeepPartial, EventEmitter, Fn} from "@cmmn/core";
-import {ICellOptions} from "./cell.js";
-import {CellDecorator, getCell} from "./decorators.js";
+import {ICellOptions} from "./cell";
+import {CellDecorator, getCell} from "./decorators";
 
 export class ObservableObject<T> extends EventEmitter<{
     change: { oldValue: T, value: T, keys?: Array<(keyof T) & string> }

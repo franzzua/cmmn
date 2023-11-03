@@ -1,5 +1,5 @@
 import {Cell, ObservableList} from "@cmmn/cell";
-import {ModelAction, ModelPath} from "../shared/types.js";
+import {ModelAction, ModelPath} from "../shared/types";
 import {Fn} from "@cmmn/core";
 
 /**

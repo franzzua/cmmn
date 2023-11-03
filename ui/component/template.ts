@@ -1,5 +1,5 @@
 import {Renderable, TemplateFunction, unroll} from "@cmmn/uhtml";
-import {Html} from "./types.js";
+import {Html} from "./types";
 
 export function getTemplate(type: 'html' | 'svg'): TemplateFunction<Renderable> {
     const cache = getCache();

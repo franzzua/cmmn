@@ -1,4 +1,4 @@
-import {ModelAction, ModelLike, ModelPath} from "./types.js";
+import {ModelAction, ModelLike, ModelPath} from "./types";
 
 export abstract class Locator {
 

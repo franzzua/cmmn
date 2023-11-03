@@ -1,7 +1,7 @@
 import {bind, EventListener, Fn} from "@cmmn/core";
 import {Cell} from "@cmmn/cell";
 import {useCustomHandler} from "@cmmn/uhtml";
-import {BoundRectListener} from "./boundRectListener.js";
+import {BoundRectListener} from "./boundRectListener";
 
 useCustomHandler((node, name) => {
     if (name == "ondrag") {

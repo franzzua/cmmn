@@ -2,11 +2,11 @@
  * @jest-environment jsdom
  */
 import {expect, sinon, suite, test} from "@cmmn/tools/test";
-import {action, ActionSubscribeType} from "../extensions/action.js";
-import {HtmlComponent} from "../component/htmlComponent.js";
-import {GlobalStaticState} from "../component/component.js";
-import {AnimationFrame} from "../user-events/animationFrameListener.js";
-import {effect} from "../extensions/effect.js";
+import {action, ActionSubscribeType} from "../extensions/action";
+import {HtmlComponent} from "../component/htmlComponent";
+import {GlobalStaticState} from "../component/component";
+import {AnimationFrame} from "../user-events/animationFrameListener";
+import {effect} from "../extensions/effect";
 
 @suite
 class HtmlComponentSpec {

@@ -1,6 +1,6 @@
 import {EventEmitter, EventEmitterBase, Fn, ResolvablePromise} from "@cmmn/core";
 import {BaseCell, Cell, cell, ICellOptions} from '@cmmn/cell';
-import { ModelLike } from "../shared/types.js";
+import { ModelLike } from "../shared/types";
 
 /**
  * Есть два состояния одной сущности - в воркере и в мейне. Они должны быть одинаковыми (consistency),

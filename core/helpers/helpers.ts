@@ -1,5 +1,5 @@
 import "../di/reflect";
-import {Fn} from "./Fn.js";
+import {Fn} from "./Fn";
 
 // @ts-ignore
 globalThis.global = globalThis;

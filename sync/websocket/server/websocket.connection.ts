@@ -1,6 +1,6 @@
 import { bind } from "@cmmn/core";
-import {ServerSocketConnection} from "../../shared/server-socket-connection.js";
-import {WebSocketDataMessage} from "../shared/types.js";
+import {ServerSocketConnection} from "../../shared/server-socket-connection";
+import {WebSocketDataMessage} from "../shared/types";
 
 export class WebsocketConnection extends ServerSocketConnection<{
     message: WebSocketDataMessage

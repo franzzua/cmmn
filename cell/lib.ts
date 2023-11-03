@@ -1,7 +1,7 @@
-export {Cell, ICellOptions} from "./src/cell.js";
-export {BaseCell} from "./src/baseCell.js";
-export {cell} from "./src/decorators.js";
-export {AsyncCell} from "./src/AsyncCell.js";
+export {Cell, ICellOptions} from "./src/cell";
+export {BaseCell} from "./src/baseCell";
+export {cell} from "./src/decorators";
+export {AsyncCell} from "./src/AsyncCell";
 export {
     EventEmitter, compare, debounce, debounced, EventEmitterBase,
     bind, Fn, throttled, throttle, StoppableEvent, AsyncQueue, DeepPartial,
@@ -9,4 +9,4 @@ export {
     Lazy, ResolvablePromise,
     Provider, Inject, Injectable, InjectionToken, ProviderOrValue, Container
 } from "@cmmn/core";
-export {ObservableList} from "./src/ObservableList.js";
+export {ObservableList} from "./src/ObservableList";

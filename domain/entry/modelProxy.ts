@@ -1,9 +1,9 @@
-import {Stream} from "../streams/stream.js";
-import {ModelAction, ModelLike, ModelPath} from "../shared/types.js";
+import {Stream} from "../streams/stream";
+import {ModelAction, ModelLike, ModelPath} from "../shared/types";
 import {AsyncQueue, Injectable} from "@cmmn/core";
-import {VersionState} from "../streams/versionState.js";
-import {Locator} from "../shared/locator.js";
-import {EntityLocator} from "./entity-locator.service.js";
+import {VersionState} from "../streams/versionState";
+import {Locator} from "../shared/locator";
+import {EntityLocator} from "./entity-locator.service";
 
 @Injectable(true)
 export class ModelProxy<TState, TActions extends ModelAction = {}> implements ModelLike<TState, TActions>{

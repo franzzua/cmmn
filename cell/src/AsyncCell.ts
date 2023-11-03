@@ -1,5 +1,5 @@
-import {Cell, ICellOptions} from "./cell.js";
-import {BaseCell} from "./baseCell.js";
+import {Cell, ICellOptions} from "./cell";
+import {BaseCell} from "./baseCell";
 import {throttle} from "@cmmn/core";
 
 export type IAsyncCellOptions<T, TKey = T> = ICellOptions<T, TKey> & {

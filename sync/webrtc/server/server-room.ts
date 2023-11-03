@@ -1,7 +1,7 @@
-import {ServerSocketConnection} from "../../shared/server-socket-connection.js";
+import {ServerSocketConnection} from "../../shared/server-socket-connection";
 import {bind} from "@cmmn/core";
-import type {SignalServerMessage} from "../shared/types.js";
-import {SignalingConnection} from "./signaling.connection.js";
+import type {SignalServerMessage} from "../shared/types";
+import {SignalingConnection} from "./signaling.connection";
 
 export class ServerRoom {
     private users = new Map<string, SignalingConnection>();

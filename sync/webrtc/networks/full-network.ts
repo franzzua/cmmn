@@ -1,5 +1,5 @@
-import {ConnectionDirection} from "./network.js";
-import {BaseNetwork} from "./base-network.js";
+import {ConnectionDirection} from "./network";
+import {BaseNetwork} from "./base-network";
 
 export class FullNetwork extends BaseNetwork {
 

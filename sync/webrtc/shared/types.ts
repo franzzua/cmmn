@@ -1,4 +1,4 @@
-import type {UserInfo} from "../../shared/token-parser.js";
+import type {UserInfo} from "../../shared/token-parser";
 
 export enum MessageType {
     UpdateRequest = 0,

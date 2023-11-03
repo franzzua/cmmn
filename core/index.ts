@@ -1,4 +1,4 @@
-export * from "./min.js";
-export * from "./di/index.js";
-export {registerSerializer, serialize, deserialize} from "./serialize/index.js";
-export {utc, utcToday, Duration, DateTime} from "./helpers/utc.js";
+export * from "./min";
+export * from "./di/index";
+export {registerSerializer, serialize, deserialize} from "./serialize/index";
+export {utc, utcToday, Duration, DateTime} from "./helpers/utc";

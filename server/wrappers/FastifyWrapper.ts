@@ -1,5 +1,5 @@
 import type {FastifyInstance, HTTPMethods} from "fastify";
-import {RouteInfo} from "../decorators/controller.js";
+import {RouteInfo} from "../decorators/controller";
 import {Container} from "@cmmn/core";
 
 export class FastifyWrapper {

@@ -1,5 +1,5 @@
 import {expect, sinon, suite, test} from "@cmmn/tools/test";
-import {ObservableSet} from "../src/ObservableSet.js";
+import {ObservableSet} from "../src/ObservableSet";
 
 @suite
 class ObservableSetSpec {

@@ -1,5 +1,5 @@
-import {PeerDataChannel} from "../../shared/peer-data-channel.js";
-import {MessageType} from "../../webrtc/shared/types.js";
+import {PeerDataChannel} from "../../shared/peer-data-channel";
+import {MessageType} from "../../webrtc/shared/types";
 
 export class ChannelMock extends PeerDataChannel {
     private static instances = new Set<ChannelMock>();

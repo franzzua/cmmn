@@ -1,4 +1,4 @@
-import {Fn} from "./Fn.js";
+import {Fn} from "./Fn";
 
 export {};
 

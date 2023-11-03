@@ -1,8 +1,8 @@
 import {Container, Injectable} from "@cmmn/core";
-import {Stream} from "../streams/stream.js";
-import {ModelAction, ModelLike, ModelPath} from "../shared/types.js";
-import {ModelProxy} from "./modelProxy.js";
-import {Locator} from "../shared/locator.js";
+import {Stream} from "../streams/stream";
+import {ModelAction, ModelLike, ModelPath} from "../shared/types";
+import {ModelProxy} from "./modelProxy";
+import {Locator} from "../shared/locator";
 
 @Injectable()
 export class EntityLocator implements Locator {

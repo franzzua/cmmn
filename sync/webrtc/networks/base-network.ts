@@ -1,4 +1,4 @@
-import {Connection, ConnectionDirection, Network} from "./network.js";
+import {Connection, ConnectionDirection, Network} from "./network";
 import {EventEmitter} from "@cmmn/core";
 
 export abstract class BaseNetwork extends EventEmitter<{

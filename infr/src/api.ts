@@ -1,4 +1,4 @@
-import {Request} from "./request.js";
+import {Request} from "./request";
 
 export type RequestOptions = RequestInit & {
     params?: any;

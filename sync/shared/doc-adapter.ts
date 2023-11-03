@@ -1,11 +1,11 @@
 import * as Y from "yjs";
 import {applyUpdate, Doc} from "yjs";
-import {PeerDataChannel} from "./peer-data-channel.js";
+import {PeerDataChannel} from "./peer-data-channel";
 import * as awarenessProtocol from 'y-protocols/awareness.js'
 import {Awareness} from 'y-protocols/awareness.js'
 import {bind, EventEmitter, Fn} from "@cmmn/core";
-import {MessageType} from "../webrtc/shared/types.js";
-import { PeerConnection } from "../webrtc/client/peer-connection.js";
+import {MessageType} from "../webrtc/shared/types";
+import { PeerConnection } from "../webrtc/client/peer-connection";
 type UnsubscribeFunction = () => void;
 export class DocAdapter extends EventEmitter<{
     dispose: void;

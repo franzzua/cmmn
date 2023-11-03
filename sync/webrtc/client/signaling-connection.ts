@@ -3,9 +3,9 @@ import {
     SignalingRegistrationInfo,
     SignalingServerMessage,
     SignalData
-} from "../shared/types.js";
+} from "../shared/types";
 import {bind} from "@cmmn/core";
-import {ClientWebsocketConnection} from "../../shared/client-websocket-connection.js";
+import {ClientWebsocketConnection} from "../../shared/client-websocket-connection";
 
 export class SignalingConnection extends ClientWebsocketConnection<{
     signal: SignalEvent;

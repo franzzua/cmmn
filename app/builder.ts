@@ -1,5 +1,5 @@
 import {Container, Provider, ProviderOrValue} from "@cmmn/core";
-import {IRouterOptions, Router} from "./router.js";
+import {IRouterOptions, Router} from "./router";
 import {setDefaultContainer} from "@cmmn/ui";
 
 export class Builder{

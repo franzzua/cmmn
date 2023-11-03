@@ -1,5 +1,5 @@
 import {BaseCell} from "@cmmn/cell";
-import {Action, ModelPath} from "../shared/types.js";
+import {Action, ModelPath} from "../shared/types";
 
 export abstract class Stream {
     public abstract Invoke(action: Action): Promise<any>;

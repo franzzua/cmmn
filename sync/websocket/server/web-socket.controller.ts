@@ -1,9 +1,9 @@
 import {Injectable} from "@cmmn/core";
 import {WebSocket} from "ws";
-import {ServerRoom} from "./server-room.js";
-import {UserInfo} from "../../webrtc/shared/types.js";
-import {WebSocketMessage} from "../shared/types.js";
-import {WebsocketConnection} from "./websocket.connection.js";
+import {ServerRoom} from "./server-room";
+import {UserInfo} from "../../webrtc/shared/types";
+import {WebSocketMessage} from "../shared/types";
+import {WebsocketConnection} from "./websocket.connection";
 import {TokenParser} from "../../shared";
 
 @Injectable()

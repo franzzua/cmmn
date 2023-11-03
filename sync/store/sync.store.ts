@@ -1,6 +1,6 @@
 import {Doc, } from "yjs";
-import {DocAdapter} from "../index.js";
-import {Awareness} from "y-protocols/awareness.js";
+import {DocAdapter} from "../index";
+import {Awareness} from "y-protocols/awareness";
 import {BaseCell, Cell, cell, ObservableList, ObservableObject, ObservableSet} from "@cmmn/cell";
 import {IndexeddbPersistence} from "y-indexeddb";
 import {compare, Fn} from "@cmmn/core";

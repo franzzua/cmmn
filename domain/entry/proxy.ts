@@ -1,19 +1,19 @@
 import {Container, registerSerializer} from "@cmmn/core";
-import {Stream} from "../streams/stream.js";
-import {DirectStream} from "../streams/direct-stream.js";
-import {WorkerStream} from "../streams/workerStream.js";
-import {Transferable} from "../streams/transferable.js";
-import {Locator} from "../shared/locator.js";
-import {EntityLocator} from "./entity-locator.service.js";
-import {ChildWindowStream} from "../window/child-window.stream.js";
+import {Stream} from "../streams/stream";
+import {DirectStream} from "../streams/direct-stream";
+import {WorkerStream} from "../streams/workerStream";
+import {Transferable} from "../streams/transferable";
+import {Locator} from "../shared/locator";
+import {EntityLocator} from "./entity-locator.service";
+import {ChildWindowStream} from "../window/child-window.stream";
 
-export {proxy} from "../shared/domain.structure.js";
-export {ModelProxy} from "./modelProxy.js";
-export {Stream} from "../streams/stream.js";
-export {WorkerStream} from "../streams/workerStream.js";
-export {ModelMap} from "../model-map.js";
-export {ChildWindowConnector} from "../window/child-window.connector.js";
-export * from "../shared/types.js"
+export {proxy} from "../shared/domain.structure";
+export {ModelProxy} from "./modelProxy";
+export {Stream} from "../streams/stream";
+export {WorkerStream} from "../streams/workerStream";
+export {ModelMap} from "../model-map";
+export {ChildWindowConnector} from "../window/child-window.connector";
+export * from "../shared/types"
 
 //
 export function useStreamDomain(): Container {

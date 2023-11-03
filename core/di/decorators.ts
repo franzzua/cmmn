@@ -1,5 +1,5 @@
 import "./reflect";
-import {Container} from "./container.js";
+import {Container} from "./container";
 
 export function Injectable(multiple: boolean = false): (target: any) => void {
     return ((target: any) => {

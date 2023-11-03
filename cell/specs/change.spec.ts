@@ -1,6 +1,6 @@
 import {expect, sinon, suite, test} from "@cmmn/tools/test";
 import {BaseCell} from '../src/baseCell.js';
-import {Actualizator} from "../src/actualizator.js";
+import {Actualizator} from "../src/actualizator";
 
 @suite
 class ChangeSpec {

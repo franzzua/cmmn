@@ -1,6 +1,6 @@
-import {Cell, ICellOptions} from "./cell.js";
-import {BaseCell} from "./baseCell.js";
-import {ObservableObject} from "./ObservableObject.js";
+import {Cell, ICellOptions} from "./cell";
+import {BaseCell} from "./baseCell";
+import {ObservableObject} from "./ObservableObject";
 
 const KEY_VALUE_CELLS = Symbol('ObservableCells')
 export type CellDecorator =

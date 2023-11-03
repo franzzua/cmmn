@@ -1,6 +1,6 @@
 import {expect, sinon, suite, test} from "@cmmn/tools/test";
-import {cell} from "../src/decorators.js";
-import {Cell} from "../src/cell.js";
+import {cell} from "../src/decorators";
+import {Cell} from "../src/cell";
 
 class TestObject {
     @cell

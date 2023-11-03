@@ -1,6 +1,6 @@
 import {bind} from "@cmmn/core";
-import {WebsocketConnection} from "./websocket.connection.js";
-import {WebSocketDataMessage} from "../shared/types.js";
+import {WebsocketConnection} from "./websocket.connection";
+import {WebSocketDataMessage} from "../shared/types";
 
 export class ServerRoom {
     private users = new Map<string, WebsocketConnection>();
