@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/server",
-  "version": "1.8.6",
+  "version": "1.9.0",
   "description": "server libs for building rest api",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -23,8 +23,8 @@
     }
   },
   "devDependencies": {
-    "@cmmn/core": "^1.8.6",
-    "@cmmn/tools": "^1.8.6",
+    "@cmmn/core": "^1.9.0",
+    "@cmmn/tools": "^1.9.0",
     "fastify": "4"
   },
   "type": "module",
