@@ -1,4 +1,4 @@
-declare module "*.txt";
+declare module "*.less";
 declare interface ReadonlyArray<T> {
     filter(callbackfn: (value: T, index: number) => boolean): Array<T>;
 

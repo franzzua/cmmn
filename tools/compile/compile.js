@@ -1,7 +1,7 @@
 import ts from "typescript";
 import {resolve, relative} from 'node:path';
 import fs from "node:fs";
-import { lessToStringTransformer } from "./absolute-plugin.js";
+import { tsResolvePlugin } from "./ts-resolve-plugin.js";
 
 const rootDir = process.cwd();
 
@@ -10,10 +10,10 @@ export function compile(...flags) {
     const host = ts.createSolutionBuilderWithWatchHost(ts.sys, createProgram);
     host.getCustomTransformers = (pkg) => ({
         before: [
-            lessToStringTransformer
+            tsResolvePlugin
         ],
         afterDeclarations: [
-            lessToStringTransformer
+            tsResolvePlugin
         ]
     });
     host.useCaseSensitiveFileNames();

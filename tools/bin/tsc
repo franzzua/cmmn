@@ -1,0 +1,4 @@
+#!/usr/bin/env node
+const {compile} = require('../compile/compile.js')
+console.log(process.argv);
+compile(['-b', '--watch'])

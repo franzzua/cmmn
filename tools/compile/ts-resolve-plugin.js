@@ -16,6 +16,17 @@ class Visitor {
      * @type {ts.CompilerOptions}
      */
     options;
+    /**
+     * @type {{
+     *     copy: RegExp;
+     *     import: RegExp;
+     * }}
+     */
+    config;
+    /**
+     *
+     * @param context {ts.TransformationContext}
+     */
     constructor(context, config) {
         this.context = context;
         this.options = context.getCompilerOptions();
@@ -24,6 +35,11 @@ class Visitor {
             baseUrl: this.options.baseUrl,
             exclude: []
         });
+        this.config = {
+            copy: /\.(less|css|scss|sass|svg|png|html|txt)$/g,
+            import: /\.(txt|sql)$/g,
+            ...config
+        }
     }
 
     /**
@@ -31,25 +47,33 @@ class Visitor {
      * @param sourceFile {ts.SourceFile}
      */
     resolve(file, sourceFile){
-        const caseSensitiveFileNames = this.context.getEmitHost().useCaseSensitiveFileNames();
-        const formatPath = caseSensitiveFileNames ? x => x : x => x.toLowerCase();
         const sourceFileDir = path.dirname(sourceFile.path);
-        const absSource = path.join(this.options.outDir, path.relative(this.options.baseUrl, sourceFileDir));
         const suggestions = this.resolver.getImportSuggestions(file, sourceFileDir) ?? [];
         for (let suggestion of suggestions) {
-            console.log('\t', suggestion)
-            if (fs.existsSync(path.join(sourceFileDir, suggestion)))
-                return suggestion;
+            if (!fs.existsSync(path.join(sourceFileDir, suggestion))) {
+                continue;
+            }
+            file = suggestion;
+            break;
         }
-
+        const caseSensitiveFileNames = this.context.getEmitHost().useCaseSensitiveFileNames();
+        const formatPath = caseSensitiveFileNames ? x => x : x => x.toLowerCase();
+        const absSource = path.join(this.options.outDir, path.relative(this.options.baseUrl, sourceFileDir));
         const abs = path.resolve(sourceFileDir, file);
-        const relFile = path.relative(absSource, abs).replaceAll(path.sep, '/');
-        if (/\.(less|css|scss|sass|svg|png|html|txt)$/.test(file)) {
+        if (this.config.copy.test(file)) {
+            const outFile = path.resolve(absSource, file).replaceAll(path.sep, '/');
+            fs.cpSync(path.resolve(sourceFileDir, file), outFile);
+            return file;
+        }
+        if (this.config.import.test(file)) {
             const content = fs.readFileSync(path.resolve(sourceFileDir, file), 'utf-8');
             const outFile = path.resolve(absSource, file).replaceAll(path.sep, '/') + '.js';
             fs.mkdirSync(path.dirname(outFile), {recursive: true});
             fs.writeFileSync(outFile, 'export default `'+content.replaceAll('`','\\`')+'`', 'utf-8');
             return outFile;
+        }
+        if (fs.existsSync(abs)){
+            return file.replace(/\.ts$/,'.js');
         }
         if (fs.existsSync(abs + '.ts') || fs.existsSync(abs + '.tsx')) {
             return `${file}.js`;
@@ -106,7 +130,7 @@ class Visitor {
 
         const resolved = this.resolve(file, sourceFile);
 
-        return this.context.factory.updateExportDeclaration(
+        const newNode = this.context.factory.updateExportDeclaration(
             exportNode,
             exportNode.decorators,
             exportNode.modifiers,
@@ -114,7 +138,10 @@ class Visitor {
             this.context.factory.createStringLiteral(resolved),
             exportNode.typeOnly
         );
-
+        if (newNode.flags !== exportNode.flags) {
+            newNode.flags = exportNode.flags
+        }
+        return newNode;
     }
 
     /**
@@ -125,16 +152,17 @@ class Visitor {
         const file = importNode.moduleSpecifier?.text;
         if (!file)
             return;
-
         const resolved = this.resolve(file, sourceFile);
 
-        return this.context.factory.updateImportDeclaration(
+        const newNode = this.context.factory.updateImportDeclaration(
             importNode,
             importNode.modifiers,
             importNode.importClause,
             this.context.factory.createStringLiteral(resolved),
             importNode.assertClause,
         );
+        newNode.flags = importNode.flags;
+        return newNode;
         // const caseSensitiveFileNames = this.context.getEmitHost().useCaseSensitiveFileNames();
         // const formatPath = caseSensitiveFileNames ? x => x : x => x.toLowerCase();
         // const sourceFileDir = path.dirname(sourceFile.path);
@@ -196,7 +224,8 @@ class Visitor {
     }
 }
 
-export const lessToStringTransformer = function (context) {
-    const visitor = new Visitor(context);
-    return visitor.visitSourceFile;
+export const tsResolvePlugin = function (contextOrOptions) {
+    if(!contextOrOptions.getCompilerOptions)
+        return context => new Visitor(context, contextOrOptions).visitSourceFile;
+    return new Visitor(contextOrOptions).visitSourceFile;
 };
