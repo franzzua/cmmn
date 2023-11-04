@@ -19,6 +19,10 @@ export async function bundle(...options) {
         for (let context of contexts) {
             await context.watch({});
         }
+    }else {
+        for (let context of contexts) {
+            await context.dispose();
+        }
     }
 }
 
