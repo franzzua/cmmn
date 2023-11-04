@@ -41,47 +41,55 @@ class Visitor {
             ...config
         }
     }
+    findFile(importPath, sourceFile) {
+        const sourceFileDir = path.dirname(sourceFile.path);
 
+        return [
+            importPath,
+            importPath + "/index.ts",
+            importPath + ".ts",
+            importPath + ".tsx",
+            importPath + "/index.js",
+            importPath + ".js",
+            importPath + ".jsx",
+            importPath.replace(/\.js$/, ".ts")
+        ].find(x => fs.existsSync(path.resolve(sourceFileDir, x)))?.replace(/(\.ts)x?$/, '.js');
+    }
+    resolveFile(importPath, sourceFile){
+        const sourceFileDir = path.dirname(sourceFile.path);
+        const existed = this.findFile(importPath, sourceFile);
+        if (existed) return existed;
+        const suggestions = this.resolver.getImportSuggestions(importPath, sourceFileDir) ?? [];
+        for (let suggestion of suggestions) {
+            const existed = this.findFile(suggestion, sourceFile)
+            if (existed) return existed;
+        }
+        return importPath;
+    }
     /**
-     * @param file {string}
+     * @param importPath {string}
      * @param sourceFile {ts.SourceFile}
      */
-    resolve(file, sourceFile){
+    resolve(importPath, sourceFile){
+        importPath = this.resolveFile(importPath, sourceFile);
         const sourceFileDir = path.dirname(sourceFile.path);
-        const suggestions = this.resolver.getImportSuggestions(file, sourceFileDir) ?? [];
-        for (let suggestion of suggestions) {
-            if (!fs.existsSync(path.join(sourceFileDir, suggestion))) {
-                continue;
-            }
-            file = suggestion;
-            break;
-        }
         const caseSensitiveFileNames = this.context.getEmitHost().useCaseSensitiveFileNames();
         const formatPath = caseSensitiveFileNames ? x => x : x => x.toLowerCase();
         const absSource = path.join(this.options.outDir, path.relative(this.options.baseUrl, sourceFileDir));
-        const abs = path.resolve(sourceFileDir, file);
-        if (this.config.copy.test(file)) {
-            const outFile = path.resolve(absSource, file).replaceAll(path.sep, '/');
-            fs.cpSync(path.resolve(sourceFileDir, file), outFile);
-            return file;
+        const abs = path.resolve(sourceFileDir, importPath);
+        if (this.config.copy.test(importPath)) {
+            const outFile = path.resolve(absSource, importPath).replaceAll(path.sep, '/');
+            fs.cpSync(path.resolve(sourceFileDir, importPath), outFile);
+            return importPath;
         }
-        if (this.config.import.test(file)) {
-            const content = fs.readFileSync(path.resolve(sourceFileDir, file), 'utf-8');
-            const outFile = path.resolve(absSource, file).replaceAll(path.sep, '/') + '.js';
+        if (this.config.import.test(importPath)) {
+            const content = fs.readFileSync(path.resolve(sourceFileDir, importPath), 'utf-8');
+            const outFile = path.resolve(absSource, importPath).replaceAll(path.sep, '/') + '.js';
             fs.mkdirSync(path.dirname(outFile), {recursive: true});
             fs.writeFileSync(outFile, 'export default `'+content.replaceAll('`','\\`')+'`', 'utf-8');
             return outFile;
         }
-        if (fs.existsSync(abs)){
-            return file.replace(/\.ts$/,'.js');
-        }
-        if (fs.existsSync(abs + '.ts') || fs.existsSync(abs + '.tsx')) {
-            return `${file}.js`;
-        }
-        if (fs.existsSync(abs + '/')) {
-            return `${file}/index.js`;
-        }
-        return file;
+        return importPath;
     }
 
     visitSourceFile = sourceFile => ts.visitEachChild(sourceFile, node => this.visit(node,sourceFile), this.context);
