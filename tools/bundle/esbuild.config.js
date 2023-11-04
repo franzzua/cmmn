@@ -258,11 +258,12 @@ export class ConfigCreator {
             outdir: 'dist/bundle',
             metafile: true,
             absWorkingDir: this.root,
+            treeShaking: this.options.minify,
             format: ({
                 es: 'esm'
             })[format] ?? format,
             outExtension: {
-                '.js': {
+                '.js': (this.options.minify ? '.min' : '') + {
                     es: '.js',
                     cjs: '.cjs'
                 }[format]
@@ -274,6 +275,7 @@ export class ConfigCreator {
                 'process.env.NODE_ENV': '"production"'
             },
             publicPath: '/',
+            alias: this.options.alias,
             plugins: [
                 lessLoader(),
                 ...(this.options.html ? [htmlPlugin({

@@ -21,6 +21,7 @@ export async function bundle(...options) {
         }
     }else {
         for (let context of contexts) {
+            await context.rebuild();
             await context.dispose();
         }
     }
