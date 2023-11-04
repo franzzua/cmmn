@@ -56,7 +56,7 @@
       "input": "dist/esm/index.js",
       "module": "es,cjs",
       "external": [
-        "@cmmn.*"
+        "@cmmn"
       ]
     },
     "lib": {

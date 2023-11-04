@@ -36,8 +36,8 @@ class Visitor {
             exclude: []
         });
         this.config = {
-            copy: /\.(less|css|scss|sass|svg|png|html|txt)$/g,
-            import: /\.(txt|sql)$/g,
+            copy: /\.(less|css|scss|sass|png|jpg|ico)$/,
+            import: /\.(txt|sql|svg|html)$/,
             ...config
         }
     }
@@ -77,17 +77,18 @@ class Visitor {
         const formatPath = caseSensitiveFileNames ? x => x : x => x.toLowerCase();
         const absSource = path.join(this.options.outDir, path.relative(this.options.baseUrl, sourceFileDir));
         const abs = path.resolve(sourceFileDir, importPath);
-        if (this.config.copy.test(importPath)) {
-            const outFile = path.resolve(absSource, importPath).replaceAll(path.sep, '/');
-            fs.cpSync(path.resolve(sourceFileDir, importPath), outFile);
-            return importPath;
-        }
         if (this.config.import.test(importPath)) {
             const content = fs.readFileSync(path.resolve(sourceFileDir, importPath), 'utf-8');
             const outFile = path.resolve(absSource, importPath).replaceAll(path.sep, '/') + '.js';
             fs.mkdirSync(path.dirname(outFile), {recursive: true});
             fs.writeFileSync(outFile, 'export default `'+content.replaceAll('`','\\`')+'`', 'utf-8');
-            return outFile;
+            return importPath+".js";
+        }
+        if (this.config.copy.test(importPath)) {
+            // console.log(abs, absSource, path.relative(absSource,abs));
+            // const outFile = path.resolve(absSource, importPath).replaceAll(path.sep, '/');
+            // fs.cpSync(path.resolve(sourceFileDir, importPath), outFile);
+            return  path.relative(absSource,abs);
         }
         return importPath;
     }

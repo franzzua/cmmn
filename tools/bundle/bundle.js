@@ -1,6 +1,6 @@
-import {rollup, watch} from "rollup";
+import  esbuild from "esbuild";
 import {getConfigOptions} from "./getConfigs.js";
-import {ConfigCreator} from "./rollup.config.js";
+import {ConfigCreator} from "./esbuild.config.js";
 import fs from "fs";
 import path, {relative} from "path";
 
@@ -13,22 +13,12 @@ export async function bundle(...options) {
         stats: options.includes('--stats'),
     });
     const configs = configOptions.flatMap(x => new ConfigCreator(x).getConfig());
-    if (!options.includes('--watch')) {
-        for (let config of configs) {
-            for (let key in config.input){
-                // console.log(`1. ${key} (${config.input[key]})`);
-            }
-            const build = await rollup(config);
-            for (let out of config.output){
-                const file = path.join(out.dir, out.entryFileNames.replace('[name]', Object.keys(config.input)[0]));
-                 await build.write(out);
-                const stat = fs.existsSync(file) ? fs.statSync(file) : 0;
-                console.log(`SUCCESS: ${file} (${(stat.size/1024).toFixed(0)} Kb)`);
+    const contexts = await Promise.all(configs.map(x => esbuild.context(x)));
 
-            }
+    if (options.includes('--watch')) {
+        for (let context of contexts) {
+            await context.watch({});
         }
-    }else {
-        await runWatching(configs)
     }
 }
 

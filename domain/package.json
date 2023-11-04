@@ -53,7 +53,7 @@
       "input": "dist/esm/entry/proxy.js",
       "module": "es,cjs",
       "external": [
-        "@cmmn.*",
+        "@cmmn",
         "luxon"
       ]
     },
@@ -61,7 +61,7 @@
       "input": "dist/esm/worker/index.js",
       "module": "es,cjs",
       "external": [
-        "@cmmn.*",
+        "@cmmn",
         "luxon"
       ]
     }

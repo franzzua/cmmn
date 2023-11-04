@@ -49,9 +49,8 @@
       "module": "es,cjs",
       "global": "app",
       "external": [
-        "@cmmn.*",
-        "luxon",
-        "cellx.*"
+        "@cmmn",
+        "luxon"
       ]
     }
   }
