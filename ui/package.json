@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/ui",
-  "version": "1.9.1",
+  "version": "1.9.2",
   "description": "",
   "publishConfig": {
     "access": "public"
@@ -32,11 +32,11 @@
     "build": "cmmn compile -b --watch"
   },
   "devDependencies": {
-    "@cmmn/tools": "^1.9.1"
+    "@cmmn/tools": "^1.9.2"
   },
   "dependencies": {
-    "@cmmn/cell": "^1.9.1",
-    "@cmmn/core": "^1.9.1",
+    "@cmmn/cell": "^1.9.2",
+    "@cmmn/core": "^1.9.2",
     "@cmmn/uhtml": "^1.8.0"
   },
   "files": [
