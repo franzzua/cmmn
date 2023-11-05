@@ -20,15 +20,6 @@ async function getPackageConfigs(rootDir, options, name = null, visited = []) {
     const packageInfos = await dependencyOrder({
         cwd: rootDir
     });
-    for (let packageInfo of packageInfos) {
-        const root = packageInfo.packageMeta.directory;
-        if (visited.includes(root))
-            continue;
-        console.log(root)
-        visited.push(root)
-        const configs = await getPackageConfigs(root, options, name, visited);
-        results.push(...configs);
-    }
     if (pkg.cmmn) {
         if (name) {
             results.push(getProjectConfig(rootDir, pkg.cmmn[name], {
@@ -45,6 +36,14 @@ async function getPackageConfigs(rootDir, options, name = null, visited = []) {
                 }));
             }
         }
+    }
+    for (let packageInfo of packageInfos) {
+        const root = packageInfo.packageMeta.directory;
+        if (visited.includes(root))
+            continue;
+        visited.push(root)
+        const configs = await getPackageConfigs(root, options, name, visited);
+        results.push(...configs);
     }
     return results;
 }
