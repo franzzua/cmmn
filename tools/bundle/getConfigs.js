@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import fg from "fast-glob";
+import { dependencyOrder } from "dependency-order";
 
 function getProjectConfig(rootDir, cmmn, options) {
     return {
@@ -10,20 +11,22 @@ function getProjectConfig(rootDir, cmmn, options) {
     };
 }
 
-function getPackageConfigs(rootDir, options, name = null) {
+async function getPackageConfigs(rootDir, options, name = null, visited = []) {
     const pckPath = path.join(rootDir, 'package.json');
     if (!fs.existsSync(pckPath))
         return [];
     const results = [];
     const pkg = JSON.parse(fs.readFileSync(pckPath));
-    if (pkg.workspaces){
-        const dirs = pkg.workspaces.flatMap(pkg => fg.sync([pkg], {
-            absolute: true,
-            globstar: true,
-            onlyDirectories: true,
-            cwd: rootDir
-        }));
-        dirs.forEach(d => results.push(...getPackageConfigs(d, options, name)));
+    const packageInfos = await dependencyOrder({
+        cwd: rootDir
+    });
+    for (let packageInfo of packageInfos) {
+        const root = packageInfo.packageMeta.directory;
+        if (visited.includes(root))
+            continue;
+        visited.push(root)
+        const configs = await getPackageConfigs(root, options, name, visited);
+        results.push(...configs);
     }
     if (pkg.cmmn) {
         if (name) {
@@ -45,7 +48,7 @@ function getPackageConfigs(rootDir, options, name = null) {
     return results;
 }
 
-function getLernaSubPackages(lernaFile, options) {
+async function getLernaSubPackages(lernaFile, options) {
     const config = JSON.parse(fs.readFileSync(lernaFile, 'utf8'));
     const packages = config.packages;
     const dirs = packages.flatMap(pkg => fg.sync([pkg], {
@@ -54,20 +57,15 @@ function getLernaSubPackages(lernaFile, options) {
         onlyDirectories: true,
         cwd: path.dirname(lernaFile)
     }));
-    return dirs.flatMap(dir => getPackageConfigs(dir, options));
+    return (await Promise.all(dirs.map(dir => getPackageConfigs(dir, options)))).flat();
 }
 
-export function getConfigOptions(options) {
+export async function getConfigOptions(options) {
     if (!options.input || options.project) {
-        const rootDir = process.cwd();
-        const lernaPath = path.join(rootDir, 'lerna.json');
-        if (fs.existsSync(lernaPath)) {
-            return getLernaSubPackages(lernaPath, options);
-        }
-        return getPackageConfigs(process.cwd(), options);
+        return await getPackageConfigs(process.cwd(), options);
     }
     if (!options.input.includes('.') || !fs.existsSync(options.input)) {
-        return getPackageConfigs(process.cwd(), options, options.input);
+        return await getPackageConfigs(process.cwd(), options, options.input);
     }
     return [options];
 }

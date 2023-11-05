@@ -5,8 +5,8 @@ import liveServer from "live-server";
 import {resolve, moduleResolve} from 'import-meta-resolve';
 import uri2path from "file-uri-to-path";
 
-export function serve(...options) {
-    const configs = getConfigOptions({
+export async function serve(...options) {
+    const configs = await getConfigOptions({
         project: options.includes('-b'),
     });
     configs.filter(x => x.port).forEach(async (x,i) => {

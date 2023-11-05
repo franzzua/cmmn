@@ -5,7 +5,7 @@ import fs from "fs";
 import path, {relative} from "path";
 
 export async function bundle(...options) {
-    const configOptions = getConfigOptions({
+    const configOptions = await getConfigOptions({
         input: options.filter(x => !x.startsWith('-'))[0],
         project: options.includes('-b'),
         minify: options.includes('--prod'),
@@ -18,9 +18,10 @@ export async function bundle(...options) {
     ));
 
     if (options.includes('--watch')) {
-        for (let [name, context] of contexts) {
+        for (let [config, context] of contexts) {
             await context.watch();
         }
+        console.log('bundled. Continue watching...');
     }else {
         const  logs = [];
         for (let [config, context] of contexts) {

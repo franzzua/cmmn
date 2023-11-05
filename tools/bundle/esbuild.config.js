@@ -117,7 +117,7 @@ export class ConfigCreator {
     getConfig() {
         if (this.options.external && typeof this.options.external === "string")
             this.options.external = [this.options.external]
-        console.log(this.options.name, this.options);
+        // console.log(this.options.name, this.options);
         return this.modules.flatMap(format => this.platforms.map(platform => ({
             entryPoints: [
                 { out: this.options.name, in: this.options.input }
@@ -138,7 +138,10 @@ export class ConfigCreator {
             },
             platform: platform,
             tsconfig: 'tsconfig.json',
-            external: ["*.woff2", "*.woff", ...this.options.external],
+            external: [
+                "*.woff2", "*.woff",
+                ...(platform !== "node" && this.options.minify ? [] : this.options.external)
+            ],
             define: {
                 'process.env.NODE_ENV': '"production"'
             },
