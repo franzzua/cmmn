@@ -54,6 +54,13 @@ export class ConfigCreator {
         return path.join(this.root, this.options.outDir);
     }
 
+    get importMaps(){
+        return JSON.stringify({
+            imports: Object.fromEntries(this.options.external
+                .map(key => key.replace('*', '/'))
+                .map(key => [key, `/external/${this.options.alias?.[key] ?? key}`]))
+        })
+    }
     getHtmlPlugin(){
         if (!this.options.html)
             return [];
@@ -61,21 +68,26 @@ export class ConfigCreator {
             {
                 name: 'esbuild-html-plugin',
                 setup: (build) => { build.onEnd(async result => {
-                    const inject = [
+                    if (!result.metafile)
+                        return;
+                    const injectStyles = [];
+                    const injectScripts = [
                         `<script type="importmap">${this.importMaps}</script>`
                     ];
                     for (let [key, value] of Object.entries(result.metafile.outputs)){
                         if (value.entryPoint !== this.options.input) continue;
                         const file = path.relative(this.outDir, path.join(this.root, key));
-                        inject.push(`<script type="module" src="/${file}"/>`)
+                        injectScripts.push(`<script type="module" src="/${file}"></script>`)
                         if (value.cssBundle) {
                             const file = path.relative(this.outDir, path.join(this.root, value.cssBundle));
-                            inject.push(`<style rel="stylesheet" href="/${file}"/>`)
+                            injectStyles.push(`<link rel="stylesheet" href="/${file}"></link>`)
                         }
                         const html = await fs.promises.readFile(path.join(this.root, this.options.html));
                         await fs.promises.writeFile(
                             path.join(this.outDir, 'index.html'),
-                            html.toString().replace('</head>', `${inject.map(x => `\t${x}\n`).join('')}</head>`)
+                            html.toString()
+                                .replace('</head>', `${injectStyles.map(x => `\t${x}\n`).join('')}</head>`)
+                                .replace('</body>', `${injectScripts.map(x => `\t${x}\n`).join('')}</body>`)
                         );
                     }
                 }); }
@@ -112,7 +124,7 @@ export class ConfigCreator {
             ],
             bundle: true,
             minify: this.options.minify,
-            sourcemap: true,
+            sourcemap: this.options.minify ? false : 'external',
             target: ['chrome88', 'safari14', 'firefox88'],
             outdir: 'dist/bundle',
             metafile: true,

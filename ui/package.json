@@ -50,7 +50,8 @@
       "input": "dist/esm/index.js",
       "platform": "browser",
       "external": [
-        "@cmmn*"
+        "@cmmn/core",
+        "@cmmn/cell"
       ],
       "module": "es,cjs"
     }
