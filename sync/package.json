@@ -8,12 +8,16 @@
   "repository": {
     "url": "https://github.com/franzzua/cmmn/tree/master/sync"
   },
+  "main": "./dist/bundle/index.node.js",
+  "module": "./dist/esm/index.js",
+  "browser": "./dist/bundle/index.browser.js",
   "exports": {
     ".": {
       "types": "./dist/typings/index.d.ts",
-      "import": "./dist/bundle/index.js",
-      "require": "./dist/bundle/index.cjs",
-      "default": "./dist/bundle/index.js"
+      "browser": "./dist/bundle/index.browser.js",
+      "import": "./dist/bundle/index.node.js",
+      "require": "./dist/bundle/index.node.cjs",
+      "default": "./dist/bundle/index.node.js"
     },
     "./webrtc/client": {
       "types": "./dist/typings/webrtc/client/index.d.ts",
@@ -88,35 +92,45 @@
       "external": [
         "@cmmn"
       ],
+      "alias": {
+        "crypto": "data:text/javascript,export const webcrypto = crypto;"
+      },
+      "platform": "browser,node",
       "module": "es,cjs"
     },
     "webrtc": {
       "input": "./dist/esm/webrtc/client/index.js",
       "external": [
         "@cmmn"
-      ]
+      ],
+      "platform": "browser",
+      "module": "es,cjs"
     },
     "webrtc-server": {
       "input": "./dist/esm/webrtc/server/index.js",
-      "module": "es,cjs",
       "external": [
         "node_modules",
         "@cmmn"
-      ]
+      ],
+      "platform": "node",
+      "module": "es,cjs"
     },
     "websocket": {
       "input": "./dist/esm/websocket/client/index.js",
       "external": [
         "@cmmn"
-      ]
+      ],
+      "platform": "browser",
+      "module": "es,cjs"
     },
     "websocket-server": {
       "input": "./dist/esm/websocket/server/index.js",
-      "module": "es,cjs",
       "external": [
         "node_modules",
         "@cmmn"
-      ]
+      ],
+      "platform": "node",
+      "module": "es,cjs"
     }
   },
   "gitHead": "2755b333808bf97f1d9454601c2a2c9a88e4a021"

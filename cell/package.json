@@ -55,13 +55,15 @@
     "index": {
       "input": "dist/esm/index.js",
       "module": "es,cjs",
+      "platform": "neutral",
       "external": [
-        "@cmmn"
+        "@cmmn*"
       ]
     },
     "lib": {
       "input": "dist/esm/lib.js",
-      "module": "es",
+      "module": "es,cjs",
+      "platform": "neutral",
       "alias": {
         "@cmmn/core": "@cmmn/core/min"
       }

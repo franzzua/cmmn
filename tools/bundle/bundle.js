@@ -13,17 +13,31 @@ export async function bundle(...options) {
         stats: options.includes('--stats'),
     });
     const configs = configOptions.flatMap(x => new ConfigCreator(x).getConfig());
-    const contexts = await Promise.all(configs.map(x => esbuild.context(x)));
+    const contexts = await Promise.all(configs.map(async x =>
+        [x, await esbuild.context(x)]
+    ));
 
     if (options.includes('--watch')) {
-        for (let context of contexts) {
-            await context.watch({});
+        for (let [name, context] of contexts) {
+            await context.watch();
         }
     }else {
-        for (let context of contexts) {
-            await context.rebuild();
+        const  logs = [];
+        for (let [config, context] of contexts) {
+            const result = await context.rebuild();
+            const project = path.relative(process.cwd(), config.absWorkingDir);
+            const name = config.entryPoints[0].out;
+            let log = logs.find(x => x.project === project && x.name === name);
+            if (!log){
+                logs.push(log = {project, name});
+            }
+            for (let [name, value] of Object.entries(result.metafile.outputs)) {
+                if (!name.endsWith('js')) continue;
+                log[config.format+"."+config.platform] = `${(value.bytes/(2**10)).toFixed(1)} Kb`;
+            }
             await context.dispose();
         }
+        console.table(logs);
     }
 }
 

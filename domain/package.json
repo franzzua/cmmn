@@ -52,6 +52,7 @@
     "proxy": {
       "input": "dist/esm/entry/proxy.js",
       "module": "es,cjs",
+      "platform": "neutral",
       "external": [
         "@cmmn",
         "luxon"
@@ -60,6 +61,7 @@
     "worker": {
       "input": "dist/esm/worker/index.js",
       "module": "es,cjs",
+      "platform": "browser",
       "external": [
         "@cmmn",
         "luxon"

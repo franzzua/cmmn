@@ -38,6 +38,8 @@ function createProgram(rootNames, options, host, oldProgram, configFileParsingDi
     options.declarationDir = resolve(options.configFilePath, '../dist/typings');
     options.baseUrl = resolve(options.configFilePath, '../');
     options.tsBuildInfoFile = resolve(options.configFilePath, '../dist/ts.buildinfo');
+    // options.excludeDirectories.baseUrl = options.baseUrl;
+    // options.includeDirectories.baseUrl = options.baseUrl;
     if (!cleanedBaseDirs.has(options.baseUrl)){
         fs.rmSync(options.outDir, {recursive: true, force: true});
         fs.rmSync(options.declarationDir, {recursive: true, force: true});

@@ -16,19 +16,30 @@ function getPackageConfigs(rootDir, options, name = null) {
         return [];
     const results = [];
     const pkg = JSON.parse(fs.readFileSync(pckPath));
-    if (name) {
-        results.push(getProjectConfig(rootDir, pkg.cmmn[name], {
-            ...options,
-            name,
-            package: pkg.name,
+    if (pkg.workspaces){
+        const dirs = pkg.workspaces.flatMap(pkg => fg.sync([pkg], {
+            absolute: true,
+            globstar: true,
+            onlyDirectories: true,
+            cwd: rootDir
         }));
-    } else {
-        for (let name in pkg.cmmn) {
+        dirs.forEach(d => results.push(...getPackageConfigs(d, options, name)));
+    }
+    if (pkg.cmmn) {
+        if (name) {
             results.push(getProjectConfig(rootDir, pkg.cmmn[name], {
                 ...options,
                 name,
                 package: pkg.name,
             }));
+        } else {
+            for (let name in pkg.cmmn) {
+                results.push(getProjectConfig(rootDir, pkg.cmmn[name], {
+                    ...options,
+                    name,
+                    package: pkg.name,
+                }));
+            }
         }
     }
     return results;

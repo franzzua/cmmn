@@ -41,7 +41,6 @@
     "test/*"
   ],
   "dependencies": {
-    "@craftamap/esbuild-plugin-html": "0.6.1",
     "@jest/globals": "27.x.x",
     "@swc/jest": "0.2.17",
     "@testdeck/jest": "0.2.0",
@@ -59,8 +58,7 @@
     "less": "^4",
     "live-server": "1.2.2",
     "sinon": "10.x.x",
-    "ts-jest": "29.x.x",
-    "unique-slug": "*"
+    "ts-jest": "29.x.x"
   },
   "author": "",
   "license": "ISC",

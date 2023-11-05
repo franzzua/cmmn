@@ -48,9 +48,9 @@
   "cmmn": {
     "index": {
       "input": "dist/esm/index.js",
+      "platform": "browser",
       "external": [
-        "@cmmn/cell",
-        "@cmmn/core"
+        "@cmmn*"
       ],
       "module": "es,cjs"
     }

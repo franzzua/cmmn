@@ -32,9 +32,11 @@
     "index": {
       "input": "./dist/esm/index.js",
       "module": "es,cjs",
+      "platform": "node",
       "external": [
         "fastify",
-        "@cmmn"
+        "@fastify*",
+        "@cmmn*"
       ]
     }
   },

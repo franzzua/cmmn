@@ -59,6 +59,7 @@
     "index": {
       "input": "dist/esm/index.js",
       "module": "es,cjs",
+      "platform": "neutral",
       "external": [
         "luxon",
         "msgpackr/pack",
@@ -67,6 +68,7 @@
     },
     "min": {
       "input": "dist/esm/min.js",
+      "platform": "neutral",
       "module": "es,cjs"
     }
   }
