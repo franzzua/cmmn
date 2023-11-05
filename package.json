@@ -3,19 +3,29 @@
   "version": "1.2.3",
   "description": "",
   "scripts": {
-    "bootstrap": "lerna bootstrap  --ignore-scripts --hoist",
     "compile": "cmmn compile -b --watch",
     "bundle": "cmmn bundle -b --watch",
     "prod": "cmmn bundle -b --prod",
     "ci2": "cmmn compile -b && cmmn bundle -b && cmmn bundle -b --prod",
-    "publish": "lerna version patch -y"
+    "publish": "npm version patch -w"
   },
+  "workspaces": [
+    "app",
+    "core",
+    "cell",
+    "domain",
+    "server",
+    "tools",
+    "infr",
+    "uhtml",
+    "ui",
+    "sync"
+  ],
   "author": "",
   "license": "ISC",
   "files": [],
   "devDependencies": {
     "@cmmn/tools": "file:./tools",
-    "lerna": "4.0.0",
     "typescript": "5.2.2"
   },
   "dependencies": {

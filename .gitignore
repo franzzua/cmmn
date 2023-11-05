@@ -5,5 +5,3 @@ dist
 .idea
 .work
 **/.swc
-lerna-debug.log
-package.json.lerna_backup

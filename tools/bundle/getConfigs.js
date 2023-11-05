@@ -48,17 +48,6 @@ async function getPackageConfigs(rootDir, options, name = null, visited = []) {
     return results;
 }
 
-async function getLernaSubPackages(lernaFile, options) {
-    const config = JSON.parse(fs.readFileSync(lernaFile, 'utf8'));
-    const packages = config.packages;
-    const dirs = packages.flatMap(pkg => fg.sync([pkg], {
-        absolute: true,
-        globstar: true,
-        onlyDirectories: true,
-        cwd: path.dirname(lernaFile)
-    }));
-    return (await Promise.all(dirs.map(dir => getPackageConfigs(dir, options)))).flat();
-}
 
 export async function getConfigOptions(options) {
     if (!options.input || options.project) {
