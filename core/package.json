@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/core",
-  "version": "1.9.2",
+  "version": "1.9.3",
   "repository": {
     "url": "https://github.com/franzzua/cmmn/tree/master/core"
   },
@@ -44,7 +44,7 @@
     "bundle": "cmmn bundle --watch"
   },
   "devDependencies": {
-    "@cmmn/tools": "^1.9.2"
+    "@cmmn/tools": "^1.9.3"
   },
   "dependencies": {
     "@types/luxon": "2.x.x",
