@@ -13,9 +13,10 @@ export async function bundle(...options) {
         stats: options.includes('--stats'),
     });
     const configs = configOptions.flatMap(x => new ConfigCreator(x).getConfig());
-    const contexts = await Promise.all(configs.map(async x =>
-        [x, await esbuild.context(x)]
-    ));
+    const contexts = [];
+    for (let config of configs){
+        contexts.push([config, await esbuild.context(config)]);
+    }
 
     if (options.includes('--watch')) {
         for (let [config, context] of contexts) {

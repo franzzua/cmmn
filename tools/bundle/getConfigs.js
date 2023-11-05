@@ -24,6 +24,7 @@ async function getPackageConfigs(rootDir, options, name = null, visited = []) {
         const root = packageInfo.packageMeta.directory;
         if (visited.includes(root))
             continue;
+        console.log(root)
         visited.push(root)
         const configs = await getPackageConfigs(root, options, name, visited);
         results.push(...configs);
