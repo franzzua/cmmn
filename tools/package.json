@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/tools",
-  "version": "1.9.7",
+  "version": "1.9.8",
   "description": "Compilation, bundling, code generator, testing.",
   "main": "dist/rollup.config.js",
   "type": "module",
@@ -38,7 +38,8 @@
     "serve/*",
     "plugins/*",
     "spawn/*",
-    "test/*"
+    "test/*",
+    "helpers/*"
   ],
   "dependencies": {
     "@jest/globals": "27.x.x",
