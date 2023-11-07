@@ -7,7 +7,7 @@
     "bundle": "cmmn bundle -b --watch",
     "prod": "cmmn bundle -b --prod",
     "ci2": "cmmn compile -b && cmmn bundle -b && cmmn bundle -b --prod",
-    "publish": "npm version patch -w"
+    "publish": "npm version patch --workspaces"
   },
   "workspaces": [
     "app",
