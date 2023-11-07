@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/framework",
-  "version": "1.2.3",
+  "version": "1.9.8",
   "description": "",
   "scripts": {
     "compile": "cmmn compile -b --watch",
@@ -28,7 +28,6 @@
     "@cmmn/tools": "file:./tools",
     "typescript": "5.2.2"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "gitHead": "68d02f49f1ecba35975351e05ec1cb0519bf0ada"
 }
