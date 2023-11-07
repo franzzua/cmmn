@@ -1,7 +1,8 @@
 {
   "name": "@cmmn/framework",
-  "version": "1.9.8",
+  "version": "1.9.9",
   "description": "",
+  "private": true,
   "scripts": {
     "compile": "cmmn compile -b --watch",
     "bundle": "cmmn bundle -b --watch",
