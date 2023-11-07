@@ -1,7 +1,7 @@
-import ts from "typescript";
 import {pathsToModuleNameMapper} from "ts-jest";
+import {getTSCompilerOptions} from "../helpers/getTSConfig.js";
 
-const options = getTSConfig();
+const options = getTSCompilerOptions(process.cwd());
 
 export default {
     transform: {
@@ -30,17 +30,3 @@ export default {
 }
 
 
-function getTSConfig() {
-    const configPath = ts.findConfigFile(process.cwd(), ts.sys.fileExists, 'tsconfig.json');
-    const readConfigFileResult = ts.readConfigFile(configPath, ts.sys.readFile);
-    if (readConfigFileResult.error) {
-        throw new Error(ts.formatDiagnostic(readConfigFileResult.error, formatHost));
-    }
-    const jsonConfig = readConfigFileResult.config;
-    const convertResult = ts.convertCompilerOptionsFromJson(jsonConfig.compilerOptions, './');
-    if (convertResult.errors && convertResult.errors.length > 0) {
-        throw new Error(ts.formatDiagnostics(convertResult.errors, formatHost));
-    }
-    const compilerOptions = convertResult.options;
-    return compilerOptions;
-}

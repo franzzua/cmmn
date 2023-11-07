@@ -10,6 +10,7 @@
   ],
   "type": "module",
   "main": "./dist/bundle/index.js",
+  "module": "./dist/esm/index.js",
   "browser": "./dist/bundle/lib.js",
   "exports": {
     ".": {

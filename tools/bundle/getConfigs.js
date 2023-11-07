@@ -1,7 +1,6 @@
 import fs from "fs";
 import path from "path";
-import fg from "fast-glob";
-import { dependencyOrder } from "dependency-order";
+import {getTSConfig} from "../helpers/getTSConfig.js";
 
 function getProjectConfig(rootDir, cmmn, options) {
     return {
@@ -11,15 +10,27 @@ function getProjectConfig(rootDir, cmmn, options) {
     };
 }
 
+async function *getDependencyOrder(rootDir, visited = []) {
+    const tsConfig = getTSConfig(rootDir)
+    for (let reference of tsConfig.references ?? []){
+        const refRoot = path.resolve(rootDir, reference.path);
+        if (visited.includes(refRoot))
+            continue;
+        visited.push(refRoot)
+        for await (let dep of await getDependencyOrder(refRoot, visited)){
+            yield dep;
+        }
+    }
+    yield rootDir;
+}
+
+
 async function getPackageConfigs(rootDir, options, name = null, visited = []) {
     const pckPath = path.join(rootDir, 'package.json');
     if (!fs.existsSync(pckPath))
         return [];
     const results = [];
-    const pkg = JSON.parse(fs.readFileSync(pckPath));
-    const packageInfos = await dependencyOrder({
-        cwd: rootDir
-    });
+    const pkg = JSON.parse(await fs.promises.readFile(pckPath));
     if (pkg.cmmn) {
         if (name) {
             results.push(getProjectConfig(rootDir, pkg.cmmn[name], {
@@ -37,24 +48,15 @@ async function getPackageConfigs(rootDir, options, name = null, visited = []) {
             }
         }
     }
-    for (let packageInfo of packageInfos) {
-        const root = packageInfo.packageMeta.directory;
-        if (visited.includes(root))
-            continue;
-        visited.push(root)
-        const configs = await getPackageConfigs(root, options, name, visited);
-        results.push(...configs);
-    }
     return results;
 }
 
 
 export async function getConfigOptions(options) {
-    if (!options.input || options.project) {
-        return await getPackageConfigs(process.cwd(), options);
+    const result = []
+    for await (let project of getDependencyOrder(process.cwd())){
+        const configs = await getPackageConfigs(project, options);
+        result.push(...configs);
     }
-    if (!options.input.includes('.') || !fs.existsSync(options.input)) {
-        return await getPackageConfigs(process.cwd(), options, options.input);
-    }
-    return [options];
+    return result;
 }

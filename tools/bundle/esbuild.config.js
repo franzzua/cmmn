@@ -26,6 +26,7 @@ export class ConfigCreator {
      *     platform: string,
      *     dedupe: string[],
      *     target: string
+     *     prod: boolean,
      *     inject: string
      * }}
      */
@@ -123,8 +124,8 @@ export class ConfigCreator {
                 { out: this.options.name, in: this.options.input }
             ],
             bundle: true,
-            minify: this.options.minify,
-            sourcemap: this.options.minify ? false : 'external',
+            minify: this.options.minify || this.options.prod,
+            sourcemap: this.options.prod ? false : 'external',
             target: ['chrome88', 'safari14', 'firefox88'],
             outdir: 'dist/bundle',
             metafile: true,
@@ -143,7 +144,8 @@ export class ConfigCreator {
                 ...(platform !== "node" && this.options.minify ? [] : this.options.external)
             ],
             define: {
-                'process.env.NODE_ENV': '"production"'
+                'process.env.NODE_ENV': '"production"',
+                PRODUCTION: this.options.prod ? "true": "false"
             },
             publicPath: '/',
             alias: this.options.alias,

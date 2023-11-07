@@ -13,6 +13,7 @@
   ],
   "type": "module",
   "main": "./dist/bundle/index.js",
+  "module": "./dist/esm/index.js",
   "exports": {
     ".": {
       "types": "./dist/typings/index.d.ts",
