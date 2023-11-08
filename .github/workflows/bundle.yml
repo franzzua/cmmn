@@ -17,6 +17,7 @@ jobs:
           node-version: 16
           registry-url: https://registry.npmjs.org/
           scope: '@cmmn'
+      - uses: pnpm/action-setup@v2
       - run: npm i
       - run: npm run ci2
       - run: pnpm publish -r

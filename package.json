@@ -8,7 +8,7 @@
     "bundle": "cmmn bundle -b --watch",
     "prod": "cmmn bundle -b --prod",
     "ci2": "cmmn compile -b && cmmn bundle -b && cmmn bundle -b --prod",
-    "publish": "npm version patch --workspaces"
+    "publish": "wersion patch"
   },
   "workspaces": [
     "app",
@@ -27,7 +27,8 @@
   "files": [],
   "devDependencies": {
     "@cmmn/tools": "file:./tools",
-    "typescript": "5.2.2"
+    "typescript": "5.2.2",
+    "wersion": "0.3.2"
   },
   "dependencies": {},
   "gitHead": "68d02f49f1ecba35975351e05ec1cb0519bf0ada"
