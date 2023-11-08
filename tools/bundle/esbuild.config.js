@@ -59,7 +59,7 @@ export class ConfigCreator {
         return JSON.stringify({
             imports: Object.fromEntries(this.options.external
                 .map(key => key.replace('*', '/'))
-                .map(key => [key, `/external/${this.options.alias?.[key] ?? key}`]))
+                .map(key => [key, `/node_modules/${this.options.alias?.[key] ?? key}`]))
         })
     }
     getHtmlPlugin(){

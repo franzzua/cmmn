@@ -67,7 +67,6 @@ async function getFileName(moduleName, root) {
 const resolveESModule = (rootDir, configs) => async function (req, res, next) {
     const name = getModuleName(req.url);
     if (!name) {
-        console.log(`skip ${req.url}`)
         return next();
     }
     // if (configs.some(x => x.package === name))
