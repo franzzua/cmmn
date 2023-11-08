@@ -19,6 +19,6 @@ jobs:
           scope: '@cmmn'
       - run: npm i
       - run: npm run ci2
-      - run: npm publish --workspaces
+      - run: pnpm publish -r
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
