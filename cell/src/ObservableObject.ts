@@ -3,7 +3,7 @@ import {ICellOptions} from "./cell";
 import {CellDecorator, getCell} from "./decorators";
 
 export class ObservableObject<T> extends EventEmitter<{
-    change: { oldValue: T, value: T, keys?: Array<(keyof T) & string> }
+    change: { oldValue: T, value: T, keys?: Array<string> }
 }> {
     constructor(private value: Readonly<T>) {
         super();
@@ -14,9 +14,10 @@ export class ObservableObject<T> extends EventEmitter<{
     }
 
     public Set(value: T) {
-        this.emitChange({
+        this.emit("change",{
             oldValue: this.value,
             value,
+            keys: Object.keys(value)
         });
         this.value = value;
     }
@@ -27,14 +28,9 @@ export class ObservableObject<T> extends EventEmitter<{
         if (keys.length === 0)
             return;
         const value = Fn.deepAssign(this.value, diff);
-        this.emitChange({
+        this.emit("change",{
             oldValue, value, keys
         });
-    }
-
-
-    public emitChange(data) {
-        this.emit('change', data)
     }
 }
 
