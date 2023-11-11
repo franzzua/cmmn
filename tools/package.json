@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/tools",
-  "version": "1.9.10",
+  "version": "1.9.11",
   "description": "Compilation, bundling, code generator, testing.",
   "main": "dist/rollup.config.js",
   "type": "module",
