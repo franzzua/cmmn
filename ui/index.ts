@@ -18,6 +18,8 @@ export {AnimationFrame} from "./user-events/animationFrameListener";
 export * from "./extensions/action";
 export * from "./extensions/effect";
 export * from "./extensions/react";
+export * from "./extensions/event";
+export * from "./extensions/select";
 //
 // const listeners = globalThis['listeners'] = new Map<string, Map<Function, EventTarget>>();
 //

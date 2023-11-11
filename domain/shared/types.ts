@@ -47,7 +47,7 @@ export type ModelStructure = {
 
 }
 export type ModelAction = {
-    [key: string]: (...args: any[]) => Promise<any>;
+    [key: string]: (...args: any[]) => any;
 }
 export type WorkerMessage = {
     data: WorkerState
