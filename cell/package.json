@@ -41,10 +41,10 @@
     "bundle:lib:prod": "cmmn bundle lib --prod"
   },
   "dependencies": {
-    "@cmmn/core": "^1.9.5"
+    "@cmmn/core": "1.9.11"
   },
   "devDependencies": {
-    "@cmmn/tools": "^1.9.5"
+    "@cmmn/tools": "1.9.11"
   },
   "author": "",
   "license": "ISC",

@@ -45,7 +45,7 @@
     "bundle": "cmmn bundle --watch"
   },
   "devDependencies": {
-    "@cmmn/tools": "^1.9.5"
+    "@cmmn/tools": "1.9.11"
   },
   "dependencies": {
     "@types/luxon": "2.x.x",
