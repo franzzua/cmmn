@@ -138,7 +138,7 @@ export class ConfigCreator {
                 '.js': this.getOutExtension(format, platform)
             },
             footer:{
-                js: `//# sourceMappingURL=./${this.options.name}.js.map`
+                js: `//# sourceMappingURL=./${this.options.name+this.getOutExtension(format, platform)}.map`
             },
             platform: platform,
             tsconfig: 'tsconfig.json',

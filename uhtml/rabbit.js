@@ -158,7 +158,7 @@ export const unroll = (info, {type, template, values}) => {
         // in some specific cases browser can recompile a function that
         // contanis tag template literal and template will change.
         // prevent of recreating elements
-        if (entry.template && template &&
+        if (entry && entry.template && template &&
             template.length === entry.template.length &&
             template.every((x, i) => x === entry.template[i])) {
             entry.template = template;

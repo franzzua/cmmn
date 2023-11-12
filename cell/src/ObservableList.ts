@@ -2,6 +2,8 @@ import {EventEmitter} from "@cmmn/core";
 
 export class ObservableList<T> extends EventEmitter<{
     change: { value: T[] },
+    splice: { index: number, deleteCount: number, values: T[] },
+    push: { values: T[] },
     error: Error,
 }>{
     constructor(private items: T[] = []) {
@@ -27,40 +29,34 @@ export class ObservableList<T> extends EventEmitter<{
         this.emit('change', {value: this.items})
     }
     set(index, value:T){
-        this.items[index] = value;
-        this.emitChange();
+        this.splice(index, 1, value);
     }
     push(...values: T[]){
         this.items.push(...values)
         this.emitChange();
+        this.emit('push', {values});
+    }
+
+    splice(index: number, deleteCount: number, ...items: T[]){
+        this.items.splice(index, deleteCount, ...items);
+        this.emitChange();
+        this.emit('splice', {index, deleteCount, values: items});
     }
     insert(index, value:T){
-        this.items.splice(index, 0, value);
-        this.emitChange();
+        this.splice(index, 0, value);
     }
 
     removeRange(index, count){
-        this.items.splice(index, count);
-        this.emitChange();
-    }
-    addRange(items: T[]){
-        this.items.push(...items);
-        this.emitChange();
+        this.splice(index, count);
     }
     update(items: T[]){
-        this.items = items;
-        this.emitChange();
+        this.splice(0, this.length, ...items);
     }
     removeAt(index){
         this.removeRange(index,1);
-        this.emitChange();
     }
     remove(item: T){
         this.removeAt(this.items.indexOf(item));
-    }
-    splice(index: number, deleteCnt: number, ...items: T[]){
-        this.items.splice(index, deleteCnt, ...items);
-        this.emitChange();
     }
     clear(){
         this.items.length = 0;

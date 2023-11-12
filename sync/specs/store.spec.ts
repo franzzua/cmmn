@@ -1,6 +1,5 @@
 import {expect, suite, test} from "@cmmn/tools/test";
 import {SyncStore} from "../store/sync.store";
-import {ChannelMock} from "./mocks/channel.mock";
 
 @suite
 export class StoreSpec {
@@ -9,8 +8,8 @@ export class StoreSpec {
     private testStore = new SyncStore('test');
 
     constructor() {
-        this.mainStore.adapter.connect(new ChannelMock());
-        this.testStore.adapter.connect(new ChannelMock());
+        // this.mainStore.adapter.connect(new ChannelMock());
+        // this.testStore.adapter.connect(new ChannelMock());
     }
 
     @test

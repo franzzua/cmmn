@@ -1,103 +1,118 @@
-import {Doc, } from "yjs";
-import {DocAdapter} from "../index";
-import {Awareness} from "y-protocols/awareness";
-import {BaseCell, Cell, cell, ObservableList, ObservableObject, ObservableSet} from "@cmmn/cell";
-import {IndexeddbPersistence} from "y-indexeddb";
-import {compare, Fn} from "@cmmn/core";
+import {cell, ObservableList, ObservableObject, ObservableSet} from "@cmmn/cell";
+import {DeepPartial, Fn} from "@cmmn/core";
+import {CRuntime, CValueMap, CObject, CValueList, CValueSet, CMap, CLazyMap} from "@collabs/collabs";
+import {IndexedDBDocStore} from "@collabs/indexeddb";
+import {TabSyncNetwork} from "@collabs/tab-sync";
 
 export class SyncStore {
-    private doc = new Doc({
-        autoLoad: true
+    // private doc = new Doc({
+    //     autoLoad: true
+    // });
+    // public adapter = new DocAdapter(this.doc, new Awareness(this.doc));
+    private doc  = new CRuntime();
+    private objects = this.doc.registerCollab("objects",
+            init => new CLazyMap(init, init => new CValueMap(init))
+    );
+    private arrays = this.doc.registerCollab("lists",
+        init => new CLazyMap(init, init => new CValueList(init))
+    );
+    private sets = this.doc.registerCollab("sets",
+        init => new CLazyMap(init, init => new CValueSet(init))
+    );
+    private store = new IndexedDBDocStore({
+        dbName: this.name
     });
-    public adapter = new DocAdapter(this.doc, new Awareness(this.doc));
+    private tabSync = new TabSyncNetwork({
+        bcName: 'bc',
+        allUpdates: true
+    });
 
-
+    public IsLoaded = new Promise(resolve => this.store.on('Load', resolve));
     constructor(protected name) {
+        this.addProvider();
     }
 
     @cell
     public IsSynced = false;
-
-    /**
-     * @deprecated use syncWith(new LocalSyncProvider(name)) instead
-     */
-    public async useIndexedDB() {
-        const indexeddbProvider = new IndexeddbPersistence(this.name, this.doc);
-        await indexeddbProvider.whenSynced;
+    public addProvider(){
+        this.store.subscribe(this.doc, this.name);
+        this.tabSync.subscribe(this.doc, this.name);
     }
-
     public getObjectCell<T>(name: string): ObservableObject<T>{
-        const map = this.doc.getMap(name);
-        map.observe((events, transaction) => {
-            if (transaction.local)
-                return;
-            const diff = {} as Partial<T>;
-            for (let [key, change] of events.keys.entries()) {
-                diff[key] = map.get(key);
-            }
-            cell.Diff(diff);
+        const map = this.objects.get(name);
+        map.on('Set', (event) => {
+            cell.Diff({
+                [event.key as keyof T]: event.value
+            } as DeepPartial<T>);
         });
-        const cell = new ObservableObject<T>(map.toJSON() as T);
-        cell.on('change', e => {
+        map.on('Delete', (event) => {
+            cell.Diff({
+                [event.key as keyof T]: null
+            } as DeepPartial<T>);
+        });
+        const cell = new ObservableObject<T>(Object.fromEntries(map.entries()) as T);
+        cell.on('change', async e => {
+            await this.IsLoaded;
             for (let key of e.keys) {
-                if (map.get(key) !== e.value[key])
-                    map.set(key, e.value[key]);
+                if (map.get(key as keyof T) !== e.value[key])
+                    map.set(key as keyof T, e.value[key]);
             }
         });
         return cell;
     }
 
     public getArray<T>(name: string): ObservableList<T>{
-        const map = this.doc.getMap(name);
-        map.observeDeep((events, transaction) => {
-            if (transaction.local)
-                return;
+        const array = this.arrays.get(name) as CValueList<T>;
+        array.on('Insert', (events) => {
+            arr.splice(events.index, 0, ...events.values);
+        });
+        array.on('Delete', (events) => {
+            arr.splice(events.index, events.values.length);
         });
         const arr = new ObservableList<T>();
-        arr.on('change', e => {
-
+        arr.on('splice', async e => {
+            await this.IsLoaded;
+            array.splice(e.index, e.deleteCount, ...e.values);
+        });
+        arr.on('push', async e => {
+            await this.IsLoaded;
+            array.push(...e.values);
         });
         return arr;
     }
     public getSet<T>(name: string): ObservableSet<T>{
-        const array = this.doc.getArray<T>(name);
-        array.observe((events, transaction) => {
-            if (transaction.local)
-                return;
-            for (let added of events.changes.added) {
-                if (events.changes.deleted.delete(added)){
-                    continue;
-                }
-                // @ts-ignore
-                for (let x of added.content.arr) {
-                    arr.add(x)
-                }
+        const array = this.sets.get(name) as CValueSet<T>;
+        const arr = new ObservableSet<T>(array.values());
+        this.IsLoaded.then(() => {
+            array.on('Add',e => {
+                arr.add(e.value);
+                console.log(this.name, 'add', e.value);
+            });
+            array.on('Delete',e => {
+                arr.delete(e.value);
+                console.log(this.name, 'remove', e.value);
+            });
+            for (let value of array.values()) {
+                arr.add(value);
             }
-            for (let deleted of events.changes.deleted) {
-                // @ts-ignore
-                for (let x of deleted.content.arr) {
-                    arr.delete(x)
+            arr.on('change', async e => {
+                for (let t of e.add ?? []) {
+                    if (array.has(t)) continue;
+                    array.add(t);
+                    console.warn(this.name, 'add', t);
                 }
-            }
-        });
-        const arr = new ObservableSet<T>(array.toArray());
-        arr.on('change', e => {
-            if (e.add) {
-                array.push(e.add);
-            }
-            if (e.delete) {
-                for (let t of e.delete) {
-                    array.delete(array.toArray().indexOf(t));
+                for (let t of e.delete ?? []) {
+                    if (!array.has(t)) continue;
+                    array.delete(t);
+                    console.warn(this.name, 'remove', t);
                 }
-            }
+            })
         })
         return arr;
     }
 
 
     public dispose(){
-        this.doc.destroy();
-        this.adapter.dispose();
     }
 }
 

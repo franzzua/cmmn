@@ -8,8 +8,8 @@ export class LocalSyncProvider implements ISyncProvider{
     }
 
     async addAdapter(docAdapter: DocAdapter) {
-        const indexeddbProvider = new IndexeddbPersistence(this.name, docAdapter.doc);
-        await indexeddbProvider.whenSynced;
+        // const indexeddbProvider = new IndexeddbPersistence(this.name, docAdapter.doc);
+        // await indexeddbProvider.whenSynced;
     }
 
 }

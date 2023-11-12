@@ -11,8 +11,9 @@ export class ObservableSet<T> extends EventEmitter<{
 
     add(value: T): this {
         const has = this.base.has(value);
+        if (has) return this;
         this.base.add(value);
-        !has && this.emit('change', {value: this.base, add: [value]})
+        this.emit('change', {value: this.base, add: [value]})
         return  this;
     }
     clear(): void {
