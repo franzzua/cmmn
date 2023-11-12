@@ -19,30 +19,6 @@
       "require": "./dist/bundle/index.node.cjs",
       "default": "./dist/bundle/index.node.js"
     },
-    "./webrtc/client": {
-      "types": "./dist/typings/webrtc/client/index.d.ts",
-      "import": "./dist/bundle/webrtc.js",
-      "require": "./dist/bundle/webrtc.cjs",
-      "default": "./dist/bundle/webrtc.js"
-    },
-    "./webrtc/server": {
-      "types": "./dist/typings/webrtc/server/index.d.ts",
-      "import": "./dist/bundle/webrtc-server.js",
-      "require": "./dist/bundle/webrtc-server.cjs",
-      "default": "./dist/bundle/webrtc-server.js"
-    },
-    "./websocket/client": {
-      "types": "./dist/typings/websocket/client/index.d.ts",
-      "import": "./dist/bundle/websocket.js",
-      "require": "./dist/bundle/websocket.cjs",
-      "default": "./dist/bundle/websocket.js"
-    },
-    "./websocket/server": {
-      "types": "./dist/typings/websocket/server/index.d.ts",
-      "import": "./dist/bundle/websocket-server.js",
-      "require": "./dist/bundle/websocket-server.cjs",
-      "default": "./dist/bundle/websocket-server.js"
-    },
     "./package.json": "./package.json"
   },
   "typings": "index.d.ts",
@@ -50,18 +26,6 @@
     "*": {
       "index.d.ts": [
         "./dist/typings/index.d.ts"
-      ],
-      "webrtc/client": [
-        "./dist/typings/webrtc/client/index.d.ts"
-      ],
-      "webrtc/server": [
-        "./dist/typings/webrtc/server/index.d.ts"
-      ],
-      "websocket/client": [
-        "./dist/typings/websocket/client/index.d.ts"
-      ],
-      "websocket/server": [
-        "./dist/typings/websocket/server/index.d.ts"
       ]
     }
   },
@@ -75,9 +39,9 @@
   "dependencies": {
     "@cmmn/cell": "1.9.11",
     "@cmmn/core": "1.9.11",
-    "y-indexeddb": "9.x.x",
-    "y-protocols": "1.x.x",
-    "yjs": "13.x.x"
+    "@collabs/tab-sync": "0.13.4",
+    "@collabs/indexeddb": "0.13.4",
+    "@collabs/collabs": "0.13.4"
   },
   "devDependencies": {
     "@cmmn/tools": "1.9.11",
@@ -96,40 +60,6 @@
         "crypto": "data:text/javascript,export const webcrypto = crypto;"
       },
       "platform": "browser,node",
-      "module": "es,cjs"
-    },
-    "webrtc": {
-      "input": "./dist/esm/webrtc/client/index.js",
-      "external": [
-        "@cmmn"
-      ],
-      "platform": "browser",
-      "module": "es,cjs"
-    },
-    "webrtc-server": {
-      "input": "./dist/esm/webrtc/server/index.js",
-      "external": [
-        "node_modules",
-        "@cmmn"
-      ],
-      "platform": "node",
-      "module": "es,cjs"
-    },
-    "websocket": {
-      "input": "./dist/esm/websocket/client/index.js",
-      "external": [
-        "@cmmn"
-      ],
-      "platform": "browser",
-      "module": "es,cjs"
-    },
-    "websocket-server": {
-      "input": "./dist/esm/websocket/server/index.js",
-      "external": [
-        "node_modules",
-        "@cmmn"
-      ],
-      "platform": "node",
       "module": "es,cjs"
     }
   },
