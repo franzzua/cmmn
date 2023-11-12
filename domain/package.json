@@ -39,11 +39,11 @@
     "dist"
   ],
   "devDependencies": {
-    "@cmmn/tools": "1.9.11"
+    "@cmmn/tools": "1.9.12"
   },
   "dependencies": {
-    "@cmmn/cell": "1.9.11",
-    "@cmmn/core": "1.9.11"
+    "@cmmn/cell": "1.9.12",
+    "@cmmn/core": "1.9.12"
   },
   "author": "",
   "license": "ISC",
