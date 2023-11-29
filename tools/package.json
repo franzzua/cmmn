@@ -54,7 +54,6 @@
     "fast-glob": "^3.2.11",
     "file-uri-to-path": "2.x.x",
     "import-meta-resolve": "2",
-    "jasmine-expect": "5.0.0",
     "less": "^4",
     "live-server": "1.2.2",
     "sinon": "17.0.1"
