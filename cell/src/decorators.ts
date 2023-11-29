@@ -51,3 +51,7 @@ export const cell: CellDecorator = ((options: ICellOptions<any>, prop?, descr?, 
     }
 }) as CellDecorator;
 
+export const likeCell: ClassDecorator = target => {
+    BaseCell.likeCells.add(target);
+    return target;
+}

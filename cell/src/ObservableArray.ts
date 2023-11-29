@@ -1,27 +1,19 @@
-import {EventEmitter, Fn} from "@cmmn/core";
+import {EventEmitter, EventEmitterBase, Fn} from "@cmmn/core";
+import {likeCell} from "./decorators";
 
-type ArrayAndEventEmitter<T> = Array<T> & EventEmitter<{
-    change: {value: Array<T>; }
-    error: Error,
-}>
-interface ArrayAndEventEmitterConstructor {
-    new(arrayLength?: number):  ArrayAndEventEmitter<any>;
-    new <T = any>(values?: readonly T[] | null):  ArrayAndEventEmitter<T>;
-    new <T>(arrayLength: number):  ArrayAndEventEmitter<T>;
-    new <T>(...items: T[]):  ArrayAndEventEmitter<T>;
-    <T>(arrayLength: number): ArrayAndEventEmitter<T>;
-    <T>(...items: T[]):  ArrayAndEventEmitter<T>;
-    readonly prototype: Array<any> & EventEmitter<any>;
-}
-declare var ArrayAndEventEmitter: ArrayAndEventEmitterConstructor;
-// @ts-ignore
-var ArrayAndEventEmitter = Fn.deepExtend(Array, EventEmitter) as any;
+@likeCell
+export class ObservableArray<T> extends Array<T> {
+    private emitter = new EventEmitter<{change: any}>();
+    on = this.emitter.on.bind(this.emitter);
 
-
-export class ObservableArray<T> extends ArrayAndEventEmitter<T> {
-
+    constructor(arr: ArrayLike<T> = []) {
+        super(arr.length);
+        for (let i = 0; i < arr.length; i++) {
+            this[i] = arr[i];
+        }
+    }
     emitChange(){
-        this.emit('change', {value: this})
+        this.emitter.emit('change', {value: this})
     }
     set(index, value:T){
         super[index] = value;
@@ -64,7 +56,7 @@ const keys: Exclude<keyof Array<any>, keyof ReadonlyArray<any>>[] = [
 for (let key of keys) {
     ObservableArray.prototype[key] = function (this: ObservableArray<any>, ...args){
         const res = Array.prototype[key].apply(this, args);
-        this.emit('change', {value: this})
+        this.emitChange();
         return res;
     } as any;
 }

@@ -1,3 +1,9 @@
 export {suite, test, timeout,} from "@testdeck/jest";
-export {expect,} from "@jest/globals";
-export * as sinon from "sinon";
+import {expect as expectBase, Assertion} from "expect.js";
+import * as sinonModule from "sinon";
+export const expect: (obj: any) => Assertion = expectBase;
+
+export type AssertionExt = Assertion & {
+    toEqual: Assertion["eql"]
+}
+export const sinon = sinonModule;

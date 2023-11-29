@@ -39,11 +39,11 @@
     "dist"
   ],
   "devDependencies": {
-    "@cmmn/tools": "1.9.13"
+    "@cmmn/tools": "workspace:*"
   },
   "dependencies": {
-    "@cmmn/cell": "1.9.13",
-    "@cmmn/core": "1.9.13",
+    "@cmmn/cell": "workspace:*",
+    "@cmmn/core": "workspace:*",
     "msgpackr": "1.10.0"
   },
   "author": "",
@@ -55,8 +55,7 @@
       "module": "es,cjs",
       "platform": "neutral",
       "external": [
-        "@cmmn",
-        "luxon"
+        "@cmmn"
       ]
     },
     "worker": {
@@ -64,8 +63,7 @@
       "module": "es,cjs",
       "platform": "browser",
       "external": [
-        "@cmmn",
-        "luxon"
+        "@cmmn"
       ]
     }
   }

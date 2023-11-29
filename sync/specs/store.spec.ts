@@ -23,7 +23,7 @@ export class StoreSpec {
     // delete() {
     //     this.add();
     //     this.mainStore.Items.delete('one');
-    //     expect(this.testStore.Items.has('one')).toBe(false);
+    //     expect(this.testStore.Items.has('one')).toEqual(false);
     // }
     //
     // @test

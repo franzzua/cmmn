@@ -25,7 +25,7 @@
     
         @test
         equalsTest() {
-            expect(1).toBe(2);
+            expect(1).toEqual(2);
         }
     }
     ```

@@ -1,3 +1,4 @@
+import "@cmmn/core";
 import {expect, sinon, suite, test} from "@cmmn/tools/test";
 import {ObservableArray} from "../src/ObservableArray";
 
@@ -25,7 +26,7 @@ class ObservableArraySpec {
     @test
     values() {
         const a = new ObservableArray<number>([1]);
-        expect([...a.values()]).toEqual([]);
+        expect([...a.values()]).toEqual([1]);
     }
 
 }

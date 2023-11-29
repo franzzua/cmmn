@@ -28,13 +28,14 @@
   },
   "scripts": {
     "build": "cmmn compile --watch",
-    "bundle": "cmmn bundle --watch"
+    "bundle": "cmmn bundle --watch",
+    "test": "node --test ./dist/esm/specs/*"
   },
   "dependencies": {
-    "@cmmn/core": "1.9.13"
+    "@cmmn/core": "workspace:*"
   },
   "devDependencies": {
-    "@cmmn/tools": "1.9.13"
+    "@cmmn/tools": "workspace:*"
   },
   "author": "",
   "license": "ISC",

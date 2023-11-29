@@ -1,5 +1,5 @@
-import {pathsToModuleNameMapper} from "ts-jest";
 import {getTSCompilerOptions} from "../helpers/getTSConfig.js";
+import {pathsToModuleNameMapper} from "./pathsToModuleNameMapper.js";
 
 const options = getTSCompilerOptions(process.cwd());
 

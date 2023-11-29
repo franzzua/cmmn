@@ -24,8 +24,8 @@ export class BaseCell<T = any> extends EventEmitter<{
             this.isActual = false;
         } else {
             this.value = value;
-            if (value instanceof EventEmitterBase) {
-                (value as any).on('change', this.onValueContentChanged);
+            if (BaseCell.isLikeCell(value)) {
+                value.on('change', this.onValueContentChanged);
             }
             this.isActual = true;
         }
@@ -160,6 +160,12 @@ export class BaseCell<T = any> extends EventEmitter<{
         }
     }
 
+    /** @internal **/
+    // register classes as cell like, so any "change" event will notify wrapped cell
+    static likeCells = new Set<any>([EventEmitterBase]);
+    static isLikeCell(target): target is EventEmitterBase<{"change": any}>{
+        return BaseCell.likeCells.has(target?.constructor);
+    }
 }
 
 // export const CellState = {

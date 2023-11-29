@@ -23,8 +23,8 @@
     }
   },
   "devDependencies": {
-    "@cmmn/core": "1.9.13",
-    "@cmmn/tools": "1.9.13",
+    "@cmmn/core": "workspace:*",
+    "@cmmn/tools": "workspace:*",
     "fastify": "4"
   },
   "type": "module",
