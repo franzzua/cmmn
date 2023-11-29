@@ -1,10 +1,9 @@
-import "./reflect";
 import {Container} from "./container";
+import {getMetadata} from "./reflect";
 
 export function Injectable(multiple: boolean = false): (target: any) => void {
     return ((target: any) => {
-        // @ts-ignore
-        const deps = Reflect.getMetadata("design:paramtypes", target) ?? [];
+        const deps = getMetadata("design:paramtypes", target) ?? [];
         const data = Container.StaticDepsMap.getOrAdd(target, () => ({
             deps: [],
             multiple: false

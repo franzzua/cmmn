@@ -1,4 +1,4 @@
-import {Container, registerSerializer} from "@cmmn/core";
+import {Container} from "@cmmn/core";
 import {Stream} from "../streams/stream";
 import {DirectStream} from "../streams/direct-stream";
 import {WorkerStream} from "../streams/workerStream";
@@ -6,6 +6,7 @@ import {Transferable} from "../streams/transferable";
 import {Locator} from "../shared/locator";
 import {EntityLocator} from "./entity-locator.service";
 import {ChildWindowStream} from "../window/child-window.stream";
+import {registerSerializer} from "../serialize";
 
 export {proxy} from "../shared/domain.structure";
 export {ModelProxy} from "./modelProxy";

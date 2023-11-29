@@ -1,6 +1,7 @@
 import {WorkerMessage, WorkerMessageSerialized} from "../shared/types";
-import {bind, deserialize, EventEmitter, ResolvablePromise, serialize} from "@cmmn/core";
+import {bind, EventEmitter, ResolvablePromise} from "@cmmn/core";
 import {Transferable} from "./transferable";
+import {deserialize, serialize} from "../serialize";
 
 
 /**

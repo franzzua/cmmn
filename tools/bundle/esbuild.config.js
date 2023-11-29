@@ -135,7 +135,8 @@ export class ConfigCreator {
                 es: 'esm'
             })[format] ?? format,
             outExtension: {
-                '.js': this.getOutExtension(format, platform)
+                '.js': this.getOutExtension(format, platform),
+                '.css': this.options.minify ? '.min.css' : '.css'
             },
             footer:{
                 js: `//# sourceMappingURL=./${this.options.name+this.getOutExtension(format, platform)}.map`
