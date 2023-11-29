@@ -20,8 +20,8 @@ jobs:
       - uses: pnpm/action-setup@v2
         with:
           version: 8
-      - run: npm i
-      - run: npm run ci2
+      - run: pnpm i
+      - run: pnpm run ci2
       - run: pnpm publish -r --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}

@@ -20,20 +20,10 @@
       "import": "./dist/bundle/index.js",
       "require": "./dist/bundle/index.cjs",
       "default": "./dist/bundle/index.js"
-    },
-    "./min": {
-      "types": "./dist/typings/min.d.ts",
-      "import": "./dist/bundle/min.js",
-      "require": "./dist/bundle/min.cjs",
-      "default": "./dist/bundle/min.js"
     }
   },
   "typesVersions": {
     "*": {
-      "min": [
-        "dist/typings/min.d.ts",
-        "extensions.d.ts"
-      ],
       "*": [
         "dist/typings/index.d.ts",
         "extensions.d.ts"

@@ -1,0 +1,11 @@
+packages:
+    - 'app'
+    - 'core'
+    - 'cell'
+    - 'domain'
+    - 'server'
+    - 'tools'
+    - 'infr'
+    - 'uhtml'
+    - 'ui'
+    - 'sync'
