@@ -126,6 +126,9 @@ importers:
       '@zerollup/ts-helpers':
         specifier: 1.7.18
         version: 1.7.18(typescript@5.2.2)
+      earl:
+        specifier: ^1.1.0
+        version: 1.1.0
       esbuild:
         specifier: 0.19.5
         version: 0.19.5
@@ -1016,6 +1019,11 @@ packages:
   /duplexer@0.1.2:
     resolution: {integrity: sha512-jtD6YG370ZCIi/9GTaJKQxWTZD045+4R4hTk/x1UyoqadyJ9x9CgSi1RlVDQF8U2sxLLSnFkCaMihqljHIWgMg==}
 
+  /earl@1.1.0:
+    resolution: {integrity: sha512-gOYd1+WYoWEkyGvUi9aKJ3Y8zSfIH0YShpvhjj59cwA8NiaWcgZe6wDOHu18j8JqGjHQtGnGIF0F+HlYRh9q9A==}
+    dependencies:
+      error-stack-parser: 2.1.4
+
   /ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
 
@@ -1033,6 +1041,11 @@ packages:
     dependencies:
       prr: 1.0.1
     optional: true
+
+  /error-stack-parser@2.1.4:
+    resolution: {integrity: sha512-Sk5V6wVazPhq5MhpO+AUxJn5x7XSXGl1R93Vn7i+zS15KDVxQijejNCrz8340/2bgLBjR9GtEG8ZVKONDjcqGQ==}
+    dependencies:
+      stackframe: 1.3.4
 
   /esbuild-plugin-less@1.3.1(esbuild@0.19.5):
     resolution: {integrity: sha512-DuG0a9wGzEqzkbzFyvd20XiMJJtZ00mhTDItp5TASgKStITqyfU/O73ZANhJRtLMJ/eU6xCtl0o3VX4gl7Y3tg==}
@@ -2396,6 +2409,9 @@ packages:
     dependencies:
       through: 2.3.8
 
+  /stackframe@1.3.4:
+    resolution: {integrity: sha512-oeVtt7eWQS+Na6F//S4kJ2K2VbRlS9D43mAlMyVpVWovy9o+jfgH8O9agzANzaiLjclA0oYzUXEM4PurhSUChw==}
+
   /static-extend@0.1.2:
     resolution: {integrity: sha512-72E9+uLc27Mt718pMHt9VMNiAL4LMsmDbBva8mxWUCkT07fSzEGMYUCk0XWY6lp0j6RBAG4cJ3mWuZv2OE3s0g==}
     engines: {node: '>=0.10.0'}
@@ -2654,6 +2670,7 @@ packages:
       '@types/node': 20.10.0
       '@types/sinon': 10.0.20
       '@zerollup/ts-helpers': 1.7.18(typescript@5.2.2)
+      earl: 1.1.0
       esbuild: 0.19.5
       esbuild-plugin-less: 1.3.1(esbuild@0.19.5)
       esbuild-register: 3.5.0(esbuild@0.19.5)
