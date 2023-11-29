@@ -150,9 +150,6 @@ importers:
       import-meta-resolve:
         specifier: '2'
         version: 2.2.2
-      jasmine-expect:
-        specifier: 5.0.0
-        version: 5.0.0
       less:
         specifier: ^4
         version: 4.2.0
@@ -659,6 +656,7 @@ packages:
 
   /add-matchers@0.6.2:
     resolution: {integrity: sha512-hVO2wodMei9RF00qe+506MoeJ/NEOdCMEkSJ12+fC3hx/5Z4zmhNiP92nJEF6XhmXokeB0hOtuQrjHCx2vmXrQ==}
+    dev: true
 
   /ajv-formats@2.1.1(ajv@8.12.0):
     resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
@@ -1601,6 +1599,7 @@ packages:
     resolution: {integrity: sha512-byn1zq0EQBA9UKs5A+H6gk5TRcanV+TqQMRxrjurGuqKkclaqgjw/vV6aT/jtf5tabXGonTH6VDZJ33Z1pxSxw==}
     dependencies:
       add-matchers: 0.6.2
+    dev: true
 
   /json-schema-ref-resolver@1.0.1:
     resolution: {integrity: sha512-EJAj1pgHc1hxF6vo2Z3s69fMjO1INq6eGHXZ8Z6wCQeldCuwxGK9Sxf4/cScGn3FZubCVUehfWtcDM/PLteCQw==}
