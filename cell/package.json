@@ -28,9 +28,7 @@
   },
   "scripts": {
     "build": "cmmn compile --watch",
-    "bundle": "cmmn bundle --watch",
-    "bundle:lib": "cmmn bundle lib --watch",
-    "bundle:lib:prod": "cmmn bundle lib --prod"
+    "bundle": "cmmn bundle --watch"
   },
   "dependencies": {
     "@cmmn/core": "1.9.12"
