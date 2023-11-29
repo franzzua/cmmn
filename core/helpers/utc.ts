@@ -4,7 +4,7 @@
  * @param d если undefined, то возвращает текущее время
  */
 export function utc(d: (Date | number | string) = undefined): Date {
-    return new Date(d);
+    return d ? new Date(d) : new Date();
 }
 
 export function utcToday() {

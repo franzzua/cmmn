@@ -7,5 +7,5 @@ import assert from "node:assert";
 export * as sinon from "sinon";
 registerValidator("toBe", isEqual)
 registerValidator("toBeInstanceOf", type => value => value instanceof type)
-registerValidator("toHaveProperty", prop => value => prop in value)
+registerValidator("toHaveProperty", (prop, value) => obj => isEqual(obj[prop], value))
 export const expect = expectBase;

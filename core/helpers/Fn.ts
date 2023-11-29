@@ -50,39 +50,4 @@ export const Fn = {
     },
     debounce: debounce,
     throttle: throttle,
-    cloneClass: function<T extends {
-        new(...args): any;
-    }>(t: T):T{
-        const q = function (...args){
-            Object.assign(this, new t(...args));
-        }
-        q.prototype = t.prototype;
-        q.constructor = t.constructor;
-        for (let key of Object.keys(t)) {
-            q[key] = t[key];
-            console.log(key)
-        }
-        return q as any;
-    },
-    deepExtend: function <T, U, TArgs extends Array<any> = []>(t: {
-        new (...args: TArgs): T;
-    }, u: {
-        new (): U;
-    }): {
-        new (...args: TArgs): T & U
-    } {
-        const protos = [];
-        for (let x = t; x !== Function.prototype; x = Object.getPrototypeOf(x)){
-            protos.push(x);
-        }
-
-        let result = u;
-        while (protos.length){
-            const Q = Fn.cloneClass(protos.pop());
-            Object.setPrototypeOf(Q.prototype, result.prototype);
-            Object.setPrototypeOf(Q, result);
-            result = Q;
-        }
-        return result as any;
-    }
 };

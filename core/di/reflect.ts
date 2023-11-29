@@ -1,3 +1,4 @@
+import "../helpers/map";
 const metadataMap = new Map<object, Map<string, any>>();
 
 export function getMetadata(metadataKey: any, target: Object): any {

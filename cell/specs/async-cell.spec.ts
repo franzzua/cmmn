@@ -8,9 +8,9 @@ export class AsyncCellSpec{
 
     @test
     async AsyncGeneratorTest(){
-        const gen = new MockGenerator();
+        const gen = new MockGenerator<number>();
         gen.Next(7);
-        const cell = new AsyncCell(() => gen.getValues());
+        const cell = new AsyncCell<number>(() => gen.getValues());
         const changeTracker = sinon.spy(() => {});
         cell.on('change', changeTracker);
         await new Promise(r => setTimeout(r, 20));
@@ -36,10 +36,10 @@ export class AsyncCellSpec{
     }
 }
 
-class MockGenerator{
-    private promise = new ResolvablePromise();
+class MockGenerator<T>{
+    private promise = new ResolvablePromise<T>();
 
-    public Next(value){
+    public Next(value:T){
         this.promise.resolve(value);
     }
 
@@ -47,7 +47,7 @@ class MockGenerator{
         while (true){
             const res = await this.promise;
             yield res;
-            this.promise = new ResolvablePromise<any>();
+            this.promise = new ResolvablePromise<T>();
         }
     }
 }

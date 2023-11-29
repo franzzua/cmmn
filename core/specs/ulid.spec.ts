@@ -1,3 +1,4 @@
+import '../helpers/helpers';
 import '../helpers/Array';
 import {expect, suite, test, timeout} from '@cmmn/tools/test';
 import { Fn } from '../helpers/Fn.js';
