@@ -45,7 +45,7 @@
     "bundle": "cmmn bundle --watch"
   },
   "devDependencies": {
-    "@cmmn/tools": "1.9.12"
+    "@cmmn/tools": "1.9.13"
   },
   "dependencies": {
     "bind-decorator": "^1.0.11"

@@ -31,10 +31,10 @@
     "bundle": "cmmn bundle --watch"
   },
   "dependencies": {
-    "@cmmn/core": "1.9.12"
+    "@cmmn/core": "1.9.13"
   },
   "devDependencies": {
-    "@cmmn/tools": "1.9.12"
+    "@cmmn/tools": "1.9.13"
   },
   "author": "",
   "license": "ISC",
