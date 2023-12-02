@@ -7,5 +7,10 @@
       "es2017.sharedmemory",
       "esnext"
     ]
-  }
+  },
+  "references": [
+    {
+      "path": "../cell"
+    },
+  ]
 }

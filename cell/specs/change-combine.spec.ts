@@ -40,7 +40,7 @@ class ChangeCombineSpec {
         b.set(3);
 
         await Actualizator.wait;
-        expect(getC.callCount).toBe(1);
+        expect(getC.callCount).toEqual(1);
     }
 }
 

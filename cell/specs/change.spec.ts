@@ -9,8 +9,8 @@ class ChangeSpec {
     changeEvent() {
         const a = new BaseCell(0);
         a.on('change', x => {
-            expect(x.value).toBe(1);
-            expect(x.oldValue).toBe(0);
+            expect(x.value).toEqual(1);
+            expect(x.oldValue).toEqual(0);
         })
         a.set(1);
     }
@@ -20,8 +20,8 @@ class ChangeSpec {
         const a = new BaseCell(0);
         const b = new BaseCell(() => a.get() + 1);
         const onChange = sinon.spy(x => {
-            expect(x.value).toBe(2);
-            expect(x.oldValue).toBe(1);
+            expect(x.value).toEqual(2);
+            expect(x.oldValue).toEqual(1);
         });
         b.on('change', onChange)
         a.set(1);
@@ -39,7 +39,7 @@ class ChangeSpec {
         getB.resetHistory(); // !
         a.set(1);
         await Actualizator.wait;
-        expect(getB.callCount).toBe(1);
+        expect(getB.callCount).toEqual(1);
     }
 
     @test

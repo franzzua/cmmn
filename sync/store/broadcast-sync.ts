@@ -7,6 +7,9 @@ export class BroadcastSync {
 
     public listen(doc: AbstractDoc){
         const array = doc.save();
+        doc.on('Change', e => {
+
+        })
         this.channel.addEventListener('message', (e: MessageEvent<BroadcastSyncMessage>) => {
             switch (e.data.type){
                 case "getState":

@@ -16,6 +16,11 @@
     },
     "./package.json": "./package.json"
   },
+  "dependencies": {
+    "@cmmn/core": "workspace:*",
+    "@cmmn/cell": "workspace:*",
+    "@cmmn/tools": "workspace:*"
+  },
   "typings": "./dist/typings/index.d.ts",
   "scripts": {
     "bundle": "cmmn bundle -b --watch",

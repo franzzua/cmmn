@@ -7,7 +7,7 @@ export type IAsyncCellOptions<T, TKey = T> = ICellOptions<T, TKey> & {
 };
 
 export class AsyncCell<T, TKey = T> extends Cell<T, TKey> {
-    private genCell: BaseCell<AsyncGenerator<T> | Promise<T>>;
+    protected genCell: BaseCell<AsyncGenerator<T> | Promise<T>>;
 
     constructor(generator: () => AsyncGenerator<T> | Promise<T>,
                 protected options: IAsyncCellOptions<T, TKey> = {}) {
@@ -15,15 +15,26 @@ export class AsyncCell<T, TKey = T> extends Cell<T, TKey> {
         this.genCell = new BaseCell(generator);
     }
 
-    private onChange = async gen => {
+    private onChange = async (gen: {value: AsyncGenerator<T> | Promise<T>}) => {
         if (!gen.value)
             return this.set(null)
         if (Symbol.asyncIterator in gen.value)
             for await(let value of gen.value as AsyncGenerator<T>) {
+                // prevent race
+                if (this.genCell.get() !== gen.value) {
+                    // console.log('Race! ignore:', value)
+                    return;
+                }
                 this.set(value);
             }
         else {
-            this.set(await (gen.value as Promise<T>));
+            const value =await (gen.value as Promise<T>);
+            if (this.genCell.get() !== gen.value) {
+                // prevent race
+                // console.log('Race! ignore:', value)
+                return;
+            }
+            this.set(value);
         }
     };
 
