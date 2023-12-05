@@ -119,15 +119,6 @@ export namespace proxy {
             }
         });
     }
-    // export const array = <TSource, TTarget>(model: ConstructorOf<TTarget>, key?: string): PropertyDecorator => (target, propertyKey) => {
-    //     const def = definitions.getOrAdd(target.constructor, defaultDef)
-    //     def.mappings.push({
-    //         type: 'array',
-    //         model,
-    //         key: key,
-    //         id: propertyKey as string
-    //     });
-    // }
     export const link = <TModel>(
         model: ConstructorOf<any>,
         getKey: (model: TModel) => ModelKey = () => 'Root'

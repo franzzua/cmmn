@@ -1,5 +1,5 @@
 import {HtmlComponentBase} from "../component/html-component-base";
-import {Fn} from "@cmmn/core";
+import {Fn, getOrAdd} from "@cmmn/core";
 import {Cell} from "@cmmn/cell";
 
 type EffectFunction<TState> = (state: TState) => void | Function
@@ -32,8 +32,8 @@ export function SubcribeOnActions<TState>(component: HtmlComponentBase<TState>, 
         const cell = new Cell(() => filter.call(component), {
             compare: Fn.compare
         });
-        const values = actionValues.getOrAdd(component, () => new Map());
-        const info = values.getOrAdd(actionFn, () => ({}));
+        const values = getOrAdd(actionValues, component, () => new Map());
+        const info = getOrAdd(values, actionFn, () => ({}));
 
         const invokeAction = async ({value}) => {
             if (info.unsubscr && typeof info.unsubscr === "function")

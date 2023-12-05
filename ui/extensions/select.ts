@@ -1,12 +1,13 @@
 import {Cell} from "@cmmn/cell";
 import {HtmlComponentBase} from "../component/html-component-base";
 import {QuerySelectorCell} from "./querySelectorCell";
+import {getOrAdd} from "@cmmn/core";
 
 export const propertySymbol = Symbol('selectors');
 
 function getOrCreateCell(element: any, key: string, selector: string) {
     self[propertySymbol] ??= new Map<string, Cell>();
-    return self[propertySymbol].getOrAdd(key, () => new QuerySelectorCell(element, selector))
+    return getOrAdd(self[propertySymbol], key, () => new QuerySelectorCell(element, selector))
 }
 
 export function select(selector: string): PropertyDecorator {

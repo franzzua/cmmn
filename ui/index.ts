@@ -21,21 +21,6 @@ export * from "./extensions/effect";
 export * from "./extensions/react";
 export * from "./extensions/event";
 export * from "./extensions/select";
-//
-// const listeners = globalThis['listeners'] = new Map<string, Map<Function, EventTarget>>();
-//
-// EventTarget.prototype.addEventListener = Fn.join(
-//     EventTarget.prototype.addEventListener,
-//     function(name, listener){
-//         listeners.getOrAdd(name, () => new Map()).set(listener, this);
-//     }
-// );
-//
-// EventTarget.prototype.removeEventListener = Fn.join(
-//     EventTarget.prototype.removeEventListener,
-//     function(name, listener){
-//         listeners.get(name).delete(listener);
-//     }
-// );
+
 export {Renderer, intersectionObserver};
 export {html} from "@cmmn/uhtml";
