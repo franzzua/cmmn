@@ -3,6 +3,7 @@ import {ModelKey, ModelPath} from "./types";
 import {ModelProxy} from "../entry/modelProxy";
 import {ModelMap} from "../model-map";
 import {Stream} from "../streams/stream";
+import {getOrAdd} from "@cmmn/core";
 
 
 type DefMapping = {
@@ -87,7 +88,7 @@ export namespace proxy {
         new(...args: any[]): TModel;
     }, getPath?: (key: ModelKey, self: ModelProxy<any, any>) => ModelPath): ClassDecorator => {
         return (target: any) => {
-            definitions.getOrAdd(target, () => ({
+            getOrAdd(definitions, target, () => ({
                 mappings: [],
                 root: !getPath,
                 instances: new Map(),
@@ -110,7 +111,7 @@ export namespace proxy {
                         () => getKeys(this.State),
                         id => {
                             const path = definition.getPath(id, this);
-                            return definition.instances.getOrAdd(path.join(':'), () =>
+                            return getOrAdd(definition.instances, path.join(':'), () =>
                                 this.locator.get(path, definition.target) as ModelProxy<any>);
                         })
                 });
@@ -137,7 +138,7 @@ export namespace proxy {
                 if (!key) return null;
                 const definition = getDefinition(model);
                 const path = definition.getPath(key, this);
-                return definition.instances.getOrAdd(path.join(':'), () => this.locator['rootLocator'].get(path, definition.target) as ModelProxy<any>);
+                return getOrAdd(definition.instances, path.join(':'), () => this.locator['rootLocator'].get(path, definition.target) as ModelProxy<any>);
             }
         });
     }

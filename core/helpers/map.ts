@@ -1,25 +1,7 @@
-export {};
-declare global {
-
-
-}
-function *getMapSelectorIterator<K,V,U>(map: Map<K,V>, selector: (value: V, key?: K) => U): Iterable<[K, U]>{
-    for (let [key, value] of map.entries()) {
-        yield [key, selector(value, key)];
-    }
-}
-
-Map.prototype.cast = function () {
-    return this;
-};
-Map.prototype.map = function (selector) {
-    return new Map(getMapSelectorIterator(this, selector));
-};
-
-Map.prototype.getOrAdd = function (key, factory) {
-    const existed = this.get(key);
+export function getOrAdd<TKey, TValue>(map: Map<TKey, TValue>, key: TKey, factory: (key: TKey) => TValue): TValue {
+    const existed = map.get(key);
     if (existed) return existed;
     const newItem = factory(key);
-    this.set(key, newItem);
+    map.set(key, newItem);
     return newItem;
-};
+}

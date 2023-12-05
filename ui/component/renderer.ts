@@ -1,4 +1,4 @@
-import {bind, ResolvablePromise} from "@cmmn/core";
+import {bind, getOrAdd, ResolvablePromise} from "@cmmn/core";
 import {Renderable, TemplateFunction} from "@cmmn/uhtml";
 import {IEvents, ITemplate} from "./types";
 import {EventHandlerProvider} from "./eventHandlerProvider";
@@ -25,7 +25,7 @@ export class Renderer<TState, TEvents extends IEvents> {
     }
 
     private cacheFor(target, key, factory) {
-        return this.cache.getOrAdd(target, () => new Map()).getOrAdd(key, factory);
+        return getOrAdd(getOrAdd(this.cache, target, () => new Map()), key, factory);
     }
 
     /**

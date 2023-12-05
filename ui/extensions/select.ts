@@ -16,7 +16,6 @@ export function select(selector: string): PropertyDecorator {
                 const cell = getOrCreateCell(this.element, key, selector);
                 return cell.get();
             },
-            writable: false,
             configurable: true
         });
     }

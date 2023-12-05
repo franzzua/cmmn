@@ -1,4 +1,4 @@
-import {Container, Injectable} from "@cmmn/core";
+import {Container, getOrAdd, Injectable} from "@cmmn/core";
 import {Stream} from "../streams/stream";
 import {ModelAction, ModelLike, ModelPath} from "../shared/types";
 import {ModelProxy} from "./modelProxy";
@@ -14,7 +14,7 @@ export class EntityLocator implements Locator {
     public get<TState, TActions extends ModelAction>(path: ModelPath, modelType: {
         new(...args): ModelLike<TState, TActions>;
     } = ModelProxy): ModelLike<TState, TActions> {
-        return this.cache.getOrAdd(path.join(':'), () => {
+        return getOrAdd(this.cache, path.join(':'), () => {
             const subStream = this.stream.getSubStream(path);
             return this.container.get<ModelLike<TState, TActions>>(modelType, [
                 {provide: Stream, useValue: subStream},

@@ -1,7 +1,7 @@
 import {useCustomHandler} from "@cmmn/uhtml";
 import {Cell, ICellOptions} from "@cmmn/cell";
 import {ExtendedElement} from "./types";
-import {Fn} from "@cmmn/core";
+import {Fn, getOrAdd} from "@cmmn/core";
 import {HtmlComponentBase} from "./html-component-base";
 
 export const propertySymbol = Symbol('properties');
@@ -20,7 +20,7 @@ useCustomHandler(componentHandler);
 
 function getOrCreateCell(self: ExtendedElement<any>, key: string, value: Function, opts: ICellOptions<any> = {}) {
     self[propertySymbol] ??= new Map<string, Cell>();
-    return self[propertySymbol].getOrAdd(key, key => new Cell(value(), opts))
+    return getOrAdd(self[propertySymbol], key, key => new Cell(value(), opts))
 }
 
 export function property(options: string | ICellOptions<any> & { attributeName?: string} = {}): PropertyDecorator {

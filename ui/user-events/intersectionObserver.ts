@@ -1,4 +1,5 @@
 import {Cell} from "@cmmn/cell";
+import {getOrAdd} from "@cmmn/core";
 
 class IntersectObserver {
 
@@ -14,7 +15,7 @@ class IntersectObserver {
   private ObservationMap = new Map<Element, Cell<IntersectionObserverEntry>>();
 
   public Observe(element: Element) {
-    return  this.ObservationMap.getOrAdd(element, element => {
+    return getOrAdd(this.ObservationMap, element, element => {
       this.observer.observe(element);
       const record = this.observer.takeRecords().find(x => x.target === element);
       return new Cell<IntersectionObserverEntry>(record);

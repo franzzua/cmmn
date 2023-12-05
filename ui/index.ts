@@ -3,8 +3,9 @@ import {AsyncHtmlComponent, HtmlComponent} from "./component/htmlComponent";
 import "./uhtml-ext/styleHandler"
 import {Renderer} from "./component/renderer";
 import {intersectionObserver} from "./user-events/intersectionObserver";
+import { QuerySelectorCell } from "./extensions/querySelectorCell";
 
-export {HtmlComponent, component, AsyncHtmlComponent};
+export {HtmlComponent, component, AsyncHtmlComponent, QuerySelectorCell};
 
 export function setDefaultContainer(container: { get(target): any; }) {
     GlobalStaticState.DefaultContainer = container;

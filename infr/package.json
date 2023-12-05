@@ -37,7 +37,9 @@
       "input": "dist/esm/index.js",
       "module": "es,cjs",
       "platform": "neutral",
-      "external": []
+      "external": [
+        "@cmmn"
+      ]
     }
   }
 }
