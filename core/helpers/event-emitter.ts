@@ -1,4 +1,6 @@
 import {bind} from "bind-decorator";
+import {orderBy, removeAll} from "./Array";
+import {getOrAdd} from "./map";
 
 export type EventListenerOptions = {
     Priority: number,
@@ -41,7 +43,7 @@ export class EventEmitter<TEvents extends {
 
     public on<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void,
                                                 options: EventListenerOptions = DefaultListenerOptions) {
-        const arr = this.listeners.getOrAdd(eventName, () => {
+        const arr = getOrAdd(this.listeners, eventName, () => {
             this.subscribe(eventName);
             return [];
         });
@@ -51,8 +53,8 @@ export class EventEmitter<TEvents extends {
     }
 
     public off<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void) {
-        const set = this.listeners.getOrAdd(eventName, () => []);
-        set.removeAll(x => x.listener === listener);
+        const set = getOrAdd(this.listeners, eventName, () => []);
+        removeAll(set, x => x.listener === listener);
         if (set.length == 0) {
             this.listeners.delete(eventName);
             this.unsubscribe(eventName);
@@ -108,7 +110,7 @@ export class StoppableEventEmitter<TEvents extends {
         if (!arr)
             return;
         let isStopped = false;
-        const ordered = arr.orderBy(x => x.options.Priority, true);
+        const ordered = orderBy(arr, x => x.options.Priority, true);
         const stopAction = () => isStopped = true;
         for (let i = 0; i < ordered.length; i++) {
             if (isStopped)

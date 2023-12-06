@@ -1,8 +1,10 @@
+import {getOrAdd} from "@cmmn/core";
+
 export const RouteInfo = new Map<Object, RouteInfo>();
 
 export function controller(baseRoute = '/'): ClassDecorator {
     return target => {
-        RouteInfo.getOrAdd(target, x => ({
+        getOrAdd(RouteInfo, target, x => ({
             baseRoute: undefined,
             routes: []
         })).baseRoute = baseRoute;
@@ -13,7 +15,7 @@ export function controller(baseRoute = '/'): ClassDecorator {
 
 export function Route(route: string, method: string, options = {}): MethodDecorator {
     return <T extends Function>(target, key, descriptor) => {
-        RouteInfo.getOrAdd(target.constructor, x => ({
+        getOrAdd(RouteInfo, target.constructor, x => ({
             baseRoute: undefined,
             routes: []
         })).routes.push({

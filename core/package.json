@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/core",
-  "version": "1.9.13",
+  "version": "2.0.0",
   "repository": {
     "url": "https://github.com/franzzua/cmmn/tree/master/core"
   },
@@ -14,20 +14,13 @@
   "type": "module",
   "main": "./dist/bundle/index.js",
   "module": "./dist/esm/index.js",
+  "typings": "./dist/typings/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/typings/index.d.ts",
       "import": "./dist/bundle/index.js",
       "require": "./dist/bundle/index.cjs",
       "default": "./dist/bundle/index.js"
-    }
-  },
-  "typesVersions": {
-    "*": {
-      "*": [
-        "dist/typings/index.d.ts",
-        "extensions.d.ts"
-      ]
     }
   },
   "scripts": {

@@ -1,7 +1,6 @@
 import "./helpers/helpers";
-import "./helpers/Array";
-import "./helpers/map";
-export type * from "./extensions";
+export * from "./helpers/Array";
+export * from "./helpers/map";
 export {AsyncQueue} from "./async-queue";
 export {bind} from "bind-decorator";
 export * from "./helpers"

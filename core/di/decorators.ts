@@ -1,10 +1,11 @@
 import {Container} from "./container";
 import {getMetadata} from "./reflect";
+import {getOrAdd} from "../helpers/map";
 
 export function Injectable(multiple: boolean = false): (target: any) => void {
     return ((target: any) => {
         const deps = getMetadata("design:paramtypes", target) ?? [];
-        const data = Container.StaticDepsMap.getOrAdd(target, () => ({
+        const data = getOrAdd(Container.StaticDepsMap, target, () => ({
             deps: [],
             multiple: false
         }));

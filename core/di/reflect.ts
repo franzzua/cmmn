@@ -1,4 +1,5 @@
 import "../helpers/map";
+import {getOrAdd} from "../helpers/map";
 const metadataMap = new Map<object, Map<string, any>>();
 
 export function getMetadata(metadataKey: any, target: Object): any {
@@ -10,6 +11,6 @@ export function metadata(metadataKey: any, metadataValue: any): {
     (target: Object, targetKey: string | symbol): void;
 } {
     return target => {
-        metadataMap.getOrAdd(target, () => new Map()).set(metadataKey, metadataValue)
+        getOrAdd(metadataMap, target, () => new Map()).set(metadataKey, metadataValue)
     };
 }

@@ -1,7 +1,7 @@
 import {BaseStream} from "./base.stream";
 import type {ModelLike} from "../worker/index";
 import {ModelAction, ModelPath, WorkerAction, WorkerMessage, WorkerMessageType} from "../shared/types";
-import {EventEmitter, Fn} from "@cmmn/core";
+import {EventEmitter, Fn, getOrAdd} from "@cmmn/core";
 import {BaseCell, Cell} from "@cmmn/cell";
 import {Locator} from "../shared/locator";
 
@@ -88,7 +88,7 @@ export class Connector<TEvents extends {
     private cache = new Map<string, ModelCell<any, any>>();
 
     private getModel<TState, TActions extends ModelAction>(path: ModelPath): ModelCell<TState, TActions> {
-        return  this.cache.getOrAdd(path.join(':'), () => {
+        return getOrAdd(this.cache, path.join(':'), () => {
             const model = this.locator.get<TState, TActions>(path);
             const cell = new Cell<TState>(() => model.State, {
                 // put: state => model.State = state

@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/infr",
-  "version": "1.9.13",
+  "version": "2.0.0",
   "description": "",
   "type": "module",
   "repository": {
@@ -37,7 +37,9 @@
       "input": "dist/esm/index.js",
       "module": "es,cjs",
       "platform": "neutral",
-      "external": []
+      "external": [
+        "@cmmn"
+      ]
     }
   }
 }

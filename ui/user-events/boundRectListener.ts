@@ -1,4 +1,5 @@
 import {cell} from "@cmmn/cell";
+import {getOrAdd} from "@cmmn/core";
 
 if (!globalThis.ResizeObserver) {
     class ROMock {
@@ -33,7 +34,7 @@ export class BoundRectListener {
     private static Instances = new Map<Element | Document, BoundRectListener>();
 
     public static Observe(root: Element | Document) {
-        return this.Instances.getOrAdd(root, el => new BoundRectListener(el));
+        return getOrAdd(this.Instances, root, el => new BoundRectListener(el));
     }
 
     public static Unobserve(root: Element | Document) {

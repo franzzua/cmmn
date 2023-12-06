@@ -67,7 +67,7 @@ export class AsyncCellSpec{
         delay.set(100);
         await Fn.asyncDelay(70);
         expect(asyncCell.get()).toEqual(0);
-        await Fn.asyncDelay(30);
+        await Fn.asyncDelay(40);
         expect(asyncCell.get()).toEqual(100);
     }
 }

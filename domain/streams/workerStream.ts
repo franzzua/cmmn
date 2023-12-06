@@ -1,4 +1,4 @@
-import {Fn, Lazy, ResolvablePromise} from '@cmmn/core';
+import {Fn, getOrAdd, Lazy, ResolvablePromise} from '@cmmn/core';
 import {Action, ModelPath, WorkerMessage, WorkerMessageType} from '../shared/types.js';
 import {VersionState} from './versionState.js';
 import {BaseStream} from './base.stream.js';
@@ -68,11 +68,11 @@ export class WorkerStream extends Stream {
             version: action.version,
             actionId
         });
-        return this.responses.getOrAdd(actionId, () => new ResolvablePromise());
+        return getOrAdd(this.responses, actionId, () => new ResolvablePromise());
     }
 
     getCell<T>(path: ModelPath) {
-        const cell = this.models.getOrAdd(this.pathToStr(path), x => {
+        const cell = getOrAdd(this.models, this.pathToStr(path), x => {
             this.postMessage({
                 type: WorkerMessageType.Subscribe,
                 path,

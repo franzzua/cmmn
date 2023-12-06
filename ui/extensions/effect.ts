@@ -1,5 +1,5 @@
 import {HtmlComponentBase} from "../component/html-component-base";
-import {Fn} from "@cmmn/core";
+import {Fn, getOrAdd} from "@cmmn/core";
 import {Html} from "../component/types";
 
 export type EffectFunction<TState> = (state: TState) => void | Function
@@ -25,7 +25,7 @@ export function SubscibeOnEffect<TState>(component: HtmlComponentBase<TState>,
     const effectValues = component[effectValuesSymbol] ??= new Map<HtmlComponentBase<TState>, Map<EffectFunction<TState>, EffectInfo>>();
     component.onDispose = component.on('render', async function (event: {state: TState }) {
         const value = filter.call(component, event.state);
-        const values = effectValues.getOrAdd(component, () => new Map());
+        const values = getOrAdd(effectValues, component, () => new Map());
         let info = values.get(effectFn);
         if (!info)
             values.set(effectFn, info = {lastValue: value})
