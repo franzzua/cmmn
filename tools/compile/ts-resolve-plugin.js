@@ -73,8 +73,6 @@ class Visitor {
     resolve(importPath, sourceFile){
         importPath = this.resolveFile(importPath, sourceFile);
         const sourceFileDir = path.dirname(sourceFile.fileName);
-        const caseSensitiveFileNames = this.context.getEmitHost().useCaseSensitiveFileNames();
-        const formatPath = caseSensitiveFileNames ? x => x : x => x.toLowerCase();
         const absSource = path.join(this.options.outDir, path.relative(this.options.baseUrl, sourceFileDir));
         const abs = path.resolve(sourceFileDir, importPath);
         if (this.config.import.test(importPath)) {
@@ -85,9 +83,6 @@ class Visitor {
             return importPath+".js";
         }
         if (this.config.copy.test(importPath)) {
-            // console.log(abs, absSource, path.relative(absSource,abs));
-            // const outFile = path.resolve(absSource, importPath).replaceAll(path.sep, '/');
-            // fs.cpSync(path.resolve(sourceFileDir, importPath), outFile);
             return  path.relative(absSource,abs);
         }
         return importPath;
