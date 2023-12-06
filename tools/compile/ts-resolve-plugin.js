@@ -42,7 +42,7 @@ class Visitor {
         }
     }
     findFile(importPath, sourceFile) {
-        const sourceFileDir = path.dirname(sourceFile.path);
+        const sourceFileDir = path.dirname(sourceFile.fileName);
 
         return [
             importPath,
@@ -56,7 +56,7 @@ class Visitor {
         ].find(x => fs.existsSync(path.resolve(sourceFileDir, x)))?.replace(/(\.ts)x?$/, '.js');
     }
     resolveFile(importPath, sourceFile){
-        const sourceFileDir = path.dirname(sourceFile.path);
+        const sourceFileDir = path.dirname(sourceFile.fileName);
         const existed = this.findFile(importPath, sourceFile);
         if (existed) return existed;
         const suggestions = this.resolver.getImportSuggestions(importPath, sourceFileDir) ?? [];
@@ -72,7 +72,7 @@ class Visitor {
      */
     resolve(importPath, sourceFile){
         importPath = this.resolveFile(importPath, sourceFile);
-        const sourceFileDir = path.dirname(sourceFile.path);
+        const sourceFileDir = path.dirname(sourceFile.fileName);
         const caseSensitiveFileNames = this.context.getEmitHost().useCaseSensitiveFileNames();
         const formatPath = caseSensitiveFileNames ? x => x : x => x.toLowerCase();
         const absSource = path.join(this.options.outDir, path.relative(this.options.baseUrl, sourceFileDir));
