@@ -1,9 +1,6 @@
-import {useCustomHandler} from "@cmmn/uhtml";
-
-useCustomHandler(style);
 
 
-function style(node: any, name: string) {
+export function style(node: any, name: string) {
     if (name !== 'style')
         return null;
     let oldValue: any = {};

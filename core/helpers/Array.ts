@@ -1,5 +1,3 @@
-import {Fn} from "./Fn";
-
 export function groupBy<T, K>(array: Array<T>, selector: (t: T) => K) {
     return array.reduce((result: Map<K, Array<T>>, item: T) => {
         const key = selector(item);
@@ -11,7 +9,7 @@ export function groupBy<T, K>(array: Array<T>, selector: (t: T) => K) {
     }, new Map());
 }
 
-export function orderBy<T>(array: Iterable<T>, selector: (t: T) => (string | number) = Fn.I as any, descending = false) {
+export function orderBy<T>(array: Iterable<T>, selector: (t: T) => (string | number) = x => x as any, descending = false) {
     return [...array].sort((a, b) => ((selector(a) > selector(b)) ? 1 : -1) * (descending ? -1 : 1));
 }
 

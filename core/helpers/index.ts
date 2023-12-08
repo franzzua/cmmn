@@ -1,15 +1,12 @@
 export {Fn} from "./Fn";
-export {
-    EventEmitter,
-    EventListener,
-    EventEmitterBase,
-    EventListenerOptions,
-    StoppableEvent,
-    StoppableEventEmitter
-} from "./event-emitter";
 export {ResolvablePromise} from "./resolvable.promise";
 export {Lazy} from "./Lazy";
 export {compare} from "./compare";
 export {debounce, debounced} from "./debounce";
 export {throttle, throttled} from "./throttle";
 export {DeepPartial} from "./deepAssign";
+export {EventEmitterBase} from "../event-emitter/eventEmitterBase";
+export {EventEmitter} from "../event-emitter/eventEmitter";
+export {EventListener} from "../event-emitter/eventListener";
+export {EventListenerOptions} from "../event-emitter/common";
+export {StoppableEventEmitter} from "../event-emitter/stoppableEventEmitter";

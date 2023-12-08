@@ -1,9 +1,11 @@
 import {component, GlobalStaticState} from "./component/component";
 import {AsyncHtmlComponent, HtmlComponent} from "./component/htmlComponent";
-import "./uhtml-ext/styleHandler"
+import {useCustomHandler} from "@cmmn/uhtml";
+
 import {Renderer} from "./component/renderer";
 import {intersectionObserver} from "./user-events/intersectionObserver";
 import { QuerySelectorCell } from "./extensions/querySelectorCell";
+import {style} from "./uhtml-ext/styleHandler";
 
 export {HtmlComponent, component, AsyncHtmlComponent, QuerySelectorCell};
 
@@ -24,3 +26,4 @@ export * from "./extensions/select";
 
 export {Renderer, intersectionObserver};
 export {html} from "@cmmn/uhtml";
+useCustomHandler(style);

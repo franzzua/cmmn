@@ -1,7 +1,3 @@
-import {metadata} from "../di/reflect";
-
-// @ts-ignore
-globalThis.global = globalThis;
 function __decorate(decorators, target, key, desc) {
     var c = arguments.length,
         r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -16,11 +12,8 @@ function __exportStar(m, exports) {
 function __param(paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 }
-
-Object.assign(globalThis, {
+export const assignGlobalHelpers = () => Object.assign(globalThis, {
     __decorate,
-// @ts-ignore
-    __metadata: metadata,
     __exportStar,
     __param
 });

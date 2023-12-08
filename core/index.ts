@@ -1,4 +1,4 @@
-import "./helpers/helpers";
+import {assignGlobalHelpers} from "./helpers/helpers";
 export * from "./helpers/Array";
 export * from "./helpers/map";
 export {AsyncQueue} from "./async-queue";
@@ -8,3 +8,7 @@ export {Disposable} from "./disposable";
 export {Provider, Inject, Injectable, InjectionToken, ProviderOrValue, Container} from "./di/index";
 export * from "./di/index";
 export {utc, utcToday} from "./helpers/utc";
+export {
+    EventEmitterBase
+} from "./event-emitter";
+assignGlobalHelpers();

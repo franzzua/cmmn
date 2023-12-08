@@ -1,4 +1,3 @@
-import "../helpers/map";
 import {getOrAdd} from "../helpers/map";
 const metadataMap = new Map<object, Map<string, any>>();
 

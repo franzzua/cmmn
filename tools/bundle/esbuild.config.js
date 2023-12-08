@@ -104,10 +104,10 @@ export class ConfigCreator {
         return this.options.module.split(',');
     }
     getOutExtension(format, platform){
-        const ext = (this.options.minify ? '.min' : '') + {
+        const ext = (this.options.minify ? '.min' : '') + ({
             es: '.js',
             cjs: '.cjs'
-        }[format];
+        }[format] ?? '.js');
         if (this.platforms.length == 1)
             return ext;
         return "."+platform+ext;
@@ -130,7 +130,7 @@ export class ConfigCreator {
             outdir: 'dist/bundle',
             metafile: true,
             absWorkingDir: this.root,
-            treeShaking: this.options.minify,
+            treeShaking: true, //this.options.minify,
             format: ({
                 es: 'esm'
             })[format] ?? format,
@@ -156,6 +156,21 @@ export class ConfigCreator {
             plugins: [
                 lessLoader(),
                 ...this.getHtmlPlugin(),
+                {
+                    name: 'no-side-effects',
+                    setup(build){
+                        build.onResolve({ filter: /.*/ }, async args => {
+                            if (args.pluginData) return // Ignore this if we called ourselves
+
+                            const { path, ...rest } = args
+                            rest.pluginData = true // Avoid infinite recursion
+                            const result = await build.resolve(path, rest)
+
+                            result.sideEffects = false
+                            return result
+                        })
+                    }
+                }
             ],
         })));
     }

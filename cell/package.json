@@ -16,8 +16,10 @@
   "exports": {
     ".": {
       "types": "./dist/typings/index.d.ts",
+      "module": "./dist/esm/index.js",
       "import": "./dist/bundle/index.js",
-      "require": "./dist/bundle/index.cjs"
+      "require": "./dist/bundle/index.cjs",
+      "default": "./dist/bundle/index.js"
     }
   },
   "typesVersions": {
