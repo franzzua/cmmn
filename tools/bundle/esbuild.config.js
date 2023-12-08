@@ -124,13 +124,13 @@ export class ConfigCreator {
                 { out: this.options.name, in: this.options.input }
             ],
             bundle: true,
-            minify: this.options.minify || this.options.prod,
+            minify: this.options.minify,
             sourcemap: this.options.prod ? false : 'external',
             target: ['chrome88', 'safari14', 'firefox88'],
             outdir: 'dist/bundle',
             metafile: true,
             absWorkingDir: this.root,
-            treeShaking: true, //this.options.minify,
+            treeShaking: this.options.prod,
             format: ({
                 es: 'esm'
             })[format] ?? format,
