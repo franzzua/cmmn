@@ -80,12 +80,12 @@ class Visitor {
             const outFile = path.resolve(absSource, importPath).replaceAll(path.sep, '/') + '.js';
             fs.mkdirSync(path.dirname(outFile), {recursive: true});
             fs.writeFileSync(outFile, 'export default `'+content.replaceAll('`','\\`')+'`', 'utf-8');
-            return importPath+".js";
+            return importPath.replaceAll(path.sep, '/') + ".js";
         }
         if (this.config.copy.test(importPath)) {
-            return  path.relative(absSource,abs);
+            return  path.relative(absSource,abs).replaceAll(path.sep, '/');
         }
-        return importPath;
+        return importPath.replaceAll(path.sep, '/');
     }
 
     visitSourceFile = sourceFile => ts.visitEachChild(sourceFile, node => this.visit(node,sourceFile), this.context);

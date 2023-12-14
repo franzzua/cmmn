@@ -1,9 +1,5 @@
 lockfileVersion: '6.0'
 
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
-
 importers:
 
   .:
@@ -121,22 +117,6 @@ importers:
       '@types/ws':
         specifier: ^8.5.4
         version: 8.5.10
-
-  test:
-    dependencies:
-      '@cmmn/cell':
-        specifier: workspace:*
-        version: link:../cell
-      '@cmmn/core':
-        specifier: workspace:*
-        version: link:../core
-      '@cmmn/uhtml':
-        specifier: workspace:*
-        version: link:../uhtml
-    devDependencies:
-      '@cmmn/tools':
-        specifier: workspace:*
-        version: link:../tools
 
   tools:
     dependencies:
@@ -2689,6 +2669,7 @@ packages:
     resolution: {directory: tools, type: directory}
     id: file:tools
     name: '@cmmn/tools'
+    version: 2.0.1
     hasBin: true
     dependencies:
       '@testdeck/jest': 0.2.0
@@ -2712,3 +2693,7 @@ packages:
       - supports-color
       - typescript
     dev: true
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
