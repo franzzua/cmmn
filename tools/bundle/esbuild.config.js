@@ -28,6 +28,7 @@ export class ConfigCreator {
      *     target: string
      *     prod: boolean,
      *     inject: string
+     *     noSideEffects: boolean
      * }}
      */
     options;
@@ -156,7 +157,7 @@ export class ConfigCreator {
             plugins: [
                 lessLoader(),
                 ...this.getHtmlPlugin(),
-                {
+                ...(this.options.noSideEffects ? [{
                     name: 'no-side-effects',
                     setup(build){
                         build.onResolve({ filter: /.*/ }, async args => {
@@ -170,7 +171,7 @@ export class ConfigCreator {
                             return result
                         })
                     }
-                }
+                }] : [])
             ],
         })));
     }

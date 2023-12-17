@@ -9,6 +9,7 @@ export async function bundle(...options) {
         minify: options.includes('--minify'),
         prod: options.includes('--prod'),
         stats: options.includes('--stats'),
+        noSideEffects: options.includes('--no-side-effects')
     });
     const configs = configOptions.flatMap(x => new ConfigCreator(x).getConfig());
     const contexts = [];
