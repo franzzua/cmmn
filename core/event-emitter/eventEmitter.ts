@@ -14,17 +14,18 @@ export class EventEmitter<TEvents extends {
 
     public on<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void,
                                                 options: EventListenerOptions = DefaultListenerOptions) {
-        const arr = getOrAdd(this.listeners, eventName, () => {
+        if (!this.listeners.has(eventName)){
+            this.listeners.set(eventName, []);
             this.subscribe(eventName);
-            return [];
-        });
+        }
+        const arr = this.listeners.get(eventName);
         arr.push({listener, options: options});
         arr.sort((a, b) => b.options.Priority - a.options.Priority);
         return () => this.off(eventName, listener);
     }
 
     public off<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void) {
-        const set = getOrAdd(this.listeners, eventName, () => []);
+        const set = this.listeners.get(eventName) ?? [];
         removeAll(set, x => x.listener === listener);
         if (set.length == 0) {
             this.listeners.delete(eventName);
