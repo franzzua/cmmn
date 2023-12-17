@@ -2,7 +2,7 @@ import {cell, ObservableList, ObservableObject, ObservableSet} from "@cmmn/cell"
 import {DeepPartial, Fn} from "@cmmn/core";
 import {CRuntime, CValueMap, CObject, CValueList, CValueSet, CMap, CLazyMap} from "@collabs/collabs";
 import {IndexedDBDocStore} from "@collabs/indexeddb";
-import {TabSyncNetwork} from "@collabs/tab-sync";
+import {BroadcastSync} from "./broadcast-sync";
 
 export class SyncStore {
     // private doc = new Doc({
@@ -22,10 +22,6 @@ export class SyncStore {
     private store = new IndexedDBDocStore({
         dbName: this.name
     });
-    private tabSync = new TabSyncNetwork({
-        bcName: this.name,
-        allUpdates: true
-    });
 
     public IsLoaded = new Promise(resolve => this.store.on('Load', resolve));
     constructor(protected name) {
@@ -36,7 +32,9 @@ export class SyncStore {
     public IsSynced = false;
     public addProvider(){
         this.store.subscribe(this.doc, this.name);
-        this.tabSync.subscribe(this.doc, this.name);
+    }
+    public addSync(sync: BroadcastSync){
+        sync.listen(this.doc);
     }
     public getObjectCell<T>(name: string): ObservableObject<T>{
         const map = this.objects.get(name);

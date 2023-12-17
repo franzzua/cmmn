@@ -1,14 +1,18 @@
-import {AbstractDoc} from "@collabs/collabs";
+import {CRuntime} from "@collabs/collabs";
 
 export class BroadcastSync {
     private channel = new BroadcastChannel(this.name);
     constructor(private name: string) {
     }
 
-    public listen(doc: AbstractDoc){
-        const array = doc.save();
-        doc.on('Change', e => {
-
+    /** @internal **/
+    public listen(doc: CRuntime){
+        doc.on('Update', e => {
+            this.channel.postMessage({
+                type: e.updateType === "message" ? "update" : "state",
+                senderID: doc.replicaID,
+                data: e.update
+            })
         })
         this.channel.addEventListener('message', (e: MessageEvent<BroadcastSyncMessage>) => {
             switch (e.data.type){
