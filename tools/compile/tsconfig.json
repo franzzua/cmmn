@@ -18,7 +18,7 @@
     "disableReferencedProjectLoad": true,
     "disableSourceOfProjectReferenceRedirect": true,
     "allowSyntheticDefaultImports": true,
-    "emitDecoratorMetadata": true ,
+    "emitDecoratorMetadata": true,
     "noEmitHelpers": true,
     "declarationDir": "./dist/typings",
     "esModuleInterop": true,

@@ -24,9 +24,7 @@ export class BaseCell<T = any> extends EventEmitter<{
             this.isActual = false;
         } else {
             this.value = value;
-            if (BaseCell.isLikeCell(value)) {
-                value.on('change', this.onValueContentChanged);
-            }
+
             this.isActual = true;
         }
     }
@@ -106,14 +104,28 @@ export class BaseCell<T = any> extends EventEmitter<{
 
     protected notifyChange(value: T, oldValue: T) {
         this.emit('change', {value, oldValue});
+        if (this.isActive){
+            if (BaseCell.isLikeCell(value)) {
+                value.on('change', this.onValueContentChanged);
+            }
+            if (BaseCell.isLikeCell(oldValue)) {
+                oldValue.off('change', this.onValueContentChanged);
+            }
+        }
     }
 
     active() {
         this.isActive = true;
+        if (BaseCell.isLikeCell(this.value)) {
+            this.value.on('change', this.onValueContentChanged);
+        }
     }
 
     protected disactive() {
         this.isActive = false;
+        if (BaseCell.isLikeCell(this.value)) {
+            this.value.off('change', this.onValueContentChanged);
+        }
         if (this.dependencies) {
             for (let dependency of this.dependencies) {
                 dependency.removeReaction(this)

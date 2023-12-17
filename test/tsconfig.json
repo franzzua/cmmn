@@ -1,0 +1,8 @@
+{
+  "extends": "@cmmn/tools/compile/tsconfig.json",
+  "compilerOptions": {
+    "noEmitHelpers": false
+  },
+  "include": [  "**/*.ts" ],
+  "exclude": ["dist", "node_modules"],
+}

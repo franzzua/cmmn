@@ -118,6 +118,22 @@ importers:
         specifier: ^8.5.4
         version: 8.5.10
 
+  test:
+    dependencies:
+      '@cmmn/cell':
+        specifier: workspace:*
+        version: link:../cell
+      '@cmmn/core':
+        specifier: workspace:*
+        version: link:../core
+      '@cmmn/uhtml':
+        specifier: workspace:*
+        version: link:../uhtml
+    devDependencies:
+      '@cmmn/tools':
+        specifier: workspace:*
+        version: link:../tools
+
   tools:
     dependencies:
       '@testdeck/jest':
