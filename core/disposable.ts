@@ -19,7 +19,4 @@ export class Disposable{
         this.onDisposeSet.clear();
     }
 
-    protected onError(err: Error, source){
-        console.warn(err, source);
-    }
 }
