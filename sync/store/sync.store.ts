@@ -11,7 +11,9 @@ export class SyncStore {
     //     autoLoad: true
     // });
     // public adapter = new DocAdapter(this.doc, new Awareness(this.doc));
-    private doc  = new CRuntime();
+    private doc  = new CRuntime({
+        debugReplicaID: this.replicaId
+    });
     protected objects = this.doc.registerCollab("objects",
         init => new CLazyMap(init, init => new CValueMap(init))
     );
@@ -26,7 +28,7 @@ export class SyncStore {
     });
 
     public IsLoaded = new Promise(resolve => this.store.on('Load', resolve));
-    constructor(protected name) {
+    constructor(protected name, private replicaId: string = undefined) {
         this.addProvider();
     }
 
