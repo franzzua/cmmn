@@ -12,7 +12,7 @@ export class WorkerStream extends Stream {
     private models = new Map<string, VersionState<any>>();
     private responses = new Map<string, ResolvablePromise<void>>();
 
-    constructor(protected target: Worker | Window) {
+    constructor(protected target: Worker | Window | MessagePort) {
         super();
         this.BaseStream.on('message', message => {
             if (message.type === WorkerMessageType.Response) {

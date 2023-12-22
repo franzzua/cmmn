@@ -6,6 +6,7 @@ import {ModelLike} from "../shared/types";
 import {registerSerializer} from "../serialize";
 
 export {WorkerEntry} from "./worker-entry";
+export {SharedWorkerEntry} from "./shared-worker-entry";
 export {Model} from "./model";
 export * from "../shared/types"
 

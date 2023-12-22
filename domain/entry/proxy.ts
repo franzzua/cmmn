@@ -8,7 +8,6 @@ import {EntityLocator} from "./entity-locator.service";
 import {ChildWindowStream} from "../window/child-window.stream";
 import {registerSerializer} from "../serialize";
 
-export {proxy} from "../shared/domain.structure";
 export {ModelProxy} from "./modelProxy";
 export {Stream} from "../streams/stream";
 export {WorkerStream} from "../streams/workerStream";
@@ -23,8 +22,8 @@ export function useStreamDomain(): Container {
     );
 }
 
-export function useWorkerDomain(worker: Worker): Container {
-    const stream = new WorkerStream(worker);
+export function useWorkerDomain(worker: Worker | SharedWorker): Container {
+    const stream = new WorkerStream(worker instanceof SharedWorker ? worker.port : worker);
     return Container.withProviders({
         provide: Locator, useClass: EntityLocator
     }, {

@@ -20,7 +20,7 @@ export class BaseStream extends EventEmitter<{
     public Connected = new ResolvablePromise<void>();
     public about: string;
 
-    constructor(private target: Worker | typeof globalThis | Window) {
+    constructor(private target: Worker | typeof globalThis | Window | MessagePort) {
         super();
         this.about = `BaseStream ${this.target}`;
 
@@ -38,7 +38,8 @@ export class BaseStream extends EventEmitter<{
     }
 
     protected subscribe(eventName: keyof { message: WorkerMessage["data"] }) {
-        this.target.addEventListener('message', this.onMessage);
+        this.target.onmessage = this.onMessage;
+        // this.target.addEventListener('message', this.onMessage);
         this.target.addEventListener('messageerror', this.onMessageError);
         super.subscribe(eventName);
     }

@@ -30,7 +30,7 @@ export class VersionState<T> extends Cell<T> {
 
     constructor(options: ICellOptions<T>) {
         super(() => {
-            if (!this.remoteVersion || this.localVersion && this.remoteVersion < this.localVersion)
+            if (this.localVersion && this.remoteVersion < this.localVersion)
                 return this.localState;
             return this.remoteState;
         }, options);
