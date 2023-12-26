@@ -34,7 +34,13 @@ export class Container {
         try {
             return this.resolve(existing, overrides);
         }catch (e){
-            throw new Error(`Could not resolve provider ${target}` +'\n' + e.message)
+            const err = new Error(`Could not resolve provider ${target}`);
+            err.cause = e;
+            // @ts-ignore
+            err.original_error = e;
+            err.stack = err.stack.split('\n').slice(0,2).join('\n') + '\n' +
+                e.stack
+            throw err;
         }
     }
 

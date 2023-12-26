@@ -1,7 +1,13 @@
-import {ModelProxy, ModelAction, ModelKey, Stream, Locator, ModelPath} from "@cmmn/domain/proxy";
+import {ModelProxy} from "./entry/modelProxy";
+import {ModelAction, ModelKey, ModelPath} from "./shared/types";
+import {Stream} from "./streams/stream";
+import {Locator} from "./shared/locator";
 
-export class ModelMap<TModelProxy
-    extends ModelProxy<TState, TActions>, TState = any, TActions extends ModelAction = {}>
+export class ModelMap<
+    TModelProxy extends ModelProxy<TState, TActions>,
+    TState,
+    TActions extends ModelAction
+>
     implements ReadonlyMap<ModelKey, TModelProxy> {
     constructor(private stream: Stream,
                 private locator: Locator,

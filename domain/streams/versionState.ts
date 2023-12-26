@@ -28,9 +28,9 @@ export class VersionState<T> extends Cell<T> {
     public waitLoaded = new ResolvablePromise<void>();
     private isLoaded: boolean;
 
-    constructor(options: ICellOptions<T>) {
+    constructor(options: ICellOptions<T> = {}) {
         super(() => {
-            if (this.localVersion && this.remoteVersion < this.localVersion)
+            if (this.localVersion && (this.remoteVersion ?? '') < this.localVersion)
                 return this.localState;
             return this.remoteState;
         }, options);

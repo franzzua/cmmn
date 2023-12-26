@@ -16,7 +16,9 @@ export class QuerySelectorCell<TElement extends Element> extends Cell<TElement> 
 
     active() {
         super.active();
-        this.observer.observe(this.element);
+        this.observer.observe(this.element, {
+            childList: true
+        });
     }
 
     disactive() {

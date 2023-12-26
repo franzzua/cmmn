@@ -1,9 +1,10 @@
 import {Stream} from "../streams/stream";
-import {ModelAction, ModelLike, ModelPath} from "../shared/types";
+import {ModelAction, ModelKey, ModelLike, ModelPath} from "../shared/types";
 import {AsyncQueue, Injectable} from "@cmmn/core";
 import {VersionState} from "../streams/versionState";
 import {Locator} from "../shared/locator";
 import {EntityLocator} from "./entity-locator.service";
+import {ModelMap} from "../model-map";
 
 @Injectable(true)
 export class ModelProxy<TState, TActions extends ModelAction = {}> implements ModelLike<TState, TActions>{
@@ -74,11 +75,31 @@ export class ModelProxy<TState, TActions extends ModelAction = {}> implements Mo
         }));
     }
 
-    public GetSubProxy<TState, TActions extends ModelAction, TModelProxy extends ModelProxy<TState, TActions> = ModelProxy<TState, TActions>>(
-        path: ModelPath, modelProxyConstructor: {
-            new(...args): TModelProxy
-        } = ModelProxy as any): TModelProxy {
-        return this.locator.get<TState, TActions>(path, modelProxyConstructor) as TModelProxy;
+    public GetSubProxy<
+        UState, UActions extends ModelAction,
+        UModelProxy extends ModelProxy<UState, UActions> = ModelProxy<UState, UActions>
+    >(
+        path: ModelPath,
+        modelProxyConstructor: {
+            new(...args): UModelProxy
+        } = ModelProxy as any): UModelProxy {
+        return this.locator.get<UState, UActions>(path, modelProxyConstructor) as UModelProxy;
+    }
+
+    public GetSubProxyMap<
+        UModelProxy extends ModelProxy<UState, UActions>,
+        UState,
+        UActions extends ModelAction,
+    >(
+        getKeys: () => ReadonlyArray<ModelKey>,
+        getPath: (key: ModelKey) => ModelPath,
+        modelProxyConstructor: {
+            new(...args): UModelProxy
+        } = ModelProxy as any
+    ): ModelMap<UModelProxy, UState, UActions> {
+        return new ModelMap<UModelProxy, UState, UActions>(
+            this.stream, this.locator, getKeys, modelProxyConstructor, getPath
+        )
     }
     public equals(x: any) {
         return this === x;

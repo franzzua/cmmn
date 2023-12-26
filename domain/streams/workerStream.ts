@@ -3,6 +3,7 @@ import {Action, ModelPath, WorkerMessage, WorkerMessageType} from '../shared/typ
 import {VersionState} from './versionState.js';
 import {BaseStream} from './base.stream.js';
 import {Stream} from './stream.js';
+import {Cell} from "@cmmn/cell";
 
 /**
  * Находится на стороне Main-thread.
@@ -72,22 +73,18 @@ export class WorkerStream extends Stream {
     }
 
     getCell<T>(path: ModelPath) {
-        const cell = getOrAdd(this.models, this.pathToStr(path), x => {
+        return getOrAdd(this.models, this.pathToStr(path), x => {
             this.postMessage({
                 type: WorkerMessageType.Subscribe,
                 path,
             });
-            return new VersionState({
-                onExternal: state => this.postMessage({
-                    type: WorkerMessageType.State,
-                    path, state, version: null,
-                })
-            });
+            const vs = new VersionState();
+            Cell.OnChange(() => vs.localState, e => this.postMessage({
+                type: WorkerMessageType.State,
+                path, state: e.value, version: null,
+            }))
+            return vs;
         });
-        // cell.on('change', ({value})=>{
-        //
-        // })
-        return cell;
     }
 
     protected onDisconnect() {
