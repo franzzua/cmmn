@@ -81,7 +81,7 @@ export class WorkerStream extends Stream {
             const vs = new VersionState();
             Cell.OnChange(() => vs.localState, e => this.postMessage({
                 type: WorkerMessageType.State,
-                path, state: e.value, version: null,
+                path, state: e.value, version: vs.localVersion,
             }))
             return vs;
         });
