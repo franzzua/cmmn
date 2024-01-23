@@ -20,7 +20,14 @@
             font-size: 1.1em;
         }
     </style>
-
+    <script type="importmap">
+        {
+          "imports": {
+            "@cmmn/cell": "/cmmn/cell/dist/bundle/index.js",
+            "@cmmn/core": "/cmmn/core/dist/bundle/index.js"
+          }
+        }
+    </script>
 </head>
 <body>
 
@@ -47,7 +54,8 @@
     Library
     <br>
     <label class="-radiobox"><input type="radio" name="rdbLibrary" value="cmmn" checked><span></span>cmmn</label>
-    <label class="-radiobox"><input type="radio" name="rdbLibrary" value="cellx" checked><span></span>cellx</label>
+    <label class="-radiobox"><input type="radio" name="rdbLibrary" value="cellx"><span></span>cellx</label>
+    <label class="-radiobox"><input type="radio" name="rdbLibrary" value="jotai"><span></span>jotai</label>
     <label class="-radiobox"><input type="radio" name="rdbLibrary" value="vanilla"><span></span>VanillaJS
         (naive)</label>
     <label class="-radiobox"><input type="radio" name="rdbLibrary" value="knockout"><span></span>Knockout</label>
@@ -115,6 +123,10 @@
                     testCellx(report, layerCount, onDone);
                     break;
                 }
+                case 'jotai': {
+                    testJotai(report, layerCount, onDone);
+                    break;
+                }
                 case 'vanilla': {
                     testVanilla(report, layerCount, onDone);
                     break;
@@ -155,9 +167,79 @@
         }, 500);
     }
 
-    import {BaseCell} from "../dist/bundle/lib.js";
+    const Jotai = globalThis.exports = {};
+    globalThis.process = {env: {NODE_ENV: 'production'}};
+    await import("https://cdn.jsdelivr.net/npm/jotai@2.0.1/vanilla.js");
+    globalThis.exports = {};
+    async function testJotai(report, layerCount, done) {
+        const {atom, createStore, getDefaultStore} = Jotai;
+        const store = createStore();
+        let start = {
+            prop1: atom(1),
+            prop2: atom(2),
+            prop3: atom(3),
+            prop4: atom(4)
+        };
+        let layer = start;
+
+        for (let i = layerCount; i--;) {
+            layer = ((prev) => {
+                let next = {
+                    prop1: atom((get) => get(prev.prop2)),
+                    prop2: atom((get) => get(prev.prop1) - get(prev.prop3)),
+                    prop3: atom((get) => get(prev.prop2) + get(prev.prop4)),
+                    prop4: atom((get) => get(prev.prop3))
+                };
+
+                store.sub(next.prop1, () => {
+                });
+                store.sub(next.prop2, () => {
+                });
+                store.sub(next.prop3, () => {
+                });
+                store.sub(next.prop4, () => {
+                });
+
+                store.get(next.prop1);
+                store.get(next.prop2);
+                store.get(next.prop3);
+                store.get(next.prop4);
+
+                return next;
+            })(layer);
+        }
+
+        let end = layer;
+
+        report.beforeChange = [
+            store.get(end.prop1),
+            store.get(end.prop2),
+            store.get(end.prop3),
+            store.get(end.prop4)
+        ];
+
+        let startTime = performance.now();
+
+        store.set(start.prop1, 4);
+        store.set(start.prop2, 3);
+        store.set(start.prop3, 2);
+        store.set(start.prop4, 1);
+
+        await Promise.resolve();
+        report.afterChange = [
+            store.get(end.prop1),
+            store.get(end.prop2),
+            store.get(end.prop3),
+            store.get(end.prop4)
+        ];
+
+        report.recalculationTime = performance.now() - startTime;
+
+        done();
+    }
 
     async function testCmmn(report, layerCount, done) {
+        const {BaseCell} = await import("@cmmn/cell");
         const Cell = BaseCell;
         let start = {
             prop1: new Cell(1),
