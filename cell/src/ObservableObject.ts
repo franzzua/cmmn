@@ -48,6 +48,7 @@ export const cellObject: CellDecorator = ((options: ICellOptions<any>, prop?, de
             },
             set(value) {
                 const cell = getCell<ObservableObject<any>>(this, prop, descr, options, new ObservableObject<any>(null));
+                descr.set?.call(this, value);
                 cell.get().Set(value);
             },
             configurable: true

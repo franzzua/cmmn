@@ -1,6 +1,5 @@
 import {Cell, ICellOptions} from "./cell";
 import {BaseCell} from "./baseCell";
-import {ObservableObject} from "./ObservableObject";
 
 const KEY_VALUE_CELLS = Symbol('ObservableCells')
 export type CellDecorator =
@@ -43,6 +42,7 @@ export const cell: CellDecorator = ((options: ICellOptions<any>, prop?, descr?, 
             },
             set(value) {
                 const cell = getCell(this, prop, descr, options);
+                descr.set?.call(this, value);
                 cell.set(value);
             },
             configurable: true
