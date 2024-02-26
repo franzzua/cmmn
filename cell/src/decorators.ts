@@ -42,7 +42,7 @@ export const cell: CellDecorator = ((options: ICellOptions<any>, prop?, descr?, 
             },
             set(value) {
                 const cell = getCell(this, prop, descr, options);
-                descr.set?.call(this, value);
+                descr?.set?.call(this, value);
                 cell.set(value);
             },
             configurable: true
