@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/infr",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "",
   "type": "module",
   "repository": {
@@ -18,7 +18,9 @@
   },
   "dependencies": {
     "@cmmn/core": "workspace:*",
-    "@cmmn/cell": "workspace:*",
+    "@cmmn/cell": "workspace:*"
+  },
+  "devDependencies": {
     "@cmmn/tools": "workspace:*"
   },
   "typings": "./dist/typings/index.d.ts",

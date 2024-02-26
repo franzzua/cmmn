@@ -9,7 +9,7 @@ export function event(name: keyof HTMLElementEventMap, options?: AddEventListene
                 return;
             let eventTarget: EventTarget | null = null;
             const listener = instance[key].bind(instance);
-            instance.on('render', e => {
+            const off = instance.on('render', e => {
                 const current = options?.selector
                     ? instance.element.querySelector(options.selector)
                     : instance.element;
@@ -19,6 +19,7 @@ export function event(name: keyof HTMLElementEventMap, options?: AddEventListene
                 eventTarget?.addEventListener(name, listener, options);
             })
             instance.once('dispose', () => {
+                off();
                 eventTarget?.removeEventListener(name, listener, options)
             });
         });
