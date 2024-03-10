@@ -76,7 +76,9 @@ const resolveESModule = (rootDir, configs) => async function (req, res, next) {
         const uri = await getFileName(name, root);
         const file = uri2path(uri);
         const stat = fs.statSync(file);
-        const relative = path.relative(rootDir, file).replace(/^.*\/node_modules/, '/node_modules');
+        const relative = path.relative(rootDir, file)
+          .replaceAll(path.sep, '/')
+          .replace(/^.*\/node_modules/, '/node_modules');
         if (req.url !== relative){
             mappingCache[getModuleName(relative)] = uri;
             res.writeHead(302, {
