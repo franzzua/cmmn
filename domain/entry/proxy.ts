@@ -23,7 +23,7 @@ export function useStreamDomain(): Container {
 }
 
 export function useWorkerDomain(worker: Worker | SharedWorker): Container {
-    const stream = new WorkerStream(worker instanceof SharedWorker ? worker.port : worker) ;
+    const stream = new WorkerStream((globalThis.SharedWorker && worker instanceof globalThis.SharedWorker) ? worker.port : worker as Worker) ;
     return Container.withProviders({
         provide: Locator, useClass: EntityLocator
     }, {
