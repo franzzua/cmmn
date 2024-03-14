@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/uhtml",
-  "version": "2.2.0",
+  "version": "2.2.3",
   "description": "stolen from WebReflection/uhtml repository",
   "publishConfig": {
     "access": "public"
