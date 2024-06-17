@@ -1,0 +1,58 @@
+{
+  "name": "@cmmn/streams",
+  "version": "2.2.2",
+  "description": "pull-based state flow",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/bundle/index.js",
+  "module": "./dist/esm/index.js",
+  "browser": "./dist/bundle/index.js",
+  "typings": "./dist/typings/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/typings/index.d.ts",
+      "module": "./dist/esm/index.js",
+      "import": "./dist/bundle/index.js",
+      "require": "./dist/bundle/index.cjs",
+      "default": "./dist/bundle/index.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "dist/typings/index.d.ts"
+      ]
+    }
+  },
+  "scripts": {
+    "compile": "cmmn compile --watch",
+    "bundle": "cmmn bundle --watch",
+    "test": "node --test ./dist/esm/specs/*"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@cmmn/tools": "workspace:*"
+  },
+  "author": "",
+  "license": "ISC",
+  "gitHead": "2755b333808bf97f1d9454601c2a2c9a88e4a021",
+  "repository": {
+    "url": "https://github.com/franzzua/cmmn/tree/master/cell"
+  },
+  "cmmn": {
+    "index": {
+      "input": "dist/esm/src/index.js",
+      "module": "es,cjs",
+      "platform": "neutral",
+      "external": [
+        "@cmmn*"
+      ]
+    }
+  }
+}

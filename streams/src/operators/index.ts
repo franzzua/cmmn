@@ -1,0 +1,17 @@
+export { bufferCount } from './bufferCount'
+export { bufferTime } from './bufferTime'
+export { filter } from './filter'
+export { map } from './map'
+export { take, skip } from './take'
+export { tap } from './tap'
+export { switchMap } from './switchMap'
+export { share } from './share'
+export { pairwise } from './pairwise'
+export { pipe } from './pipe'
+export { concatMap } from './concatMap'
+export { timer } from '../sources/timer'
+export { windowCount } from './windowCount'
+export { windowTime } from './windowTime'
+export { merge } from '../sources/merge'
+
+export type Operator<T, U> = (ai: AsyncIterable<T>) => AsyncIterable<U>;
