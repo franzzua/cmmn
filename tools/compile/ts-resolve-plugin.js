@@ -45,13 +45,13 @@ class Visitor {
         const sourceFileDir = path.dirname(sourceFile.fileName);
 
         return [
-            importPath,
             importPath + "/index.ts",
             importPath + ".ts",
             importPath + ".tsx",
             importPath + "/index.js",
             importPath + ".js",
             importPath + ".jsx",
+            importPath,
             importPath.replace(/\.js$/, ".ts")
         ].find(x => fs.existsSync(path.resolve(sourceFileDir, x)))?.replace(/(\.ts)x?$/, '.js');
     }

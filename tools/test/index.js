@@ -1,6 +1,6 @@
 import * as test from "node:test";
 Object.assign(globalThis, test);
-export {suite, test, timeout,} from "@testdeck/jest";
+export {suite, test, timeout, } from "@testdeck/jest";
 import { expect as expectBase, registerValidator, isEqual, formatCompact} from "earl";
 // import * as globals from "@jest/globals";
 export * as sinon from "sinon";

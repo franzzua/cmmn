@@ -176,7 +176,11 @@ export class BaseCell<T = any> extends EventEmitter<{
     // register classes as cell like, so any "change" event will notify wrapped cell
     static likeCells = new Set<any>([EventEmitterBase]);
     static isLikeCell(target): target is EventEmitterBase<{"change": any}>{
-        return BaseCell.likeCells.has(target?.constructor);
+        for (let likeCell of BaseCell.likeCells) {
+            if (target instanceof likeCell)
+                return true;
+        }
+        return false;
     }
 }
 

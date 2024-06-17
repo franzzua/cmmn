@@ -58,6 +58,7 @@ export class SyncStore {
         this.sets.finalize();
         this.objects.finalize();
         this.arrays.finalize();
+        this.store.unsubscribe(this.doc)
     }
 }
 
