@@ -30,5 +30,6 @@
     "@cmmn/tools": "file:./tools",
     "typescript": "5.2.2"
   },
-  "gitHead": "68d02f49f1ecba35975351e05ec1cb0519bf0ada"
+  "gitHead": "68d02f49f1ecba35975351e05ec1cb0519bf0ada",
+  "packageManager": "pnpm@8.15.4+sha1.c85a4305534f76d461407b59277b954bac97b5c4"
 }

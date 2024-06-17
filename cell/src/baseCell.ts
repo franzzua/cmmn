@@ -104,7 +104,7 @@ export class BaseCell<T = any> extends EventEmitter<{
 
     protected notifyChange(value: T, oldValue: T) {
         this.emit('change', {value, oldValue});
-        if (this.isActive){
+        if (this.isActive && value !== oldValue){
             if (BaseCell.isLikeCell(value)) {
                 value.on('change', this.onValueContentChanged);
             }
