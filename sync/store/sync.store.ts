@@ -54,7 +54,7 @@ export class SyncStore {
     }
 
 
-    public dispose(){
+    public [Symbol.dispose](){
         this.sets.finalize();
         this.objects.finalize();
         this.arrays.finalize();

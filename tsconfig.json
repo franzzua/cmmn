@@ -12,10 +12,7 @@
       "path": "./core"
     },
     {
-      "path": "./domain"
-    },
-    {
-      "path": "./ui"
+      "path": "./ui/uhtml"
     },
     {
       "path": "./infr"

@@ -1,9 +1,11 @@
 import {EventEmitter} from "@cmmn/core";
-import {Injectable} from "@cmmn/core";
+import {singleton} from "@cmmn/core";
+import { inject } from "@cmmn/core";
 
-@Injectable()
+@singleton()
 class Dependency{
-    constructor(private service: EventEmitter<any>) {
+    @inject(EventEmitter) private service!: EventEmitter<any>;
+    constructor() {
     }
 }
 

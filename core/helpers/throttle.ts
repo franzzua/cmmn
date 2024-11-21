@@ -1,48 +1,64 @@
-export function throttle(func: Function, wait: number, options = {leading: false, trailing: true}) {
-    var context, args, result;
-    var timeout = null;
-    var previous = 0;
-    var later = function () {
-        previous = options.leading === false ? 0 : +new Date();
-        timeout = null;
-        result = func.apply(context, args);
-        if (!timeout) context = args = null;
-        return result;
-    };
-    return function () {
-        var now = +new Date();
-        if (!previous && options.leading === false) previous = now;
-        var remaining = wait - (now - previous);
-        context = this;
-        args = arguments;
-        if (remaining <= 0 || remaining > wait) {
-            if (timeout) {
-                clearTimeout(timeout);
-                timeout = null;
-            }
-            previous = now;
-            result = func.apply(context, args);
-            if (!timeout) context = args = null;
-        } else if (!timeout && options.trailing !== false) {
-            result = new Promise((resolve, reject) => {
-                timeout = setTimeout(() => {
-                    try {
-                        resolve(later());
-                    } catch (e) {
-                        reject(e);
-                    }
-                }, remaining);
-            });
+import { throttle as throttleOrig } from "throttle-debounce";
+import {ResolvablePromise} from "./resolvable.promise";
+
+export function throttle<TResult, TThis = void, TArgs extends unknown[] = []>(
+    fn: (this: TThis, ...args: TArgs) => TResult | Promise<TResult>,
+    wait: number,
+    options: {
+        leading?: boolean;
+        trailing?: boolean;
+        /** @internal **/
+        debounceMode?: boolean;
+    } = {
+        leading: false,
+        trailing: true,
+    },
+
+){
+    let promise: ResolvablePromise<TResult> = new ResolvablePromise();
+    const orig = throttleOrig(wait, async function (...args){
+        try {
+            const res = await fn.apply(this, args);
+            promise.resolve(res);
+        }catch (e){
+            promise.reject(e);
         }
-        return result;
+        promise = new ResolvablePromise();
+    }, {
+        noLeading: !options.leading,
+        noTrailing: !options.trailing,
+        debounceMode: options.debounceMode
+    });
+    return function (this: TThis, ...args: TArgs): Promise<TResult>{
+        orig.apply(this, args);
+        return promise.asPromise();
+    }
+}
+
+export function debounce<TResult, TThis = void, TArgs extends unknown[] = []>(
+    fn: (this: TThis, ...args: TArgs) => TResult,
+    wait: number,
+    immediate = false
+){
+    return throttle(fn, wait, {
+        debounceMode: immediate,
+        leading: true,
+        trailing: true
+    })
+}
+
+export function throttled<TResult, TThis = void, TArgs extends unknown[] = []>(
+    wait: number, options = {leading: false, trailing: true}
+) {
+    return (
+        fn: (this: TThis, ...args: TArgs) => TResult | Promise<TResult>,
+        context: ClassMethodDecoratorContext<TThis>) => {
+        return throttle(fn, wait, options);
     };
 }
 
-export function throttled(wait: number, options = {leading: false, trailing: true}): MethodDecorator {
-    return (target, key, descr) => {
-        const fn = descr.value;
-        return {
-            value: throttle(fn as any, wait, options) as any
-        }
-    }
+export function debounced(wait: number, immediate = false) {
+    return (method, context: ClassMethodDecoratorContext) => {
+        return debounce(method, wait, immediate);
+    };
 }

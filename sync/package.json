@@ -39,9 +39,9 @@
   "dependencies": {
     "@cmmn/cell": "workspace:*",
     "@cmmn/core": "workspace:*",
-    "@collabs/tab-sync": "0.13.4",
+    "@collabs/collabs": "0.13.4",
     "@collabs/indexeddb": "0.13.4",
-    "@collabs/collabs": "0.13.4"
+    "@collabs/tab-sync": "0.13.4"
   },
   "devDependencies": {
     "@cmmn/tools": "workspace:*",

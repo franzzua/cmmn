@@ -1,5 +1,7 @@
 {
   "extends": "@cmmn/tools/compile/tsconfig.json",
+  "compilerOptions": {
+  },
   "references": [{
     "path": "../core"
   }],

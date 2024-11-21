@@ -1,21 +1,13 @@
 #!/usr/bin/env node
+import * as commands from "./commands/index.js";
 
-import {bundle} from "./bundle/bundle.js";
-import {serve} from "./serve/serve.js";
-import {compile} from "./compile/compile.js";
-import {gen} from "./gen/gen.js";
-import {spawn} from "./spawn/index.js";
+const [command, ...args] = process.argv.slice(2);
 
-const [action, ...args] = process.argv.slice(2);
-
-const actions = {
-    bundle, compile, gen, serve, spawn
-}
-
-if (action in actions) {
-    actions[action](...args);
+if (command in commands) {
+    commands[command](...args);
 } else {
-    console.log(`cmmn bundle [-b] [index.ts] [--watch] [--run] [--prod]`);
-    console.log(`cmmn compile [-b] [--watch]`);
+    console.log(`cmmn compile [--watch] [--minify] [--run]`);
+    console.log(`cmmn bundle [--watch]`);
+    console.log(`cmmn typings [--watch]`);
     console.log(`cmmn gen AppRoot . [--nested]`);
 }

@@ -6,7 +6,7 @@
     "composite": true,
     "sourceMap": false,
     "baseUrl": "./",
-    "experimentalDecorators": true,
+    "experimentalDecorators": false,
     "checkJs": false,
     "outDir": "./dist/esm",
     "skipLibCheck": true,
@@ -14,11 +14,11 @@
     "disableSolutionSearching": true,
     "assumeChangesOnlyAffectDirectDependencies": true,
     "skipDefaultLibCheck": true,
+    "isolatedModules": true,
     "allowJs": true,
     "disableReferencedProjectLoad": true,
     "disableSourceOfProjectReferenceRedirect": true,
     "allowSyntheticDefaultImports": true,
-    "emitDecoratorMetadata": true,
     "noEmitHelpers": true,
     "declarationDir": "./dist/typings",
     "esModuleInterop": true,
@@ -26,9 +26,8 @@
     "useDefineForClassFields": false,
     "declaration": true,
     "lib": [
-      "ES2020.BigInt",
       "ESNext",
-      "DOM"
+      "ES2023.Array"
     ]
   },
   "exclude": [

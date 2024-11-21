@@ -54,14 +54,14 @@ export class StoreSpec {
         expect(main.Value.b).toEqual(3);
     }
 
-    // @test
+    // @node
     // delete() {
     //     this.add();
     //     this.mainStore.Items.delete('one');
     //     expect(this.testStore.Items.has('one')).toEqual(false);
     // }
     //
-    // @test
+    // @node
     // update() {
     //     this.add();
     //     this.mainStore.Items.set('one', {

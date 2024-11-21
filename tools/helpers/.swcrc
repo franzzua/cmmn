@@ -1,0 +1,26 @@
+{
+    "jsc": {
+        "parser": {
+            "syntax": "typescript",
+            "decoratorsBeforeExport": true,
+            "decorators": true
+        },
+        "transform": {
+            "legacyDecorator": false,
+            "decoratorVersion": "2022-03",
+            "react": {
+                "runtime": "automatic"
+            }
+        },
+        "target": "esnext",
+        "externalHelpers": true
+    },
+    "module": {
+        "type": "nodenext",
+        "resolveFully": true,
+        "noInterop": true,
+        "strict": true
+    },
+    "sourceMaps": true,
+    "isModule": true
+}

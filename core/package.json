@@ -11,8 +11,11 @@
   "files": [
     "dist"
   ],
+  "browserslist": [
+    "> 0.25%"
+  ],
   "type": "module",
-  "main": "./dist/bundle/index.js",
+  "main": "./dist/bundle/main.js",
   "module": "./dist/esm/index.js",
   "typings": "./dist/typings/index.d.ts",
   "exports": {
@@ -26,17 +29,18 @@
   },
   "scripts": {
     "build": "cmmn compile --watch",
-    "bundle": "cmmn bundle --watch"
+    "bundle": "cmmn bundle --watch",
+    "bundle:min": "cmmn bundle --watch",
+    "typings": "cmmn typings --watch",
+    "test": "node --test --import @cmmn/tools/import ./**/*.spec.ts"
   },
   "devDependencies": {
-    "@cmmn/tools": "workspace:*"
-  },
-  "dependencies": {
-    "bind-decorator": "^1.0.11"
+    "@cmmn/tools": "workspace:*",
+    "throttle-debounce": "5.0.2",
+    "uuidv7": "1.0.2"
   },
   "author": "",
   "license": "ISC",
-  "gitHead": "2755b333808bf97f1d9454601c2a2c9a88e4a021",
   "cmmn": {
     "index": {
       "input": "dist/esm/index.js",

@@ -77,11 +77,11 @@ Cell have initial value, so pull have not executed and there is no dependencies.
 
 ### Тесты для понимания:
 
-* [Решение квадратного уравнения](./specs/long-graph.spec.ts)
-* [Декораторы](./specs/decorators.spec.ts)
-* [Валидация](./specs/filter.spec.ts)
-* [Функция сравнения](./specs/compare.spec.ts)
-* [Асинхронная ячейка](./specs/async-cell.spec.ts)
+* [Решение квадратного уравнения](../core/specs/cells/long-graph.spec.ts)
+* [Декораторы](../core/specs/cells/decorators.spec.ts)
+* [Валидация](../core/specs/cells/filter.spec.ts)
+* [Функция сравнения](../core/specs/cells/compare.spec.ts)
+* [Асинхронная ячейка](../core/specs/cells/async-cell.spec.ts)
 
 ### Examples
 

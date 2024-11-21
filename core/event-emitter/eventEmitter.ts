@@ -1,5 +1,4 @@
 import {EventEmitterBase} from "./eventEmitterBase";
-import {getOrAdd} from "../helpers/map";
 import {removeAll} from "../helpers/Array";
 import {DefaultListenerOptions, EventListenerOptions} from "./common";
 
@@ -46,7 +45,7 @@ export class EventEmitter<TEvents extends {
         arr.slice().forEach(x => x.listener(data));
     }
 
-    public dispose() {
+    public [Symbol.dispose]() {
         for (let [key, value] of this.listeners) {
             for (let listener of value) {
                 this.off(key, listener.listener);

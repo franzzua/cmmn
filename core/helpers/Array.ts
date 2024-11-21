@@ -13,7 +13,7 @@ export function orderBy<T>(array: Iterable<T>, selector: (t: T) => (string | num
     return [...array].sort((a, b) => ((selector(a) > selector(b)) ? 1 : -1) * (descending ? -1 : 1));
 }
 
-export function distinct<T, U = any>(array: Array<T>, selector?: (t: T) => U) {
+export function distinct<T, U = any>(array: ReadonlyArray<T>, selector?: (t: T) => U) {
     if (selector) {
         const map = array.reduce((map: Map<U, T>, cur: T) => {
             map.set(selector(cur), cur);

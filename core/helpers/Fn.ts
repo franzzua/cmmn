@@ -1,8 +1,7 @@
-import {ulid} from "./ulid";
+import {uuid} from "./uuid";
 import {compare} from "./compare";
 import {deepAssign} from "./deepAssign";
-import {debounce} from "./debounce";
-import {throttle} from "./throttle";
+import {throttle, debounce} from "./throttle";
 //
 // import { generator, BASE } from "flexid";
 // const ulid = generator(BASE["58"]);
@@ -14,7 +13,7 @@ export const Fn = {
     Ib<T>(x: T): boolean {
         return !!x;
     },
-    ulid: ulid,
+    uuid: uuid,
     pipe: (...functions: (((...input: any[]) => any | Function))[]):  ((...input: any[]) => any) => {
         return functions.reduce((f1, f2) => (...args: any[]) => f2(f1(...args)))
     },

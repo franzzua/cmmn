@@ -6,7 +6,6 @@
   "repository": {
     "url": "https://github.com/franzzua/cmmn/tree/master/infr"
   },
-  "private": false,
   "exports": {
     ".": {
       "types": "./dist/typings/index.d.ts",
@@ -17,8 +16,8 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@cmmn/core": "workspace:*",
-    "@cmmn/cell": "workspace:*"
+    "@cmmn/cell": "workspace:*",
+    "@cmmn/core": "workspace:*"
   },
   "devDependencies": {
     "@cmmn/tools": "workspace:*"
