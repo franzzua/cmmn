@@ -1,6 +1,7 @@
 import {EventEmitterBase} from "./eventEmitterBase";
 import {removeAll} from "../helpers/Array";
 import {DefaultListenerOptions, EventListenerOptions} from "./common";
+import {ResolvablePromise} from "../helpers";
 
 export class EventEmitter<TEvents extends {
     [key in string]: any | void;
@@ -49,6 +50,50 @@ export class EventEmitter<TEvents extends {
         for (let [key, value] of this.listeners) {
             for (let listener of value) {
                 this.off(key, listener.listener);
+            }
+        }
+    }
+
+    public iterate<TEventName extends keyof TEvents>(eventName: TEventName): AsyncIterable<TEvents[TEventName]>{
+        return {
+            [Symbol.asyncIterator]: () => {
+                const promiseQueue: Array<ResolvablePromise<IteratorResult<TEvents[TEventName]>>> = [];
+                const valueQueue: TEvents[TEventName][] = [];
+                const off = this.on(eventName, event => {
+                    const promise = promiseQueue.shift();
+                    if (promise){
+                        promise.resolve({ value: event, done: false });
+                    } else {
+                        valueQueue.push(event);
+                    }
+                });
+                return {
+                    next(){
+                        const value = valueQueue.shift();
+                        if (value){
+                            return Promise.resolve({ value, done: false });
+                        } else {
+                            const promise = new ResolvablePromise<IteratorResult<TEvents[TEventName]>>();
+                            promiseQueue.push(promise);
+                            return promise.asPromise();
+                        }
+                    },
+                    return(value?: any): Promise<IteratorResult<TEvents[TEventName], any>> {
+                        off();
+                        promiseQueue.forEach(q => q.resolve({
+                            done: true,
+                            value
+                        }))
+                        return Promise.resolve({
+                            done: true,
+                            value: null
+                        });
+                    },
+                    throw(e?: any): Promise<IteratorResult<TEvents[TEventName], any>> {
+                        off();
+                        return Promise.reject(e);
+                    }
+                }
             }
         }
     }
