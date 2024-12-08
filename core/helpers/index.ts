@@ -9,3 +9,4 @@ export {compare} from "./compare";
 export {throttle, throttled, debounce, debounced} from "./throttle";
 export type {DeepPartial} from "./deepAssign";
 export {bind} from "./bind";
+export {pipe} from "./pipe";

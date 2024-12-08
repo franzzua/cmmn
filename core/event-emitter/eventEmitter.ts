@@ -1,7 +1,6 @@
 import {EventEmitterBase} from "./eventEmitterBase";
-import {removeAll} from "../helpers/Array";
-import {DefaultListenerOptions, EventListenerOptions} from "./common";
-import {ResolvablePromise} from "../helpers";
+import {removeAll} from "../helpers";
+import {AIEmitter} from "../ai/AIEmitter";
 
 export class EventEmitter<TEvents extends {
     [key in string]: any | void;
@@ -9,18 +8,22 @@ export class EventEmitter<TEvents extends {
 
     protected listeners = new Map<keyof TEvents, Array<{
         listener: (data, stop?) => void,
-        options: EventListenerOptions
+        options: SubscriptionOptions
     }>>();
 
-    public on<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void,
-                                                options: EventListenerOptions = DefaultListenerOptions) {
-        if (!this.listeners.has(eventName)){
+    public on<TEventName extends keyof TEvents, TSubscriptionOptions extends SubscriptionOptions = SubscriptionOptions>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void,
+                                                                                                                        options?: TSubscriptionOptions) {
+        if (!this.listeners.has(eventName)) {
             this.listeners.set(eventName, []);
             this.subscribe(eventName);
         }
+        if (options?.signal) {
+            options.signal.addEventListener('abort', () => {
+                this.off(eventName, listener);
+            }, {once: true});
+        }
         const arr = this.listeners.get(eventName);
         arr.push({listener, options: options});
-        arr.sort((a, b) => b.options.Priority - a.options.Priority);
         return () => this.off(eventName, listener);
     }
 
@@ -47,6 +50,7 @@ export class EventEmitter<TEvents extends {
     }
 
     public [Symbol.dispose]() {
+        this.emit(Symbol.dispose as keyof TEvents);
         for (let [key, value] of this.listeners) {
             for (let listener of value) {
                 this.off(key, listener.listener);
@@ -54,47 +58,31 @@ export class EventEmitter<TEvents extends {
         }
     }
 
-    public iterate<TEventName extends keyof TEvents>(eventName: TEventName): AsyncIterable<TEvents[TEventName]>{
-        return {
-            [Symbol.asyncIterator]: () => {
-                const promiseQueue: Array<ResolvablePromise<IteratorResult<TEvents[TEventName]>>> = [];
-                const valueQueue: TEvents[TEventName][] = [];
-                const off = this.on(eventName, event => {
-                    const promise = promiseQueue.shift();
-                    if (promise){
-                        promise.resolve({ value: event, done: false });
-                    } else {
-                        valueQueue.push(event);
-                    }
-                });
-                return {
-                    next(){
-                        const value = valueQueue.shift();
-                        if (value){
-                            return Promise.resolve({ value, done: false });
-                        } else {
-                            const promise = new ResolvablePromise<IteratorResult<TEvents[TEventName]>>();
-                            promiseQueue.push(promise);
-                            return promise.asPromise();
-                        }
-                    },
-                    return(value?: any): Promise<IteratorResult<TEvents[TEventName], any>> {
-                        off();
-                        promiseQueue.forEach(q => q.resolve({
-                            done: true,
-                            value
-                        }))
-                        return Promise.resolve({
-                            done: true,
-                            value: null
-                        });
-                    },
-                    throw(e?: any): Promise<IteratorResult<TEvents[TEventName], any>> {
-                        off();
-                        return Promise.reject(e);
-                    }
-                }
+    public async* iterate<TEventName extends keyof TEvents, TSubscriptionOptions extends SubscriptionOptions = SubscriptionOptions>(
+        eventName: TEventName, options?: TSubscriptionOptions): AsyncIterable<TEvents[TEventName]> {
+        const aiEmitter = new AIEmitter<TEvents[TEventName]>();
+        const off = this.on(eventName, aiEmitter.emit, options);
+        if (options?.signal) {
+            options.signal.addEventListener('abort', () => {
+                aiEmitter[Symbol.dispose]();
+                off2();
+            }, {once: true});
+        }
+        const off2 = this.once(Symbol.dispose as keyof TEvents, () => {
+            aiEmitter[Symbol.dispose]();
+            off();
+        });
+        try {
+            for await (const x of aiEmitter) {
+                yield x;
             }
+        } finally {
+            off();
+            off2();
         }
     }
+}
+
+export type SubscriptionOptions = {
+    signal?: AbortSignal;
 }

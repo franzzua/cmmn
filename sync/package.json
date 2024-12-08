@@ -39,29 +39,13 @@
   "dependencies": {
     "@cmmn/cell": "workspace:*",
     "@cmmn/core": "workspace:*",
-    "@collabs/collabs": "0.13.4",
-    "@collabs/indexeddb": "0.13.4",
-    "@collabs/tab-sync": "0.13.4"
+    "loro-crdt": "1.1.4"
   },
   "devDependencies": {
-    "@cmmn/tools": "workspace:*",
-    "@types/ws": "^8.5.4"
+    "@cmmn/tools": "workspace:*"
   },
   "author": "",
   "license": "ISC",
   "type": "module",
-  "cmmn": {
-    "index": {
-      "input": "./dist/esm/index.js",
-      "external": [
-        "@cmmn"
-      ],
-      "alias": {
-        "crypto": "data:text/javascript,export const webcrypto = crypto;"
-      },
-      "platform": "browser,node",
-      "module": "es,cjs"
-    }
-  },
   "gitHead": "2755b333808bf97f1d9454601c2a2c9a88e4a021"
 }

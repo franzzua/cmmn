@@ -4,7 +4,7 @@ import {Graph} from './graph.js';
 export class BaseCell<T = any> extends EventEmitter<{
     change: { value: T, oldValue: T },
     error: Error,
-}> {
+}> implements AsyncIterable<{ value: T, oldValue: T }>{
 
     /** @internal **/
     pull: () => T;
@@ -57,7 +57,7 @@ export class BaseCell<T = any> extends EventEmitter<{
         this.isActual = true;
     }
 
-    protected onValueContentChanged = (change) => {
+    protected onValueContentChanged = () => {
         this.update(this.value); // e.g. adding a new element to ObservableMap
     }
 
@@ -181,6 +181,10 @@ export class BaseCell<T = any> extends EventEmitter<{
         return (target: TClass, context: ClassDecoratorContext) => {
             BaseCell.likeCells.add(target);
         }
+    }
+
+    public [Symbol.asyncIterator](){
+        return this.iterate('change')[Symbol.asyncIterator]();
     }
 }
 

@@ -1,12 +1,10 @@
-import {EventEmitter} from "./eventEmitter";
-import {DefaultListenerOptions, EventListenerOptions} from "./common";
-import {orderBy} from "../helpers/Array";
+import {EventEmitter, SubscriptionOptions} from "./eventEmitter";
 
 export class StoppableEventEmitter<TEvents extends {
     [key in string]: any | void;
 }> extends EventEmitter<TEvents> {
     public on<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName], stop?: Function) => void,
-                                                options: EventListenerOptions = DefaultListenerOptions) {
+                                                options: SubscriptionOptions) {
         return super.on(eventName, listener, options);
     }
     public off<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName], stop?: Function) => void) {
@@ -18,12 +16,11 @@ export class StoppableEventEmitter<TEvents extends {
         if (!arr)
             return;
         let isStopped = false;
-        const ordered = orderBy(arr, x => x.options.Priority, true);
         const stopAction = () => isStopped = true;
-        for (let i = 0; i < ordered.length; i++) {
+        for (let i = 0; i < arr.length; i++) {
             if (isStopped)
                 return;
-            ordered[i].listener(data, stopAction);
+            arr[i].listener(data, stopAction);
         }
     }
 }

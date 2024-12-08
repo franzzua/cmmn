@@ -1,7 +1,8 @@
 import {uuid} from "./uuid";
 import {compare} from "./compare";
 import {deepAssign} from "./deepAssign";
-import {throttle, debounce} from "./throttle";
+import {debounce, Func, throttle} from "./throttle";
+import {pipe} from "./pipe";
 //
 // import { generator, BASE } from "flexid";
 // const ulid = generator(BASE["58"]);
@@ -14,9 +15,7 @@ export const Fn = {
         return !!x;
     },
     uuid: uuid,
-    pipe: (...functions: (((...input: any[]) => any | Function))[]):  ((...input: any[]) => any) => {
-        return functions.reduce((f1, f2) => (...args: any[]) => f2(f1(...args)))
-    },
+    pipe,
     join: (...functions: Function[]) => {
         return function (...args) {
             for (let fn of functions) {
@@ -50,3 +49,4 @@ export const Fn = {
     debounce: debounce,
     throttle: throttle,
 };
+

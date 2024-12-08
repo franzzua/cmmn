@@ -20,7 +20,8 @@ export {
     debounced,
     type DeepPartial,
     Lazy,
-    uuid
+    uuid,
+    pipe
 } from "./helpers"
 export {
     Cell,

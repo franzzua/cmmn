@@ -45,7 +45,9 @@ describe('throttle', (ctx) => {
     });
 
     test('output', async () => {
-        const fn = (a, b) => a + b;
+        function fn(a: number, b: number){
+            return a + b;
+        }
         const t = throttle(fn, 10);
         const result1 = t(1, 2);
         const result2 = t(1, 2);
@@ -53,7 +55,6 @@ describe('throttle', (ctx) => {
         assert.equal(await result1, 3);
         assert.equal(await result2, 3);
     });
-
 
     test('class', async () => {
 
@@ -84,6 +85,7 @@ describe('throttle', (ctx) => {
         assert.equal(a.get(), 1);
         assert.equal(new Set(p).size, 1);
         assert.equal(await p[0], 1);
-
+        await Fn.asyncDelay(20);
+        console.log(a.increment[Symbol.metadata])
     });
 });

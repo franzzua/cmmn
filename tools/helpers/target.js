@@ -94,6 +94,14 @@ export class Target {
                 filename: `[resourceName]${this.minify ? '.min' : ''}.[ext]`,
                 assetsFilename: `[resourceName]${this.minify ? '.min' : ''}.[ext]`,
             },
+            partialBundling: {
+                enforceResources: [
+                    {
+                        name: 'node.bundle.js',
+                        test: ['.+']
+                    }
+                ]
+            },
             root: this.rootDir,
             minify: this.minify ? {
                 compress: true,

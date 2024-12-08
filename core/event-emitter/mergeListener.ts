@@ -1,6 +1,5 @@
 import {EventEmitterBase} from "./eventEmitterBase";
-
-import {DefaultListenerOptions, EventListenerOptions} from "./common";
+import {SubscriptionOptions} from "./eventEmitter";
 
 export class MergeListener<TEvents extends {
     [key in string]: any | void;
@@ -9,7 +8,7 @@ export class MergeListener<TEvents extends {
         super();
     }
 
-    on<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void, options: EventListenerOptions = DefaultListenerOptions): () => void {
+    on<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName]) => void, options: SubscriptionOptions = {}): () => void {
         const unsubscrs = this.emitters.map(x => x.on(eventName, listener, options));
         return () => unsubscrs.forEach(f => f());
     }
