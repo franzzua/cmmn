@@ -10,13 +10,12 @@ globalThis.customElements = x.customElements;
 globalThis.document = x.document;
 globalThis.window = x.window;
 globalThis.requestAnimationFrame = cb => setTimeout(cb, 40);
+globalThis.cancelAnimationFrame = id => clearTimeout(id);
 
 
 describe('component', async () => {
 
-    const {Component} = await import("../component/component");
-    const {component, property} = await import("../component/decorators");
-    const {html} = await import("uhtml");
+    const {Component, component, property, html, svg} = await import("..");
 
 
     await test('hello-world', async () => {
@@ -91,4 +90,30 @@ describe('component', async () => {
         await EventListener.onceAsync(el, 'render');
         assert.equal(el.firstElementChild.firstElementChild, span);
     });
+
+
+    await test('classes', async () => {
+
+        @component()
+        class MyClasses extends Component {
+
+            render() {
+                return html`
+                    <div class=${[{ one: true, two: false }, 'three']} style=${{
+                        background: 'red',
+                        color: 'white'
+                    }}/>
+                `;
+            }
+        }
+
+        const el = x.document.createElement('my-classes');
+        x.document.appendChild(el);
+        await EventListener.onceAsync(el, 'render');
+        const div = el.firstElementChild as HTMLDivElement;
+        assert.equal(div.getAttribute('class'), 'one three');
+        assert.equal(div.style.background, 'red');
+        assert.equal(div.style.color, 'white');
+    });
+
 })

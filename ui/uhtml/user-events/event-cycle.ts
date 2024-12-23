@@ -5,26 +5,27 @@ export type EventCycleStep = (typeof EventCycleEvents)[number];
 
 export class EventCycleClass extends EventEmitter<Record<EventCycleStep, void>> {
     override subscribe(eventName: EventCycleStep){
-        this.subscribers[eventName](this.handlers[eventName]);
+        this.handles[eventName] = this.subscribers[eventName](this.handlers[eventName]);
     }
 
     override unsubscribe(eventName: EventCycleStep){
-        this.unsubscribers[eventName](this.handles[eventName]);
+        if (this.handles[eventName])
+            this.unsubscribers[eventName](this.handles[eventName]);
     }
 
     private handles: Partial<Record<EventCycleStep, number>> = {};
     private subscribers: Record<EventCycleStep, (listener: () => void) => number> = {
-        animationFrame: requestAnimationFrame,
-        idle: requestIdleCallback
+        animationFrame: globalThis.requestAnimationFrame,
+        idle: globalThis.requestIdleCallback
     };
     private unsubscribers: Record<EventCycleStep, (handler: number) => void> = {
-        animationFrame: cancelAnimationFrame,
-        idle: cancelIdleCallback
+        animationFrame: globalThis.cancelAnimationFrame,
+        idle: globalThis.cancelIdleCallback
     };
 
     private handlers = Object.fromEntries(EventCycleEvents.map(event => [event, () => {
-        this.emit(event);
         this.handles[event] = this.subscribers[event](this.handlers[event]);
+        this.emit(event);
     }]));
 }
 

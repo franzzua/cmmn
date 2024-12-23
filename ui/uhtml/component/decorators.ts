@@ -3,7 +3,6 @@ import {cell, ICellOptions} from "@cmmn/core";
 
 export type IComponentOptions = {
     name?: `${string}-${string}`,
-    is?: string;
 };
 
 export function component(opts: IComponentOptions = {}) {
@@ -23,9 +22,7 @@ export function component(opts: IComponentOptions = {}) {
                 this[attrs[key]] = newValue;
             }
         }
-        customElements.define(opts.name ?? toSnake(target.name), target, {
-            extends: opts.is,
-        });
+        customElements.define(opts.name ?? toSnake(target.name), target);
     };
 }
 
