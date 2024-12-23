@@ -1,20 +1,7 @@
 import {bind, EventListener, Fn} from "@cmmn/core";
-import {Cell} from "@cmmn/cell";
-import {useCustomHandler} from "@cmmn/uhtml";
+import {Cell} from "@cmmn/core";
 import {BoundRectListener} from "./boundRectListener";
 
-useCustomHandler((node, name) => {
-    if (name == "ondrag") {
-        const pointer = new PointerListener(node);
-        let lastListener = null;
-        return ([listener, options, unsubscr]) => {
-            if (lastListener !== listener) {
-                unsubscr(pointer.on('drag', listener));
-                lastListener = listener;
-            }
-        }
-    }
-});
 
 export type RelativePointerEvent<TEvent = PointerEvent> = { event: TEvent, point: IPoint };
 
@@ -83,7 +70,7 @@ export class PointerListener extends EventListener<PointerEvents> {
         this._position?.[Symbol.dispose]();
     }
 
-    @bind
+    @bind()
     private async dragListener(downEvent: RelativePointerEvent) {
         let isStarted = false;
 
@@ -135,7 +122,7 @@ export class PointerListener extends EventListener<PointerEvents> {
         });
     }
 
-    @bind
+    @bind()
     private async directClickListener(downEvent: RelativePointerEvent) {
         const upEvent = await this.onceAsync('up', {Priority: Number.POSITIVE_INFINITY});
         if (upEvent.event.timeStamp - downEvent.event.timeStamp > 400)

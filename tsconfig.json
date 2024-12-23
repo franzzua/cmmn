@@ -6,28 +6,13 @@
   "include": [],
   "references": [
     {
-      "path": "./cell"
-    },
-    {
       "path": "./core"
     },
     {
       "path": "./ui/uhtml"
     },
     {
-      "path": "./infr"
-    },
-    {
-      "path": "./app"
-    },
-    {
-      "path": "./server"
-    },
-    {
       "path": "./sync"
-    },
-    {
-      "path": "./test"
     }
   ]
 }

@@ -1,4 +1,4 @@
-import {Cell} from "@cmmn/cell";
+import {Cell} from "@cmmn/core";
 import {getOrAdd} from "@cmmn/core";
 
 class IntersectObserver {

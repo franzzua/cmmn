@@ -21,7 +21,7 @@ export async function compile(...flags) {
                 watch: flags.includes('--watch'),
                 extensions: ['.ts'],
                 // filenames: swcOptions.env.include.map(s => path.join(rootDir, s)),
-                filenames: swcOptions.env.include?.length === 0 ? [] : [path.join(target.rootDir, './')],
+                filenames: swcOptions.env?.include?.length === 0 ? [] : [path.join(target.rootDir, './')],
                 stripLeadingPaths: false,
                 quiet: false,
                 noSwcrc: true,

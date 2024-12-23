@@ -8,7 +8,7 @@
   > Runs rollup bundler
   
 * `cmmn gen name directory [-n]`
-  > Generates component with template at directory
+  > Generates decorators with template at directory
 
 * default `jest.config.js`:
     ```typescript

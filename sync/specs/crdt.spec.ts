@@ -1,10 +1,6 @@
 import {expect, suite, mock, test} from "@cmmn/tools/test";
 import {Fn} from "@cmmn/core";
 import {TextLoroCell} from "../src/crdt/crdt-sink";
-import {pipe} from "../src/pipe/pipe";
-import {map} from "../src/pipe/map";
-import {filter, pairwise} from "../src/pipe";
-import {VersionVector} from "loro-crdt";
 
 
 @suite

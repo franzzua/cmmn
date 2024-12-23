@@ -1,5 +1,5 @@
-import {Cell} from "@cmmn/cell";
-import {HtmlComponentBase} from "../component/html-component-base";
+import {Cell} from "@cmmn/core";
+import {Component} from "../component/component";
 import {QuerySelectorCell} from "./querySelectorCell";
 import {getOrAdd} from "@cmmn/core";
 
@@ -11,7 +11,7 @@ function getOrCreateCell(element: any, key: string, selector: string) {
 }
 
 export function select(selector: string): PropertyDecorator {
-    return function (this: HtmlComponentBase<any, any>, target: any, key: string) {
+    return function (this: Component, target: any, key: string) {
         Object.defineProperty(target, key, {
             get(): any {
                 const cell = getOrCreateCell(this.element, key, selector);

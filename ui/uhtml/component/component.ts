@@ -1,84 +1,55 @@
-import {HtmlComponent} from "./htmlComponent";
-import {IEvents, ITemplate} from "./types";
-import {importStyle} from "./importStyle";
-import {componentHandler, propertySymbol} from "./property";
+import {bind, Cell, EventEmitter} from "@cmmn/core";
+import {Hole, render} from "uhtml";
+import {EventCycle} from "../user-events/event-cycle";
 
-export const GlobalStaticState = new class {
-    _defaultContainer: {get<T>(target): T;} = null;
-    _registrations: Function[] = [];
+export abstract class Component extends globalThis.HTMLElement {
 
-    get DefaultContainer(): {get<T>(target): T;} {
-        return this._defaultContainer;
-    };
-
-    set DefaultContainer(value: {get<T>(target): T;}) {
-        this._defaultContainer = value;
-        this._registrations.forEach(f => f());
-        this._registrations.length = 0;
-    };
-
-    public creatingElement: HTMLElement | SVGElement;
-
-    addRegistration(registration: Function) {
-        if (this.DefaultContainer)
-            registration();
-        else
-            this._registrations.push(registration);
+    attributeChangedCallback(key, oldValue, newValue) {
+        this[key] = newValue;
     }
-};
-export type IComponentOptions<TState, TEvents extends IEvents = IEvents> = {
-    name: `${string}-${string}`,
-    template: ITemplate<TState, TEvents>,
-    style?: string,
-    svg?: boolean
-};
 
-export function component<TState, TEvents extends IEvents = IEvents>(opts: IComponentOptions<TState, TEvents>) {
-    return (target: any) => {
-        target.Name = opts.name;
-        target.Template = opts.template;
-
-        class ProxyHTML extends HTMLElement {
-            public component: HtmlComponent<TState, TEvents>;
-            static get observedAttributes() {
-                if (propertySymbol in target)
-                    return Array.from(target[propertySymbol]);
-                return  [];
-            }
-            constructor() {
-                super();
-                HtmlComponent.Init(this, target);
-            }
-
-            connectedCallback() {
-                this.component.connectedCallback();
-            }
-
-            attributeChangedCallback(name, oldValue, newValue) {
-                const setter = componentHandler(this,name);
-                setter(newValue);
-            }
-
-            disconnectedCallback() {
-                this.component.disconnectedCallback();
-            }
-
+    public connectedCallback() {
+        Component.GlobalEvents.emit('connected', this);
+        this.dispatchEvent(new Event('connected'));
+        this.injectedChildren = Array.from(this.children);
+        for (let child of Array.from(this.children)) {
+            child.remove()
         }
+        this.hole.on('change', this.syncHtml);
+        this.syncHtml();
+    }
 
-        GlobalStaticState.addRegistration(() => {
-            // @ts-ignore
-            customElements.define(opts.name, ProxyHTML, {
-                // @ts-ignore
-                extends: opts.is
-            });
-            if (opts.style) {
-                if (typeof opts.style === "object" && 'default' in (opts.style as object)){
-                    // @ts-ignore
-                    opts.style = opts.style.default;
-                }
-                importStyle(opts.style, opts.name, target.name);
-            }
-        });
-        return target;
-    };
+    public disconnectedCallback() {
+        this.dispatchEvent(new Event('disconnected'));
+        Component.GlobalEvents.emit('disconnected', this);
+        this.hole.off('change', this.syncHtml);
+        this[Symbol.dispose]();
+    }
+
+    public onError(error, source: 'effect' | 'action' | 'state' | 'template', sourceName?) {
+        console.groupCollapsed(this.constructor.name, `${source} ${sourceName ?? ''}`);
+        console.warn(error);
+        console.groupEnd()
+    }
+
+    static GlobalEvents = new EventEmitter<{
+        disconnected: Component,
+        connected: Component,
+        render: { target: Component, state: any }
+    }>();
+
+
+    protected hole = new Cell(() => this.render());
+
+    abstract render(): Hole;
+
+    @bind()
+    private async syncHtml() {
+        await EventCycle.onceAsync('animationFrame');
+        render(this, this.hole.get())
+        this.dispatchEvent(new Event('render'));
+    }
+
+    protected injectedChildren: Element[];
+
 }

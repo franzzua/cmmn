@@ -4,7 +4,7 @@ export class StoppableEventEmitter<TEvents extends {
     [key in string]: any | void;
 }> extends EventEmitter<TEvents> {
     public on<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName], stop?: Function) => void,
-                                                options: SubscriptionOptions) {
+                                                options: SubscriptionOptions = {}) {
         return super.on(eventName, listener, options);
     }
     public off<TEventName extends keyof TEvents>(eventName: TEventName, listener: (data: TEvents[TEventName], stop?: Function) => void) {

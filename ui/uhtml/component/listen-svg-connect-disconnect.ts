@@ -1,23 +1,23 @@
-import {ExtendedElement} from "./types";
+import { type Component} from "./component";
 
 
-const waitForAttach = new Set<ExtendedElement>();
-const waitForDetach = new Set<ExtendedElement>();
+const waitForAttach = new Set<Component>();
+const waitForDetach = new Set<Component>();
 
-function checkAdded(node: ExtendedElement) {
+function checkAdded(node: Component) {
     if (waitForAttach.has(node)) { // @ts-ignore
         waitForAttach.delete(node)
-        node.component.connectedCallback();
+        node.connectedCallback();
         waitForDetach.add(node);
     }
     node.children && Array.from(node.children).forEach(checkAdded);
 }
 
 
-function checkRemoved(node: ExtendedElement) {
+function checkRemoved(node: Component) {
     if (waitForDetach.has(node)) { // @ts-ignore
         waitForDetach.delete(node)
-        node.component.disconnectedCallback();
+        node.disconnectedCallback();
         waitForAttach.add(node);
     }
     node.children && Array.from(node.children).forEach(checkAdded);
@@ -30,7 +30,7 @@ const mo = new MutationObserver(events => {
     }
 });
 
-export function listenSvgConnectDisconnect(element: ExtendedElement) {
+export function listenSvgConnectDisconnect(element: Component) {
     waitForAttach.add(element);
 }
 

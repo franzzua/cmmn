@@ -1,6 +1,6 @@
-import {LoroDoc, Subscription, VersionVector} from "loro-crdt";
-import {BaseCell} from "@cmmn/core";
-import {filter, map, pairwise, pipe} from "../pipe";
+import {LoroDoc, LoroEventBatch, Subscription, VersionVector} from "loro-crdt";
+import {BaseCell, EventEmitter} from "@cmmn/core";
+import {filter, map, pipe} from "../pipe";
 
 export class LoroCell<T> extends BaseCell<T> {
 
@@ -8,6 +8,8 @@ export class LoroCell<T> extends BaseCell<T> {
                 public doc: LoroDoc = data ? LoroDoc.fromSnapshot(data) : new LoroDoc()) {
         super(() => doc.toJSON().value);
     }
+
+    private docEvents = new LoroDocEventEmitter(this.doc);
 
     async sinkFrom(ai: AsyncIterable<Uint8Array>) {
         for await (let uint8Array of ai) {
@@ -32,21 +34,49 @@ export class LoroCell<T> extends BaseCell<T> {
     }
 
     public async *getUpdates(abort?: AbortSignal){
-        let prevVersion: VersionVector = this.doc.version();
-        for await (let change of this.iterate('change', abort)){
-            const version = this.doc.version();
-            if (version.get(this.doc.peerId) !== prevVersion.get(this.doc.peerId)){
-                yield this.doc.export({
-                    mode: 'update',
-                    from: prevVersion
-                })
+        for await (let { event, diff } of this.docEvents.iterate('change')){
+            if (event.by == 'local'){
+                yield diff;
             }
-            prevVersion = version;
         }
+    }
+
+    [Symbol.dispose](){
+        super[Symbol.dispose]();
+        this.docEvents[Symbol.dispose]();
     }
 }
 
 export class TextLoroCell extends LoroCell<string> {
     public text = this.doc.getText('value');
 
+}
+
+class LoroDocEventEmitter extends EventEmitter<{
+    change: { event: LoroEventBatch, diff: Uint8Array }
+}> {
+    constructor(private doc: LoroDoc) {
+        super();
+    }
+
+    private subscription: Subscription | undefined;
+    protected subscribe(eventName: 'change') {
+        super.subscribe(eventName);
+        let lastVersion = this.doc.version();
+        this.subscription = this.doc.subscribe(event => {
+            this.emit('change', {
+                event,
+                diff: this.doc.export({
+                    mode: 'update',
+                    from: lastVersion
+                })
+            });
+            lastVersion = this.doc.version()
+        });
+    }
+
+    protected unsubscribe(eventName: 'change') {
+        super.unsubscribe(eventName);
+        this.subscription?.();
+    }
 }

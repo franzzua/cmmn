@@ -1,9 +1,10 @@
 import {test, mock, describe} from "node:test";
-import {Fn} from "../helpers";
+import {Fn, throttle} from "../helpers";
 import {expect} from "@cmmn/tools/test";
-import {AIListener, AIEmitter} from "../ai";
+import {AIListener, AIEmitter, timer, throttler} from "../ai";
 import {EventEmitter} from "../event-emitter";
 import {pipe} from "../helpers";
+import * as console from "node:console";
 
 describe('ai', (ctx) => {
     test('eventEmitter', async () => {
@@ -77,5 +78,17 @@ describe('ai', (ctx) => {
         expect(mockFn.mock.calls[1].arguments[0]).toEqual(2);
         expect(mockFn.mock.calls[2].arguments[0]).toEqual(3);
     });
+
+    test('throttler', async () => {
+        const e = throttler(60);
+        for await (let i of timer(10)) {
+            const iLocal = i;
+            (async () => {
+                for await (let _ of e){
+                    console.log('t', iLocal, Math.round(+performance.now() / 10));
+                }
+            })();
+        }
+    })
 
 })

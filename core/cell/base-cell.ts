@@ -1,5 +1,7 @@
 import {EventEmitter, EventEmitterBase} from '../event-emitter';
 import {Graph} from './graph.js';
+import {Cell} from "./cell";
+import {selector} from "./cell-selector";
 
 export class BaseCell<T = any> extends EventEmitter<{
     change: { value: T, oldValue: T },
@@ -164,6 +166,10 @@ export class BaseCell<T = any> extends EventEmitter<{
         }
     }
 
+    get $(){
+        return selector(this);
+    }
+
     /** @internal **/
     // register classes as cell like, so any "change" event will notify wrapped cell
     private static likeCells = new Set<any>([EventEmitterBase]);
@@ -186,6 +192,8 @@ export class BaseCell<T = any> extends EventEmitter<{
     public [Symbol.asyncIterator](){
         return this.iterate('change')[Symbol.asyncIterator]();
     }
+
+    public static readonly Symbol: unique symbol = Symbol('BaseCell');
 }
 
 export class CyclicalPullError extends Error {

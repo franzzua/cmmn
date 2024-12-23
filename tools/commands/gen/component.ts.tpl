@@ -1,11 +1,7 @@
-import {component, HtmlComponent, property} from "@cmmn/ui";
-import {template, IState, IEvents} from "./$name$.template";
-import style from "./$name$.style.less";
-import {Injectable} from "@cmmn/core";
+import {decorators, Component, property} from "@cmmn/uhtml";
 
-@Injectable(true)
-@component({name: '$name$', template, style})
-export class $Name$Component extends HtmlComponent<IState, IEvents> {
+@component()
+export class $Name extends Component {
 
     @property()
     private property!: any;

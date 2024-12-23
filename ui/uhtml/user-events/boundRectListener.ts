@@ -1,4 +1,4 @@
-import {cell} from "@cmmn/cell";
+import {cell} from "@cmmn/core";
 import {getOrAdd} from "@cmmn/core";
 
 if (!globalThis.ResizeObserver) {
@@ -64,8 +64,8 @@ export class BoundRectListener {
         }
     }
 
-    @cell
-    public Rect: Rect;
+    @cell()
+    public accessor Rect: Rect;
 }
 
 type Rect = {
@@ -73,4 +73,4 @@ type Rect = {
 }
 
 
-window.addEventListener('resize', BoundRectListener.onWindowResize);
+// window.addEventListener('resize', BoundRectListener.onWindowResize);

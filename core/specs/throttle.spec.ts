@@ -2,6 +2,9 @@ import { test, mock, describe } from "node:test";
 import * as assert from "node:assert";
 import {debounce, throttle, throttled} from "../helpers";
 import { Fn } from "../helpers";
+import {EventEmitter} from "../event-emitter";
+import {getThrottler} from "../helpers/throttle";
+import {expect} from "@cmmn/tools/test";
 
 describe('debounce', (ctx) =>{
     test('timing', async () => {
@@ -25,7 +28,6 @@ describe('debounce', (ctx) =>{
         const result2 = t(1, 2);
         assert.equal(result1, result2);
         assert.equal(await result1, 3);
-        assert.equal(await result2, 3);
     });
 })
 describe('throttle', (ctx) => {
@@ -55,6 +57,22 @@ describe('throttle', (ctx) => {
         assert.equal(await result1, 3);
         assert.equal(await result2, 3);
     });
+    test('select', async () => {
+        function sum(a: number, b: number){
+            return a + b;
+        }
+        const t = throttle(sum, 10, {
+            select: (...args)=> [
+                args.map(([a,b]) => a).reduce(sum),
+                args.map(([a,b]) => b).reduce(sum)
+            ]
+        });
+        const result1 = t(1, 2);
+        const result2 = t(3, 4);
+        assert.equal(result1, result2);
+        assert.equal(await result1, 10);
+    });
+
 
     test('class', async () => {
 

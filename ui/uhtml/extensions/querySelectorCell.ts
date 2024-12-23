@@ -1,4 +1,4 @@
-import {Cell} from "@cmmn/cell";
+import {Cell} from "@cmmn/core";
 
 export class QuerySelectorCell<TElement extends Element> extends Cell<TElement> {
     constructor(private element: Element, private selector: string) {

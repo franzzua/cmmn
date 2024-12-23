@@ -22,4 +22,8 @@ export class EventListener<TEvents extends {
         this.target.removeEventListener(eventName as string, this._emitters[eventName] as any);
     }
 
+    public static onceAsync(target: EventTarget, event: string){
+        return new EventListener(target).onceAsync(event);
+    }
+
 }

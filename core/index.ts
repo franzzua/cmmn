@@ -43,3 +43,6 @@ export {
     StoppableEventEmitter
 } from "./event-emitter";
 export {defaultContainer, factory, inject, resolve, singleton} from "./di";
+export {
+    throttler, timer
+} from "./ai"

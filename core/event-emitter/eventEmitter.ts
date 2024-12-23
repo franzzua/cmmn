@@ -1,6 +1,7 @@
 import {EventEmitterBase} from "./eventEmitterBase";
 import {removeAll} from "../helpers";
 import {AIEmitter} from "../ai/AIEmitter";
+import {getThrottler} from "../helpers/throttle";
 
 export class EventEmitter<TEvents extends {
     [key in string]: any | void;
@@ -81,6 +82,7 @@ export class EventEmitter<TEvents extends {
             off2();
         }
     }
+
 }
 
 export type SubscriptionOptions = {
