@@ -42,7 +42,7 @@ export {
     MergeListener,
     StoppableEventEmitter
 } from "./event-emitter";
-export {defaultContainer, factory, inject, resolve, singleton} from "./di";
+export {di, factory, inject, resolve, singleton, Container} from "./di";
 export {
     throttler, timer
 } from "./ai"

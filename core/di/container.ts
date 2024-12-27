@@ -48,6 +48,7 @@ export class Container {
         const res = new Container();
         res.consts = new Map(this.consts);
         res.overrides = new Map(this.overrides);
+        res.factories = new Map(this.factories);
         res.instances = new Map(this.instances);
         return res;
     }

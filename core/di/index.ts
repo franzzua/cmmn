@@ -10,15 +10,16 @@ export const inject =
 
 export function singleton<TClass extends ConstructorOf<any>>() {
     return function (target: any, context: ClassDecoratorContext<TClass>) {
-        defaultContainer.factory(target, () => new target());
+        di.factory(target, () => new target());
     };
 }
 
 export function factory<T>(dep: ConstructorOf<T>, factory: (c: Container) => T) {
-    defaultContainer.factory(dep, factory);
+    di.factory(dep, factory);
 }
 
 // const singletons = new Set<ConstructorOf<any>>();
 
-export const defaultContainer = Container.Default;
+export const di = Container.Default;
 export const resolve = <T>(dep: ConstructorOf<T> | Symbol) => Container.Default.resolve(dep);
+export { Container };
