@@ -1,4 +1,5 @@
 import {EventEmitter} from "../../event-emitter";
+import {BaseCell} from "../base-cell";
 
 export class ObservableList<T> extends EventEmitter<{
     change: { value: T[] },
@@ -74,3 +75,5 @@ export class ObservableList<T> extends EventEmitter<{
     includes: Array<T>["includes"];
 
 }
+
+BaseCell.likeCells.add(ObservableList);

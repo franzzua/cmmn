@@ -2,6 +2,8 @@ import {VersionVector} from "loro-crdt";
 import {PeerId} from "@libp2p/interface";
 import {peerIdFromCID} from "@libp2p/peer-id";
 import {CID} from "multiformats";
+import {Serializer} from "./serializer";
+import {Deserializer} from "./deserializer";
 
 type LoroUpdateMessage = {
     type: LoroMessageType.Update;
@@ -35,17 +37,16 @@ export const LoroMessage = {
             : msg.version.encode();
         const peerId = msg.type == LoroMessageType.Join
             ? msg.peerId.toCID().bytes
-            : new Uint8Array();
-        return Serializer.from([
-            msg.type,
-            peerId,
-            data
+            : undefined;
+        return Serializer.serialize([
+            { value: msg.type, size: 8 },
+            data,
+            ...(peerId ? [peerId] : []),
         ]);
     },
     deserialize(data: Uint8Array): LoroMessage {
         const des = new Deserializer(data);
         const type = des.readByte();
-        const peerId = des.readUint8Array();
         const bytes = des.readUint8Array();
 
         switch (type) {
@@ -60,6 +61,7 @@ export const LoroMessage = {
                     version: VersionVector.decode(bytes)
                 }
             case LoroMessageType.Join:
+                const peerId = des.readUint8Array();
                 return {
                     type: type,
                     peerId: peerIdFromCID(CID.decode(peerId)),
@@ -69,67 +71,3 @@ export const LoroMessage = {
     }
 }
 
-class Serializer {
-    public uint8 = new Uint8Array(this.size);
-    private index = 0;
-
-    constructor(private size: number) {
-    }
-
-    writeByte(value: number) {
-        this.uint8[this.index++] = value;
-    }
-
-    writeInt16(value: number) {
-        this.writeByte(Math.floor(value / 256));
-        this.writeByte(value % 256);
-    }
-
-    writeUint8array(uint8: Uint8Array) {
-        this.writeInt16(uint8.length)
-        this.uint8.set(uint8, this.index)
-        this.index += uint8.length;
-    }
-
-    write(value: number | Uint8Array) {
-        if (typeof value === "number")
-            this.writeByte(value);
-        else
-            this.writeUint8array(value);
-    }
-
-    static from(data: Array<number | Uint8Array>) {
-        const size = data
-            .map(x => typeof x === "number" ? 1 : (x.length + 2))
-            .reduce((a, b) => a + b, 0);
-        const res = new Serializer(size);
-        for (let datum of data) {
-            res.write(datum);
-        }
-        return res.uint8;
-    }
-}
-
-class Deserializer {
-    private index = 0;
-
-    constructor(private uint8: Uint8Array) {
-    }
-
-    readByte() {
-        return this.uint8[this.index++];
-    }
-
-    readInt16() {
-        return this.readByte() * 256 + this.readByte();
-    }
-
-    readUint8Array() {
-        const len = this.readInt16();
-        const uint8 = new Uint8Array(len);
-        for (let i = 0; i < len; i++) {
-            uint8[i] = this.uint8[this.index++];
-        }
-        return uint8;
-    }
-}

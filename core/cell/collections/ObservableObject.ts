@@ -1,5 +1,7 @@
 import {compare, DeepPartial, Fn} from "../../helpers";
 import {EventEmitter} from "../../event-emitter";
+import {BaseCell} from "../base-cell";
+import {ObservableMap} from "./ObservableMap";
 
 export class ObservableObject<T> extends EventEmitter<{
     change: { oldValue: T, value: T, keys?: Array<string> }
@@ -32,3 +34,4 @@ export class ObservableObject<T> extends EventEmitter<{
         });
     }
 }
+BaseCell.likeCells.add(ObservableObject);

@@ -1,7 +1,6 @@
 import {EventEmitter} from "../../event-emitter";
 import {BaseCell} from "../base-cell";
 
-@BaseCell.like()
 export class ObservableSet<T> extends Set<T> {
     private ee = new EventEmitter<{
         change: {value: Set<T>; add?: T[]; delete?: T[];}
@@ -33,3 +32,4 @@ export class ObservableSet<T> extends Set<T> {
         return `(${[...this.values()].join(',')})`
     }
 }
+BaseCell.likeCells.add(ObservableSet);

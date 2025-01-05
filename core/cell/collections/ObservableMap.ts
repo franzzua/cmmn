@@ -1,7 +1,7 @@
 import {EventEmitter} from "../../event-emitter";
 import {BaseCell} from "../base-cell";
+import {ObservableSet} from "./ObservableSet";
 
-@BaseCell.like()
 export class ObservableMap<K, V> extends Map<K,V> {
     private ee = new EventEmitter<{
         change: {
@@ -56,3 +56,4 @@ export class ObservableMap<K, V> extends Map<K,V> {
     }
 }
 
+BaseCell.likeCells.add(ObservableMap);
