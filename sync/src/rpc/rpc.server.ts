@@ -1,28 +1,33 @@
 import {Container, inject, singleton} from "@cmmn/core";
-import {Transport} from "../../transport/transport";
-import {RpcMessage} from "./types";
+import {Transport} from "../transport/transport";
+import {RpcMessage, RpcService} from "./types";
 
 @singleton()
 export class RpcServer {
-    @inject(Transport<RpcMessage>) transport!: Transport<RpcMessage>;
+    @inject(Transport<{ rpc: RpcMessage }>) transport!: Transport<{ rpc: RpcMessage }>;
     @inject(Container) container!: Container;
+    private channel = this.transport.getChannel('rpc')
 
-    private unsubscribe = this.transport.on('rpc', async e => {
+    private unsubscribe = this.channel.on('message', async e => {
         if (!('args' in e)) return;
         const service = this.container.resolve(e.service as any);
         try {
             const result = await service[e.method].apply(service, e.args);
-            this.transport.send('rpc', {
+            this.channel.broadcast({
                 id: e.id,
                 result,
             });
         } catch (e) {
-            this.transport.send('rpc', {
+            this.channel.broadcast({
                 id: e.id,
                 error: e.message,
             });
         }
     });
+
+    register(name: string, service: RpcService) {
+        this.container.const(name, service);
+    }
 
     [Symbol.dispose]() {
         this.unsubscribe();

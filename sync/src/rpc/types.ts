@@ -10,7 +10,7 @@ export type RpcMessage = {
 }
 
 export type RpcService = {
-    [key: string]: (...args: Transferable[]) => Promise<Transferable>;
+    [key: string | symbol]: (...args: Transferable[]) => Transferable | Promise<Transferable>;
 }
 
 export type Transferable =

@@ -25,6 +25,16 @@ export class Container {
         }
     }
 
+    instantiate<T, TArgs extends any[] = []>(dep: new (...args: TArgs) => T, ...args: TArgs): T {
+        const oldContainer = Container.Default;
+        Container.Default = this;
+        try {
+            return new (dep as any)(...args);
+        } finally {
+            Container.Default = oldContainer;
+        }
+    }
+
     async [Symbol.asyncDispose]() {
         for (let value of this.instances.values()) {
             await value[Symbol.asyncDispose]?.();

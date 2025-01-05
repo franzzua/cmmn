@@ -16,7 +16,6 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@cmmn/cell": "workspace:*",
     "@cmmn/core": "workspace:*"
   },
   "devDependencies": {

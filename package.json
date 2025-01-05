@@ -27,6 +27,7 @@
   "license": "ISC",
   "files": [],
   "devDependencies": {
+    "@chainsafe/libp2p-yamux": "^7.0.1",
     "@cmmn/tools": "workspace:*",
     "typescript": "5.6.3"
   },

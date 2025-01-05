@@ -37,12 +37,19 @@
     "dist"
   ],
   "dependencies": {
-    "@cmmn/cell": "workspace:*",
     "@cmmn/core": "workspace:*",
-    "loro-crdt": "1.1.4"
+    "@libp2p/interface-mocks": "^12.0.1",
+    "loro-crdt": "1.2.7",
+    "seqproto": "^0.2.3"
   },
   "devDependencies": {
-    "@cmmn/tools": "workspace:*"
+    "@cmmn/tools": "workspace:*",
+    "@libp2p/bootstrap": "^11.0.16",
+    "@libp2p/floodsub": "10.1.14",
+    "@libp2p/identify": "^3.0.14",
+    "@libp2p/memory": "^1.0.2",
+    "@libp2p/plaintext": "2.0.12",
+    "libp2p": "^2.0.0"
   },
   "author": "",
   "license": "ISC",

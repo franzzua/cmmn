@@ -49,8 +49,7 @@
       "input": "dist/esm/index.js",
       "platform": "browser",
       "external": [
-        "@cmmn/core",
-        "@cmmn/cell"
+        "@cmmn/core"
       ],
       "module": "es,cjs"
     }

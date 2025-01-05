@@ -31,9 +31,7 @@
     "@cmmn/tools": "workspace:*"
   },
   "dependencies": {
-    "@cmmn/cell": "workspace:*",
     "@cmmn/core": "workspace:*",
-    "@cmmn/ui": "workspace:*",
     "router5": "^8.0.1",
     "router5-plugin-browser": "^8.0.1"
   },

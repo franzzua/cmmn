@@ -1,6 +1,6 @@
 import { suite, test, sinon, expect } from "@cmmn/tools/test";
 import {CellQuery} from "../src/cell.query";
-import { Fn } from "@cmmn/core";
+import { Fn, Cell } from "@cmmn/core";
 import {Cell} from "@cmmn/cell";
 @suite
 export class CellQuerySpec {
