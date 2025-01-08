@@ -20,9 +20,7 @@ export abstract class P2PNode implements AsyncDisposable {
         for (let peer of this.p2p.getPeers()) {
             this._peers.add(peer);
         }
-        this.p2p.addEventListener('peer:connect', e => {
-            return this._peers.add(e.detail);
-        });
+        this.p2p.addEventListener('peer:connect', e => this._peers.add(e.detail));
         this.p2p.addEventListener('peer:disconnect', e => this._peers.delete(e.detail));
     }
 

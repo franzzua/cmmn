@@ -14,6 +14,7 @@ export class LoroRoom implements AsyncDisposable {
                 private doc: LoroDoc) {
         this.p2p.services.pubsub.subscribe(this.topic);
         this.p2p.services.pubsub.addEventListener('message', this.topicListener);
+
         this.p2p.handle(LoroRoom.protocol, async e => {
             for await (let [uint8] of e.stream.source) {
                 const message = LoroMessage.deserialize(uint8);
@@ -64,10 +65,13 @@ export class LoroRoom implements AsyncDisposable {
                 }
         }
     }
+    private version = this.doc.version();
     private docUnsubscribe = this.doc.subscribe(async e => {
         const update = this.doc.export({
-            mode: 'update'
+            mode: 'update',
+            from: this.version
         });
+        this.version = this.doc.version();
         await this.send({type: LoroMessageType.Update, update: update});
     });
     private async sendVersion() {

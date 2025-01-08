@@ -1,5 +1,5 @@
 import {Fn} from "@cmmn/core";
-import {TextLoroCell} from "../src/crdt/crdt-sink";
+import {TextLoroCell} from "./text-loro-cell";
 import {describe, test, mock} from "node:test";
 import {expect} from "@cmmn/tools/test";
 import {InMemoryP2PNode} from "./inMemoryP2PNode";

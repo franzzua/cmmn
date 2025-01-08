@@ -1,8 +1,11 @@
 import {afterEach, beforeEach, describe, mock, test} from "node:test";
 import {InMemoryP2PNode} from "./inMemoryP2PNode";
-import { expect } from "@cmmn/tools/test";
 import {P2PNode} from "../src/p2p/p2p.node";
-import {Cell, Fn} from "@cmmn/core";
+import {Cell, Container, di, Fn} from "@cmmn/core";
+import {expect} from "@cmmn/tools/test";
+import {Storage} from "../src/crdt/storage";
+import {InMemoryStorage} from "./inMemoryStorage";
+import {P2PRepository} from "../src";
 
 describe('p2p', () => {
     let nodes: P2PNode[] = [];

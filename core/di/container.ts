@@ -8,28 +8,20 @@ export class Container {
     private overrides = new Map<ConstructorOf<any> | Symbol, ConstructorOf<any>>();
     private factories = new Map<ConstructorOf<any> | Symbol, (c: Container) => any>();
 
-    resolve<T>(dep: ConstructorOf<T> | Symbol): T {
+    resolve<T, TArgs extends any[] = []>(dep: ConstructorOf<T, TArgs> | Symbol, ...args: TArgs): T {
         const oldContainer = Container.Default;
         Container.Default = this;
         try {
             if ((dep as unknown) == Container) return this as unknown as T;
             if (this.overrides.has(dep)) dep = this.overrides.get(dep) as ConstructorOf<T>;
             if (this.consts.has(dep)) return this.consts.get(dep);
-            if (!this.factories.has(dep)) return new (dep as any)();
+            if (typeof dep !== "function")
+                throw new Error(`${dep} is not a constructor`)
+            if (!this.factories.has(dep)) return new (dep as any)(...args);
             if (this.instances.has(dep)) return this.instances.get(dep);
             const instance = this.factories.get(dep)?.(this);
             this.instances.set(dep, instance);
             return instance;
-        } finally {
-            Container.Default = oldContainer;
-        }
-    }
-
-    instantiate<T, TArgs extends any[] = []>(dep: new (...args: TArgs) => T, ...args: TArgs): T {
-        const oldContainer = Container.Default;
-        Container.Default = this;
-        try {
-            return new (dep as any)(...args);
         } finally {
             Container.Default = oldContainer;
         }
