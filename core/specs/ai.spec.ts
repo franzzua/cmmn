@@ -3,8 +3,6 @@ import {Fn, throttle} from "../helpers";
 import {expect} from "@cmmn/tools/test";
 import {AIListener, AIEmitter, timer, throttler} from "../ai";
 import {EventEmitter} from "../event-emitter";
-import {pipe} from "../helpers";
-import * as console from "node:console";
 
 describe('ai', (ctx) => {
     test('eventEmitter', async () => {

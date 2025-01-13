@@ -1,5 +1,4 @@
-import {Fn, ResolvablePromise, throttle} from "../helpers";
-import * as console from "node:console";
+import {throttle} from "../helpers";
 import {EventEmitter} from "../event-emitter";
 
 export {AIEmitter} from "./AIEmitter";
@@ -20,7 +19,7 @@ export class TimerEmitter extends EventEmitter<{
     }
 
     protected unsubscribe(eventName: keyof { time: number }) {
-        super.subscribe(eventName);
+        super.unsubscribe(eventName);
         clearInterval(this.intervalId);
     }
 }

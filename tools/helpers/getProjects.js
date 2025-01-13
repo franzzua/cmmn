@@ -13,20 +13,24 @@ function getProjectConfig(rootDir, cmmn, options) {
 /**
  * @param rootDir
  * @param visited
- * @returns {AsyncGenerator<string>}
+ * @returns {AsyncGenerator<{ root: string, deps: string[] }>}
  */
 export async function *getDependencyOrder(rootDir, visited = []) {
-    const tsConfig = getTSConfig(rootDir)
+    const tsConfig = getTSConfig(rootDir);
+    const deps = [];
     for (let reference of tsConfig.references ?? []){
         const refRoot = path.resolve(rootDir, reference.path);
-        if (visited.includes(refRoot))
+        if (visited.includes(refRoot)) {
+            deps.push(refRoot);
             continue;
+        }
         visited.push(refRoot)
-        for await (let dep of await getDependencyOrder(refRoot, visited)){
+        for await (const dep of getDependencyOrder(refRoot, visited)){
+            deps.push(dep.root);
             yield dep;
         }
     }
-    yield rootDir;
+    yield { root: rootDir, deps };
 }
 
 

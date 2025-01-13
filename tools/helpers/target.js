@@ -4,13 +4,22 @@ import fs from "node:fs";
 import {getTSConfig} from "./getTSConfig.js";
 import swc from "unplugin-swc";
 import {bootstrapLogger, mergeObjects, resolveConfig} from "@farmfe/core";
+import {resolve} from "node:path";
 
 const swcConfig = JSON.parse(fs.readFileSync(import.meta.dirname + "/.swcrc", "utf-8"));
 
 export class Target {
-    constructor(rootDir, flags) {
+    /** @type {string} **/
+    rootDir;
+    /** @type {string[]} **/
+    flags;
+    /** @type {Target[]} **/
+    deps;
+
+    constructor(rootDir, flags, deps) {
         this.rootDir = rootDir;
         this.flags = flags;
+        this.deps = deps;
     }
 
     get minify() {
@@ -27,14 +36,19 @@ export class Target {
      * @returns {Promise<Target[]>}
      */
     static async readTargets(rootDir, flags) {
+        if (flags.includes('-w')) {
+            const dir = flags[flags.indexOf('-w') + 1];
+            return [new Target(resolve(rootDir, dir), flags)];
+        }
         if (!flags.includes('-b')) {
             return [new Target(rootDir, flags)]
         }
-        const result = [];
+        const result = new Map();
         for await (let project of getDependencyOrder(rootDir)) {
-            result.push(new Target(project, flags));
+            const depProjects = project.deps.map(x => result.get(x));
+            result.set(project.root, new Target(project.root, flags, depProjects));
         }
-        return result;
+        return Array.from(result.values());
     }
 
     /**
@@ -77,31 +91,38 @@ export class Target {
      */
     async getCompilation() {
         const packageJson = await this.packageJson;
+        const input = this.packageJson.module ?? "index.ts";
         return {
             persistentCache: false,
             input: {
-                main: path.resolve(this.rootDir, "index.ts"),
+                main: path.resolve(this.rootDir, input),
             },
             external: Object.keys(packageJson.dependencies ?? {}),
-            treeShaking: true,
+            watch: {},
+            resolve: {
+                symlinks: true
+            },
+            treeShaking: !this.run,
             clearScreen: false,
             output: {
                 path: path.join(this.rootDir, "dist/bundle"),
-                targetEnv: 'library-node',
+                targetEnv: input.endsWith('.ts') ? 'browser' : "browser-esnext",
+                publicPath: this.run ? '/_/' + this.packageJson.name + '/' : undefined,
                 clean: true,
-                // format: 'esm',
+                format: 'esm',
                 entryFilename: `[entryName]${this.minify ? '.min' : ''}.[ext]`,
                 filename: `[resourceName]${this.minify ? '.min' : ''}.[ext]`,
                 assetsFilename: `[resourceName]${this.minify ? '.min' : ''}.[ext]`,
             },
-            partialBundling: {
-                enforceResources: [
-                    {
-                        name: 'node.bundle.js',
-                        test: ['.+']
-                    }
-                ]
-            },
+            html: {},
+            // partialBundling: {
+            //     enforceResources: [
+            //         {
+            //             name: 'node.bundle.js',
+            //             test: ['.+']
+            //         }
+            //     ]
+            // },
             root: this.rootDir,
             minify: this.minify ? {
                 compress: true,
@@ -110,14 +131,13 @@ export class Target {
     }
 
     /**
-     * @param mode {'development' | 'production'}
-     * @returns {Promise<ResolvedUserConfig>}
+     * @returns {Promise<import('@farmfe/core').ResolvedUserConfig>}
      */
     async getViteConfig() {
         const override = await import(path.join(this.rootDir, "vite.config.js"))
             .then(m => m.default ?? {})
             .catch(() => ({}));
-        const mode = this.flags.includes('--run') ? 'development' : 'production';
+        const mode = this.run ? 'development' : 'production';
         return resolveConfig(mergeObjects({
             root: this.rootDir,
             plugins: [
@@ -126,29 +146,11 @@ export class Target {
                     env: null
                 })
             ],
-            server: this.run ? {
-                port: 9123
-            } : undefined,
+            server: this.run ? {} : undefined,
             compilation: await this.getCompilation(),
             clearScreen: false,
             logger: this.logger,
         }, override), mode, this.logger);
     }
 
-    /**
-     *
-     * @returns {{
-     *  input: import('rolldown').InputOptions;
-     *  output: import('rolldown').OutputOptions;
-     * }}
-     */
-    async getRolldownConfig() {
-        return {
-            input: {},
-            output: {
-                path: path.join(this.rootDir, "dist/dev"),
-
-            }
-        };
-    }
 }

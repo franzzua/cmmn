@@ -9,7 +9,10 @@
       "path": "./core"
     },
     {
-      "path": "./ui/uhtml"
+      "path": "./uhtml"
+    },
+    {
+      "path": "./server"
     },
     {
       "path": "./sync"

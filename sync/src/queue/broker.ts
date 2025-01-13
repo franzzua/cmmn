@@ -33,9 +33,9 @@ export class Broker {
 
     private async create<T>(name: string) {
         if (this.team.isLeader)
-            return this.container.instantiate(Queue, name)
+            return this.container.resolve(Queue, name)
         const state = await this.rpc.client.call<T[]>(this.constructor.name, 'get', [name]);
-        return this.container.instantiate(Queue, name, state)
+        return this.container.resolve(Queue, name, state)
     }
 
     [Symbol.dispose]() {

@@ -37,7 +37,7 @@
   "dependencies": {
   },
   "devDependencies": {
-    "@cmmn/tools": "workspace:*"
+    "@cmmn/tools": "workspace:~"
   },
   "author": "",
   "license": "ISC",

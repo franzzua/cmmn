@@ -1,8 +1,12 @@
 {
   "name": "@cmmn/framework",
-  "version": "2.2.3",
+  "version": "3.0.0-alpha-2",
   "description": "",
+  "module": "package.json",
   "private": true,
+  "repository": {
+    "url": "https://npm.local"
+  },
   "scripts": {
     "compile": "cmmn compile -b --watch",
     "bundle": "cmmn bundle -b --watch",
@@ -10,17 +14,14 @@
     "prod": "cmmn bundle -b --prod",
     "ci2": "cmmn compile -b && cmmn bundle -b && cmmn bundle -b --prod --minify",
     "test": "node --test */dist/**/*.spec.js",
-    "publish": "wersion patch"
+    "publish": "wersion patch",
+    "dev": "cmmn dev -b --run"
   },
   "workspaces": [
-    "app",
     "core",
-    "cell",
-    "server",
     "tools",
-    "infr",
+    "server",
     "uhtml",
-    "ui/uhtml",
     "sync"
   ],
   "author": "",
@@ -28,8 +29,9 @@
   "files": [],
   "devDependencies": {
     "@chainsafe/libp2p-yamux": "^7.0.1",
-    "@cmmn/tools": "workspace:*",
+    "@cmmn/tools": "workspace:~",
     "typescript": "5.6.3"
   },
-  "packageManager": "yarn@4.5.1"
+  "packageManager": "yarn@4.5.1",
+  "stableVersion": "3.0.0-alpha-2"
 }

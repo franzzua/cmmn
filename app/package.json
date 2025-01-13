@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/app",
-  "version": "2.2.3",
+  "version": "3.0.0-alpha-2",
   "description": "",
   "publishConfig": {
     "access": "public"
@@ -28,10 +28,10 @@
     "build": "cmmn compile ./index.ts --watch"
   },
   "devDependencies": {
-    "@cmmn/tools": "workspace:*"
+    "@cmmn/tools": "workspace:~"
   },
   "dependencies": {
-    "@cmmn/core": "workspace:*",
+    "@cmmn/core": "workspace:~",
     "router5": "^8.0.1",
     "router5-plugin-browser": "^8.0.1"
   },

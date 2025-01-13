@@ -9,7 +9,6 @@ import {floodsub} from "@libp2p/floodsub";
 import { createLibp2p } from "libp2p";
 import {Libp2p} from "@libp2p/interface";
 import {singleton} from "@cmmn/core";
-import console from "node:console";
 
 @singleton()
 export class InMemoryP2PNode extends P2PNode {

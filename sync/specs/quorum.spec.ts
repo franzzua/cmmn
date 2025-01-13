@@ -4,8 +4,6 @@ import {di, Fn} from "@cmmn/core";
 import {Transport} from "../src/transport/transport";
 import {expect} from "@cmmn/tools/test";
 import {Team} from "../src/queue/team";
-import * as console from "node:console";
-import {Broker} from "../src/queue/broker";
 
 describe('quorum', async () => {
     await test('two', async () => {

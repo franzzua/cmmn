@@ -1,2 +1,2 @@
-export {Server} from "./Server";
-export {controller, Get, Put, Post, Delete} from "./decorators/controller";
+export {ctrl, get, post, put, request, type RouteOptions, routes} from "./decorators/decorators";
+export {registerRoutes} from "./decorators/routes";

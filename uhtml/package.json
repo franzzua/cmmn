@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/uhtml",
-  "version": "2.2.3",
+  "version": "3.0.0-alpha-2",
   "description": "",
   "publishConfig": {
     "access": "public"
@@ -18,7 +18,7 @@
     }
   },
   "browser": "./dist/bundle/index.js",
-  "module": "./dist/bundle/index.js",
+  "module": "./index.ts",
   "typesVersions": {
     "*": {
       "typings.d.ts": [
@@ -31,12 +31,12 @@
     "build": "cmmn compile -b --watch"
   },
   "devDependencies": {
-    "@cmmn/tools": "workspace:*",
+    "@cmmn/tools": "workspace:~",
     "linkedom": "0.18.6",
     "uhtml": "4.7.0"
   },
   "dependencies": {
-    "@cmmn/core": "workspace:*"
+    "@cmmn/core": "workspace:~"
   },
   "files": [
     "dist"

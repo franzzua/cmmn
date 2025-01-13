@@ -15,7 +15,7 @@ globalThis.cancelAnimationFrame = id => clearTimeout(id);
 
 describe('component', async () => {
 
-    const {Component, component, property, html, svg} = await import("..");
+    const {Component, component, property, html, svg} = await import("../index");
 
 
     await test('hello-world', async () => {

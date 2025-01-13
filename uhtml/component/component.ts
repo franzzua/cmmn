@@ -48,6 +48,11 @@ export abstract class Component extends globalThis.HTMLElement {
         await EventCycle.onceAsync('animationFrame');
         render(this, this.hole.get())
         this.dispatchEvent(new Event('render'));
+        this.renderCallback();
+    }
+
+    protected renderCallback(){
+
     }
 
     protected injectedChildren: Element[];

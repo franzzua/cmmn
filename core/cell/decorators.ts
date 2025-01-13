@@ -1,5 +1,4 @@
 import { BaseCell, Cell, ICellOptions } from '../cell';
-import * as console from "node:console";
 
 type ClassAccessorDecorator<TClass, T> = (
     initial: ClassAccessorDecoratorTarget<TClass, T>,

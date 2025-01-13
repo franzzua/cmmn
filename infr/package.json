@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/infr",
-  "version": "2.2.3",
+  "version": "3.0.0-alpha-2",
   "description": "",
   "type": "module",
   "repository": {
@@ -16,10 +16,10 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@cmmn/core": "workspace:*"
+    "@cmmn/core": "workspace:~"
   },
   "devDependencies": {
-    "@cmmn/tools": "workspace:*"
+    "@cmmn/tools": "workspace:~"
   },
   "typings": "./dist/typings/index.d.ts",
   "scripts": {

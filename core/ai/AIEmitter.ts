@@ -1,5 +1,4 @@
 import {ResolvablePromise} from "../helpers";
-import * as console from "node:console";
 
 export class AIEmitter<T> implements AsyncIterable<T>, Disposable {
 

@@ -11,12 +11,14 @@ export function component(opts: IComponentOptions = {}) {
         Name?: string;
     }, context: ClassDecoratorContext) => {
         // target.Name = opts.name;
-        const attrs = context.metadata.observedAttributes as Record<string, string | symbol>;
-        Object.defineProperty(target, 'observedAttributes', {
-            get(){
-                return Object.keys(attrs);
-            }
-        });
+        const attrs = context.metadata.observedAttributes as Record<string, string | symbol> | undefined;
+        if (attrs) {
+            Object.defineProperty(target, 'observedAttributes', {
+                get() {
+                    return Object.keys(attrs);
+                }
+            });
+        }
         target.prototype.attributeChangedCallback = function (key, oldValue, newValue){
             if (key in attrs){
                 this[attrs[key]] = newValue;

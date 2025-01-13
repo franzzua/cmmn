@@ -3,7 +3,6 @@ import {LoroDoc} from "loro-crdt";
 import {bind, Fn} from "@cmmn/core";
 import {LoroMessage, LoroMessageType} from "./loro.message";
 import {LibP2PServices} from "./p2p.node";
-import * as console from "node:console";
 
 export class LoroRoom implements AsyncDisposable {
     private static protocol = 'loro:v1'

@@ -6,7 +6,6 @@ import {Cell, Container, di, Fn} from "@cmmn/core";
 import {P2PRepository} from "../src";
 import {Storage, StorageProvider} from "../src/crdt/storage";
 import {InMemoryStorage} from "./inMemoryStorage";
-import * as console from "node:console";
 
 describe('p2p-repo', () => {
 

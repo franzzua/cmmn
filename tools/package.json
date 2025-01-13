@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/tools",
-  "version": "2.2.3",
+  "version": "3.0.0-alpha-2",
   "description": "Compilation, bundling, code generator, testing.",
   "main": "dist/rollup.config.js",
   "type": "module",
@@ -38,19 +38,18 @@
     "helpers/*"
   ],
   "dependencies": {
-    "@farmfe/core": "1.4.7",
+    "@farmfe/core": "^1.6.4",
     "@schemastore/package": "0.0.10",
     "@swc-node/register": "1.10.9",
-    "@swc/cli": "0.4.1-nightly.20240914",
-    "@swc/core": "1.7.39",
+    "@swc/cli": "^0.6.0",
+    "@swc/core": "^1.10.4",
     "@types/node": "22.8.1",
     "@zerollup/ts-helpers": "1.7.18",
-    "chokidar": "3.5.1",
-    "expect": "29.7.0",
-    "rolldown": "0.14.0",
-    "unplugin-swc": "1.5.1"
+    "expect": "^29.7.0",
+    "unplugin-swc": "^1.5.1"
   },
   "author": "",
   "license": "ISC",
-  "gitHead": "2755b333808bf97f1d9454601c2a2c9a88e4a021"
+  "gitHead": "2755b333808bf97f1d9454601c2a2c9a88e4a021",
+  "stableVersion": "3.0.0-alpha-2"
 }
