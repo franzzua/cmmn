@@ -45,8 +45,6 @@ export const Fn = {
             };
             return descr;
         }
-    },
-    debounce: debounce,
-    throttle: throttle,
+    }
 };
 

@@ -1,4 +1,4 @@
-import {Libp2p, PeerId} from "@libp2p/interface";
+import type {Libp2p, PeerId} from "@libp2p/interface";
 import {LoroDoc} from "loro-crdt";
 import {bind, Fn} from "@cmmn/core";
 import {LoroMessage, LoroMessageType} from "./loro.message";

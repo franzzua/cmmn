@@ -1,5 +1,4 @@
 import {Target} from "../helpers/target.js";
-import {createBundleHandler} from "@farmfe/core";
 import {exec, execSync} from "node:child_process";
 
 export async function publish(...flags){

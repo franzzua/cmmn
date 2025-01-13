@@ -9,7 +9,7 @@
       "path": "../core"
     },
     {
-      "path": "../uhtml"
+      "path": "../ui"
     }
   ]
 }

@@ -1,9 +1,8 @@
 import {Cell, ICellOptions} from "./cell";
 import {BaseCell} from "./base-cell";
-import {throttle} from "../helpers";
 
 export type IAsyncCellOptions<T, TKey = T> = ICellOptions<T, TKey> & {
-    throttle?: { time: number, leading: boolean, trailing: boolean }
+    // throttle?: { time: number, leading: boolean, trailing: boolean }
 };
 
 export class AsyncCell<T, TKey = T> extends Cell<T, TKey> {
@@ -39,12 +38,7 @@ export class AsyncCell<T, TKey = T> extends Cell<T, TKey> {
     };
 
     active() {
-        const onChange = this.options.throttle
-            ? throttle(
-                this.onChange,
-                this.options.throttle.time, // TODO throttle некорректно работает с wait равным undefined
-                this.options.throttle)
-            : this.onChange;
+        const onChange = this.onChange;
         this.genCell.on('change', onChange)
         this.onChange({value: this.genCell.get()})
         super.active()

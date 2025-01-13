@@ -38,7 +38,7 @@
     "helpers/*"
   ],
   "dependencies": {
-    "@farmfe/core": "^1.6.4",
+    "@rsbuild/core": "^1.1.13",
     "@schemastore/package": "0.0.10",
     "@swc-node/register": "1.10.9",
     "@swc/cli": "^0.6.0",
@@ -51,5 +51,8 @@
   "author": "",
   "license": "ISC",
   "gitHead": "2755b333808bf97f1d9454601c2a2c9a88e4a021",
-  "stableVersion": "3.0.0-alpha-2"
+  "stableVersion": "3.0.0-alpha-2",
+  "devDependencies": {
+    "@rslib/core": "^0.3.1"
+  }
 }

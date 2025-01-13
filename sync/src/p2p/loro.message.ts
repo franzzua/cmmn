@@ -1,5 +1,5 @@
 import {VersionVector} from "loro-crdt";
-import {PeerId} from "@libp2p/interface";
+import type {PeerId} from "@libp2p/interface";
 import {peerIdFromCID} from "@libp2p/peer-id";
 import {CID} from "multiformats";
 import {Serializer} from "./serializer";

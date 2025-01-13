@@ -24,7 +24,9 @@
   },
   "devDependencies": {
     "@cmmn/core": "workspace:~",
-    "@cmmn/tools": "workspace:~",
+    "@cmmn/tools": "workspace:~"
+  },
+  "dependencies": {
     "fastify": "4"
   },
   "type": "module",

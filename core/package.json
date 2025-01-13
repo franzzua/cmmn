@@ -16,7 +16,7 @@
     "> 0.25%"
   ],
   "type": "module",
-  "main": "dist/bundle/main.js",
+  "main": "dist/bundle/index.js",
   "typings": "./dist/typings/index.d.ts",
   "scripts": {
     "build": "cmmn compile --watch",
@@ -27,7 +27,9 @@
   },
   "devDependencies": {
     "@cmmn/tools": "workspace:~",
-    "@types/throttle-debounce": "5.0.2",
+    "@types/throttle-debounce": "5.0.2"
+  },
+  "dependencies": {
     "throttle-debounce": "5.0.2",
     "uuidv7": "1.0.2"
   },

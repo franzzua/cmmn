@@ -1,5 +1,5 @@
-import {bind, Cell, EventEmitter} from "@cmmn/core";
 import {Hole, render} from "uhtml";
+import {bind, Cell, EventEmitter} from "@cmmn/core";
 import {EventCycle} from "../user-events/event-cycle";
 
 export abstract class Component extends globalThis.HTMLElement {

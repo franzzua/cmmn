@@ -1,5 +1,5 @@
 import {cell, ObservableSet, singleton} from "@cmmn/core";
-import {Libp2p, PeerId, PubSub} from "@libp2p/interface";
+import type {Libp2p, PeerId, PubSub} from "@libp2p/interface";
 import {LoroDoc} from "loro-crdt";
 import {LoroRoom} from "./loroRoom";
 
