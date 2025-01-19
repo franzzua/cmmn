@@ -7,6 +7,9 @@
   "repository": {
     "url": "https://npm.local"
   },
+  "exports": {
+    ".": "./test"
+  },
   "scripts": {
     "compile": "cmmn compile -b --watch",
     "bundle": "cmmn bundle -b --watch",
@@ -22,7 +25,8 @@
     "tools",
     "server",
     "ui",
-    "sync"
+    "sync",
+    "test"
   ],
   "author": "",
   "license": "ISC",

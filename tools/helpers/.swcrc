@@ -14,13 +14,5 @@
         },
         "target": "esnext",
         "externalHelpers": true
-    },
-    "module": {
-        "type": "nodenext",
-        "resolveFully": true,
-        "noInterop": true,
-        "strict": true
-    },
-    "sourceMaps": true,
-    "isModule": true
+    }
 }

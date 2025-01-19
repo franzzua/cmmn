@@ -1,6 +1,5 @@
 import {EventEmitter, EventEmitterBase} from '../event-emitter';
-import {Graph} from './graph.js';
-import {Cell} from "./cell";
+import {Graph} from './graph';
 import {selector} from "./cell-selector";
 
 export class BaseCell<T = any> extends EventEmitter<{

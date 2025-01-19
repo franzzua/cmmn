@@ -8,13 +8,17 @@
   "repository": {
     "url": "https://github.com/franzzua/cmmn/tree/master/sync"
   },
-  "main": "./dist/bundle/main.js",
+  "main": "./dist/bundle/index.js",
   "module": "./index.ts",
   "browser": "./dist/bundle/index.browser.js",
   "exports": {
     ".": {
-      "import": "./dist/bundle/main.js",
-      "default": "./dist/bundle/main.js"
+      "import": "./dist/bundle/index.js",
+      "default": "./dist/bundle/index.js"
+    },
+    "./entry": {
+      "import": "./dist/bundle/index.js",
+      "default": "./dist/bundle/index.js"
     },
     "./package.json": "./package.json"
   },
@@ -43,10 +47,10 @@
   },
   "devDependencies": {
     "@cmmn/tools": "workspace:~",
-    "@libp2p/interface-mocks": "^12.0.1",
     "@libp2p/bootstrap": "^11.0.16",
     "@libp2p/floodsub": "10.1.14",
     "@libp2p/identify": "^3.0.14",
+    "@libp2p/interface-mocks": "^12.0.1",
     "@libp2p/memory": "^1.0.2",
     "@libp2p/plaintext": "2.0.12"
   },

@@ -1,4 +1,4 @@
-import {BaseCell} from './base-cell.js';
+import {BaseCell} from './base-cell';
 
 export type ICellOptions<T, TKey = T> = {
     compare?: (a: TKey, b: TKey) => boolean;

@@ -1,0 +1,24 @@
+{
+  "name": "@cmmn/test",
+  "version": "3.0.0-alpha-2",
+  "description": "",
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "exports": {
+    "./index.html": {
+      "require": "./src/index.html",
+      "default": "./dist/bundle/index.html"
+    },
+    "./index.ts": {
+      "require": "./src/index.ts",
+      "default": "./dist/bundle/index.js"
+    }
+  },
+  "devDependencies": {
+    "@cmmn/core": "workspace:~",
+    "@cmmn/tools": "workspace:~",
+    "@cmmn/ui": "workspace:~"
+  }
+}
