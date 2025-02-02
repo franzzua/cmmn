@@ -3,11 +3,15 @@ import path from "path";
 import fs from "node:fs";
 import {getTSConfig} from "./getTSConfig.js";
 import {resolve} from "node:path";
-import {rspack} from "@rspack/core";
+import {build, createBuilder, createLogger} from "vite";
+import tsconfigPaths from 'vite-tsconfig-paths';
+import swc from 'unplugin-swc';
+import {builtinModules as builtin} from "module";
+import {hooksPlugin} from "./hooks.js";
 
 const swcConfig = JSON.parse(fs.readFileSync(import.meta.dirname + "/.swcrc", "utf-8"));
 
-export class Target {
+export class Target extends EventTarget {
     /** @type {string} **/
     rootDir;
     /** @type {string[]} **/
@@ -16,6 +20,7 @@ export class Target {
     deps;
 
     constructor(rootDir, flags, deps) {
+        super();
         this.rootDir = rootDir;
         this.flags = flags;
         this.deps = deps;
@@ -75,7 +80,21 @@ export class Target {
             jsc: {
                 ...swcConfig.jsc,
                 baseUrl: this.rootDir,
-                paths: tsConfig.compilerOptions?.paths
+                paths: tsConfig.compilerOptions?.paths,
+                minify: this.minify ? {
+                    compress: {
+                        booleans_as_integers: true,
+                        ecma: 2020
+                    },
+                    mangle: {
+                        topLevel: true
+                    },
+                    ecma: '2020',
+                    format: {
+                        comments: false,
+                        asciiOnly: true
+                    }
+                } : undefined
             }
         };
     }
@@ -142,22 +161,16 @@ export class Target {
             wasmLoading: 'fetch',
         };
     }
-    /** @returns {import('webpack-dev-server').RspackOptions["devServer"]} **/
-    get devServer(){
-        return  {
-
-        }
-    }
 
     /** @returns {import('webpack-dev-server').RspackOptions["entry"]} **/
-    get entries(){
+    get entries() {
         if (this.packageJson.module) {
             const entry = path.join(this.rootDir, this.packageJson.module ?? "index.ts");
             return {
                 index: entry
             }
         }
-        if (this.packageJson.exports){
+        if (this.packageJson.exports) {
             const result = {};
             for (let item in this.packageJson.exports) {
                 if (!this.packageJson.exports[item].require ||
@@ -168,19 +181,19 @@ export class Target {
                     this.rootDir,
                     importFile
                 );
-                console.log(file)
+                // console.log(file)
                 const exportFile = path.relative(
                     this.output.path,
                     path.join(this.rootDir, this.packageJson.exports[item].default),
                 );
-                console.log(exportFile);
+                // console.log(exportFile);
                 result[exportFile] = file;
             }
             return result;
         }
     }
 
-    get htmlTemplate(){
+    get htmlTemplate() {
         if (this.packageJson.exports) {
             for (let item in this.packageJson.exports) {
                 if (!this.packageJson.exports[item].require ||
@@ -199,11 +212,11 @@ export class Target {
         }
     }
 
-    *getPlugins(){
+    * getPlugins() {
         yield new rspack.ProgressPlugin({
             prefix: this.packageJson.name,
         });
-        if (this.htmlTemplate){
+        if (this.htmlTemplate) {
             yield new rspack.HtmlRspackPlugin({
                 filename: this.htmlTemplate.output,
                 template: this.htmlTemplate.template,
@@ -212,39 +225,93 @@ export class Target {
         }
     }
 
-    /**
-     * @returns {Promise<import('@rspack/core').RspackOptions>}
-     */
-    async getConfig() {
-        const mode = this.run ? 'development' : 'production';
+    get logger() {
         return {
-            context: this.rootDir,
-            mode,
-            name: this.packageJson.name,
-            entry: this.entries,
-            externals: Object.keys(this.packageJson.dependencies ?? {}),
-            externalsType: 'module',
-            resolve: this.resolve,
-            module: this.module,
-            optimization: this.optimization,
-            output: this.output,
-            plugins: [...this.getPlugins()],
-            devServer: {
-                client: {
-                    overlay: {
-                        errors: true,
-                        warnings: false
-                    },
-                },
-                hot: true,
-                host: '0.0.0.0',
-                port: 9126
-            },
-        }
-    };
-
-    async getCompiler() {
-        return rspack(await this.getConfig());
+            log: (...args) => console.log(this.packageJson.name, ...args)
+        };
     }
 
+    async getCompiler() {
+        return createBuilder({
+            root: this.rootDir,
+            logLevel: 'silent',
+            mode: 'production',
+            build: {
+                watch: this.flags.includes('--watch'),
+                rollupOptions: {
+                    input: this.entries ?? path.join(this.rootDir, './index.ts'),
+                    output: {
+                        dir: path.join(this.rootDir, 'dist/bundle'),
+                        entryFileNames: `[name].${this.minify ? 'min.' : ''}js`,
+                        chunkFileNames: `assets/[name].${this.minify ? 'min.' : ''}js`,
+                        assetFileNames: `assets/[name].[ext]`,
+                        esModule: true,
+                        exports: "named",
+                        format: 'esm',
+                        generatedCode: 'es2015',
+                        strict: true
+                    },
+                    external: [
+                        ...Object.keys(this.packageJson.dependencies ?? {}),
+                        ...builtin,
+                        ...builtin.map((x) => `node:${x}`),
+                        'fsevents',
+                    ],
+                },
+                sourcemap: true,
+                lib: {
+                    entry: this.entries ?? path.join(this.rootDir, './index.ts'),
+                    formats: ['es'],
+                }
+            },
+            plugins: [
+                swc.vite({
+                    ...this.swcConfig,
+                }),
+                tsconfigPaths({}),
+                hooksPlugin(this)
+            ],
+            builder: {
+            },
+        });
+    }
+
+    /** @type {import('unplugin').UnpluginOptions} **/
+    hooks = {
+        buildStart: (config) => {
+            this.dispatchEvent(new Event('start'));
+            // this.logger.log('start...')
+        },
+        buildEnd: () => {
+            this.dispatchEvent(new Event('end'));
+        },
+        writeBundle: (config, bundles) => {
+            for (let name in bundles) {
+                this.dispatchEvent(new BundleEvent(name, bundles[name]));
+            }
+        },
+        watchChange: (id, change) => {
+            this.dispatchEvent(new ChangeEvent(id, change.event));
+            this.logger.log(change.event, id);
+        }
+    }
+}
+
+class BundleEvent extends Event {
+    bundleName;
+    bundle;
+    constructor(bundleName, bundle) {
+        super('bundle');
+        this.bundleName = bundleName;
+        this.bundle = bundle;
+    }
+}
+class ChangeEvent extends Event {
+    file;
+    change;
+    constructor(id, type) {
+        super('change');
+        this.file = id;
+        this.change = type;
+    }
 }

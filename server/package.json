@@ -15,13 +15,6 @@
   "files": [
     "dist"
   ],
-  "exports": {
-    ".": {
-      "types": "./dist/typings/index.d.ts",
-      "import": "./dist/bundle/index.js",
-      "require": "./dist/bundle/index.cjs"
-    }
-  },
   "devDependencies": {
     "@cmmn/core": "workspace:~",
     "@cmmn/tools": "workspace:~"

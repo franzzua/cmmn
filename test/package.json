@@ -16,8 +16,10 @@
       "default": "./dist/bundle/index.js"
     }
   },
+  "dependencies": {
+    "@cmmn/core": "workspace:~"
+  },
   "devDependencies": {
-    "@cmmn/core": "workspace:~",
     "@cmmn/tools": "workspace:~",
     "@cmmn/ui": "workspace:~"
   }

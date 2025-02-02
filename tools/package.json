@@ -38,9 +38,6 @@
     "helpers/*"
   ],
   "dependencies": {
-    "@rspack/cli": "^1.1.8",
-    "@rspack/core": "1.1.8",
-    "@rspack/dev-server": "^1.0.10",
     "@schemastore/package": "0.0.10",
     "@swc-node/register": "1.10.9",
     "@swc/cli": "^0.6.0",
@@ -52,14 +49,19 @@
     "expect": "^29.7.0",
     "html-loader": "^5.1.0",
     "import-meta-resolve": "^4.1.0",
-    "snowpack": "^3.8.8",
-    "unionfs": "^4.5.4"
+    "terminal-kit": "^3.1.2",
+    "unionfs": "^4.5.4",
+    "unplugin": "^2.1.2",
+    "unplugin-starter": "^0.1.0",
+    "unplugin-swc": "^1.5.1",
+    "vite": "6.0.11",
+    "vite-tsconfig-paths": "^5.1.4"
   },
   "author": "",
   "license": "ISC",
   "gitHead": "2755b333808bf97f1d9454601c2a2c9a88e4a021",
   "stableVersion": "3.0.0-alpha-2",
-  "devDependencies": {
-    "@rslib/core": "^0.3.1"
+  "resolutions": {
+    "terser": "npm:@swc/core"
   }
 }
