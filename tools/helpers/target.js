@@ -130,6 +130,7 @@ export class Target extends EventTarget {
             }
             return result;
         }
+        return { index: 'index.ts' };
     }
 
     get logger() {
@@ -147,7 +148,7 @@ export class Target extends EventTarget {
             build: {
                 watch: this.flags.includes('--watch'),
                 rollupOptions: {
-                    input: this.entries ?? path.join(this.rootDir, './index.ts'),
+                    input: this.entries,
                     output: {
                         dir: path.join(this.rootDir, 'dist/bundle'),
                         entryFileNames: `[name].${this.minify ? 'min.' : ''}js`,
@@ -191,7 +192,6 @@ export class Target extends EventTarget {
     }
 
     resolver;
-
     /** @type {import('unplugin').UnpluginOptions} **/
     hooks = {
         buildStart: (config) => {
@@ -206,6 +206,15 @@ export class Target extends EventTarget {
                 this.dispatchEvent(new BundleEvent(name, bundles[name]));
             }
         },
+        // transform: (code) => {
+        //     const loader = `${this.packageJson.name}_@vite/client_loaded`;
+        //     return code + `
+        //         if (!globalThis['${loader}']){
+        //             globalThis['${loader}'] = true;
+        //             import('@vite/client');
+        //         }
+        //     `;
+        // },
         watchChange: (id, change) => {
             this.dispatchEvent(new ChangeEvent(id, change.event));
             this.logger.log(change.event, id);

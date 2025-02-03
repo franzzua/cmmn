@@ -1,7 +1,7 @@
 import {Target} from "../helpers/target.js";
-import {getNodeModulesMiddleware, getTargetMiddleware} from "../dev-server/index.js";
 import {fastify} from "fastify";
 import {createServer} from "vite";
+import path from "path";
 
 const prefix = '_';
 
@@ -13,41 +13,74 @@ export async function dev(...flags) {
             return `/${prefix}/` + id;
     }
     const app = fastify({});
+    await app.register(await import('@fastify/express'));
+    const broadcaster = new HotUpdateBroadcaster()
     for (let target of targets) {
         if (target.tsConfig.include?.length === 0)
             continue;
-        target.resolver = resolver; const config = await target.getConfig();
+        target.resolver = resolver;
+        const config = await target.getConfig();
         const devServer = await createServer({
             ...config,
-            base: `/${prefix}/`+target.packageJson.name,
+            base: `/${prefix}/` + target.packageJson.name,
             server: {
-                fs: {
-                    strict: false
-                },
+                ...config.server ?? {},
                 hmr: {
+                    ...config.server?.hmr ?? {},
                     server: app.server,
                 },
             },
-
         });
 
-        app.get(`/${prefix}/${target.packageJson.name}*`, await getTargetMiddleware(devServer, target, prefix));
+        broadcaster.enhanceDevServer(devServer);
+
+        app.register(await getTargetMiddleware(devServer, target, prefix), {
+            prefix: `/${prefix}/${target.packageJson.name}`
+        });
     }
-    app.get(`/${prefix}/`, getNodeModulesMiddleware(process.cwd()));
 
     await app.listen({
         host: '0.0.0.0',
         port: 9000
     });
     return app;
-    // const app = await runDevServer(ufs.use(memfs).use(fs));
-    // const {EsmHmrEngine} = await import("snowpack/lib/cjs/hmr-server-engine.js");
-    // const hmr = new EsmHmrEngine({
-    //     server: app.server,
-    // });
-    // const devServer = new RspackDevServer(
-    //     Object.values(compilers)[0].options.devServer,
-    //     compiler)
-    // await devServer.initialize();
 
+}
+class HotUpdateBroadcaster {
+    #eventTarget = new EventTarget();
+
+    enhanceDevServer(devServer) {
+        const baseSend = devServer.ws.send
+        this.#eventTarget.addEventListener('ws', e => baseSend(e.detail))
+        devServer.ws.send = this.send;
+    }
+
+    send = payload => this.#eventTarget.dispatchEvent(new CustomEvent('ws', {detail: payload}))
+}
+
+
+/**
+ * @param devServer {import('vite/dist/node/index.d.ts').ViteDevServer}
+ * @param target {import("../helpers/target.js").Target}
+ * @param prefix {string}
+ */
+export async function getTargetMiddleware(devServer, target, prefix) {
+    return async (app, options) => {
+        app.get('*', (request, reply, next) => {
+            const file = request.params['*'] || 'index';
+            function redirect(location){
+                reply.status(302);
+                reply.headers({ location });
+                reply.send();
+            }
+            if (file in target.entries) {
+                const entry = target.entries[file];
+                return redirect(path.join(`/${prefix}/${target.packageJson.name}/`, entry));
+            }
+            if (file.startsWith(`/${prefix}`)){
+                return redirect(file);
+            }
+            devServer.middlewares(request.raw, reply.raw);
+        })
+    }
 }

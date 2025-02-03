@@ -5,7 +5,7 @@ import {execSync} from "child_process";
 
 const templateTpl = fs.readFileSync(path.join(import.meta.dirname, './gen/template.ts.tpl'), 'utf8');
 const componentTpl = fs.readFileSync(path.join(import.meta.dirname, './gen/component.ts.tpl'), 'utf8');
-const styleTpl = fs.readFileSync(path.join(import.meta.dirname, './gen/style.less.tpl'), 'utf8');
+const styleTpl = fs.readFileSync(path.join(import.meta.dirname, './gen/style.css.tpl'), 'utf8');
 
 
 export function gen(name, directory, nested = false) {
@@ -18,7 +18,7 @@ export function gen(name, directory, nested = false) {
     }
     fs.writeFileSync(name + '.component.ts', componentTpl.replace(/\$Name\$/g, Name).replace(/\$name\$/g, name), 'utf8');
     fs.writeFileSync(name + '.template.ts', templateTpl.replace(/\$Name\$/g, Name).replace(/\$name\$/g, name), 'utf8');
-    fs.writeFileSync(name + '.style.less', styleTpl.replace(/\$Name\$/g, Name).replace(/\$name\$/g, name), 'utf8');
+    fs.writeFileSync(name + '.style.css', styleTpl.replace(/\$Name\$/g, Name).replace(/\$name\$/g, name), 'utf8');
     execSync(`git add ${name}.component.ts`);
     execSync(`git add ${name}.template.ts`);
     execSync(`git add ${name}.style.less`);

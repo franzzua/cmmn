@@ -38,6 +38,7 @@
     "helpers/*"
   ],
   "dependencies": {
+    "@fastify/express": "^4.0.2",
     "@schemastore/package": "0.0.10",
     "@swc-node/register": "1.10.9",
     "@swc/cli": "^0.6.0",
@@ -48,6 +49,7 @@
     "chokidar": "4.0.3",
     "expect": "^29.7.0",
     "express": "^4.21.2",
+    "fastify": "5.2.1",
     "html-loader": "^5.1.0",
     "import-meta-resolve": "^4.1.0",
     "mime": "4.0.6",

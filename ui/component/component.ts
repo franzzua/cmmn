@@ -9,7 +9,6 @@ export abstract class Component extends globalThis.HTMLElement {
     }
 
     public connectedCallback() {
-        Component.GlobalEvents.emit('connected', this);
         this.dispatchEvent(new Event('connected'));
         this.injectedChildren = Array.from(this.children);
         for (let child of Array.from(this.children)) {
@@ -52,9 +51,17 @@ export abstract class Component extends globalThis.HTMLElement {
     }
 
     protected renderCallback(){
-
     }
 
     protected injectedChildren: Element[];
 
+}
+
+if (import.meta.hot) {
+    import.meta.hot.accept((newModule) => {
+        if (newModule) {
+            // newModule is undefined when SyntaxError happened
+            console.log('updated: count is now ', newModule.count)
+        }
+    })
 }
