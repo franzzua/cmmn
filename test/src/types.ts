@@ -1,0 +1,1 @@
+export type SmallNumber = 4 | 6 | 7 | 8 | 9;

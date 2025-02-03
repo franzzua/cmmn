@@ -1,5 +1,6 @@
 import { Cell } from "@cmmn/core";
 import { Component } from "@cmmn/ui";
-const cell = new Cell(1);
+import {SmallNumber} from "./types";
+const cell = new Cell<SmallNumber>(6);
 const cell2 = new Cell(1);
-console.log('cell');
+console.log('cell', cell.value);
