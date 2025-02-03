@@ -18,17 +18,17 @@ export function getNodeModulesMiddleware(rootDir) {
 }
 
 /**
- * @param devServer {import('vite').DevServer}
+ * @param devServer {import('vite/dist/node/index.d.ts').ViteDevServer}
  * @param target {import("../helpers/target.js").Target}
  * @param prefix {string}
- * @returns {Promise<function(*, *, *): Promise<string>>}
+ * @returns {Promise<function(*, *, *): Promise<string | undefined | Buffer>>}
  */
 export async function getTargetMiddleware(devServer, target, prefix) {
     let clientInjected = false;
     /**
      * @param req {import('fastify/types/request.js').FastifyRequest}
      * @param res {import('fastify/types/reply.js').FastifyReply}
-     * @returns {Promise<string | undefined>}
+     * @returns {Promise<string | undefined | Buffer>}
      */
     async function handler(req, res){
         const route = req.params['*'];
@@ -41,26 +41,35 @@ export async function getTargetMiddleware(devServer, target, prefix) {
             return;
         }
         if (file.endsWith('.html')){
-            const html = await fs.readFile(path.join(target.rootDir, file), {
+            const content = await fs.readFile(path.join(target.rootDir, file), {
                 encoding: 'utf-8'
             });
+            const mimeType = mime.getType(file)
             res.headers({
-                "content-type": "text/html"
+                "content-type": mimeType
             });
-            clientInjected = true;
-            return devServer.transformIndexHtml(file, html);
+            if (file.endsWith('.html')) {
+                clientInjected = true;
+            }
+            return devServer.transformIndexHtml(file, content);
         }
-        res.headers({
-            "content-type": "application/javascript"
-        });
-        const result = await devServer.transformRequest(file);
-        if (!clientInjected){
-            return result.code + `
+        if (file.match(/\.[tj]sx?$/) || !file.match(/\.(css|png|svg|jpe?g)$/)) {
+            res.headers({
+                "content-type": "application/javascript"
+            });
+            const result = await devServer.transformRequest(file);
+            if (!clientInjected) {
+                return result.code + `
                 // inject vite client
                 import "/${prefix}/${target.packageJson.name}/@vite/client";
             `;
+            }
+            return result.code;
         }
-        return result.code;
+        res.headers({
+            "content-type": mime.getType(file)
+        });
+        return fs.readFile(path.join(target.rootDir, file));
     };
     return handler;
 }
