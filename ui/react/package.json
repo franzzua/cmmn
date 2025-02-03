@@ -1,5 +1,5 @@
 {
-  "name": "@cmmn/ui",
+  "name": "@cmmn/react",
   "version": "3.0.0-alpha-2",
   "description": "",
   "publishConfig": {
@@ -18,7 +18,7 @@
     }
   },
   "browser": "./dist/bundle/index.js",
-  "module": "./index.ts",
+  "module": "index.ts",
   "typesVersions": {
     "*": {
       "typings.d.ts": [
@@ -36,6 +36,7 @@
     "uhtml": "4.7.0"
   },
   "dependencies": {
+    "react": "18.3.1",
     "@cmmn/core": "workspace:~"
   },
   "files": [
@@ -43,15 +44,5 @@
   ],
   "author": "",
   "license": "ISC",
-  "gitHead": "2755b333808bf97f1d9454601c2a2c9a88e4a021",
-  "cmmn": {
-    "index": {
-      "input": "dist/esm/index.js",
-      "platform": "browser",
-      "external": [
-        "@cmmn/core"
-      ],
-      "module": "es,cjs"
-    }
-  }
+  "gitHead": "2755b333808bf97f1d9454601c2a2c9a88e4a021"
 }

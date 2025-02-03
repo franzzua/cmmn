@@ -14,7 +14,7 @@ export function select(selector: string): PropertyDecorator {
     return function (this: Component, target: any, key: string) {
         Object.defineProperty(target, key, {
             get(): any {
-                const cell = getOrCreateCell(this.element, key, selector);
+                const cell = getOrCreateCell(this, key, selector);
                 return cell.get();
             },
             configurable: true

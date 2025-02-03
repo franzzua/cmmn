@@ -74,7 +74,9 @@ export type ArraySelector<T> = Omit<Array<T>, keyof ReadonlyArray<T>> & Readonly
 export type ObjectSelector<T> = {
     readonly [key in keyof T]: Selector<T[key]>
 } & {
+    /** @internal **/
     [BaseCell.Symbol]: BaseCell<T>;
+    /** @internal **/
     [Selector]: 'object';
 };
 

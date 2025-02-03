@@ -1,6 +1,6 @@
 import {EventEmitter, EventEmitterBase} from '../event-emitter';
 import {Graph} from './graph';
-import {selector} from "./cell-selector";
+import {Selector, selector} from "./cell-selector";
 
 export class BaseCell<T = any> extends EventEmitter<{
     change: { value: T, oldValue: T },
@@ -165,7 +165,7 @@ export class BaseCell<T = any> extends EventEmitter<{
         }
     }
 
-    get $(){
+    get $(): Selector<T> {
         return selector(this);
     }
 

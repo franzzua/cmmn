@@ -75,6 +75,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@cmmn/react@workspace:ui/react":
+  version: 0.0.0-use.local
+  resolution: "@cmmn/react@workspace:ui/react"
+  dependencies:
+    "@cmmn/core": "workspace:~"
+    "@cmmn/tools": "workspace:~"
+    linkedom: "npm:0.18.6"
+    react: "npm:18.3.1"
+    uhtml: "npm:4.7.0"
+  peerDependencies:
+    react: "> 18.0.0"
+  languageName: unknown
+  linkType: soft
+
 "@cmmn/server@workspace:server":
   version: 0.0.0-use.local
   resolution: "@cmmn/server@workspace:server"
@@ -111,7 +125,7 @@ __metadata:
   dependencies:
     "@cmmn/core": "workspace:~"
     "@cmmn/tools": "workspace:~"
-    "@cmmn/ui": "workspace:~"
+    "@cmmn/uhtml": "workspace:~"
   languageName: unknown
   linkType: soft
 
@@ -147,9 +161,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@cmmn/ui@workspace:ui, @cmmn/ui@workspace:~":
+"@cmmn/uhtml@workspace:ui/uhtml, @cmmn/uhtml@workspace:~":
   version: 0.0.0-use.local
-  resolution: "@cmmn/ui@workspace:ui"
+  resolution: "@cmmn/uhtml@workspace:ui/uhtml"
   dependencies:
     "@cmmn/core": "workspace:~"
     "@cmmn/tools": "workspace:~"
@@ -4606,7 +4620,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-tokens@npm:^4.0.0":
+"js-tokens@npm:^3.0.0 || ^4.0.0, js-tokens@npm:^4.0.0":
   version: 4.0.0
   resolution: "js-tokens@npm:4.0.0"
   checksum: 10c0/e248708d377aa058eacf2037b07ded847790e6de892bbad3dac0abba2e759cb9f121b00099a65195616badcb6eca8d14d975cb3e89eb1cfda644756402c8aeed
@@ -4750,6 +4764,17 @@ __metadata:
   version: 0.2.5
   resolution: "load-tsconfig@npm:0.2.5"
   checksum: 10c0/bf2823dd26389d3497b6567f07435c5a7a58d9df82e879b0b3892f87d8db26900f84c85bc329ef41c0540c0d6a448d1c23ddc64a80f3ff6838b940f3915a3fcb
+  languageName: node
+  linkType: hard
+
+"loose-envify@npm:^1.1.0":
+  version: 1.4.0
+  resolution: "loose-envify@npm:1.4.0"
+  dependencies:
+    js-tokens: "npm:^3.0.0 || ^4.0.0"
+  bin:
+    loose-envify: cli.js
+  checksum: 10c0/655d110220983c1a4b9c0c679a2e8016d4b67f6e9c7b5435ff5979ecdb20d0813f4dec0a08674fcbdd4846a3f07edbb50a36811fd37930b94aaa0d9daceb017e
   languageName: node
   linkType: hard
 
@@ -5715,6 +5740,15 @@ __metadata:
   version: 18.3.1
   resolution: "react-is@npm:18.3.1"
   checksum: 10c0/f2f1e60010c683479e74c63f96b09fb41603527cd131a9959e2aee1e5a8b0caf270b365e5ca77d4a6b18aae659b60a86150bb3979073528877029b35aecd2072
+  languageName: node
+  linkType: hard
+
+"react@npm:18.3.1":
+  version: 18.3.1
+  resolution: "react@npm:18.3.1"
+  dependencies:
+    loose-envify: "npm:^1.1.0"
+  checksum: 10c0/283e8c5efcf37802c9d1ce767f302dd569dd97a70d9bb8c7be79a789b9902451e0d16334b05d73299b20f048cbc3c7d288bbbde10b701fa194e2089c237dbea3
   languageName: node
   linkType: hard
 

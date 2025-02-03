@@ -21,6 +21,6 @@
   },
   "devDependencies": {
     "@cmmn/tools": "workspace:~",
-    "@cmmn/ui": "workspace:~"
+    "@cmmn/uhtml": "workspace:~"
   }
 }

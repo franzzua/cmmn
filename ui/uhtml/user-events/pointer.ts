@@ -160,7 +160,7 @@ export class PointerListener extends EventListener<PointerEvents> {
             case 'down':
             case 'up':
             case 'move':
-                this.root.addEventListener('pointer' + eventName, this.emitters[eventName]);
+                this.root.addEventListener('pointer' + eventName as any,  this.emitters[eventName]);
                 break;
             case 'touchstart':
             case 'touchend':
@@ -170,7 +170,7 @@ export class PointerListener extends EventListener<PointerEvents> {
             case 'gesturestart':
             case 'wheel':
             case "dblclick":
-                this.root.addEventListener(eventName, this.emitters[eventName], {passive: true});
+                this.root.addEventListener(eventName as any, this.emitters[eventName], {passive: true});
                 break;
             case 'click':
                 this.root.addEventListener('click', this.emitters[eventName]);
@@ -192,7 +192,7 @@ export class PointerListener extends EventListener<PointerEvents> {
             case 'down':
             case 'up':
             case 'move':
-                this.root.removeEventListener('pointer' + eventName, this.emitters[eventName]);
+                this.root.removeEventListener('pointer' + eventName as any, this.emitters[eventName]);
                 break;
             case 'touchstart':
             case 'touchend':
@@ -202,7 +202,7 @@ export class PointerListener extends EventListener<PointerEvents> {
             case 'gesturestart':
             case 'wheel':
             case "dblclick":
-                this.root.removeEventListener(eventName, this.emitters[eventName]);
+                this.root.removeEventListener(eventName as any, this.emitters[eventName]);
                 break;
             case 'click':
                 this.root.removeEventListener('click', this.emitters[eventName]);
