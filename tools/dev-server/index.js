@@ -1,66 +1,66 @@
-import path from "path";
-import * as realFs from "fs";
-import {fastify} from "fastify";
+import fs from "fs/promises";
 import mime from "mime";
 import {fileURLToPath, pathToFileURL} from "node:url";
 import {resolve, moduleResolve} from 'import-meta-resolve';
+import {createServer} from "vite";
+import path from "path";
 
 /**
- * @param fs {import('fs')}
+ * @param rootDir {string}
  */
-export async function runDevServer(fs) {
-    const app = fastify({});
-    // for (let path in compilers) {
-    //     app.register(route(compilers[path]), {prefix: '/_/' + path});
-    // }
-    app.get('/_/*', async (req, reply) => {
+export function getNodeModulesMiddleware(rootDir) {
+    return async (req, reply) => {
         const file = req.params['*'];
-        const resolvedUrl = resolve(file, pathToFileURL(process.cwd()+"/index.js"));
-        const type = mime.lookup(resolvedUrl);
-        return reply.type(type).send(await fs.promises.readFile(fileURLToPath(resolvedUrl)));
-    });
-    await app.listen({
-        host: '0.0.0.0',
-        port: 9000
-    });
-    return app;
+        const resolvedUrl = resolve(file, pathToFileURL(rootDir+"/index.js"));
+        const type = mime.getType(resolvedUrl);
+        return reply.type(type).send(await fs.readFile(fileURLToPath(resolvedUrl)));
+    };
 }
 
 /**
- * @param compiler {import('@rspack/core').Compiler}
- * @returns {(function(app: import('fastify/types/instance.js').FastifyInstance, *): Promise<void>)|*}
+ * @param devServer {import('vite').DevServer}
+ * @param target {import("../helpers/target.js").Target}
+ * @param prefix {string}
+ * @returns {Promise<function(*, *, *): Promise<string>>}
  */
-export function route(compiler) {
-    let compilation;
-
-    async function getFile(file, fromCompilation) {
-        if (fromCompilation) {
-            compilation ??= new Promise((resolve) => compiler.watch({}, () => {
-                resolve();
-            }));
-            await compilation;
-        }
-        const fs = fromCompilation ? compiler.outputFileSystem : realFs;
-        return new Promise((resolve, reject) => {
-            fs.readFile(path.join(compiler.options.context, file), (err, buf) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(buf);
-                }
-            });
-        });
-    }
-
+export async function getTargetMiddleware(devServer, target, prefix) {
+    let clientInjected = false;
     /**
-     * @param app {import('fastify/types/instance.js').FastifyInstance}
+     * @param req {import('fastify/types/request.js').FastifyRequest}
+     * @param res {import('fastify/types/reply.js').FastifyReply}
+     * @returns {Promise<string | undefined>}
      */
-    return async (app, opts) => {
-        app.get('/', async (req, res) => {
-            return getFile('dist/bundle/index.js', true)
+    async function handler(req, res){
+        const route = req.params['*'];
+        const file = route || '/index.ts'
+        if (file.startsWith(`/${prefix}`)){
+            res.status(302);
+            res.headers({
+                location: file
+            });
+            return;
+        }
+        if (file.endsWith('.html')){
+            const html = await fs.readFile(path.join(target.rootDir, file), {
+                encoding: 'utf-8'
+            });
+            res.headers({
+                "content-type": "text/html"
+            });
+            clientInjected = true;
+            return devServer.transformIndexHtml(file, html);
+        }
+        res.headers({
+            "content-type": "application/javascript"
         });
-        app.get('/*', (request) => {
-            return getFile(request.params['*'], false)
-        });
-    }
+        const result = await devServer.transformRequest(file);
+        if (!clientInjected){
+            return result.code + `
+                // inject vite client
+                import "/${prefix}/${target.packageJson.name}/@vite/client";
+            `;
+        }
+        return result.code;
+    };
+    return handler;
 }

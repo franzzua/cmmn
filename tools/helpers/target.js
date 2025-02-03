@@ -3,11 +3,12 @@ import path from "path";
 import fs from "node:fs";
 import {getTSConfig} from "./getTSConfig.js";
 import {resolve} from "node:path";
-import {build, createBuilder, createLogger} from "vite";
+import {build, createBuilder} from "vite";
 import tsconfigPaths from 'vite-tsconfig-paths';
 import swc from 'unplugin-swc';
 import {builtinModules as builtin} from "module";
 import {hooksPlugin} from "./hooks.js";
+import {createVitePlugin} from "unplugin";
 
 const swcConfig = JSON.parse(fs.readFileSync(import.meta.dirname + "/.swcrc", "utf-8"));
 
@@ -99,69 +100,6 @@ export class Target extends EventTarget {
         };
     }
 
-    /** @returns {import('@rspack/core').RspackOptions["resolve"]} **/
-    get resolve() {
-        return {
-            extensions: ['...', '.tsx', '.ts', '.jsx'],
-            tsConfig: {
-                configFile: path.join(this.rootDir, 'tsconfig.json')
-            }
-        }
-    }
-
-    /** @returns {import('@rspack/core').RspackOptions["module"]} **/
-    get module() {
-        return {
-            rules: [
-                '...',
-                {
-                    test: /\.ts$/,
-                    exclude: [/node_modules/],
-                    loader: 'builtin:swc-loader',
-                    options: this.swcConfig,
-                    type: 'javascript/auto',
-                },
-                {
-                    test: /\.html$/,
-                    type: "asset/resource",
-                    // generator: {
-                    //     filename: "[name][ext]",
-                    // },
-                },
-                // {
-                //     test: /\.html$/i,
-                //     use: ["html-loader"],
-                // },
-            ],
-        }
-    }
-
-    /** @returns {import('@rspack/core').RspackOptions["optimization"]} **/
-    get optimization() {
-        return {
-            concatenateModules: true,
-            mergeDuplicateChunks: true,
-            nodeEnv: false,
-            minimize: this.minify
-        };
-    }
-
-    /** @returns {import('@rspack/core').RspackOptions["output"]} **/
-    get output() {
-        return {
-            path: path.join(this.rootDir, 'dist/bundle'),
-            filename: '[name]',
-            module: true,
-            chunkFormat: 'module',
-            library: {
-                type: 'modern-module'
-            },
-            chunkLoading: 'import',
-            workerChunkLoading: 'import',
-            wasmLoading: 'fetch',
-        };
-    }
-
     /** @returns {import('webpack-dev-server').RspackOptions["entry"]} **/
     get entries() {
         if (this.packageJson.module) {
@@ -170,6 +108,7 @@ export class Target extends EventTarget {
                 index: entry
             }
         }
+        const outputPath = path.join(this.rootDir, 'dist/bundle');
         if (this.packageJson.exports) {
             const result = {};
             for (let item in this.packageJson.exports) {
@@ -183,7 +122,7 @@ export class Target extends EventTarget {
                 );
                 // console.log(file)
                 const exportFile = path.relative(
-                    this.output.path,
+                    outputPath,
                     path.join(this.rootDir, this.packageJson.exports[item].default),
                 );
                 // console.log(exportFile);
@@ -193,49 +132,18 @@ export class Target extends EventTarget {
         }
     }
 
-    get htmlTemplate() {
-        if (this.packageJson.exports) {
-            for (let item in this.packageJson.exports) {
-                if (!this.packageJson.exports[item].require ||
-                    !this.packageJson.exports[item].default) continue;
-                const importFile = this.packageJson.exports[item].require;
-                if (!importFile.endsWith('.html')) continue;
-                const exportFile = path.relative(
-                    this.output.path,
-                    path.join(this.rootDir, this.packageJson.exports[item].default),
-                );
-                return {
-                    template: importFile,
-                    output: exportFile,
-                }
-            }
-        }
-    }
-
-    * getPlugins() {
-        yield new rspack.ProgressPlugin({
-            prefix: this.packageJson.name,
-        });
-        if (this.htmlTemplate) {
-            yield new rspack.HtmlRspackPlugin({
-                filename: this.htmlTemplate.output,
-                template: this.htmlTemplate.template,
-                inject: false
-            });
-        }
-    }
-
     get logger() {
         return {
             log: (...args) => console.log(this.packageJson.name, ...args)
         };
     }
 
-    async getCompiler() {
-        return createBuilder({
+    /** @returns {import('vite').InlineConfig} **/
+    async getConfig() {
+        return {
             root: this.rootDir,
             logLevel: 'silent',
-            mode: 'production',
+            mode: 'development',
             build: {
                 watch: this.flags.includes('--watch'),
                 rollupOptions: {
@@ -269,12 +177,20 @@ export class Target extends EventTarget {
                     ...this.swcConfig,
                 }),
                 tsconfigPaths({}),
-                hooksPlugin(this)
+                createVitePlugin(() =>({
+                    name: this.packageJson.name + '_pre',
+                    ...this.hooks
+                }))(),
             ],
-            builder: {
-            },
-        });
+            builder: {},
+        }
     }
+
+    getCompiler() {
+        return createBuilder(this.getConfig());
+    }
+
+    resolver;
 
     /** @type {import('unplugin').UnpluginOptions} **/
     hooks = {
@@ -293,22 +209,31 @@ export class Target extends EventTarget {
         watchChange: (id, change) => {
             this.dispatchEvent(new ChangeEvent(id, change.event));
             this.logger.log(change.event, id);
-        }
+        },
+        vite: {
+        },
+        resolveId:(id, importer, options) => {
+            return this.resolver?.(id);
+        },
+        enforce: 'pre',
     }
 }
 
 class BundleEvent extends Event {
     bundleName;
     bundle;
+
     constructor(bundleName, bundle) {
         super('bundle');
         this.bundleName = bundleName;
         this.bundle = bundle;
     }
 }
+
 class ChangeEvent extends Event {
     file;
     change;
+
     constructor(id, type) {
         super('change');
         this.file = id;
