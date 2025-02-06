@@ -1,7 +1,7 @@
 import {Target} from "../helpers/target.js";
 import {fastify} from "fastify";
 import {createServer} from "vite";
-import path from "path";
+import {join} from "path";
 
 const prefix = '_';
 
@@ -12,7 +12,10 @@ export async function dev(...flags) {
         if (target)
             return `/${prefix}/` + id;
     }
-    const app = fastify({});
+    const rewriter = new UrlRewriter();
+    const app = fastify({
+        rewriteUrl: rewriter.rewriteUrl
+    });
     await app.register(await import('@fastify/express'));
     const broadcaster = new HotUpdateBroadcaster()
     for (let target of targets) {
@@ -33,8 +36,8 @@ export async function dev(...flags) {
         });
 
         broadcaster.enhanceDevServer(devServer);
-
-        app.register(await getTargetMiddleware(devServer, target, prefix), {
+        rewriter.targets.push(target);
+        app.register(await getTargetMiddleware(devServer, target), {
             prefix: `/${prefix}/${target.packageJson.name}`
         });
     }
@@ -43,8 +46,42 @@ export async function dev(...flags) {
         host: '0.0.0.0',
         port: 9000
     });
+    console.log(`Listen http://localhost:9000`);
     return app;
 
+}
+
+class UrlRewriter {
+    /**
+     *
+     * @type {import("../helpers/target.js").Target[]}
+     */
+    targets = [];
+
+    rewritePath(path, req){
+        for (let target of this.targets) {
+            if (!path.startsWith(`/${prefix}/${target.packageJson.name}`)) continue;
+            const file = path.substring(`/${prefix}/${target.packageJson.name}`.length);
+            if (!file || file === '/'){
+                const mainEntry = target.packageJson.module
+                    ?? target.packageJson.main
+                    ?? target.packageJson.exports?.['.'];
+                return join(`/${prefix}/${target.packageJson.name}/`, mainEntry);
+            }
+            if (file in (target.packageJson.exports ?? {})) {
+                const entry = target.packageJson.exports[file];
+                return join(`/${prefix}/${target.packageJson.name}/`, entry);
+            }
+            if (file.startsWith(`/${prefix}`)){
+                return this.rewritePath(file, req);
+            }
+        }
+        return path;
+    }
+
+    rewriteUrl = req => {
+        return this.rewritePath(req.url, req)
+    }
 }
 class HotUpdateBroadcaster {
     #eventTarget = new EventTarget();
@@ -64,22 +101,9 @@ class HotUpdateBroadcaster {
  * @param target {import("../helpers/target.js").Target}
  * @param prefix {string}
  */
-export async function getTargetMiddleware(devServer, target, prefix) {
+export async function getTargetMiddleware(devServer, target) {
     return async (app, options) => {
         app.get('*', (request, reply, next) => {
-            const file = request.params['*'] || 'index';
-            function redirect(location){
-                reply.status(302);
-                reply.headers({ location });
-                reply.send();
-            }
-            if (file in target.entries) {
-                const entry = target.entries[file];
-                return redirect(path.join(`/${prefix}/${target.packageJson.name}/`, entry));
-            }
-            if (file.startsWith(`/${prefix}`)){
-                return redirect(file);
-            }
             devServer.middlewares(request.raw, reply.raw);
         })
     }

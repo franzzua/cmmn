@@ -9,23 +9,8 @@
     "url": "https://github.com/franzzua/cmmn/tree/master/ui"
   },
   "type": "module",
-  "main": "./dist/bundle/main.js",
-  "typings": "typings.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/typings/index.d.ts",
-      "import": "./dist/bundle/main.js"
-    }
-  },
-  "browser": "./dist/bundle/index.js",
+  "main": "./dist/bundle/index.js",
   "module": "index.ts",
-  "typesVersions": {
-    "*": {
-      "typings.d.ts": [
-        "dist/typings/index.d.ts"
-      ]
-    }
-  },
   "scripts": {
     "bundle": "cmmn bundle --watch",
     "build": "cmmn compile -b --watch"
@@ -35,8 +20,10 @@
     "linkedom": "0.18.6",
     "uhtml": "4.7.0"
   },
+  "peerDependencies": {
+    "react": ">=17.0.0"
+  },
   "dependencies": {
-    "react": "18.3.1",
     "@cmmn/core": "workspace:~"
   },
   "files": [

@@ -5,7 +5,8 @@
       "dom",
       "es2015.collection",
       "esnext"
-    ]
+    ],
+    "jsx": "react"
   },
   "include": [  "**/*.ts" ],
   "exclude": [

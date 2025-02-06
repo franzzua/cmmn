@@ -44,7 +44,7 @@ export class Graph {
             value = cell.pull();
         } catch (e) {
             error = e;
-        }finally {
+        } finally {
             cell.isPulling = false;
         }
         if (error) {

@@ -7,20 +7,19 @@
   },
   "type": "module",
   "exports": {
-    "./index.html": {
-      "require": "./src/index.html",
-      "default": "./dist/bundle/index.html"
-    },
-    "./index.ts": {
-      "require": "./src/index.ts",
-      "default": "./dist/bundle/index.js"
-    }
+    ".": "./src/index.html",
+    "./index.ts": "./src/index.ts"
   },
   "dependencies": {
-    "@cmmn/core": "workspace:~"
+    "@cmmn/core": "workspace:~",
+    "@cmmn/react": "workspace:~",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@cmmn/tools": "workspace:~",
-    "@cmmn/uhtml": "workspace:~"
+    "@cmmn/uhtml": "workspace:~",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react-swc": "^3.7.2"
   }
 }

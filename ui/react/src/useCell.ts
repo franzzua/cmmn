@@ -1,31 +1,35 @@
-import { useEffect, useMemo, useReducer } from 'react';
-import { BaseCell, Cell, compare } from '@cmmn/core';
+import { useRef, useSyncExternalStore } from 'react';
+import { BaseCell } from '@cmmn/core';
 
 export function useCell<T>(getter: (() => T) | BaseCell<T> | undefined, deps: any[] = []): T {
     if (!getter || getter instanceof BaseCell) deps.push(getter);
-    const cell = useMemo<BaseCell>(
-        () => (getter instanceof BaseCell ? getter : new Cell(getter, { compare })),
-        deps
+    console.log('useRef', useRef)
+    const cellRef = useRef<{
+        cell: BaseCell<T>;
+        state: symbol;
+        getSnapshot(): symbol;
+        subscribe(onChange): void;
+    } | null>(null);
+
+    if (!cellRef.current && getter){
+        const value = cellRef.current = {
+            cell: getter instanceof BaseCell ? getter : new BaseCell<T>(getter),
+            state: Symbol(),
+            getSnapshot(){
+                return this.state;
+            },
+            subscribe(onChange) {
+                value.cell.on('change', e => {
+                    onChange(value.state);
+                })
+            }
+        };
+    }
+    useSyncExternalStore(
+        cellRef.current.subscribe,
+        cellRef.current.getSnapshot,
+        cellRef.current.getSnapshot,
     );
-    // @ts-ignore
-    const [, dispatch] = useReducer((x) => ({}), {});
-    useEffect(() => {
-        dispatch();
-        return cell?.on('change', dispatch);
-    }, [cell]);
-    return cell.get();
-}
 
-export function select<T extends {
-    [k in TKey]?: unknown
-}, TKey extends keyof T>(cell: BaseCell<T | undefined>, key: TKey) : BaseCell<T[TKey] | undefined> {
-    return new Cell(() => cell.get()?.[key], {
-        onExternal: v => cell.set({
-            ...(cell.get() || {}),
-            [key]: v
-        } as never)
-    })
+    return cellRef.current.cell.value;
 }
-
-const c = new Cell<{a: Number}>({a: 1});
-c.$.Selector

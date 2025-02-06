@@ -3,6 +3,9 @@ import terminalKit from "terminal-kit";
 export class Terminal {
     term = terminalKit.terminal;
     data = [];
+    /**
+     * @type {import("./flags.js").Flags}
+     */
     flags;
     constructor(flags) {
         this.flags = flags;
@@ -17,12 +20,12 @@ export class Terminal {
             this.term.clear();
         }
         this.term.yellow('CMMN bundler');
-        if (this.flags.includes('--watch')){
+        if (this.flags.watch){
             this.term.green(' ✓ watch');
         } else {
             this.term.red(' ❌ watch')
         }
-        if (this.flags.includes('--minify')){
+        if (this.flags.minify){
             this.term.green(' ✓ minify\n');
         }else {
             this.term.red(' ❌ minify\n');

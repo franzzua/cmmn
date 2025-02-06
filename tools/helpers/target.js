@@ -3,11 +3,10 @@ import path from "path";
 import fs from "node:fs";
 import {getTSConfig} from "./getTSConfig.js";
 import {resolve} from "node:path";
-import {build, createBuilder} from "vite";
+import {build, createBuilder, mergeConfig} from "vite";
 import tsconfigPaths from 'vite-tsconfig-paths';
 import swc from 'unplugin-swc';
 import {builtinModules as builtin} from "module";
-import {hooksPlugin} from "./hooks.js";
 import {createVitePlugin} from "unplugin";
 
 const swcConfig = JSON.parse(fs.readFileSync(import.meta.dirname + "/.swcrc", "utf-8"));
@@ -15,7 +14,7 @@ const swcConfig = JSON.parse(fs.readFileSync(import.meta.dirname + "/.swcrc", "u
 export class Target extends EventTarget {
     /** @type {string} **/
     rootDir;
-    /** @type {string[]} **/
+    /** @type {import("./flags.js").Flags} **/
     flags;
     /** @type {Target[]} **/
     deps;
@@ -27,26 +26,14 @@ export class Target extends EventTarget {
         this.deps = deps;
     }
 
-    get minify() {
-        return this.flags.includes('--minify');
-    }
-
-    get run() {
-        return this.flags.includes('--run');
-    }
-
     /**
      * @param rootDir
      * @param flags
      * @returns {Promise<Target[]>}
      */
     static async readTargets(rootDir, flags) {
-        if (flags.includes('-w')) {
-            const dir = flags[flags.indexOf('-w') + 1];
-            return [new Target(resolve(rootDir, dir), flags)];
-        }
-        if (!flags.includes('-b')) {
-            return [new Target(rootDir, flags)]
+        if (flags.workspace) {
+            return [new Target(resolve(rootDir, flags.workspace), flags)];
         }
         const result = new Map();
         for await (let project of getDependencyOrder(rootDir)) {
@@ -82,7 +69,7 @@ export class Target extends EventTarget {
                 ...swcConfig.jsc,
                 baseUrl: this.rootDir,
                 paths: tsConfig.compilerOptions?.paths,
-                minify: this.minify ? {
+                minify: this.flags.minify ? {
                     compress: {
                         booleans_as_integers: true,
                         ecma: 2020
@@ -130,7 +117,7 @@ export class Target extends EventTarget {
             }
             return result;
         }
-        return { index: 'index.ts' };
+        return { index: './index.ts' };
     }
 
     get logger() {
@@ -142,11 +129,13 @@ export class Target extends EventTarget {
     /** @returns {import('vite').InlineConfig} **/
     async getConfig() {
         return {
+            envFile: false,
             root: this.rootDir,
             logLevel: 'silent',
             mode: 'development',
             build: {
-                watch: this.flags.includes('--watch'),
+                emptyOutDir: false,
+                watch: this.flags.watch,
                 rollupOptions: {
                     input: this.entries,
                     output: {
@@ -169,7 +158,7 @@ export class Target extends EventTarget {
                 },
                 sourcemap: true,
                 lib: {
-                    entry: this.entries ?? path.join(this.rootDir, './index.ts'),
+                    entry: this.entries,
                     formats: ['es'],
                 }
             },
@@ -184,7 +173,7 @@ export class Target extends EventTarget {
                 }))(),
             ],
             builder: {},
-        }
+        };
     }
 
     getCompiler() {

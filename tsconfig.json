@@ -12,6 +12,9 @@
       "path": "./ui/uhtml"
     },
     {
+      "path": "./ui/react"
+    },
+    {
       "path": "./server"
     },
     {
