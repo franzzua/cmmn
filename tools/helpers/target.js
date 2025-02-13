@@ -82,7 +82,7 @@ export class Target extends EventTarget {
                         comments: false,
                         asciiOnly: true
                     }
-                } : undefined
+                } : false
             }
         };
     }
@@ -99,9 +99,9 @@ export class Target extends EventTarget {
         if (this.packageJson.exports) {
             const result = {};
             for (let item in this.packageJson.exports) {
-                if (!this.packageJson.exports[item].require ||
-                    !this.packageJson.exports[item].default) continue;
-                const importFile = this.packageJson.exports[item].require;
+                const importFile = this.packageJson.exports[item].require ??
+                    this.packageJson.exports[item].default ?? this.packageJson.exports[item];
+                if (!importFile || !(typeof importFile === "string")) continue;
                 if (importFile.endsWith('.html')) continue;
                 const file = path.join(
                     this.rootDir,
@@ -110,7 +110,7 @@ export class Target extends EventTarget {
                 // console.log(file)
                 const exportFile = path.relative(
                     outputPath,
-                    path.join(this.rootDir, this.packageJson.exports[item].default),
+                    path.join(this.rootDir, importFile),
                 );
                 // console.log(exportFile);
                 result[exportFile] = file;
@@ -156,6 +156,7 @@ export class Target extends EventTarget {
                         'fsevents',
                     ],
                 },
+                minify: false,
                 sourcemap: true,
                 lib: {
                     entry: this.entries,

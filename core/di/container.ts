@@ -42,7 +42,7 @@ export class Container {
     const(dependency: any, value: any) {
         this.consts.set(dependency, value);
     }
-    factory(dependency: any, value: any) {
+    factory(dependency: any, value: (c: Container) => unknown) {
         this.factories.set(dependency, value);
     }
 

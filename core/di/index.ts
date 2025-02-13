@@ -1,12 +1,23 @@
 import { Container } from "./container";
 import { ConstructorOf } from "./types";
+import * as console from "node:console";
 
 export const inject =
-    <T>(dep: ConstructorOf<T, any[]> | Symbol) =>
-        (initial: T | undefined, ctx: ClassFieldDecoratorContext) =>
-            function (this: any) {
-                return resolve(dep) as T;
-            };
+    <T>(dep: ConstructorOf<T, any[]> | Symbol) => {
+        return (initial: T | undefined, ctx: ClassFieldDecoratorContext | ClassAccessorDecoratorContext) => {
+            if (ctx.kind == 'field')
+                return function (this: any) {
+                    return resolve(dep) as T;
+                };
+            if (ctx.kind == 'accessor'){
+                return {
+                    init(){
+                        return resolve(dep);
+                    }
+                }
+            }
+        };
+    };
 
 export function singleton<TClass extends ConstructorOf<any>>() {
     return function (target: any, context: ClassDecoratorContext<TClass>) {
