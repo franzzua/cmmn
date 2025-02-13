@@ -1,57 +1,51 @@
 {
-  "name": "@cmmn/uhtml",
-  "version": "3.0.0-alpha-2",
-  "description": "",
-  "publishConfig": {
-    "access": "public"
-  },
-  "repository": {
-    "url": "https://github.com/franzzua/cmmn/tree/master/ui"
-  },
-  "type": "module",
-  "main": "./dist/bundle/main.js",
-  "typings": "typings.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/typings/index.d.ts",
-      "import": "./dist/bundle/main.js"
-    }
-  },
-  "browser": "./dist/bundle/index.js",
-  "module": "index.ts",
-  "typesVersions": {
-    "*": {
-      "typings.d.ts": [
-        "dist/typings/index.d.ts"
-      ]
-    }
-  },
-  "scripts": {
-    "bundle": "cmmn bundle --watch",
-    "build": "cmmn compile -b --watch"
-  },
-  "devDependencies": {
-    "@cmmn/tools": "workspace:~",
-    "linkedom": "0.18.6",
-    "uhtml": "4.7.0"
-  },
-  "dependencies": {
-    "@cmmn/core": "workspace:~"
-  },
-  "files": [
-    "dist"
-  ],
-  "author": "",
-  "license": "ISC",
-  "gitHead": "2755b333808bf97f1d9454601c2a2c9a88e4a021",
-  "cmmn": {
-    "index": {
-      "input": "dist/esm/index.js",
-      "platform": "browser",
-      "external": [
-        "@cmmn/core"
-      ],
-      "module": "es,cjs"
-    }
-  }
+	"name": "@cmmn/uhtml",
+	"version": "3.0.0-alpha-2",
+	"description": "",
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": {
+		"url": "https://github.com/franzzua/cmmn/tree/master/ui"
+	},
+	"type": "module",
+	"main": "./dist/bundle/main.js",
+	"typings": "typings.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/typings/index.d.ts",
+			"import": "./dist/bundle/main.js"
+		}
+	},
+	"browser": "./dist/bundle/index.js",
+	"module": "index.ts",
+	"typesVersions": {
+		"*": {
+			"typings.d.ts": ["dist/typings/index.d.ts"]
+		}
+	},
+	"scripts": {
+		"bundle": "cmmn bundle --watch",
+		"build": "cmmn compile -b --watch"
+	},
+	"devDependencies": {
+		"@cmmn/tools": "workspace:~",
+		"linkedom": "0.18.6",
+		"uhtml": "4.7.0"
+	},
+	"dependencies": {
+		"@cmmn/core": "workspace:~"
+	},
+	"files": ["dist"],
+	"author": "",
+	"license": "ISC",
+	"gitHead": "2755b333808bf97f1d9454601c2a2c9a88e4a021",
+	"cmmn": {
+		"index": {
+			"input": "dist/esm/index.js",
+			"platform": "browser",
+			"external": ["@cmmn/core"],
+			"module": "es,cjs"
+		}
+	}
 }

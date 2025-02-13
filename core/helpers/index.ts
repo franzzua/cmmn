@@ -1,12 +1,22 @@
-export {average, distinct, groupBy, maxVal, minVal, orderBy, remove, removeAll, sum} from "./Array";
-export {getOrAdd} from "./map";
-export { AsyncQueue } from "./async-queue";
-export {uuid} from "./uuid";
-export {Fn} from "./Fn";
-export {ResolvablePromise} from "./resolvable.promise";
-export {Lazy} from "./Lazy";
-export {compare} from "./compare";
-export {throttle, throttled, debounce, debounced} from "./throttle";
-export type {DeepPartial} from "./deepAssign";
-export {bind} from "./bind";
-export {pipe} from "./pipe";
+export {
+	average,
+	distinct,
+	groupBy,
+	maxVal,
+	minVal,
+	orderBy,
+	remove,
+	removeAll,
+	sum,
+} from './Array';
+export { getOrAdd } from './map';
+export { AsyncQueue } from './async-queue';
+export { uuid } from './uuid';
+export { Fn } from './Fn';
+export { ResolvablePromise } from './resolvable.promise';
+export { Lazy } from './Lazy';
+export { compare } from './compare';
+export { throttle, throttled, debounce, debounced } from './throttle';
+export type { DeepPartial } from './deepAssign';
+export { bind } from './bind';
+export { pipe } from './pipe';

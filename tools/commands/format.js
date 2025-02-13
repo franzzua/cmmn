@@ -10,7 +10,8 @@ const rootDir = process.cwd();
  * @returns {Promise<import('@swc/types').Config>}
  */
 export async function format(...flags) {
-    for (let target of await Target.readTargets(rootDir, flags)) {
+    const promises = [];
+    for (const target of await Target.readTargets(rootDir, flags)) {
         if (target.tsConfig.include?.length === 0)
             continue;
         const json = join(target.rootDir, 'biome.json');
@@ -25,9 +26,15 @@ export async function format(...flags) {
         biome.stdout.on('data', data => {
             console.log(`${target.packageJson.name}: ${data}`);
         });
-        await new Promise(res => biome.on('close', res));
-        if (linked){
-            await rm(json);
-        }
+        biome.stderr.on('data', data => {
+            console.error(`${target.packageJson.name}: ${data}`);
+        });
+        promises.push(new Promise(res => biome.on('close', async () => {
+            if (linked){
+                await rm(json, {force: true});
+            }
+            res();
+        })));
     }
+    await Promise.all(promises);
 }

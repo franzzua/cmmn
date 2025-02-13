@@ -1,5 +1,5 @@
-import {attr} from "uhtml";
+import { attr } from 'uhtml';
 
 attr.set('style', (el: HTMLElement, value) => {
-    Object.assign(el.style, value);
+	Object.assign(el.style, value);
 });

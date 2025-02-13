@@ -1,23 +1,17 @@
 {
-  "extends": "@cmmn/tools/compile/tsconfig.json",
-  "compilerOptions": {
-    "lib": [
-      "dom",
-      "es2015.collection",
-      "esnext"
-    ],
-    "baseUrl": "./src"
-  },
-  "include": [  "**/*.ts" ],
-  "exclude": [
-    "dist", "node_modules"
-  ],
-  "references": [
-    {
-      "path": "../core"
-    },
-    {
-      "path": "../ui/uhtml"
-    }
-  ]
+	"extends": "@cmmn/tools/compile/tsconfig.json",
+	"compilerOptions": {
+		"lib": ["dom", "es2015.collection", "esnext"],
+		"baseUrl": "./src"
+	},
+	"include": ["**/*.ts"],
+	"exclude": ["dist", "node_modules"],
+	"references": [
+		{
+			"path": "../core"
+		},
+		{
+			"path": "../ui/uhtml"
+		}
+	]
 }

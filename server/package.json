@@ -1,41 +1,35 @@
 {
-  "name": "@cmmn/server",
-  "version": "3.0.0-alpha-2",
-  "description": "server libs for building rest api",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "url": "https://github.com/franzzua/cmmn/tree/master/server"
-  },
-  "typings": "dist/typings/index.d.ts",
-  "publishConfig": {
-    "access": "public"
-  },
-  "files": [
-    "dist"
-  ],
-  "devDependencies": {
-    "@cmmn/core": "workspace:~",
-    "@cmmn/tools": "workspace:~"
-  },
-  "dependencies": {
-    "fastify": "4"
-  },
-  "type": "module",
-  "cmmn": {
-    "index": {
-      "input": "./dist/esm/index.js",
-      "module": "es,cjs",
-      "platform": "node",
-      "external": [
-        "fastify",
-        "@fastify*",
-        "@cmmn*"
-      ]
-    }
-  },
-  "author": "",
-  "license": "ISC",
-  "gitHead": "2755b333808bf97f1d9454601c2a2c9a88e4a021"
+	"name": "@cmmn/server",
+	"version": "3.0.0-alpha-2",
+	"description": "server libs for building rest api",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"url": "https://github.com/franzzua/cmmn/tree/master/server"
+	},
+	"typings": "dist/typings/index.d.ts",
+	"publishConfig": {
+		"access": "public"
+	},
+	"files": ["dist"],
+	"devDependencies": {
+		"@cmmn/core": "workspace:~",
+		"@cmmn/tools": "workspace:~"
+	},
+	"dependencies": {
+		"fastify": "4"
+	},
+	"type": "module",
+	"cmmn": {
+		"index": {
+			"input": "./dist/esm/index.js",
+			"module": "es,cjs",
+			"platform": "node",
+			"external": ["fastify", "@fastify*", "@cmmn*"]
+		}
+	},
+	"author": "",
+	"license": "ISC",
+	"gitHead": "2755b333808bf97f1d9454601c2a2c9a88e4a021"
 }

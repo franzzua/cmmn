@@ -1,1 +1,1 @@
-export {useCell} from "./src/useCell";
+export { useCell } from './src/useCell';

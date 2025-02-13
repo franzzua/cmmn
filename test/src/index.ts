@@ -1,2 +1,1 @@
-import "./react/index";
-
+import './react/index';

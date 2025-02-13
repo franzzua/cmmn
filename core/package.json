@@ -1,39 +1,35 @@
 {
-  "name": "@cmmn/core",
-  "version": "3.0.0-alpha-2",
-  "repository": {
-    "url": "https://github.com/franzzua/cmmn/tree/master/core"
-  },
-  "description": "di, base extensions, useful functions",
-  "publishConfig": {
-    "registry": "https://npm.local",
-    "access": "public"
-  },
-  "files": [
-    "dist"
-  ],
-  "browserslist": [
-    "> 0.25%"
-  ],
-  "type": "module",
-  "module": "./index.ts",
-  "typings": "./dist/typings/index.d.ts",
-  "scripts": {
-    "build": "cmmn compile --watch",
-    "bundle": "cmmn bundle --watch",
-    "bundle:min": "cmmn bundle --watch",
-    "typings": "cmmn typings --watch",
-    "test": "node --test --import @cmmn/tools/import ./**/*.spec.ts"
-  },
-  "devDependencies": {
-    "@cmmn/tools": "workspace:~",
-    "@types/throttle-debounce": "5.0.2"
-  },
-  "dependencies": {
-    "throttle-debounce": "5.0.2",
-    "uuidv7": "1.0.2"
-  },
-  "author": "",
-  "license": "ISC",
-  "stableVersion": "3.0.0-alpha-2"
+	"name": "@cmmn/core",
+	"version": "3.0.0-alpha-2",
+	"repository": {
+		"url": "https://github.com/franzzua/cmmn/tree/master/core"
+	},
+	"description": "di, base extensions, useful functions",
+	"publishConfig": {
+		"registry": "https://npm.local",
+		"access": "public"
+	},
+	"files": ["dist"],
+	"browserslist": ["> 0.25%"],
+	"type": "module",
+	"module": "./index.ts",
+	"typings": "./dist/typings/index.d.ts",
+	"scripts": {
+		"build": "cmmn compile --watch",
+		"bundle": "cmmn bundle --watch",
+		"bundle:min": "cmmn bundle --watch",
+		"typings": "cmmn typings --watch",
+		"test": "node --test --import @cmmn/tools/import ./**/*.spec.ts"
+	},
+	"devDependencies": {
+		"@cmmn/tools": "workspace:~",
+		"@types/throttle-debounce": "5.0.2"
+	},
+	"dependencies": {
+		"throttle-debounce": "5.0.2",
+		"uuidv7": "1.0.2"
+	},
+	"author": "",
+	"license": "ISC",
+	"stableVersion": "3.0.0-alpha-2"
 }

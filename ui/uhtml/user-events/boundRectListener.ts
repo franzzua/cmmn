@@ -1,76 +1,92 @@
-import {cell} from "@cmmn/core";
-import {getOrAdd} from "@cmmn/core";
+import { cell } from '@cmmn/core';
+import { getOrAdd } from '@cmmn/core';
 
 if (!globalThis.ResizeObserver) {
-    class ROMock {
-        observe() {
-        }
-    }
+	class ROMock {
+		observe() {}
+	}
 
-    globalThis.ResizeObserver = ROMock as any;
+	globalThis.ResizeObserver = ROMock as any;
 }
 
 export class BoundRectListener {
-    static onWindowResize() {
-        for (let instance of BoundRectListener.Instances.values()) {
-            if (instance.root === document) {
-                instance.Rect = {left: 0, top: 0, width: window.innerWidth, height: window.innerHeight};
-            } else {
-                instance.Rect = (instance.root as Element).getBoundingClientRect();
-            }
-        }
-    }
+	static onWindowResize() {
+		for (let instance of BoundRectListener.Instances.values()) {
+			if (instance.root === document) {
+				instance.Rect = {
+					left: 0,
+					top: 0,
+					width: window.innerWidth,
+					height: window.innerHeight,
+				};
+			} else {
+				instance.Rect = (instance.root as Element).getBoundingClientRect();
+			}
+		}
+	}
 
-    private static observer = new globalThis.ResizeObserver(BoundRectListener.onResize);
+	private static observer = new globalThis.ResizeObserver(
+		BoundRectListener.onResize,
+	);
 
-    private static onResize(entries: ResizeObserverEntry[], observer: ResizeObserver) {
-        for (let entry of entries) {
-            if (!BoundRectListener.Instances.has(entry.target))
-                continue;
-            BoundRectListener.Instances.get(entry.target).Rect = entry.target.getBoundingClientRect();
-        }
-    }
+	private static onResize(
+		entries: ResizeObserverEntry[],
+		observer: ResizeObserver,
+	) {
+		for (let entry of entries) {
+			if (!BoundRectListener.Instances.has(entry.target)) continue;
+			BoundRectListener.Instances.get(entry.target).Rect =
+				entry.target.getBoundingClientRect();
+		}
+	}
 
-    private static Instances = new Map<Element | Document, BoundRectListener>();
+	private static Instances = new Map<Element | Document, BoundRectListener>();
 
-    public static Observe(root: Element | Document) {
-        return getOrAdd(this.Instances, root, el => new BoundRectListener(el));
-    }
+	public static Observe(root: Element | Document) {
+		return getOrAdd(this.Instances, root, (el) => new BoundRectListener(el));
+	}
 
-    public static Unobserve(root: Element | Document) {
-        this.Instances.get(root)?.[Symbol.dispose]();
-        this.Instances.delete(root);
-    }
+	public static Unobserve(root: Element | Document) {
+		this.Instances.get(root)?.[Symbol.dispose]();
+		this.Instances.delete(root);
+	}
 
-    private constructor(private root: Element | Document) {
-        if (root instanceof Document) {
-            this.rootListener = event => {
-                this.Rect = {left: 0, top: 0, width: window.innerWidth, height: window.innerHeight};
-            }
-            window.addEventListener('resize', this.rootListener);
-        } else {
-            BoundRectListener.observer.observe(root);
-            this.Rect = root.getBoundingClientRect();
-        }
-    }
+	private constructor(private root: Element | Document) {
+		if (root instanceof Document) {
+			this.rootListener = (event) => {
+				this.Rect = {
+					left: 0,
+					top: 0,
+					width: window.innerWidth,
+					height: window.innerHeight,
+				};
+			};
+			window.addEventListener('resize', this.rootListener);
+		} else {
+			BoundRectListener.observer.observe(root);
+			this.Rect = root.getBoundingClientRect();
+		}
+	}
 
-    private rootListener;
+	private rootListener;
 
-    [Symbol.dispose]() {
-        if (this.root instanceof Document) {
-            window.addEventListener('resize', this.rootListener);
-        } else {
-            BoundRectListener.observer.unobserve(this.root);
-        }
-    }
+	[Symbol.dispose]() {
+		if (this.root instanceof Document) {
+			window.addEventListener('resize', this.rootListener);
+		} else {
+			BoundRectListener.observer.unobserve(this.root);
+		}
+	}
 
-    @cell()
-    public accessor Rect: Rect;
+	@cell()
+	public accessor Rect: Rect;
 }
 
 type Rect = {
-    left; top; width; height;
-}
-
+	left;
+	top;
+	width;
+	height;
+};
 
 // window.addEventListener('resize', BoundRectListener.onWindowResize);

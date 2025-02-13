@@ -1,9 +1,13 @@
 ﻿import { FastifyInstance, HTTPMethods, fastify } from 'fastify';
 import { routes } from './decorators';
-import {Container} from "@cmmn/core";
-import {HttpError} from "./http-error";
+import { Container } from '@cmmn/core';
+import { HttpError } from './http-error';
 
-export function registerRoutes(app: FastifyInstance, authHandler, di: Container) {
+export function registerRoutes(
+	app: FastifyInstance,
+	authHandler,
+	di: Container,
+) {
 	for (let x of routes) {
 		console.log(`register [${x.method}]: ${x.route}`);
 		app.route({
@@ -26,7 +30,7 @@ export function registerRoutes(app: FastifyInstance, authHandler, di: Container)
 						instance,
 						hasBody ? req.body : req.params,
 						req,
-						reply
+						reply,
 					);
 					if (!result) {
 						return reply.status(204).send();
@@ -49,7 +53,9 @@ export function registerRoutes(app: FastifyInstance, authHandler, di: Container)
 					// });
 					if (e instanceof HttpError)
 						return reply.status(e.statusCode).send(e.message ?? e.toString());
-					return reply.status((e as any).http_code ?? 422).send((e as Error).message ?? e);
+					return reply
+						.status((e as any).http_code ?? 422)
+						.send((e as Error).message ?? e);
 				}
 			},
 		});

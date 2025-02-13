@@ -1,29 +1,35 @@
-import {StoppableEventEmitter} from "./stoppableEventEmitter";
+import { StoppableEventEmitter } from './stoppableEventEmitter';
 
-export class EventListener<TEvents extends {
-    [key in string]: any | void;
-}> extends StoppableEventEmitter<TEvents> {
+export class EventListener<
+	TEvents extends {
+		[key in string]: any | void;
+	},
+> extends StoppableEventEmitter<TEvents> {
+	constructor(private target: Omit<EventTarget, 'dispatchEvent'>) {
+		super();
+	}
 
-    constructor(private target: Omit<EventTarget, "dispatchEvent">) {
-        super();
-    }
+	private _emitters: {
+		[key in keyof TEvents]?: Function;
+	} = {};
 
-    private _emitters: {
-        [key in keyof TEvents]?: Function
-    } = {}
+	protected subscribe(eventName: keyof TEvents) {
+		if (!this._emitters[eventName])
+			this._emitters[eventName] = (data) => this.emit(eventName, data);
+		this.target.addEventListener(
+			eventName as string,
+			this._emitters[eventName] as any,
+		);
+	}
 
-    protected subscribe(eventName: keyof TEvents) {
-        if (!this._emitters[eventName])
-            this._emitters[eventName] = data => this.emit(eventName, data);
-        this.target.addEventListener(eventName as string, this._emitters[eventName] as any);
-    }
+	protected unsubscribe(eventName: keyof TEvents) {
+		this.target.removeEventListener(
+			eventName as string,
+			this._emitters[eventName] as any,
+		);
+	}
 
-    protected unsubscribe(eventName: keyof TEvents) {
-        this.target.removeEventListener(eventName as string, this._emitters[eventName] as any);
-    }
-
-    public static onceAsync(target: EventTarget, event: string){
-        return new EventListener(target).onceAsync(event);
-    }
-
+	public static onceAsync(target: EventTarget, event: string) {
+		return new EventListener(target).onceAsync(event);
+	}
 }

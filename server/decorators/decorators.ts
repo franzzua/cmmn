@@ -9,7 +9,11 @@ function getRoutes(metadata: DecoratorMetadata) {
 		options: RouteOptions;
 	}>;
 }
-export function request(method: HTTPMethods, route: string = '', options: RouteOptions = defaultRouteOptions) {
+export function request(
+	method: HTTPMethods,
+	route: string = '',
+	options: RouteOptions = defaultRouteOptions,
+) {
 	return function (handler: Function, context: ClassMethodDecoratorContext) {
 		getRoutes(context.metadata).push({
 			handler,
@@ -29,20 +33,28 @@ export function ctrl(route: string) {
 				ctrl,
 				handler: x.handler,
 				options: x.options,
-			}))
+			})),
 		);
 	};
 }
-export function post(route: string = '', options: RouteOptions = defaultRouteOptions) {
+export function post(
+	route: string = '',
+	options: RouteOptions = defaultRouteOptions,
+) {
 	return request('post', route, options);
 }
-export function put(route: string = '', options: RouteOptions = defaultRouteOptions) {
+export function put(
+	route: string = '',
+	options: RouteOptions = defaultRouteOptions,
+) {
 	return request('put', route, options);
 }
-export function get(route: string = '', options: RouteOptions = defaultRouteOptions) {
+export function get(
+	route: string = '',
+	options: RouteOptions = defaultRouteOptions,
+) {
 	return request('get', route, options);
 }
-
 
 export type RouteOptions = {
 	auth: boolean | 'optional';

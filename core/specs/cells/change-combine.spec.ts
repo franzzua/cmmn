@@ -1,47 +1,46 @@
-import {expect, mock, suite, test} from "@cmmn/tools/test";
-import {BaseCell} from '../../cell/base-cell.js';
-import {Graph} from "../../cell/graph";
+import { expect, mock, suite, test } from '@cmmn/tools/test';
+import { BaseCell } from '../../cell/base-cell.js';
+import { Graph } from '../../cell/graph';
 
 @suite
 class ChangeCombineSpec {
+	@test
+	async combin1() {
+		let a = new BaseCell(1);
+		let b = new BaseCell(2);
+		let getC = mock.fn(() => a.get() + b.get());
 
-    @test
-    async combin1() {
-        let a = new BaseCell(1);
-        let b = new BaseCell(2);
-        let getC = mock.fn(() => a.get() + b.get());
+		const c = new BaseCell(getC);
+		c.on('change', console.log);
+		getC.mock.resetCalls();
 
-        const c = new BaseCell(getC);
-        c.on('change', console.log);
-        getC.mock.resetCalls();
+		a.set(2);
+		b.set(3);
 
-        a.set(2);
-        b.set(3);
+		await Graph.wait;
+		expect(getC.mock.callCount()).toEqual(1);
+	}
 
-        await Graph.wait;
-        expect(getC.mock.callCount()).toEqual(1);
-    }
+	@test
+	async combine2() {
+		let a = new BaseCell(1);
+		let b = new BaseCell(2);
+		let aa = new BaseCell<number>(() => a.get() + 1);
+		let bb = new BaseCell<number>(() => b.get() + 1);
+		let getC = mock.fn(() => {
+			return aa.get() + bb.get();
+		});
 
-    @test
-    async combine2() {
-        let a = new BaseCell(1);
-        let b = new BaseCell(2);
-        let aa = new BaseCell<number>(() => a.get() + 1);
-        let bb = new BaseCell<number>(() => b.get() + 1);
-        let getC = mock.fn(() => {
-            return aa.get() + bb.get()
-        });
+		const c = new BaseCell(getC);
+		c.on('change', () => {});
+		getC.mock.resetCalls();
 
-        const c = new BaseCell(getC);
-        c.on('change', () => {});
-        getC.mock.resetCalls();
+		a.set(2);
+		b.set(3);
 
-        a.set(2);
-        b.set(3);
-
-        await Graph.wait;
-        expect(getC.mock.callCount()).toEqual(1);
-    }
+		await Graph.wait;
+		expect(getC.mock.callCount()).toEqual(1);
+	}
 }
 
 // describe('Cell', () => {

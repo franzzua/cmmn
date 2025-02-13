@@ -1,15 +1,15 @@
 {
-  "extends": "@cmmn/tools/compile/tsconfig.json",
-  "compilerOptions": {
-    "paths": {
-      "@cmmn/sync": ["./index.ts"]
-    }
-  },
-  "include": [  "**/*.ts" ],
-  "exclude": ["dist", "node_modules"],
-  "references": [
-    {
-      "path": "../core"
-    }
-  ]
+	"extends": "@cmmn/tools/compile/tsconfig.json",
+	"compilerOptions": {
+		"paths": {
+			"@cmmn/sync": ["./index.ts"]
+		}
+	},
+	"include": ["**/*.ts"],
+	"exclude": ["dist", "node_modules"],
+	"references": [
+		{
+			"path": "../core"
+		}
+	]
 }

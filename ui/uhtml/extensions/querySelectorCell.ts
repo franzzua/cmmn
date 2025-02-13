@@ -1,28 +1,33 @@
-import {Cell} from "@cmmn/core";
+import { Cell } from '@cmmn/core';
 
-export class QuerySelectorCell<TElement extends Element> extends Cell<TElement> {
-    constructor(private element: Element, private selector: string) {
-        super(element.querySelector<TElement>(selector));
-    }
+export class QuerySelectorCell<
+	TElement extends Element,
+> extends Cell<TElement> {
+	constructor(
+		private element: Element,
+		private selector: string,
+	) {
+		super(element.querySelector<TElement>(selector));
+	}
 
-    onMutation: MutationCallback = (e) => {
-        this.set(this.getCurrentValue());
-    }
-    private observer = new MutationObserver(this.onMutation)
+	onMutation: MutationCallback = (e) => {
+		this.set(this.getCurrentValue());
+	};
+	private observer = new MutationObserver(this.onMutation);
 
-    getCurrentValue() {
-        return this.element.querySelector<TElement>(this.selector);
-    }
+	getCurrentValue() {
+		return this.element.querySelector<TElement>(this.selector);
+	}
 
-    active() {
-        super.active();
-        this.observer.observe(this.element, {
-            childList: true
-        });
-    }
+	active() {
+		super.active();
+		this.observer.observe(this.element, {
+			childList: true,
+		});
+	}
 
-    disactive() {
-        super.disactive();
-        this.observer.disconnect();
-    }
+	disactive() {
+		super.disactive();
+		this.observer.disconnect();
+	}
 }
