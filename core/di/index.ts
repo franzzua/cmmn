@@ -1,8 +1,7 @@
 import { Container } from './container';
-import type { ConstructorOf } from './types';
-import * as console from 'node:console';
+import type {ConstructorOf, InjectionToken} from './types';
 
-export const inject = <T>(dep: ConstructorOf<T, unknown[]> | symbol) => {
+export const inject = <T>(dep: InjectionToken<T>) => {
 	return (
 		initial: T | undefined,
 		ctx: ClassFieldDecoratorContext | ClassAccessorDecoratorContext,
@@ -21,8 +20,8 @@ export const inject = <T>(dep: ConstructorOf<T, unknown[]> | symbol) => {
 	};
 };
 
-export function singleton<TClass extends ConstructorOf<unknown>>() {
-	return (target: unknown, context: ClassDecoratorContext<TClass>) => {
+export function scoped<TClass extends ConstructorOf<unknown>>() {
+	return (target: ConstructorOf<unknown>, context: ClassDecoratorContext<TClass>) => {
 		di.factory(target, () => new target());
 	};
 }

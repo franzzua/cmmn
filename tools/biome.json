@@ -29,7 +29,8 @@
 			"correctness": {
 			},
 			"suspicious": {
-				"noAssignInExpressions": "off"
+				"noAssignInExpressions": "off",
+				"noConfusingVoidType": "off"
 			},
 			"complexity": {
 				"noForEach": "off"

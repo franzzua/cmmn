@@ -1,20 +1,21 @@
-import type { ConstructorOf } from './types';
+import type {InjectionToken} from './types';
+
 
 export class Container {
 	public static Default: Container = new Container();
-	private instances = new Map<ConstructorOf<unknown> | symbol, unknown>();
-	private consts = new Map<ConstructorOf<unknown> | symbol, unknown>();
+	private instances = new Map<InjectionToken, unknown>();
+	private consts = new Map<InjectionToken, unknown>();
 	private overrides = new Map<
-		ConstructorOf<unknown> | symbol,
-		ConstructorOf<unknown>
+		InjectionToken,
+		InjectionToken
 	>();
 	private factories = new Map<
-		ConstructorOf<unknown> | symbol,
+		InjectionToken,
 		(c: Container) => unknown
 	>();
 
 	resolve<T, TArgs extends unknown[] = []>(
-		dep: ConstructorOf<T, TArgs> | symbol,
+		dep: InjectionToken<T, TArgs>,
 		...args: TArgs
 	): T {
 		const oldContainer = Container.Default;
@@ -22,15 +23,15 @@ export class Container {
 		try {
 			if ((dep as unknown) === Container) return this as unknown as T;
 			if (this.overrides.has(dep))
-				dep = this.overrides.get(dep) as ConstructorOf<T>;
-			if (this.consts.has(dep)) return this.consts.get(dep);
+				dep = this.overrides.get(dep) as InjectionToken<T, TArgs>;
+			if (this.consts.has(dep)) return this.consts.get(dep) as T;
 			if (typeof dep !== 'function')
 				throw new Error(`${dep} is not a constructor`);
 			if (!this.factories.has(dep)) return new (dep as unknown)(...args);
-			if (this.instances.has(dep)) return this.instances.get(dep);
+			if (this.instances.has(dep)) return this.instances.get(dep) as T;
 			const instance = this.factories.get(dep)?.(this);
 			this.instances.set(dep, instance);
-			return instance;
+			return instance as T;
 		} finally {
 			Container.Default = oldContainer;
 		}
@@ -44,14 +45,14 @@ export class Container {
 		this.instances.clear();
 	}
 
-	override(dependency: unknown, override: unknown) {
+	override<T, TArgs>(dependency: InjectionToken<T, TArgs>, override: InjectionToken<T, TArgs>) {
 		this.overrides.set(dependency, override);
 	}
 
-	const(dependency: unknown, value: unknown) {
+	const<T, TArgs>(dependency: InjectionToken<T, TArgs>, value: T) {
 		this.consts.set(dependency, value);
 	}
-	factory(dependency: unknown, value: (c: Container) => unknown) {
+	factory<T, TArgs>(dependency: InjectionToken<T, TArgs>, value: (c: Container) => T) {
 		this.factories.set(dependency, value);
 	}
 

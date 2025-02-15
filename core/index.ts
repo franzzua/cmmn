@@ -41,7 +41,6 @@ export {
 	EventEmitter,
 	EventListener,
 	MergeListener,
-	StoppableEventEmitter,
 } from './event-emitter';
 
-export { di, factory, inject, resolve, singleton, Container } from './di';
+export { di, factory, inject, resolve, scoped, Container } from './di';
