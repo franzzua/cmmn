@@ -1,4 +1,4 @@
-import { BaseCell } from './base-cell.js';
+import type { BaseCell } from './base-cell.js';
 
 export class Graph {
 	public static CurrentCell: BaseCell;
@@ -37,7 +37,8 @@ export class Graph {
 		cell.dependencies = null;
 		const prevCell = Graph.CurrentCell;
 		Graph.CurrentCell = cell;
-		let value, error;
+		let value;
+		let error;
 		try {
 			cell.isPulling = true;
 			value = cell.pull();
@@ -53,7 +54,7 @@ export class Graph {
 		}
 		Graph.CurrentCell = prevCell;
 		if (oldDependencies) {
-			for (let oldDependency of oldDependencies) {
+			for (const oldDependency of oldDependencies) {
 				if (cell.dependencies?.has(oldDependency)) continue;
 				oldDependency.removeReaction(cell);
 			}

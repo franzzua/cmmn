@@ -1,4 +1,4 @@
-import { Cell, ICellOptions } from './cell';
+import { Cell, type ICellOptions } from './cell';
 import { BaseCell } from './base-cell';
 
 export type IAsyncCellOptions<T, TKey = T> = ICellOptions<T, TKey> & {
@@ -19,7 +19,7 @@ export class AsyncCell<T, TKey = T> extends Cell<T, TKey> {
 	private onChange = async (gen: { value: AsyncGenerator<T> | Promise<T> }) => {
 		if (!gen.value) return this.set(null);
 		if (Symbol.asyncIterator in gen.value)
-			for await (let value of gen.value as AsyncGenerator<T>) {
+			for await (const value of gen.value as AsyncGenerator<T>) {
 				// prevent race
 				if (this.genCell.get() !== gen.value) {
 					// console.log('Race! ignore:', value)

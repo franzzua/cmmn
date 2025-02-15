@@ -6,10 +6,10 @@ import {join, resolve} from "node:path";
 const rootDir = process.cwd();
 
 /**
- * @param flags
+ * @param flags {import("../helpers/flags.js").Flags}
  * @returns {Promise<import('@swc/types').Config>}
  */
-export async function format(...flags) {
+export async function lint(flags) {
     const promises = [];
     for (const target of await Target.readTargets(rootDir, flags)) {
         if (target.tsConfig.include?.length === 0)
@@ -20,14 +20,14 @@ export async function format(...flags) {
             await link(resolve(import.meta.dirname, '../biome.json'), json);
             linked = true;
         }
-        const biome = spawn("npx", ['@biomejs/biome', 'format', '--write'],{
+        const biome = spawn("npx", ['@biomejs/biome', 'lint', '--write', flags.unsafe ? '--unsafe' : ''],{
             cwd: target.rootDir,
         });
         biome.stdout.on('data', data => {
             console.log(`${target.packageJson.name}: ${data}`);
         });
         biome.stderr.on('data', data => {
-            console.error(`${target.packageJson.name}: ${data}`);
+            console.error(data.toString());
         });
         promises.push(new Promise(res => biome.on('close', async () => {
             if (linked){

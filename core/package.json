@@ -9,8 +9,12 @@
 		"registry": "https://npm.local",
 		"access": "public"
 	},
-	"files": ["dist"],
-	"browserslist": ["> 0.25%"],
+	"files": [
+		"dist"
+	],
+	"browserslist": [
+		"> 0.25%"
+	],
 	"type": "module",
 	"module": "./index.ts",
 	"typings": "./dist/typings/index.d.ts",

@@ -1,9 +1,9 @@
 import { EventEmitterBase } from './eventEmitterBase';
-import { SubscriptionOptions } from './eventEmitter';
+import type { SubscriptionOptions } from './eventEmitter';
 
 export class MergeListener<
 	TEvents extends {
-		[key in string]: any | void;
+		[key in string]: any | undefined;
 	},
 > extends EventEmitterBase<TEvents> {
 	constructor(private emitters: EventEmitterBase<TEvents>[]) {

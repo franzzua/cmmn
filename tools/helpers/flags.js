@@ -3,10 +3,12 @@ export class Flags {
     watch;
     minify;
     workspace;
+    unsafe;
     constructor(args) {
         this.args = args;
         this.watch = args.includes('--watch');
         this.minify = args.includes('--minify');
+        this.unsafe = args.includes('--unsafe');
         this.workspace = args.includes('-w') ? args[args.indexOf('-w') + 1] ?? '.' : undefined;
         if (this.workspace?.startsWith('--')){
             this.workspace = undefined;

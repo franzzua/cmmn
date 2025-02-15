@@ -1,4 +1,4 @@
-import { type Func } from './throttle';
+import type { Func } from './throttle';
 
 export function pipe<
 	TThis,
@@ -42,7 +42,7 @@ export function pipe<TThis, TArgs extends Array<unknown>, T1, T>(
 export function pipe(fn1: Function, ...fn: Array<Function>): Function {
 	return function piped(this: unknown, ...args: unknown[]) {
 		args = fn1.apply(this, args);
-		for (let f of fn) {
+		for (const f of fn) {
 			args = f.call(this, args);
 		}
 		return args;

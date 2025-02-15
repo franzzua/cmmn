@@ -1,32 +1,32 @@
-import { ConstructorOf } from './types';
+import type { ConstructorOf } from './types';
 
 export class Container {
 	public static Default: Container = new Container();
-	private instances = new Map<ConstructorOf<any> | Symbol, any>();
-	private consts = new Map<ConstructorOf<any> | Symbol, any>();
+	private instances = new Map<ConstructorOf<unknown> | symbol, unknown>();
+	private consts = new Map<ConstructorOf<unknown> | symbol, unknown>();
 	private overrides = new Map<
-		ConstructorOf<any> | Symbol,
-		ConstructorOf<any>
+		ConstructorOf<unknown> | symbol,
+		ConstructorOf<unknown>
 	>();
 	private factories = new Map<
-		ConstructorOf<any> | Symbol,
-		(c: Container) => any
+		ConstructorOf<unknown> | symbol,
+		(c: Container) => unknown
 	>();
 
-	resolve<T, TArgs extends any[] = []>(
-		dep: ConstructorOf<T, TArgs> | Symbol,
+	resolve<T, TArgs extends unknown[] = []>(
+		dep: ConstructorOf<T, TArgs> | symbol,
 		...args: TArgs
 	): T {
 		const oldContainer = Container.Default;
 		Container.Default = this;
 		try {
-			if ((dep as unknown) == Container) return this as unknown as T;
+			if ((dep as unknown) === Container) return this as unknown as T;
 			if (this.overrides.has(dep))
 				dep = this.overrides.get(dep) as ConstructorOf<T>;
 			if (this.consts.has(dep)) return this.consts.get(dep);
 			if (typeof dep !== 'function')
 				throw new Error(`${dep} is not a constructor`);
-			if (!this.factories.has(dep)) return new (dep as any)(...args);
+			if (!this.factories.has(dep)) return new (dep as unknown)(...args);
 			if (this.instances.has(dep)) return this.instances.get(dep);
 			const instance = this.factories.get(dep)?.(this);
 			this.instances.set(dep, instance);
@@ -37,21 +37,21 @@ export class Container {
 	}
 
 	async [Symbol.asyncDispose]() {
-		for (let value of this.instances.values()) {
+		for (const value of this.instances.values()) {
 			await value[Symbol.asyncDispose]?.();
 			await value[Symbol.dispose]?.();
 		}
 		this.instances.clear();
 	}
 
-	override(dependency: any, override: any) {
+	override(dependency: unknown, override: unknown) {
 		this.overrides.set(dependency, override);
 	}
 
-	const(dependency: any, value: any) {
+	const(dependency: unknown, value: unknown) {
 		this.consts.set(dependency, value);
 	}
-	factory(dependency: any, value: (c: Container) => unknown) {
+	factory(dependency: unknown, value: (c: Container) => unknown) {
 		this.factories.set(dependency, value);
 	}
 

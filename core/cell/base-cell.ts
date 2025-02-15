@@ -1,8 +1,8 @@
 import { EventEmitter, EventEmitterBase } from '../event-emitter';
 import { Graph } from './graph';
-import { Selector, selector } from './cell-selector';
+import { type Selector, selector } from './cell-selector';
 
-export class BaseCell<T = any>
+export class BaseCell<T = unknown>
 	extends EventEmitter<{
 		change: { value: T; oldValue: T };
 		error: Error;
@@ -13,8 +13,8 @@ export class BaseCell<T = any>
 	pull: () => T;
 	value: T;
 	error: Error;
-	dependencies: Set<BaseCell<any>>; // cells on which this cell depends
-	private reactions: Set<BaseCell<any>>; // cells dependent on this cell
+	dependencies: Set<BaseCell>; // cells on which this cell depends
+	private reactions: Set<BaseCell>; // cells dependent on this cell
 	isPulling = false;
 	isActive = false;
 	isActual: boolean;
@@ -82,7 +82,7 @@ export class BaseCell<T = any>
 		if (error) this.emit('error', error);
 		else this.notifyChange(value, oldValue);
 		if (this.reactions) {
-			for (let reaction of this.reactions) {
+			for (const reaction of this.reactions) {
 				reaction.isActual = false;
 				Graph.Up(reaction);
 			}
@@ -118,7 +118,7 @@ export class BaseCell<T = any>
 			this.value.off('change', this.onValueContentChanged);
 		}
 		if (this.dependencies) {
-			for (let dependency of this.dependencies) {
+			for (const dependency of this.dependencies) {
 				dependency.removeReaction(this);
 			}
 			this.dependencies = null;
@@ -129,14 +129,14 @@ export class BaseCell<T = any>
 	}
 
 	protected subscribe(eventName: keyof { change: T }) {
-		if (eventName == 'change' && !this.isActive) {
+		if (eventName === 'change' && !this.isActive) {
 			this.active();
 			Graph.Down(this);
 		}
 	}
 
 	protected unsubscribe(eventName: keyof { change: T }) {
-		if (eventName == 'change' && this.isActive && !this.reactions)
+		if (eventName === 'change' && this.isActive && !this.reactions)
 			this.disactive();
 	}
 
@@ -166,12 +166,12 @@ export class BaseCell<T = any>
 	}
 
 	/** @internal **/
-	// register classes as cell like, so any "change" event will notify wrapped cell
-	public static likeCells = new Set<any>([EventEmitterBase]);
+	// register classes as cell like, so unknown "change" event will notify wrapped cell
+	public static likeCells = new Set<unknown>([EventEmitterBase]);
 	private static isLikeCell(
 		target,
-	): target is EventEmitterBase<{ change: any }> {
-		for (let likeCell of BaseCell.likeCells) {
+	): target is EventEmitterBase<{ change: unknown }> {
+		for (const likeCell of BaseCell.likeCells) {
 			if (target instanceof likeCell) return true;
 		}
 		return false;
@@ -181,7 +181,7 @@ export class BaseCell<T = any>
 		TClass extends abstract new (
 			...args: unknown[]
 		) => {
-			on(key: 'change', listener: Function): Function;
+			on(key: 'change', listener: () => void): () => void;
 		},
 	>() {
 		return (target: TClass, context: ClassDecoratorContext) => {

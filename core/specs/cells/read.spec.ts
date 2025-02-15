@@ -7,7 +7,7 @@ class ReadSpec {
 	readCell() {
 		const a = new BaseCell(1);
 		expect(a.get()).toEqual(1);
-		expect(a['value']).toEqual(1);
+		expect(a.value).toEqual(1);
 	}
 
 	@test

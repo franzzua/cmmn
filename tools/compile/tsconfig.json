@@ -27,7 +27,8 @@
     "declaration": true,
     "lib": [
       "ESNext",
-      "ES2023.Array"
+      "Decorators",
+      "WebWorker"
     ]
   },
   "exclude": [

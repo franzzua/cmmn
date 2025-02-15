@@ -1,4 +1,4 @@
-import { BaseCell, Cell, ICellOptions } from '../cell';
+import { type BaseCell, Cell, type ICellOptions } from '../cell';
 
 type ClassAccessorDecorator<TClass, T> = (
 	initial: ClassAccessorDecoratorTarget<TClass, T>,
@@ -33,7 +33,7 @@ export function cell<T, TClass = unknown>(
 ): CellDecorator<TClass, T> {
 	return ((initialValue, context) => {
 		switch (context.kind) {
-			case 'getter':
+			case 'getter': {
 				const getter = initialValue as (this: TClass) => T;
 				return function (this: TClass): T {
 					return getOrCreateCell(
@@ -42,7 +42,8 @@ export function cell<T, TClass = unknown>(
 						() => new Cell(getter.bind(this), options),
 					).get();
 				};
-			case 'setter':
+			}
+			case 'setter': {
 				const setter = initialValue as (this: TClass, value: T) => T;
 				return function (this: TClass, value: T) {
 					getOrCreateCell(
@@ -52,11 +53,12 @@ export function cell<T, TClass = unknown>(
 					).set(value);
 					setter.call(this, value);
 				};
-			case 'accessor':
+			}
+			case 'accessor': {
 				const target = initialValue as ClassAccessorDecoratorTarget<TClass, T>;
 				const createCell = (self: TClass) => {
 					const startValue = options?.startValue ?? target.get.call(self);
-					delete options.startValue;
+					options.startValue = undefined;
 					return new Cell(startValue, options);
 				};
 				return {
@@ -71,6 +73,7 @@ export function cell<T, TClass = unknown>(
 						).set(value);
 					},
 				} as ClassAccessorDecoratorResult<TClass, T>;
+			}
 		}
 	}) as CellDecorator<TClass, T>;
 }

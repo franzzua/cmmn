@@ -25,14 +25,18 @@
 	"typings": "index.d.ts",
 	"typesVersions": {
 		"*": {
-			"index.d.ts": ["./dist/typings/index.d.ts"]
+			"index.d.ts": [
+				"./dist/typings/index.d.ts"
+			]
 		}
 	},
 	"scripts": {
 		"bundle": "cmmn bundle -b --watch",
 		"build": "cmmn compile -b --watch"
 	},
-	"files": ["dist"],
+	"files": [
+		"dist"
+	],
 	"dependencies": {
 		"@cmmn/core": "workspace:~",
 		"@libp2p/peer-id": "^5.0.0",

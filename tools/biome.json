@@ -23,7 +23,13 @@
 			"recommended": true,
 			"style": {
 				"useBlockStatements": "off",
+				"noParameterAssign": "off",
 				"noUselessElse": "off"
+			},
+			"correctness": {
+			},
+			"suspicious": {
+				"noAssignInExpressions": "off"
 			},
 			"complexity": {
 				"noForEach": "off"

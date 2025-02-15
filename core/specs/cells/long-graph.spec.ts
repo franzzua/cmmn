@@ -19,13 +19,13 @@ class Evalutator {
 
 	@cell()
 	public get X(): number[] {
-		if (this.a == 0) {
-			if (this.b == 0) throw new Error('unresolvable');
+		if (this.a === 0) {
+			if (this.b === 0) throw new Error('unresolvable');
 			return [-this.c / this.b];
 		}
 		const det = this.b ** 2 - 4 * this.a * this.c;
 		if (det < 0) throw new Error('imaginate roots');
-		if (det == 0) return [-this.b / 2 / this.a];
+		if (det === 0) return [-this.b / 2 / this.a];
 		return [
 			(-this.b - Math.sqrt(det)) / 2 / this.a,
 			(-this.b + Math.sqrt(det)) / 2 / this.a,

@@ -8,7 +8,7 @@ import {Terminal} from "../helpers/terminal.js";
 export async function bundle(flags) {
     const targets = await Target.readTargets(process.cwd(), flags);
     const term = new Terminal(flags);
-    for (let target of targets) {
+    for (const target of targets) {
         if (target.tsConfig.include?.length === 0)
             continue;
         console.log(target.rootDir)

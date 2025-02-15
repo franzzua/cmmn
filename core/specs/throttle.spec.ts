@@ -74,7 +74,7 @@ describe('throttle', (ctx) => {
 
 	test('class', async () => {
 		class A {
-			constructor(private value: number = 0) {}
+			constructor(private value = 0) {}
 
 			@throttled(10)
 			async increment() {

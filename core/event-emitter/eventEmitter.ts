@@ -1,13 +1,7 @@
 import { EventEmitterBase } from './eventEmitterBase';
 import { removeAll } from '../helpers';
-import { AIEmitter } from '../ai/AIEmitter';
-import { getThrottler } from '../helpers/throttle';
 
-export class EventEmitter<
-	TEvents extends {
-		[key in string]: any | void;
-	},
-> extends EventEmitterBase<TEvents> {
+export class EventEmitter<TEvents> extends EventEmitterBase<TEvents> {
 	protected listeners = new Map<
 		keyof TEvents,
 		Array<{
@@ -48,7 +42,7 @@ export class EventEmitter<
 	) {
 		const set = this.listeners.get(eventName) ?? [];
 		removeAll(set, (x) => x.listener === listener);
-		if (set.length == 0) {
+		if (set.length === 0) {
 			this.listeners.delete(eventName);
 			this.unsubscribe(eventName);
 		}
@@ -62,50 +56,17 @@ export class EventEmitter<
 		eventName: TEventName,
 		data?: TEvents[TEventName],
 	) {
-		let arr = this.listeners.get(eventName);
+		const arr = this.listeners.get(eventName);
 		if (!arr) return;
 		arr.slice().forEach((x) => x.listener(data));
 	}
 
 	public [Symbol.dispose]() {
 		this.emit(Symbol.dispose as keyof TEvents);
-		for (let [key, value] of this.listeners) {
-			for (let listener of value) {
+		for (const [key, value] of this.listeners) {
+			for (const listener of value) {
 				this.off(key, listener.listener);
 			}
-		}
-	}
-
-	public async *iterate<
-		TEventName extends keyof TEvents,
-		TSubscriptionOptions extends SubscriptionOptions = SubscriptionOptions,
-	>(
-		eventName: TEventName,
-		options?: TSubscriptionOptions,
-	): AsyncIterable<TEvents[TEventName]> {
-		const aiEmitter = new AIEmitter<TEvents[TEventName]>();
-		const off = this.on(eventName, aiEmitter.emit, options);
-		if (options?.signal) {
-			options.signal.addEventListener(
-				'abort',
-				() => {
-					aiEmitter[Symbol.dispose]();
-					off2();
-				},
-				{ once: true },
-			);
-		}
-		const off2 = this.once(Symbol.dispose as keyof TEvents, () => {
-			aiEmitter[Symbol.dispose]();
-			off();
-		});
-		try {
-			for await (const x of aiEmitter) {
-				yield x;
-			}
-		} finally {
-			off();
-			off2();
 		}
 	}
 }

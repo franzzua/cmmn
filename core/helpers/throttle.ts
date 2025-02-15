@@ -74,9 +74,9 @@ export function getThrottler<
 ) {
 	options.leading ??= false;
 	options.trailing ??= true;
-	return function (
+	return (
 		fn: ThrottleFunc<TResult, TThis, TNewArgs>,
-	): ThrottledFunc<TResult, TThis, TArgs> {
+	): ThrottledFunc<TResult, TThis, TArgs> => {
 		let promise: ResolvablePromise<Awaited<TResult>> | undefined;
 		let allArgs: Array<TArgs> = [];
 		const orig = throttleOrig(

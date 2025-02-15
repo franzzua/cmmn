@@ -32,8 +32,8 @@ export function arraySelector<T>(cell: BaseCell<Array<T>>): Selector<Array<T>> {
 			[Selector]: 'array',
 		}) as ArraySelector<T>,
 		{
-			get(target: ArraySelector<T>, key: string | symbol, receiver: any): any {
-				if (key == 'length') return cell.get().length;
+			get(target: ArraySelector<T>, key: string | symbol): unknown {
+				if (key === 'length') return cell.get().length;
 				return (target[key] = selector(
 					new Cell(() => cell.get()[key], {
 						onExternal(value) {
@@ -57,7 +57,7 @@ export function objectSelector<T extends object>(
 			[Selector]: 'object',
 		} as ObjectSelector<T>,
 		{
-			get(target: ObjectSelector<T>, key: string | symbol, receiver: any): any {
+			get(target: ObjectSelector<T>, key: string | symbol): unknown {
 				return (target[key] = selector(
 					new Cell(() => cell.get()[key], {
 						onExternal(value) {
@@ -82,12 +82,12 @@ export function selector<T>(cell: BaseCell<T>): Selector<T> {
 	switch (typeof value) {
 		case 'object':
 			if (Array.isArray(value)) {
-				if (current?.[Selector] == 'array') return current;
+				if (current?.[Selector] === 'array') return current;
 				return (cell[Selector] = arraySelector(
 					cell as BaseCell<T & unknown[]>,
 				) as Selector<T>);
 			}
-			if (current?.[Selector] == 'object') return current;
+			if (current?.[Selector] === 'object') return current;
 			return (cell[Selector] = objectSelector(
 				cell as BaseCell<T & object>,
 			) as Selector<T>);

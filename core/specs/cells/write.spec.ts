@@ -20,9 +20,9 @@ class WriteSpec {
 
 	@test
 	writeComputed() {
-		let a = new BaseCell(1);
-		let b = new BaseCell<number>(() => a.get() + 1);
-		let c = new BaseCell(() => b.get() + 1);
+		const a = new BaseCell(1);
+		const b = new BaseCell<number>(() => a.get() + 1);
+		const c = new BaseCell(() => b.get() + 1);
 		c.on('change', () => {});
 
 		a.set(2);
@@ -32,9 +32,9 @@ class WriteSpec {
 	}
 	@test
 	writeComputedAndPushAfter() {
-		let a = new BaseCell(1);
-		let b = new BaseCell<number>(() => a.get() + 1);
-		let c = new BaseCell(() => b.get() + 1);
+		const a = new BaseCell(1);
+		const b = new BaseCell<number>(() => a.get() + 1);
+		const c = new BaseCell(() => b.get() + 1);
 		c.on('change', () => {});
 
 		b.set(4);
@@ -47,7 +47,7 @@ class WriteSpec {
 	writeInPull() {
 		const a = new BaseCell(1);
 		const b = new BaseCell(() => {
-			if (a.get() == 2) a.set(3);
+			if (a.get() === 2) a.set(3);
 			return a.get() + 1;
 		});
 		a.set(2);

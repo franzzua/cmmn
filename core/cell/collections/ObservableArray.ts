@@ -2,7 +2,7 @@ import { EventEmitter } from '../../event-emitter';
 import { BaseCell } from '../base-cell';
 
 export class ObservableArray<T> extends Array<T> {
-	private emitter = new EventEmitter<{ change: any }>();
+	private emitter = new EventEmitter<{ change: unknown }>();
 	on = this.emitter.on.bind(this.emitter);
 
 	constructor(arr: ArrayLike<T> = []) {
@@ -41,7 +41,7 @@ export class ObservableArray<T> extends Array<T> {
 	}
 }
 
-const keys: Exclude<keyof Array<any>, keyof ReadonlyArray<any>>[] = [
+const keys: Exclude<keyof Array<unknown>, keyof ReadonlyArray<unknown>>[] = [
 	'pop',
 	'splice',
 	'push',
@@ -54,15 +54,15 @@ const keys: Exclude<keyof Array<any>, keyof ReadonlyArray<any>>[] = [
 	'shift',
 	'fill',
 ];
-for (let key of keys) {
+for (const key of keys) {
 	ObservableArray.prototype[key] = function (
-		this: ObservableArray<any>,
+		this: ObservableArray<unknown>,
 		...args
 	) {
 		const res = Array.prototype[key].apply(this, args);
 		this.emitChange();
 		return res;
-	} as any;
+	} as never;
 }
 
 BaseCell.likeCells.add(ObservableArray);

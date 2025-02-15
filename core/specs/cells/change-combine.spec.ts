@@ -6,9 +6,9 @@ import { Graph } from '../../cell/graph';
 class ChangeCombineSpec {
 	@test
 	async combin1() {
-		let a = new BaseCell(1);
-		let b = new BaseCell(2);
-		let getC = mock.fn(() => a.get() + b.get());
+		const a = new BaseCell(1);
+		const b = new BaseCell(2);
+		const getC = mock.fn(() => a.get() + b.get());
 
 		const c = new BaseCell(getC);
 		c.on('change', console.log);
@@ -23,11 +23,11 @@ class ChangeCombineSpec {
 
 	@test
 	async combine2() {
-		let a = new BaseCell(1);
-		let b = new BaseCell(2);
-		let aa = new BaseCell<number>(() => a.get() + 1);
-		let bb = new BaseCell<number>(() => b.get() + 1);
-		let getC = mock.fn(() => {
+		const a = new BaseCell(1);
+		const b = new BaseCell(2);
+		const aa = new BaseCell<number>(() => a.get() + 1);
+		const bb = new BaseCell<number>(() => b.get() + 1);
+		const getC = mock.fn(() => {
 			return aa.get() + bb.get();
 		});
 

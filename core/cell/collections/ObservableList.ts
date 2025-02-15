@@ -9,7 +9,7 @@ export class ObservableList<T> extends EventEmitter<{
 }> {
 	constructor(private items: T[] = []) {
 		super();
-		for (let key of [
+		for (const key of [
 			'filter',
 			'indexOf',
 			'map',

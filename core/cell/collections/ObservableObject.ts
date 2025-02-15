@@ -1,4 +1,4 @@
-import { compare, DeepPartial, Fn } from '../../helpers';
+import { compare, type DeepPartial, Fn } from '../../helpers';
 import { EventEmitter } from '../../event-emitter';
 import { BaseCell } from '../base-cell';
 import { ObservableMap } from './ObservableMap';

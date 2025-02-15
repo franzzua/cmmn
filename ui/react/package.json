@@ -26,7 +26,9 @@
 	"dependencies": {
 		"@cmmn/core": "workspace:~"
 	},
-	"files": ["dist"],
+	"files": [
+		"dist"
+	],
 	"author": "",
 	"license": "ISC",
 	"gitHead": "2755b333808bf97f1d9454601c2a2c9a88e4a021"

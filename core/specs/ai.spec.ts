@@ -12,7 +12,7 @@ describe('ai', (ctx) => {
 		}>();
 		const mockFn = mock.fn();
 		const p = (async () => {
-			for await (let ee of emitter.iterate('value', {
+			for await (const ee of emitter.iterate('value', {
 				signal: abort.signal,
 			})) {
 				mockFn(ee);
@@ -37,7 +37,7 @@ describe('ai', (ctx) => {
 		const emitter = new AIEmitter<number>();
 		const mockFn = mock.fn();
 		const p = (async () => {
-			for await (let ee of emitter) {
+			for await (const ee of emitter) {
 				mockFn(ee);
 			}
 		})();
@@ -79,10 +79,10 @@ describe('ai', (ctx) => {
 
 	test('throttler', async () => {
 		const e = throttler(60);
-		for await (let i of timer(10)) {
+		for await (const i of timer(10)) {
 			const iLocal = i;
 			(async () => {
-				for await (let _ of e) {
+				for await (const _ of e) {
 					console.log('t', iLocal, Math.round(+performance.now() / 10));
 				}
 			})();

@@ -1,7 +1,7 @@
 import {Target} from "../helpers/target.js";
 import {fastify} from "fastify";
 import {createServer} from "vite";
-import {join} from "path";
+import {join} from "node:path";
 
 const prefix = '_';
 
@@ -10,7 +10,7 @@ export async function dev(...flags) {
     const resolver = (id) => {
         const target = targets.find(x => id.startsWith(x.packageJson.name));
         if (target)
-            return `/${prefix}/` + id;
+            return `/${prefix}/${id}`;
     }
     const rewriter = new UrlRewriter();
     const app = fastify({
@@ -18,14 +18,14 @@ export async function dev(...flags) {
     });
     await app.register(await import('@fastify/express'));
     const broadcaster = new HotUpdateBroadcaster()
-    for (let target of targets) {
+    for (const target of targets) {
         if (target.tsConfig.include?.length === 0)
             continue;
         target.resolver = resolver;
         const config = await target.getConfig();
         const devServer = await createServer({
             ...config,
-            base: `/${prefix}/` + target.packageJson.name,
+            base: `/${prefix}/${target.packageJson.name}`,
             server: {
                 ...config.server ?? {},
                 hmr: {
@@ -46,7 +46,7 @@ export async function dev(...flags) {
         host: '0.0.0.0',
         port: 9000
     });
-    console.log(`Listen http://localhost:9000`);
+    console.log('Listen http://localhost:9000');
     return app;
 
 }
@@ -59,7 +59,7 @@ class UrlRewriter {
     targets = [];
 
     rewritePath(path, req){
-        for (let target of this.targets) {
+        for (const target of this.targets) {
             if (!path.startsWith(`/${prefix}/${target.packageJson.name}`)) continue;
             const file = path.substring(`/${prefix}/${target.packageJson.name}`.length);
             if (!file || file === '/'){

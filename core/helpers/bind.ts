@@ -1,9 +1,9 @@
 export function bind<TInstance>() {
 	return function decorator(
-		handler: Function,
+		handler: (this: unknown, ...args: unknown[]) => unknown,
 		context: ClassMethodDecoratorContext,
 	) {
-		context.addInitializer(function (this: any) {
+		context.addInitializer(function () {
 			this[context.name] = handler.bind(this);
 		});
 	};

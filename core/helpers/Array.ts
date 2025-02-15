@@ -1,7 +1,7 @@
 export function groupBy<T, K>(array: Array<T>, selector: (t: T) => K) {
 	return array.reduce((result: Map<K, Array<T>>, item: T) => {
 		const key = selector(item);
-		if (result.has(key)) result.get(key)!.push(item);
+		if (result.has(key)) result.get(key)?.push(item);
 		else result.set(key, [item]);
 		return result;
 	}, new Map());
@@ -9,7 +9,7 @@ export function groupBy<T, K>(array: Array<T>, selector: (t: T) => K) {
 
 export function orderBy<T>(
 	array: Iterable<T>,
-	selector: (t: T) => string | number = (x) => x as any,
+	selector: (t: T) => string | number = (x) => x as string | number,
 	descending = false,
 ) {
 	return [...array].sort(
@@ -17,7 +17,7 @@ export function orderBy<T>(
 	);
 }
 
-export function distinct<T, U = any>(
+export function distinct<T, U = unknown>(
 	array: ReadonlyArray<T>,
 	selector?: (t: T) => U,
 ) {
@@ -28,11 +28,11 @@ export function distinct<T, U = any>(
 		}, new Map<U, T>());
 		return Array.from(map.values());
 	}
-	return Array.from(new (<any>Set)(array)) as Array<T>;
+	return Array.from(new Set(array)) as Array<T>;
 }
 
 export function sum(array: Array<number>): number {
-	if (array.length == 0) return 0;
+	if (array.length === 0) return 0;
 	return array.reduce((a, b) => a + b, 0);
 }
 export function average(array: Array<number>) {
@@ -40,7 +40,7 @@ export function average(array: Array<number>) {
 }
 export function remove<T>(array: Array<T>, item: T) {
 	const index = array.indexOf(item);
-	if (index == -1) return false;
+	if (index === -1) return false;
 	array.splice(index, 1);
 	return true;
 }
@@ -68,7 +68,7 @@ export function maxVal<T, U>(
 	array: Array<T>,
 	fn: (x: T, index: number) => U,
 ): U {
-	if (array.length == 0) return null;
+	if (array.length === 0) return null;
 	let current = array[0];
 	let currentVal = fn ? fn(current, 0) : current;
 	array.forEach((item, i) => {
@@ -89,7 +89,7 @@ export function minVal<T, U>(
 	array: Array<T>,
 	fn: (x: T, index: number) => U,
 ): U {
-	if (array.length == 0) return null;
+	if (array.length === 0) return null;
 	let current = array[0];
 	let currentVal = fn ? fn(current, 0) : current;
 	array.forEach((item, i) => {

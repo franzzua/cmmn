@@ -9,7 +9,7 @@ export type ICellOptions<T, TKey = T> = {
 	startValue?: T;
 };
 
-export class Cell<T = any, TKey = T> extends BaseCell<T> {
+export class Cell<T = unknown, TKey = T> extends BaseCell<T> {
 	constructor(
 		value: T | (() => T),
 		protected options: ICellOptions<T, TKey> = {},
@@ -23,7 +23,7 @@ export class Cell<T = any, TKey = T> extends BaseCell<T> {
 			this.handleFilterError(this.value);
 			if (options.startValue === undefined) {
 				// startValue -> update -> tap
-				this.options.tap && this.options.tap(this.value);
+				this.options.tap?.(this.value);
 			}
 		}
 	}
@@ -37,12 +37,12 @@ export class Cell<T = any, TKey = T> extends BaseCell<T> {
 
 	public set(value: T) {
 		super.set(value);
-		this.options.onExternal && this.options.onExternal(value);
+		this.options.onExternal?.(value);
 	}
 
 	protected update(value: T, error?: Error) {
 		super.update(value, error);
-		this.options.tap && this.options.tap(value);
+		this.options.tap?.(value);
 	}
 
 	public changeOptions(options: ICellOptions<T, TKey>) {
@@ -66,8 +66,8 @@ export class Cell<T = any, TKey = T> extends BaseCell<T> {
 		if (!this.options.compare) return false;
 		if (!this.options.compareKey)
 			return this.options.compare(
-				value as any as TKey,
-				oldValue as any as TKey,
+				value as TKey,
+				oldValue as TKey,
 			);
 		return this.options.compare(
 			this.options.compareKey(value),
@@ -79,18 +79,20 @@ export class Cell<T = any, TKey = T> extends BaseCell<T> {
 		pull: () => T,
 		options: ICellOptions<T, TKey>,
 		listener: (event: { value: T; oldValue: T }) => void,
-	): Function;
+	): () => void;
 	public static OnChange<T>(
 		pull: () => T,
 		listener: (event: { value: T; oldValue: T }) => void,
-	): Function;
+	): () => void;
 	public static OnChange<T, TKey>(
 		pull: () => T,
-		options: any,
+		options: ICellOptions<T, TKey>,
 		listener?: (event: { value: T; oldValue: T }) => void,
-	): Function {
+	): () => void {
 		if (typeof options === 'function') {
+			// @ts-ignore
 			listener = options;
+			// @ts-ignore
 			options = {};
 		}
 		return new Cell(pull, options).on('change', listener);
@@ -98,7 +100,7 @@ export class Cell<T = any, TKey = T> extends BaseCell<T> {
 
 	public static MergeCells<T>(...pulls: (() => T)[]): Cell<T> {
 		const cell = new Cell<T>(null);
-		for (let pull of pulls) {
+		for (const pull of pulls) {
 			Cell.OnChange(pull, (x) => cell.set(x.value));
 		}
 		return cell;
@@ -109,7 +111,7 @@ export class CellFilterError<T> extends Error {
 	constructor(
 		public value: T,
 		public filter: (x: T) => void,
-		public cell: Cell<T, any>,
+		public cell: Cell<T, unknown>,
 	) {
 		super(`Cell have not accepted value: ${value}`);
 	}

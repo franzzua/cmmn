@@ -1,16 +1,12 @@
-import { StoppableEventEmitter } from './stoppableEventEmitter';
+import {EventEmitter} from "@cmmn/core";
 
-export class EventListener<
-	TEvents extends {
-		[key in string]: any | void;
-	},
-> extends StoppableEventEmitter<TEvents> {
+export class EventListener<TEvents> extends EventEmitter<TEvents> {
 	constructor(private target: Omit<EventTarget, 'dispatchEvent'>) {
 		super();
 	}
 
 	private _emitters: {
-		[key in keyof TEvents]?: Function;
+		[key in keyof TEvents]?: (data: TEvents[key]) => unknown;
 	} = {};
 
 	protected subscribe(eventName: keyof TEvents) {

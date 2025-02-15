@@ -12,7 +12,9 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"files": ["dist"],
+	"files": [
+		"dist"
+	],
 	"devDependencies": {
 		"@cmmn/core": "workspace:~",
 		"@cmmn/tools": "workspace:~"
@@ -26,7 +28,11 @@
 			"input": "./dist/esm/index.js",
 			"module": "es,cjs",
 			"platform": "node",
-			"external": ["fastify", "@fastify*", "@cmmn*"]
+			"external": [
+				"fastify",
+				"@fastify*",
+				"@cmmn*"
+			]
 		}
 	},
 	"author": "",

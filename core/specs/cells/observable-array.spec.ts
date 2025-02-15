@@ -6,7 +6,7 @@ class ObservableArraySpec {
 	@test
 	iterable() {
 		const a = new ObservableArray<number>([1]);
-		for (let x of a) {
+		for (const x of a) {
 			expect(x).toEqual(1);
 		}
 	}

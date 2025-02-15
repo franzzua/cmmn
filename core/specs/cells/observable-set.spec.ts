@@ -6,7 +6,7 @@ class ObservableSetSpec {
 	@test
 	iterable() {
 		const a = new ObservableSet<number>([1]);
-		for (let x of a) {
+		for (const x of a) {
 			expect(x).toEqual(1);
 		}
 	}

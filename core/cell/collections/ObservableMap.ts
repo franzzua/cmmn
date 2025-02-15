@@ -47,14 +47,14 @@ export class ObservableMap<K, V> extends Map<K, V> {
 		update?: (item: V, value: U) => void,
 		onDelete?: (item: V) => void,
 	) {
-		for (let [existed, value] of this.entries()) {
+		for (const [existed, value] of this.entries()) {
 			if (!map.has(existed)) {
 				this.delete(existed);
-				onDelete && onDelete(value);
+				onDelete?.(value);
 			}
 		}
-		for (let [key, value] of map.entries()) {
-			if (this.has(key)) update && update(this.get(key), value);
+		for (const [key, value] of map.entries()) {
+			if (this.has(key)) update?.(this.get(key), value);
 			else this.set(key, create(value));
 		}
 		this.ee.emit('change', {

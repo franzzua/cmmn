@@ -16,14 +16,14 @@ export const Fn = {
 	},
 	uuid: uuid,
 	pipe,
-	join: (...functions: Function[]) => {
+	join: (...functions: Array<(this: unknown, ...args: unknown[]) => unknown>) => {
 		return function (...args) {
-			for (let fn of functions) {
-				fn && fn.apply(this, args);
+			for (const fn of functions) {
+				fn?.apply(this, args);
 			}
 		};
 	},
-	asyncDelay(timeout: number = 0): Promise<void> {
+	asyncDelay(timeout = 0): Promise<void> {
 		return new Promise((resolve) => setTimeout(resolve, timeout));
 	},
 	/**

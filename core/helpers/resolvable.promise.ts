@@ -17,14 +17,15 @@ export class ResolvablePromise<T = void, TError = unknown>
 		private executor: ConstructorParameters<typeof Promise<T>>[0] = () => {},
 	) {}
 
+	// biome-ignore lint/suspicious/noThenProperty: <explanation>
 	then<TResult1 = T, TResult2 = never>(
 		onfulfilled?: (value: T) => TResult1 | PromiseLike<TResult1>,
-		onrejected?: (reason: any) => TResult2 | PromiseLike<TResult2>,
+		onrejected?: (reason: unknown) => TResult2 | PromiseLike<TResult2>,
 	): Promise<TResult1 | TResult2> {
 		return this.impl.then(onfulfilled, onrejected);
 	}
 	catch<TResult = never>(
-		onrejected?: (reason: any) => TResult | PromiseLike<TResult>,
+		onrejected?: (reason: unknown) => TResult | PromiseLike<TResult>,
 	): Promise<T | TResult> {
 		return this.impl.catch(onrejected);
 	}

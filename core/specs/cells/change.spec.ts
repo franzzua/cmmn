@@ -25,7 +25,7 @@ class ChangeSpec {
 		b.on('change', onChange);
 		a.set(1);
 		await Graph.wait;
-		expect(onChange.mock.callCount() == 1).toBeTruthy();
+		expect(onChange.mock.callCount() === 1).toBeTruthy();
 	}
 
 	@test
@@ -43,10 +43,10 @@ class ChangeSpec {
 
 	@test
 	distinctChange() {
-		let onChange = mock.fn();
-		let a = new BaseCell(1);
+		const onChange = mock.fn();
+		const a = new BaseCell(1);
 		a.on('change', onChange);
 		a.set(1);
-		expect(onChange.mock.callCount() == 0).toBeTruthy();
+		expect(onChange.mock.callCount() === 0).toBeTruthy();
 	}
 }

@@ -7,10 +7,6 @@ export class ObservableSet<T> extends Set<T> {
 	}>();
 	on = this.ee.on.bind(this.ee);
 
-	constructor(values?: readonly T[] | Iterable<T> | null) {
-		super(values);
-	}
-
 	add(value: T): this {
 		const has = super.has(value);
 		if (has) return this;
