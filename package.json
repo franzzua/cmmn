@@ -1,42 +1,42 @@
 {
-  "name": "@cmmn/framework",
-  "version": "3.0.0-alpha-2",
-  "description": "",
-  "module": "package.json",
-  "private": true,
-  "repository": {
-    "url": "https://npm.local"
-  },
-  "exports": {
-    ".": "./test"
-  },
-  "scripts": {
-    "compile": "cmmn compile -b --watch",
-    "bundle": "cmmn bundle -b --watch",
-    "typings": "cmmn typings -b --watch",
-    "prod": "cmmn bundle -b --prod",
-    "ci2": "cmmn compile -b && cmmn bundle -b && cmmn bundle -b --prod --minify",
-    "test": "node --test */dist/**/*.spec.js",
-    "publish": "wersion patch",
-    "dev": "cmmn dev -b --run"
-  },
-  "workspaces": [
-    "core",
-    "tools",
-    "server",
-    "ui/uhtml",
-    "ui/react",
-    "sync",
-    "test"
-  ],
-  "author": "",
-  "license": "ISC",
-  "files": [],
-  "devDependencies": {
-    "@chainsafe/libp2p-yamux": "^7.0.1",
-    "@cmmn/tools": "workspace:~",
-    "typescript": "5.6.3"
-  },
-  "packageManager": "yarn@4.5.1",
-  "stableVersion": "3.0.0-alpha-2"
+	"name": "@cmmn/framework",
+	"version": "3.0.0-alpha-3",
+	"description": "",
+	"module": "package.json",
+	"private": true,
+	"repository": {
+		"url": "https://npm.local"
+	},
+	"exports": {
+		".": "./test"
+	},
+	"scripts": {
+		"compile": "cmmn compile -b --watch",
+		"bundle": "cmmn bundle -b --watch",
+		"typings": "cmmn typings -b --watch",
+		"prod": "cmmn bundle -b --prod",
+		"ci2": "cmmn compile -b && cmmn bundle -b && cmmn bundle -b --prod --minify",
+		"test": "node --test */dist/**/*.spec.js",
+		"publish": "wersion patch",
+		"dev": "cmmn dev -b --run"
+	},
+	"workspaces": [
+		"core",
+		"tools",
+		"server",
+		"ui/uhtml",
+		"ui/react",
+		"sync",
+		"test"
+	],
+	"author": "",
+	"license": "ISC",
+	"files": [],
+	"devDependencies": {
+		"@chainsafe/libp2p-yamux": "^7.0.1",
+		"@cmmn/tools": "workspace:~",
+		"typescript": "5.6.3"
+	},
+	"packageManager": "yarn@4.5.1",
+	"stableVersion": "3.0.0-alpha-2"
 }
