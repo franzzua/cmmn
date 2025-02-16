@@ -1,9 +1,7 @@
 import { EventEmitterBase } from './eventEmitterBase';
 import { removeAll } from '../helpers';
 
-export class EventEmitter<TEvents> extends EventEmitterBase<TEvents & {
-	[Symbol.dispose]: void
-}> {
+export class EventEmitter<TEvents> extends EventEmitterBase<TEvents> {
 	protected listeners = new Map<
 		keyof TEvents,
 		Array<{

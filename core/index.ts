@@ -23,6 +23,7 @@ export {
 	uuid,
 	pipe,
 } from './helpers';
+
 export {
 	Cell,
 	BaseCell,
@@ -39,7 +40,6 @@ export {
 export {
 	EventEmitterBase,
 	EventEmitter,
-	EventListener,
 	MergeListener,
 } from './event-emitter';
 

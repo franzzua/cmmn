@@ -1,7 +1,7 @@
 import { Storage, StorageProvider } from '../src/crdt/storage';
-import { singleton } from '@cmmn/core';
+import { scoped } from '@cmmn/core';
 
-@singleton()
+@scoped()
 export class InMemoryStorage<T> extends Storage<T> {
 	static Provider: StorageProvider = {
 		getStorage<T>(name: string): Storage<T> {

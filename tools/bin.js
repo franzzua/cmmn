@@ -2,14 +2,11 @@
 import * as commands from "./commands/index.js";
 import {Flags} from "./helpers/flags.js";
 
-const [command, ...args] = process.argv.slice(2);
+const flags = new Flags(process.argv.slice(2));
 
-if (command in commands) {
-    commands[command](new Flags(args));
+if (flags.command in commands) {
+    commands[flags.command](flags);
 } else {
-    console.log(`cmmn dev`);
-    console.log(`cmmn compile [--watch] [--minify]`);
-    console.log(`cmmn bundle [--watch]`);
-    console.log(`cmmn typings [--watch]`);
-    console.log(`cmmn gen AppRoot . [--nested]`);
+    console.log('cmmn [command] [args]');
+    console.log(Object.keys(commands).map(x => `* ${x}`).join('\n'))
 }

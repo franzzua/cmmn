@@ -8,7 +8,7 @@ const rootDir = process.cwd();
  * @param flags {import("../helpers/flags.js").Flags}
  * @returns {Promise<import('@swc/types').Config>}
  */
-export async function compile(...flags) {
+export async function compile(flags) {
     for (const target of await Target.readTargets(rootDir, flags)) {
         if (target.tsConfig.include?.length === 0)
             continue;
@@ -18,7 +18,7 @@ export async function compile(...flags) {
             cliOptions: {
                 outDir: path.join(target.rootDir, './dist/esm'),
                 rootDir: path.join(target.rootDir, target.tsConfig.compilerOptions.baseUrl ?? ''),
-                watch: flags.includes('--watch'),
+                watch: flags.watch,
                 extensions: ['.ts'],
                 // filenames: swcOptions.env.include.map(s => path.join(rootDir, s)),
                 filenames: swcOptions.env?.include?.length === 0 ? [] : [path.join(target.rootDir, './')],

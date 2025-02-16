@@ -14,7 +14,10 @@ export function compare(a: unknown, b: unknown): boolean {
 
 	// здесь и a и b это объекты
 	if (a === b) return true;
-	if (a.equals && b.equals) return a.equals(b);
+	if ('equals' in a && 'equals' in b) {
+		// @ts-ignore
+		return a.equals(b);
+	}
 
 	const aIsArr = Array.isArray(a);
 	const bIsArr = Array.isArray(b);

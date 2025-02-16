@@ -11,7 +11,7 @@ export class EventListener<TEvents> extends EventEmitter<TEvents> {
 
 	protected subscribe(eventName: keyof TEvents) {
 		if (!this._emitters[eventName])
-			this._emitters[eventName] = (data) => this.emit(eventName, data);
+			this._emitters[eventName] = ((data) => this.emit(eventName, data)) as never;
 		this.target.addEventListener(
 			eventName as string,
 			this._emitters[eventName] as any,
@@ -26,6 +26,6 @@ export class EventListener<TEvents> extends EventEmitter<TEvents> {
 	}
 
 	public static onceAsync(target: EventTarget, event: string) {
-		return new EventListener(target).onceAsync(event);
+		return new EventListener<Record<string, any>>(target).onceAsync(event);
 	}
 }

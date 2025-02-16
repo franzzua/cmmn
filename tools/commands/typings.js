@@ -2,12 +2,32 @@ import ts from "typescript";
 import {resolve, relative} from 'node:path';
 import fs from "node:fs";
 import {tsResolvePlugin} from "../helpers/ts-resolve-plugin.js";
+import {Target} from "../helpers/target.js";
 
 const rootDir = process.cwd();
 
-export function typings(...flags) {
+/**
+ * @param flags {import("../helpers/flags.js").Flags}
+ */
+export async function typings(flags) {
+    const targets = await Target.readTargets(rootDir, flags);
 
-    const host = ts.createSolutionBuilderWithWatchHost(ts.sys, createProgram);
+    for (let target of targets) {
+        runTarget(target, flags);
+    }
+}
+
+/**
+ * @param target {import("../helpers/target.js").Target}
+ * @param flags {import("../helpers/flags.js").Flags}
+ */
+function runTarget(target, flags){
+
+    const host = ts.createIncrementalCompilerHost(ts.sys, createProgram, ()=> {
+
+    }, (a) => {
+        console.log(a);
+    });
     host.getCustomTransformers = (pkg) => ({
         before: [
             tsResolvePlugin
@@ -18,38 +38,46 @@ export function typings(...flags) {
     });
     host.useCaseSensitiveFileNames();
 
-    const builderFactory = flags.includes('--watch') ?
-        ts.createSolutionBuilderWithWatch :
+    const builderFactory = flags.watch ?
+        ts.createwa :
         ts.createSolutionBuilder;
 
-    const builder = builderFactory(host, [rootDir], {
+    const builder = builderFactory(host, [target.rootDir], {
         incremental: true,
         dry: false,
-        assumeChangesOnlyAffectDirectDependencies: true
+        assumeChangesOnlyAffectDirectDependencies: true,
+        emitDeclarationOnly: true
     }, {
-        excludeDirectories: ["node_modules", "dist"],
+        excludeDirectories: [
+            `${target.rootDir}/node_modules`,
+            `${target.rootDir}/dist`,
+        ]
     });
-    builder.clean(rootDir);
-    builder.build(rootDir);
+    builder.clean(target.rootDir);
+    builder.build(target.rootDir);
+
 }
 
-const cleanedBaseDirs = new Set();
+const programCache = new Map();
+
 
 function createProgram(rootNames, options, host, oldProgram, configFileParsingDiagnostics, projectReferences) {
+    if (programCache.has(options.configFilePath))
+        return programCache.get(options.configFilePath);
     options.outDir = resolve(options.configFilePath, '../dist/esm');
     options.declarationDir = resolve(options.configFilePath, '../dist/typings');
     options.baseUrl = resolve(options.configFilePath, '../');
     options.tsBuildInfoFile = resolve(options.configFilePath, '../dist/ts.buildinfo');
     options.emitDeclarationsOnly = true;
-    // options.excludeDirectories.baseUrl = options.baseUrl;
-    // options.includeDirectories.baseUrl = options.baseUrl;
-    if (!cleanedBaseDirs.has(options.baseUrl)) {
-        fs.rmSync(options.declarationDir, {recursive: true, force: true});
-        fs.rmSync(options.tsBuildInfoFile, {force: true});
-        cleanedBaseDirs.add(options.baseUrl);
-    }
-    console.log('\t', relative(process.cwd(), options.baseUrl));
-    return ts.createEmitAndSemanticDiagnosticsBuilderProgram(
+    options.disableReferencedProjectLoad = true;
+
+    fs.rmSync(options.declarationDir, {recursive: true, force: true});
+    fs.rmSync(options.tsBuildInfoFile, {force: true});
+
+    console.log(options.project);
+    const result = ts.createSemanticDiagnosticsBuilderProgram(
         rootNames, options, host, oldProgram, configFileParsingDiagnostics, projectReferences
-    )
+    );
+    programCache.set(options.configFilePath, result);
+    return result;
 }

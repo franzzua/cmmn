@@ -3,7 +3,9 @@ import {exec, execSync} from "node:child_process";
 
 export async function publish(...flags){
     const targets = await Target.readTargets(process.cwd(), flags);
-    for (let target of targets) {
+    for (const target of targets) {
+        if (target.packageJson.private)
+            continue;
         try {
             execSync("yarn npm publish", {
                 cwd: target.rootDir,

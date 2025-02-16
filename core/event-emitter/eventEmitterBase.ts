@@ -1,7 +1,5 @@
 export abstract class EventEmitterBase<
-	TEvents extends {
-		[key in string]: unknown | undefined;
-	} = Record<never, never>,
+	TEvents = Record<never, never>,
 > {
 	public abstract on<TEventName extends keyof TEvents>(
 		eventName: TEventName,

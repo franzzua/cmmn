@@ -2,13 +2,13 @@ import {
 	Container,
 	inject,
 	ResolvablePromise,
-	singleton,
+	scoped,
 	uuid,
 } from '@cmmn/core';
 import { Transport } from '../transport/transport';
 import { RpcMessage, RpcService } from './types';
 
-@singleton()
+@scoped()
 export class RpcClient {
 	@inject(Transport<{ rpc: RpcMessage }>) transport!: Transport<{
 		rpc: RpcMessage;

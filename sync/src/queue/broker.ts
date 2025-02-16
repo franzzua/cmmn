@@ -1,9 +1,9 @@
-import { bind, Container, inject, singleton } from '@cmmn/core';
+import { bind, Container, inject, scoped } from '@cmmn/core';
 import { RPC } from '../rpc';
 import { Team } from './team';
 import { Queue } from './queue';
 
-@singleton()
+@scoped()
 export class Broker {
 	private cache: Record<string, Queue<any>> = {};
 

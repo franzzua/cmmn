@@ -1,8 +1,8 @@
-import { Container, inject, singleton } from '@cmmn/core';
+import { Container, inject, scoped } from '@cmmn/core';
 import { Transport } from '../transport/transport';
 import { RpcMessage, RpcService } from './types';
 
-@singleton()
+@scoped()
 export class RpcServer {
 	@inject(Transport<{ rpc: RpcMessage }>) transport!: Transport<{
 		rpc: RpcMessage;

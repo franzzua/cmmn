@@ -36,6 +36,6 @@ export function factory<T>(
 // const singletons = new Set<ConstructorOf<any>>();
 
 export const di = Container.Default;
-export const resolve = <T>(dep: ConstructorOf<T> | symbol) =>
+export const resolve = <T>(dep: InjectionToken<T>) =>
 	Container.Default.resolve(dep);
 export { Container };

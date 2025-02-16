@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/tools",
-  "version": "3.0.0-alpha-2",
+  "version": "3.0.0-alpha-3",
   "description": "Compilation, bundling, code generator, testing.",
   "main": "dist/rollup.config.js",
   "type": "module",
@@ -57,6 +57,7 @@
     "terminal-kit": "^3.1.2",
     "unionfs": "^4.5.4",
     "unplugin": "^2.1.2",
+    "unplugin-isolated-decl": "0.11.0",
     "unplugin-starter": "^0.1.0",
     "unplugin-swc": "^1.5.1",
     "vite": "6.0.11",

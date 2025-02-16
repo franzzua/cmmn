@@ -19,6 +19,7 @@
     "disableReferencedProjectLoad": true,
     "disableSourceOfProjectReferenceRedirect": true,
     "allowSyntheticDefaultImports": true,
+    "emitDeclarationOnly": true,
     "noEmitHelpers": true,
     "declarationDir": "./dist/typings",
     "esModuleInterop": true,

@@ -1,4 +1,4 @@
-import { inject, singleton } from '@cmmn/core';
+import { inject } from '@cmmn/core';
 import { P2PNode } from '../p2p/p2p.node';
 import { LoroCell } from './loro-cell';
 import { StorageProvider } from './storage';

@@ -7,7 +7,6 @@ export class BaseCell<T = unknown>
 		change: { value: T; oldValue: T };
 		error: Error;
 	}>
-	implements AsyncIterable<{ value: T; oldValue: T }>
 {
 	/** @internal **/
 	pull: () => T;
@@ -167,7 +166,7 @@ export class BaseCell<T = unknown>
 
 	/** @internal **/
 	// register classes as cell like, so unknown "change" event will notify wrapped cell
-	public static likeCells = new Set<unknown>([EventEmitterBase]);
+	public static likeCells = new Set<any>([EventEmitterBase]);
 	private static isLikeCell(
 		target,
 	): target is EventEmitterBase<{ change: unknown }> {
@@ -187,10 +186,6 @@ export class BaseCell<T = unknown>
 		return (target: TClass, context: ClassDecoratorContext) => {
 			BaseCell.likeCells.add(target);
 		};
-	}
-
-	public [Symbol.asyncIterator]() {
-		return this.iterate('change')[Symbol.asyncIterator]();
 	}
 
 	public static readonly Symbol: unique symbol = Symbol('BaseCell');

@@ -1,5 +1,5 @@
 import { Transport, TransportChannel } from './transport';
-import { EventEmitter, EventEmitterBase, singleton } from '@cmmn/core';
+import { EventEmitter, EventEmitterBase, scoped } from '@cmmn/core';
 
 declare const BroadcastChannel: EventTarget &
 	(new (
@@ -47,7 +47,7 @@ export abstract class DOMTransport<T extends Record<string, any>>
 	}
 }
 
-@singleton()
+@scoped()
 export class BroadcastTransport<
 	T extends Record<string, any>,
 > extends DOMTransport<T> {

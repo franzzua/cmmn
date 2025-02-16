@@ -1,7 +1,7 @@
-import { EventEmitter, Fn, inject, singleton } from '@cmmn/core';
+import { EventEmitter, Fn, inject, scoped } from '@cmmn/core';
 import { Transport } from '../transport/transport';
 
-@singleton()
+@scoped()
 export class Team
 	extends EventEmitter<{
 		leader: string;

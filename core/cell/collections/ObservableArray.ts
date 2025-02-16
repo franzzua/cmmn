@@ -49,9 +49,13 @@ const keys: Exclude<keyof Array<unknown>, keyof ReadonlyArray<unknown>>[] = [
 	'unshift',
 	// @ts-ignore
 	'removeAll',
+	// @ts-ignore
 	'remove',
+	// @ts-ignore
 	'reverse',
+	// @ts-ignore
 	'shift',
+	// @ts-ignore
 	'fill',
 ];
 for (const key of keys) {

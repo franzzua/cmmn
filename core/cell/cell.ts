@@ -66,8 +66,8 @@ export class Cell<T = unknown, TKey = T> extends BaseCell<T> {
 		if (!this.options.compare) return false;
 		if (!this.options.compareKey)
 			return this.options.compare(
-				value as TKey,
-				oldValue as TKey,
+				value as unknown as TKey,
+				oldValue as unknown as TKey,
 			);
 		return this.options.compare(
 			this.options.compareKey(value),
@@ -86,7 +86,7 @@ export class Cell<T = unknown, TKey = T> extends BaseCell<T> {
 	): () => void;
 	public static OnChange<T, TKey>(
 		pull: () => T,
-		options: ICellOptions<T, TKey>,
+		options: ICellOptions<T, TKey> | ((event: { value: T; oldValue: T }) => void),
 		listener?: (event: { value: T; oldValue: T }) => void,
 	): () => void {
 		if (typeof options === 'function') {

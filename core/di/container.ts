@@ -26,8 +26,8 @@ export class Container {
 				dep = this.overrides.get(dep) as InjectionToken<T, TArgs>;
 			if (this.consts.has(dep)) return this.consts.get(dep) as T;
 			if (typeof dep !== 'function')
-				throw new Error(`${dep} is not a constructor`);
-			if (!this.factories.has(dep)) return new (dep as unknown)(...args);
+				throw new Error(`${dep.toString()} is not a constructor`);
+			if (!this.factories.has(dep)) return new (dep as any)(...args);
 			if (this.instances.has(dep)) return this.instances.get(dep) as T;
 			const instance = this.factories.get(dep)?.(this);
 			this.instances.set(dep, instance);
@@ -45,14 +45,14 @@ export class Container {
 		this.instances.clear();
 	}
 
-	override<T, TArgs>(dependency: InjectionToken<T, TArgs>, override: InjectionToken<T, TArgs>) {
+	override<T, TArgs extends unknown[]>(dependency: InjectionToken<T, TArgs>, override: InjectionToken<T, TArgs>) {
 		this.overrides.set(dependency, override);
 	}
 
-	const<T, TArgs>(dependency: InjectionToken<T, TArgs>, value: T) {
+	const<T, TArgs extends unknown[]>(dependency: InjectionToken<T, TArgs>, value: T) {
 		this.consts.set(dependency, value);
 	}
-	factory<T, TArgs>(dependency: InjectionToken<T, TArgs>, value: (c: Container) => T) {
+	factory<T, TArgs extends unknown[]>(dependency: InjectionToken<T, TArgs>, value: (c: Container) => T) {
 		this.factories.set(dependency, value);
 	}
 

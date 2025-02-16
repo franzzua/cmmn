@@ -248,6 +248,7 @@ __metadata:
     terminal-kit: "npm:^3.1.2"
     unionfs: "npm:^4.5.4"
     unplugin: "npm:^2.1.2"
+    unplugin-isolated-decl: "npm:0.11.0"
     unplugin-starter: "npm:^0.1.0"
     unplugin-swc: "npm:^1.5.1"
     vite: "npm:6.0.11"
@@ -674,7 +675,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jridgewell/sourcemap-codec@npm:^1.4.10, @jridgewell/sourcemap-codec@npm:^1.4.14":
+"@jridgewell/sourcemap-codec@npm:^1.4.10, @jridgewell/sourcemap-codec@npm:^1.4.14, @jridgewell/sourcemap-codec@npm:^1.5.0":
   version: 1.5.0
   resolution: "@jridgewell/sourcemap-codec@npm:1.5.0"
   checksum: 10c0/2eb864f276eb1096c3c11da3e9bb518f6d9fc0023c78344cdc037abadc725172c70314bdb360f2d4b7bffec7f5d657ce006816bc5d4ecb35e61b66132db00c18
@@ -1663,6 +1664,69 @@ __metadata:
   dependencies:
     semver: "npm:^7.3.5"
   checksum: 10c0/c90935d5ce670c87b6b14fab04a965a3b8137e585f8b2a6257263bd7f97756dd736cb165bb470e5156a9e718ecd99413dccc54b1138c1a46d6ec7cf325982fe5
+  languageName: node
+  linkType: hard
+
+"@oxc-parser/binding-darwin-arm64@npm:0.48.2":
+  version: 0.48.2
+  resolution: "@oxc-parser/binding-darwin-arm64@npm:0.48.2"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@oxc-parser/binding-darwin-x64@npm:0.48.2":
+  version: 0.48.2
+  resolution: "@oxc-parser/binding-darwin-x64@npm:0.48.2"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@oxc-parser/binding-linux-arm64-gnu@npm:0.48.2":
+  version: 0.48.2
+  resolution: "@oxc-parser/binding-linux-arm64-gnu@npm:0.48.2"
+  conditions: os=linux & cpu=arm64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@oxc-parser/binding-linux-arm64-musl@npm:0.48.2":
+  version: 0.48.2
+  resolution: "@oxc-parser/binding-linux-arm64-musl@npm:0.48.2"
+  conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@oxc-parser/binding-linux-x64-gnu@npm:0.48.2":
+  version: 0.48.2
+  resolution: "@oxc-parser/binding-linux-x64-gnu@npm:0.48.2"
+  conditions: os=linux & cpu=x64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@oxc-parser/binding-linux-x64-musl@npm:0.48.2":
+  version: 0.48.2
+  resolution: "@oxc-parser/binding-linux-x64-musl@npm:0.48.2"
+  conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@oxc-parser/binding-win32-arm64-msvc@npm:0.48.2":
+  version: 0.48.2
+  resolution: "@oxc-parser/binding-win32-arm64-msvc@npm:0.48.2"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@oxc-parser/binding-win32-x64-msvc@npm:0.48.2":
+  version: 0.48.2
+  resolution: "@oxc-parser/binding-win32-x64-msvc@npm:0.48.2"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@oxc-project/types@npm:^0.48.2":
+  version: 0.48.2
+  resolution: "@oxc-project/types@npm:0.48.2"
+  checksum: 10c0/7d1369016b33bb19023a14ad57af7c572c28aa851af8c266ac4f182af3a791c6da7794e10dcfa3bdf8bde5b24bd5dbd918baf87c3599a3026bf9fc5151acbe4c
   languageName: node
   linkType: hard
 
@@ -3283,7 +3347,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:4, debug@npm:^4.1.1":
+"debug@npm:4, debug@npm:^4.1.1, debug@npm:^4.4.0":
   version: 4.4.0
   resolution: "debug@npm:4.4.0"
   dependencies:
@@ -5029,6 +5093,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"magic-string@npm:^0.30.17":
+  version: 0.30.17
+  resolution: "magic-string@npm:0.30.17"
+  dependencies:
+    "@jridgewell/sourcemap-codec": "npm:^1.5.0"
+  checksum: 10c0/16826e415d04b88378f200fe022b53e638e3838b9e496edda6c0e086d7753a44a6ed187adc72d19f3623810589bf139af1a315541cd6a26ae0771a0193eaf7b8
+  languageName: node
+  linkType: hard
+
 "make-dir@npm:^4.0.0":
   version: 4.0.0
   resolution: "make-dir@npm:4.0.0"
@@ -5527,6 +5600,40 @@ __metadata:
   languageName: node
   linkType: hard
 
+"oxc-parser@npm:^0.48.2":
+  version: 0.48.2
+  resolution: "oxc-parser@npm:0.48.2"
+  dependencies:
+    "@oxc-parser/binding-darwin-arm64": "npm:0.48.2"
+    "@oxc-parser/binding-darwin-x64": "npm:0.48.2"
+    "@oxc-parser/binding-linux-arm64-gnu": "npm:0.48.2"
+    "@oxc-parser/binding-linux-arm64-musl": "npm:0.48.2"
+    "@oxc-parser/binding-linux-x64-gnu": "npm:0.48.2"
+    "@oxc-parser/binding-linux-x64-musl": "npm:0.48.2"
+    "@oxc-parser/binding-win32-arm64-msvc": "npm:0.48.2"
+    "@oxc-parser/binding-win32-x64-msvc": "npm:0.48.2"
+    "@oxc-project/types": "npm:^0.48.2"
+  dependenciesMeta:
+    "@oxc-parser/binding-darwin-arm64":
+      optional: true
+    "@oxc-parser/binding-darwin-x64":
+      optional: true
+    "@oxc-parser/binding-linux-arm64-gnu":
+      optional: true
+    "@oxc-parser/binding-linux-arm64-musl":
+      optional: true
+    "@oxc-parser/binding-linux-x64-gnu":
+      optional: true
+    "@oxc-parser/binding-linux-x64-musl":
+      optional: true
+    "@oxc-parser/binding-win32-arm64-msvc":
+      optional: true
+    "@oxc-parser/binding-win32-x64-msvc":
+      optional: true
+  checksum: 10c0/46bd33e5bb8da5bf6347bbe796b878a57debc24b324253cf74541ba4a83cee8909a396325e8f23b1a4b6e8e406664fc1382793837232faaeb1078047de42f94c
+  languageName: node
+  linkType: hard
+
 "oxc-resolver@npm:^1.10.2":
   version: 1.12.0
   resolution: "oxc-resolver@npm:1.12.0"
@@ -5689,6 +5796,13 @@ __metadata:
   version: 0.1.12
   resolution: "path-to-regexp@npm:0.1.12"
   checksum: 10c0/1c6ff10ca169b773f3bba943bbc6a07182e332464704572962d277b900aeee81ac6aa5d060ff9e01149636c30b1f63af6e69dd7786ba6e0ddb39d4dee1f0645b
+  languageName: node
+  linkType: hard
+
+"pathe@npm:^2.0.2":
+  version: 2.0.3
+  resolution: "pathe@npm:2.0.3"
+  checksum: 10c0/c118dc5a8b5c4166011b2b70608762e260085180bb9e33e80a50dcdb1e78c010b1624f4280c492c92b05fc276715a4c357d1f9edc570f8f1b3d90b6839ebaca1
   languageName: node
   linkType: hard
 
@@ -7007,6 +7121,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"unplugin-isolated-decl@npm:0.11.0":
+  version: 0.11.0
+  resolution: "unplugin-isolated-decl@npm:0.11.0"
+  dependencies:
+    debug: "npm:^4.4.0"
+    magic-string: "npm:^0.30.17"
+    oxc-parser: "npm:^0.48.2"
+    unplugin: "npm:^2.1.2"
+    unplugin-utils: "npm:^0.2.3"
+  peerDependencies:
+    "@swc/core": ^1.6.6
+    oxc-transform: ">=0.42.0"
+    typescript: ^5.5.2
+  peerDependenciesMeta:
+    "@swc/core":
+      optional: true
+    oxc-transform:
+      optional: true
+    typescript:
+      optional: true
+  checksum: 10c0/837fa21255e1410df1ec8f0e9d3988e5493fc51a35f8d0870ce712a0e897cbe60d5142a75d02f972d63a359545244d98ff375644a4451db1b6085e0be345d87c
+  languageName: node
+  linkType: hard
+
 "unplugin-starter@npm:^0.1.0":
   version: 0.1.0
   resolution: "unplugin-starter@npm:0.1.0"
@@ -7026,6 +7164,16 @@ __metadata:
   peerDependencies:
     "@swc/core": ^1.2.108
   checksum: 10c0/113d9acc4f54a97d1bfc87b4d4c6bf56a99f9e3b392f4c09e15e0abb7dbf2ae4c11679e5a3dd9102f3e62f2c50fdf02883ee51c13e64b7a83b8f2294c47a8071
+  languageName: node
+  linkType: hard
+
+"unplugin-utils@npm:^0.2.3":
+  version: 0.2.4
+  resolution: "unplugin-utils@npm:0.2.4"
+  dependencies:
+    pathe: "npm:^2.0.2"
+    picomatch: "npm:^4.0.2"
+  checksum: 10c0/b5ab2db37823f5b4c8ee8719caa4b5a50b2da33c74c8110d46deb7a2399dfa15cbcaa0cff62aa6400c76e778e42becd9195c09b6502c0c007d03610f432c875f
   languageName: node
   linkType: hard
 

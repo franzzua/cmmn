@@ -8,9 +8,9 @@ import { identify } from '@libp2p/identify';
 import { floodsub } from '@libp2p/floodsub';
 import { createLibp2p } from 'libp2p';
 import { Libp2p } from '@libp2p/interface';
-import { singleton } from '@cmmn/core';
+import { scoped } from '@cmmn/core';
 
-@singleton()
+@scoped()
 export class InMemoryP2PNode extends P2PNode {
 	static addresses = [] as Multiaddr[];
 	static counter = 0;

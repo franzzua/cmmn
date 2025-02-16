@@ -6,6 +6,7 @@ import {resolve} from "node:path";
 import {build, createBuilder, mergeConfig} from "vite";
 import tsconfigPaths from 'vite-tsconfig-paths';
 import swc from 'unplugin-swc';
+import {IsolatedDecl} from 'unplugin-isolated-decl';
 import {builtinModules as builtin} from "module";
 import {createVitePlugin} from "unplugin";
 
@@ -82,7 +83,7 @@ export class Target extends EventTarget {
                         comments: false,
                         asciiOnly: true
                     }
-                } : false
+                } : undefined
             }
         };
     }
@@ -172,6 +173,8 @@ export class Target extends EventTarget {
                     name: this.packageJson.name + '_pre',
                     ...this.hooks
                 }))(),
+                IsolatedDecl.vite({
+                })
             ],
             builder: {},
         };
