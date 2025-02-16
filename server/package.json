@@ -1,6 +1,6 @@
 {
 	"name": "@cmmn/server",
-	"version": "3.0.0-alpha-3",
+	"version": "3.0.0-alpha-4",
 	"description": "server libs for building rest api",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
@@ -23,18 +23,6 @@
 		"fastify": "4"
 	},
 	"type": "module",
-	"cmmn": {
-		"index": {
-			"input": "./dist/esm/index.js",
-			"module": "es,cjs",
-			"platform": "node",
-			"external": [
-				"fastify",
-				"@fastify*",
-				"@cmmn*"
-			]
-		}
-	},
 	"author": "",
 	"license": "ISC",
 	"gitHead": "2755b333808bf97f1d9454601c2a2c9a88e4a021"
