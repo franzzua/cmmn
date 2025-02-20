@@ -16,7 +16,7 @@
 		"> 0.25%"
 	],
 	"type": "module",
-	"module": "./index.ts",
+	"module": "./dist/bundle/index.js",
 	"typings": "./dist/typings/index.d.ts",
 	"scripts": {
 		"build": "cmmn compile --watch",

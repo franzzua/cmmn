@@ -7,6 +7,21 @@
   "references": [
     {
       "path": "./core"
+    },
+    {
+      "path": "./ui/uhtml"
+    },
+    {
+      "path": "./ui/react"
+    },
+    {
+      "path": "./server"
+    },
+    {
+      "path": "./sync"
+    },
+    {
+      "path": "./test"
     }
   ]
 }

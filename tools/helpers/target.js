@@ -9,6 +9,8 @@ import swc from 'unplugin-swc';
 import {IsolatedDecl} from 'unplugin-isolated-decl';
 import {builtinModules as builtin} from "module";
 import {createVitePlugin} from "unplugin";
+import wasm from "vite-plugin-wasm";
+import topLevelAwait from "vite-plugin-top-level-await";
 
 const swcConfig = JSON.parse(fs.readFileSync(import.meta.dirname + "/.swcrc", "utf-8"));
 
@@ -165,6 +167,8 @@ export class Target extends EventTarget {
                 }
             },
             plugins: [
+                wasm(),
+                topLevelAwait(),
                 swc.vite({
                     ...this.swcConfig,
                 }),

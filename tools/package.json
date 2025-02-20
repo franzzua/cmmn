@@ -1,6 +1,6 @@
 {
   "name": "@cmmn/tools",
-  "version": "3.0.0-alpha-3",
+  "version": "3.0.0-alpha-4",
   "description": "Compilation, bundling, code generator, testing.",
   "main": "dist/rollup.config.js",
   "type": "module",
@@ -61,6 +61,8 @@
     "unplugin-starter": "^0.1.0",
     "unplugin-swc": "^1.5.1",
     "vite": "6.0.11",
+    "vite-plugin-top-level-await": "^1.5.0",
+    "vite-plugin-wasm": "^3.4.1",
     "vite-tsconfig-paths": "^5.1.4"
   },
   "author": "",
