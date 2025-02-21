@@ -1,6 +1,6 @@
 {
 	"name": "@cmmn/uhtml",
-	"version": "3.0.0-alpha-4",
+	"version": "3.0.0-alpha-5",
 	"description": "",
 	"publishConfig": {
 		"access": "public"
@@ -11,7 +11,7 @@
 	"type": "module",
 	"main": "./dist/bundle/index.js",
 	"typings": "./dist/bundle/typings/index.d.ts",
-	"module": "index.ts",
+	"module": "./dist/bundle/index.js",
 	"typesVersions": {
 		"*": {
 			"typings.d.ts": [
@@ -35,16 +35,5 @@
 		"dist"
 	],
 	"author": "",
-	"license": "ISC",
-	"gitHead": "2755b333808bf97f1d9454601c2a2c9a88e4a021",
-	"cmmn": {
-		"index": {
-			"input": "dist/esm/index.js",
-			"platform": "browser",
-			"external": [
-				"@cmmn/core"
-			],
-			"module": "es,cjs"
-		}
-	}
+	"license": "ISC"
 }
