@@ -13,7 +13,9 @@ import wasm from "vite-plugin-wasm";
 import topLevelAwait from "vite-plugin-top-level-await";
 import {federation} from '@module-federation/vite';
 
-const swcConfig = JSON.parse(fs.readFileSync(import.meta.dirname + "/.swcrc", "utf-8"));
+const swcConfig = JSON.parse(await fs.promises.readFile(import.meta.dirname + "/.swcrc", {
+    encoding: 'utf-8'
+}));
 
 export class Target extends EventTarget {
     /** @type {string} **/
@@ -131,13 +133,13 @@ export class Target extends EventTarget {
 
     /** @returns {import('vite').InlineConfig} **/
     async getConfig() {
-        console.log(this.entries);
         return {
             envFile: false,
             root: this.rootDir,
-            // logLevel: 'silent',
-            mode: 'development',
+            logLevel: 'silent',
+            mode: 'production',
             build: {
+                target: 'chrome89',
                 emptyOutDir: false,
                 watch: this.flags.watch,
                 rollupOptions: {
@@ -160,16 +162,12 @@ export class Target extends EventTarget {
                         'fsevents',
                     ],
                     plugins: [
-                        wasm(),
-                        topLevelAwait(),
                         swc.vite(this.swcConfig),
-                        tsconfigPaths(),
                         createVitePlugin(() => ({
                             name: this.packageJson.name + '_pre',
                             ...this.hooks
-                        }))(),
-                        IsolatedDecl.vite({}),
-                    ],
+                        }))()
+                    ]
                 },
                 minify: false,
                 sourcemap: true,
@@ -178,18 +176,15 @@ export class Target extends EventTarget {
                     formats: ['es'],
                 },
             },
-            plugins: [
-                wasm(),
-                topLevelAwait(),
-                swc.vite(this.swcConfig),
-                tsconfigPaths(),
-                createVitePlugin(() => ({
-                    name: this.packageJson.name + '_pre',
-                    ...this.hooks
-                }))(),
-                IsolatedDecl.vite({}),
-            ],
+            plugins: [...this.getPlugins()]
         };
+    }
+
+    *getPlugins(){
+        // yield wasm();
+        // yield topLevelAwait();
+        yield swc.vite(this.swcConfig);
+        yield tsconfigPaths();
     }
 
     getCompiler() {
@@ -201,14 +196,14 @@ export class Target extends EventTarget {
     hooks = {
         buildStart: (config) => {
             this.dispatchEvent(new Event('start'));
-            this.logger.log('start...')
+            // this.logger.log('start...')
         },
         buildEnd: () => {
-            this.logger.log('end...')
+            // this.logger.log('end...')
             this.dispatchEvent(new Event('end'));
         },
         writeBundle: (config, bundles) => {
-            this.logger.log('write...')
+            // this.logger.log('write...')
             for (let name in bundles) {
                 this.dispatchEvent(new BundleEvent(name, bundles[name]));
             }

@@ -11,7 +11,6 @@ export async function bundle(flags) {
     for (const target of targets) {
         if (target.tsConfig.include?.length === 0)
             continue;
-        console.log(target.rootDir)
         const info = {
             name: target.packageJson.name,
             state: 'idle',
@@ -41,8 +40,8 @@ export async function bundle(flags) {
             }
         });
         await target.getCompiler().then(c => {
-            console.log(c.config.plugins.map(x => x.name));
-            c.buildApp()
+            // console.log(c.config.plugins.map(x => x.name));
+            return c.buildApp()
         });
     }
     term.render(false);

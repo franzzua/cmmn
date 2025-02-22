@@ -61,7 +61,7 @@
     "unplugin-isolated-decl": "0.11.0",
     "unplugin-starter": "^0.1.0",
     "unplugin-swc": "^1.5.1",
-    "vite": "6.0.11",
+    "vite": "6.1.1",
     "vite-plugin-top-level-await": "^1.5.0",
     "vite-plugin-wasm": "^3.4.1",
     "vite-tsconfig-paths": "^5.1.4"
