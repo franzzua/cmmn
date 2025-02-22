@@ -14,6 +14,7 @@ export class ObservableMap<K, V> extends Map<K, V> {
 			| { value: Map<K, V> };
 	}>();
 	public on = this.ee.on.bind(this.ee);
+	public off = this.ee.off.bind(this.ee);
 
 	toArray(): ReadonlyArray<V> {
 		return Array.from(this.values());

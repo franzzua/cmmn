@@ -11,6 +11,7 @@ import {builtinModules as builtin} from "module";
 import {createVitePlugin} from "unplugin";
 import wasm from "vite-plugin-wasm";
 import topLevelAwait from "vite-plugin-top-level-await";
+import {federation} from '@module-federation/vite';
 
 const swcConfig = JSON.parse(fs.readFileSync(import.meta.dirname + "/.swcrc", "utf-8"));
 
@@ -86,18 +87,14 @@ export class Target extends EventTarget {
                         asciiOnly: true
                     }
                 } : undefined
-            }
+            },
+            "sourceMaps": true,
+            "inlineSourcesContent": false
         };
     }
 
     /** @returns {import('webpack-dev-server').RspackOptions["entry"]} **/
     get entries() {
-        if (this.packageJson.module) {
-            const entry = path.join(this.rootDir, this.packageJson.module ?? "index.ts");
-            return {
-                index: entry
-            }
-        }
         const outputPath = path.join(this.rootDir, 'dist/bundle');
         if (this.packageJson.exports) {
             const result = {};
@@ -116,11 +113,14 @@ export class Target extends EventTarget {
                     path.join(this.rootDir, importFile),
                 );
                 // console.log(exportFile);
-                result[exportFile] = file;
+                result['index'] = file;
             }
             return result;
         }
-        return { index: './index.ts' };
+        const entry = path.join(this.rootDir, this.packageJson.module ?? "index.ts");
+        return {
+            index: entry
+        }
     }
 
     get logger() {
@@ -131,10 +131,11 @@ export class Target extends EventTarget {
 
     /** @returns {import('vite').InlineConfig} **/
     async getConfig() {
+        console.log(this.entries);
         return {
             envFile: false,
             root: this.rootDir,
-            logLevel: 'silent',
+            // logLevel: 'silent',
             mode: 'development',
             build: {
                 emptyOutDir: false,
@@ -158,29 +159,36 @@ export class Target extends EventTarget {
                         ...builtin.map((x) => `node:${x}`),
                         'fsevents',
                     ],
+                    plugins: [
+                        wasm(),
+                        topLevelAwait(),
+                        swc.vite(this.swcConfig),
+                        tsconfigPaths(),
+                        createVitePlugin(() => ({
+                            name: this.packageJson.name + '_pre',
+                            ...this.hooks
+                        }))(),
+                        IsolatedDecl.vite({}),
+                    ],
                 },
                 minify: false,
                 sourcemap: true,
                 lib: {
                     entry: this.entries,
                     formats: ['es'],
-                }
+                },
             },
             plugins: [
                 wasm(),
                 topLevelAwait(),
-                swc.vite({
-                    ...this.swcConfig,
-                }),
-                tsconfigPaths({}),
-                createVitePlugin(() =>({
+                swc.vite(this.swcConfig),
+                tsconfigPaths(),
+                createVitePlugin(() => ({
                     name: this.packageJson.name + '_pre',
                     ...this.hooks
                 }))(),
-                IsolatedDecl.vite({
-                })
+                IsolatedDecl.vite({}),
             ],
-            builder: {},
         };
     }
 
@@ -193,12 +201,14 @@ export class Target extends EventTarget {
     hooks = {
         buildStart: (config) => {
             this.dispatchEvent(new Event('start'));
-            // this.logger.log('start...')
+            this.logger.log('start...')
         },
         buildEnd: () => {
+            this.logger.log('end...')
             this.dispatchEvent(new Event('end'));
         },
         writeBundle: (config, bundles) => {
+            this.logger.log('write...')
             for (let name in bundles) {
                 this.dispatchEvent(new BundleEvent(name, bundles[name]));
             }
@@ -216,9 +226,8 @@ export class Target extends EventTarget {
             this.dispatchEvent(new ChangeEvent(id, change.event));
             this.logger.log(change.event, id);
         },
-        vite: {
-        },
-        resolveId:(id, importer, options) => {
+        vite: {},
+        resolveId: (id, importer, options) => {
             return this.resolver?.(id);
         },
         enforce: 'pre',

@@ -1,9 +1,16 @@
 import { Container } from './container';
 import type {ConstructorOf, InjectionToken} from './types';
 
+type FieldDecorator<T, This> = (_: T, ctx: ClassFieldDecoratorContext) => (this: This, value: T) => T;
+type AccessorDecorator<T, This> = (_: T, ctx: ClassAccessorDecoratorContext) => {
+	get?(this: This): T;
+	set?(this: This, value: T): void;
+	init?(this: This): void;
+};
+
 export const inject = <T>(dep: InjectionToken<T>) => {
-	return (
-		initial: T | undefined,
+	return ((
+		_: unknown,
 		ctx: ClassFieldDecoratorContext | ClassAccessorDecoratorContext,
 	) => {
 		if (ctx.kind === 'field')
@@ -17,7 +24,7 @@ export const inject = <T>(dep: InjectionToken<T>) => {
 				},
 			};
 		}
-	};
+	}) as (FieldDecorator<T, unknown> | AccessorDecorator<T, unknown>);
 };
 
 export function scoped<TClass extends ConstructorOf<unknown>>() {
@@ -38,4 +45,6 @@ export function factory<T>(
 export const di = Container.Default;
 export const resolve = <T>(dep: InjectionToken<T>) =>
 	Container.Default.resolve(dep);
+
+const t: InjectionToken<Container> = Container;
 export { Container };

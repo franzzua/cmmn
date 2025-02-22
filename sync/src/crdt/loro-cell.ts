@@ -44,13 +44,6 @@ export class LoroCell<T> extends BaseCell<T> {
 		this.subscription?.();
 	}
 
-	public async *getUpdates(abort?: AbortSignal) {
-		for await (let { event, diff } of this.docEvents.iterate('change')) {
-			if (event.by == 'local') {
-				yield diff;
-			}
-		}
-	}
 
 	[Symbol.dispose]() {
 		super[Symbol.dispose]();

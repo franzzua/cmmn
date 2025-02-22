@@ -19,26 +19,27 @@ export async function dev(...flags) {
     await app.register(await import('@fastify/express'));
     const broadcaster = new HotUpdateBroadcaster()
     for (const target of targets) {
-        if (target.tsConfig.include?.length === 0)
-            continue;
         target.resolver = resolver;
         const config = await target.getConfig();
         const devServer = await createServer({
             ...config,
-            base: `/${prefix}/${target.packageJson.name}`,
+            base: target.packageJson.workspaces ? '' : `/${prefix}/${target.packageJson.name}`,
             server: {
                 ...config.server ?? {},
                 hmr: {
                     ...config.server?.hmr ?? {},
                     server: app.server,
                 },
+                fs: {
+                    strict: false
+                }
             },
         });
 
         broadcaster.enhanceDevServer(devServer);
         rewriter.targets.push(target);
-        app.register(await getTargetMiddleware(devServer, target), {
-            prefix: `/${prefix}/${target.packageJson.name}`
+        app.register(await getTargetMiddleware(devServer, target, devServer.config.base), {
+            prefix: devServer.config.base
         });
     }
 
@@ -58,11 +59,11 @@ class UrlRewriter {
      */
     targets = [];
 
-    rewritePath(path, req){
+    rewritePath(path, req) {
         for (const target of this.targets) {
             if (!path.startsWith(`/${prefix}/${target.packageJson.name}`)) continue;
             const file = path.substring(`/${prefix}/${target.packageJson.name}`.length);
-            if (!file || file === '/'){
+            if (!file || file === '/') {
                 const mainEntry = target.packageJson.module
                     ?? target.packageJson.main
                     ?? target.packageJson.exports?.['.'];
@@ -72,7 +73,7 @@ class UrlRewriter {
                 const entry = target.packageJson.exports[file];
                 return join(`/${prefix}/${target.packageJson.name}/`, entry);
             }
-            if (file.startsWith(`/${prefix}`)){
+            if (file.startsWith(`/${prefix}`)) {
                 return this.rewritePath(file, req);
             }
         }
@@ -83,6 +84,7 @@ class UrlRewriter {
         return this.rewritePath(req.url, req)
     }
 }
+
 class HotUpdateBroadcaster {
     #eventTarget = new EventTarget();
 
@@ -92,18 +94,28 @@ class HotUpdateBroadcaster {
         devServer.ws.send = this.send;
     }
 
-    send = payload => this.#eventTarget.dispatchEvent(new CustomEvent('ws', {detail: payload}))
+    send = payload => {
+        return this.#eventTarget.dispatchEvent(new CustomEvent('ws', {detail: payload}));
+    }
 }
 
 
 /**
  * @param devServer {import('vite/dist/node/index.d.ts').ViteDevServer}
  * @param target {import("../helpers/target.js").Target}
- * @param prefix {string}
+ * @param base {string}
  */
-export async function getTargetMiddleware(devServer, target) {
+export async function getTargetMiddleware(devServer, target, base) {
     return async (app, options) => {
         app.get('*', (request, reply, next) => {
+            if (base !== '/' && request.url.startsWith(base + '@fs')) {
+                reply.headers({
+                    'Content-Type': 'application/javascript'
+                })
+                return Promise.resolve(
+                    `export * from "/${request.url.substring(base.length).replace(/\?.*$/,'')}"`
+                )
+            }
             devServer.middlewares(request.raw, reply.raw);
         })
     }

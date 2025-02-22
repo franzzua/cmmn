@@ -9,19 +9,6 @@
 		"url": "https://github.com/franzzua/cmmn/tree/master/sync"
 	},
 	"main": "./dist/bundle/index.js",
-	"module": "./index.ts",
-	"browser": "./dist/bundle/index.browser.js",
-	"exports": {
-		".": {
-			"import": "./dist/bundle/index.js",
-			"default": "./dist/bundle/index.js"
-		},
-		"./entry": {
-			"import": "./dist/bundle/index.js",
-			"default": "./dist/bundle/index.js"
-		},
-		"./package.json": "./package.json"
-	},
 	"typings": "index.d.ts",
 	"typesVersions": {
 		"*": {

@@ -25,6 +25,7 @@ export async function compile(flags) {
                 stripLeadingPaths: false,
                 quiet: false,
                 noSwcrc: true,
+                sourceMaps: true,
                 logWatchCompilation: true,
                 sourceRoot: path.join(target.rootDir, target.tsConfig.compilerOptions.sourceRoot ?? ''),
                 ignore: [

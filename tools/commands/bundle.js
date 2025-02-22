@@ -40,7 +40,10 @@ export async function bundle(flags) {
                 term.render();
             }
         });
-        await target.getCompiler().then(c => c.buildApp());
+        await target.getCompiler().then(c => {
+            console.log(c.config.plugins.map(x => x.name));
+            c.buildApp()
+        });
     }
     term.render(false);
 }

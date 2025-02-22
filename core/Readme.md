@@ -3,8 +3,8 @@
 * [Serialization via messagepack](./serialize/index.ts)
 * [Dependency injection container](./di/index.ts)
 * [Datetime wrappers](./helpers/utc.ts) - luxon not included
-* [Array **monkey-patching**](./helpers/Array.ts)
-* [Map **monkey-patching**](./helpers/map.ts)
+* [Array](./helpers/Array.ts)
+* [Map](./helpers/map.ts)
 * [EventEmitter](event-emitter/index.ts)
 * [Usefull functions](./helpers/Fn.ts)
   * [ulid](./helpers/uuid.ts) for unical monothonic ids

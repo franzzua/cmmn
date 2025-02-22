@@ -2,7 +2,8 @@ import { parseHTML } from 'linkedom';
 import * as global from 'linkedom';
 import { describe, test, mock } from 'node:test';
 import * as assert from 'node:assert';
-import { bind, EventListener } from '@cmmn/core';
+import { bind } from '@cmmn/core';
+import {EventListener} from "../user-events/eventListener";
 
 const x = parseHTML(`<!doctype html><html lang="en"></html>`);
 Object.assign(globalThis, global);
