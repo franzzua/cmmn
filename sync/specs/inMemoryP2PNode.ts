@@ -36,7 +36,7 @@ export class InMemoryP2PNode extends P2PNode {
 				pubsub: floodsub(),
 			},
 		});
-		InMemoryP2PNode.addresses.push(...p2p.getMultiaddrs());
+		InMemoryP2PNode.addresses.push(...(p2p.getMultiaddrs() as Multiaddr[]));
 		for (let instance of InMemoryP2PNode.instances) {
 			await p2p.dial(instance.getMultiaddrs());
 		}

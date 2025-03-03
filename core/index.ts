@@ -27,7 +27,6 @@ export {
 export {
 	Cell,
 	BaseCell,
-	AsyncCell,
 	cell,
 	type IAsyncCellOptions,
 	type ICellOptions,

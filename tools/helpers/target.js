@@ -6,12 +6,11 @@ import {resolve} from "node:path";
 import {build, createBuilder, mergeConfig} from "vite";
 import tsconfigPaths from 'vite-tsconfig-paths';
 import swc from 'unplugin-swc';
-import {IsolatedDecl} from 'unplugin-isolated-decl';
 import {builtinModules as builtin} from "module";
-import {createVitePlugin} from "unplugin";
 import wasm from "vite-plugin-wasm";
 import topLevelAwait from "vite-plugin-top-level-await";
-import {federation} from '@module-federation/vite';
+import {createVitePlugin} from "unplugin";
+import {fileURLToPath} from "node:url";
 
 const swcConfig = JSON.parse(await fs.promises.readFile(import.meta.dirname + "/.swcrc", {
     encoding: 'utf-8'
@@ -24,12 +23,15 @@ export class Target extends EventTarget {
     flags;
     /** @type {Target[]} **/
     deps;
+    /** @type {Map<string, Target>} **/
+    depsMap;
 
     constructor(rootDir, flags, deps) {
         super();
         this.rootDir = rootDir;
         this.flags = flags;
         this.deps = deps;
+        this.depsMap = new Map(deps.map(x => [x.packageJson.name, x]));
     }
 
     /**
@@ -39,7 +41,7 @@ export class Target extends EventTarget {
      */
     static async readTargets(rootDir, flags) {
         if (flags.workspace) {
-            return [new Target(resolve(rootDir, flags.workspace), flags)];
+            return [new Target(resolve(rootDir, flags.workspace), flags, [])];
         }
         const result = new Map();
         for await (let project of getDependencyOrder(rootDir)) {
@@ -138,6 +140,8 @@ export class Target extends EventTarget {
             root: this.rootDir,
             logLevel: 'silent',
             mode: 'production',
+            optimizeDeps:{
+            },
             build: {
                 target: 'chrome89',
                 emptyOutDir: false,
@@ -156,18 +160,12 @@ export class Target extends EventTarget {
                         strict: true
                     },
                     external: [
-                        ...Object.keys(this.packageJson.dependencies ?? {}),
+                        // ...Object.keys(this.packageJson.dependencies ?? {}).map(x => new RegExp(`^${x}`)),
                         ...builtin,
                         ...builtin.map((x) => `node:${x}`),
                         'fsevents',
                     ],
-                    plugins: [
-                        swc.vite(this.swcConfig),
-                        createVitePlugin(() => ({
-                            name: this.packageJson.name + '_pre',
-                            ...this.hooks
-                        }))()
-                    ]
+                    plugins: [...this.getPlugins()],
                 },
                 minify: false,
                 sourcemap: true,
@@ -176,34 +174,40 @@ export class Target extends EventTarget {
                     formats: ['es'],
                 },
             },
-            plugins: [...this.getPlugins()]
+            base: `http://localhost:9000/_/${this.packageJson.name}`,
+            plugins: [...this.getPlugins()],
         };
     }
 
     *getPlugins(){
-        // yield wasm();
-        // yield topLevelAwait();
+        yield wasm();
+        yield topLevelAwait();
         yield swc.vite(this.swcConfig);
         yield tsconfigPaths();
+        yield createVitePlugin(() => ({
+            name: this.packageJson.name + '_pre',
+            ...this.hooks
+        }))()
     }
 
     getCompiler() {
         return createBuilder(this.getConfig());
     }
 
+    /**
+     * @type {import('vite/dist/node/index.d.ts').ViteDevServer}
+     */
+    devServer;
     resolver;
     /** @type {import('unplugin').UnpluginOptions} **/
     hooks = {
         buildStart: (config) => {
             this.dispatchEvent(new Event('start'));
-            // this.logger.log('start...')
         },
         buildEnd: () => {
-            // this.logger.log('end...')
             this.dispatchEvent(new Event('end'));
         },
         writeBundle: (config, bundles) => {
-            // this.logger.log('write...')
             for (let name in bundles) {
                 this.dispatchEvent(new BundleEvent(name, bundles[name]));
             }
@@ -217,11 +221,24 @@ export class Target extends EventTarget {
         //         }
         //     `;
         // },
+        // load: (id, options) => {
+        //     if (!id?.startsWith('/_/@id:')) return;
+        //     const [pkg, version] = id.substring('/_/@id:'.length).split('@');
+        //     const resolved = import.meta.resolve(pkg, this.rootDir);
+        //     return `export * from "${pkg}"`;
+        // },
         watchChange: (id, change) => {
             this.dispatchEvent(new ChangeEvent(id, change.event));
             this.logger.log(change.event, id);
         },
-        vite: {},
+        vite: {
+            configResolved: {
+                handler(config){
+                    // console.log('config:', config.root)
+                },
+                order: 'pre'
+            }
+        },
         resolveId: (id, importer, options) => {
             return this.resolver?.(id);
         },

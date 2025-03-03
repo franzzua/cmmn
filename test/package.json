@@ -8,18 +8,18 @@
 	"type": "module",
 	"exports": {
 		".": "./src/index.html",
-		"./index.ts": "./src/index.ts"
+		"./index.ts": "./index.ts"
 	},
 	"dependencies": {
 		"@cmmn/core": "workspace:~",
 		"@cmmn/react": "workspace:~",
 		"react": "^19.0.0",
-		"react-dom": "^19.0.0"
+		"react-dom": "^19.0.0",
+		"uuidv7": "1.0.2"
 	},
 	"devDependencies": {
 		"@cmmn/tools": "workspace:~",
 		"@cmmn/uhtml": "workspace:~",
-		"@types/react-dom": "^19",
-		"@vitejs/plugin-react-swc": "^3.7.2"
+		"@types/react-dom": "^19"
 	}
 }

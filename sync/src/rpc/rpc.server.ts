@@ -4,7 +4,9 @@ import { RpcMessage, RpcService } from './types';
 
 @scoped()
 export class RpcServer {
-	@inject(Transport<{ rpc: RpcMessage }>) transport!: Transport<{
+	@inject<Transport<{
+		rpc: RpcMessage;
+	}>>(Transport) transport!: Transport<{
 		rpc: RpcMessage;
 	}>;
 	@inject(Container) container!: Container;

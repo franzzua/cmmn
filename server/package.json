@@ -15,12 +15,12 @@
 	"files": [
 		"dist"
 	],
+	"dependencies": {
+		"fastify": "4"
+	},
 	"devDependencies": {
 		"@cmmn/core": "workspace:~",
 		"@cmmn/tools": "workspace:~"
-	},
-	"dependencies": {
-		"fastify": "4"
 	},
 	"type": "module",
 	"author": "",

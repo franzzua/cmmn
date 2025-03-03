@@ -1,12 +1,10 @@
-import { useRef, useSyncExternalStore } from 'react';
-import { BaseCell } from '@cmmn/core';
+import {useRef, useSyncExternalStore} from 'react';
+import {BaseCell, Cell, ICellOptions} from '@cmmn/core';
 
 export function useCell<T>(
 	getter: (() => T) | BaseCell<T> | undefined,
-	deps: any[] = [],
+	options?: ICellOptions<T>
 ): T {
-	if (!getter || getter instanceof BaseCell) deps.push(getter);
-	console.log('useRef', useRef);
 	const cellRef = useRef<{
 		cell: BaseCell<T>;
 		state: symbol;
@@ -16,14 +14,14 @@ export function useCell<T>(
 
 	if (!cellRef.current && getter) {
 		const value = (cellRef.current = {
-			cell: getter instanceof BaseCell ? getter : new BaseCell<T>(getter),
+			cell: getter instanceof BaseCell ? getter : new Cell<T>(getter, options),
 			state: Symbol(),
 			getSnapshot() {
-				return this.state;
+				return value.state;
 			},
 			subscribe(onChange) {
 				value.cell.on('change', (e) => {
-					onChange(value.state);
+					onChange(value.state = Symbol());
 				});
 			},
 		});

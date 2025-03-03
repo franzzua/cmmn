@@ -3,7 +3,6 @@ import type { Libp2p, PeerId, PubSub } from '@libp2p/interface';
 import { LoroDoc } from 'loro-crdt';
 import { LoroRoom } from './loroRoom';
 
-@scoped()
 export abstract class P2PNode implements AsyncDisposable {
 	protected p2p: Libp2p<LibP2PServices>;
 	public readonly init: Promise<void> = this.initP2P();

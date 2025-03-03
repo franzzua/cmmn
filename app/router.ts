@@ -1,6 +1,6 @@
 import {createRouter, Options, Route, RouteNode, Router as Router5, State as RouterState} from 'router5';
 import browserPlugin from 'router5-plugin-browser';
-import {singleton} from "@cmmn/core";
+import {scoped} from "@cmmn/core";
 import {Cell} from "@cmmn/cell";
 
 export type {RouterState, Route};
@@ -10,7 +10,7 @@ export class IRouterOptions {
     options: Options;
 }
 
-@singleton()
+@scoped()
 export class Router {
     public router: Router5 = (() => {
         const router = createRouter(this.routerInit.routes, this.routerInit.options);

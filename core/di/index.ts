@@ -1,30 +1,33 @@
 import { Container } from './container';
 import type {ConstructorOf, InjectionToken} from './types';
-
-type FieldDecorator<T, This> = (_: T, ctx: ClassFieldDecoratorContext) => (this: This, value: T) => T;
-type AccessorDecorator<T, This> = (_: T, ctx: ClassAccessorDecoratorContext) => {
+type FieldDecoratorResult<T, This> = (this: This, value: T) => T
+type FieldDecorator<T, This> = (_: T, ctx: ClassFieldDecoratorContext) =>
+	FieldDecoratorResult<T, This>;
+type AccessorDecoratorResult<T, This> = {
 	get?(this: This): T;
 	set?(this: This, value: T): void;
 	init?(this: This): void;
 };
+type AccessorDecorator<T, This> = (_: T, ctx: ClassAccessorDecoratorContext) =>
+	AccessorDecoratorResult<T, This>
 
-export const inject = <T>(dep: InjectionToken<T>) => {
+export const inject = <T>(dep: InjectionToken<T>): FieldDecorator<T, unknown> & AccessorDecorator<T, unknown> => {
 	return ((
 		_: unknown,
-		ctx: ClassFieldDecoratorContext | ClassAccessorDecoratorContext,
+		ctx,
 	) => {
 		if (ctx.kind === 'field')
 			return function (this: unknown) {
 				return resolve(dep) as T;
-			};
+			} as unknown as (AccessorDecoratorResult<T, unknown> & FieldDecoratorResult<T, unknown>);
 		if (ctx.kind === 'accessor') {
 			return {
 				init() {
 					return resolve(dep);
 				},
-			};
+			} as unknown as (AccessorDecoratorResult<T, unknown> & FieldDecoratorResult<T, unknown>);
 		}
-	}) as (FieldDecorator<T, unknown> | AccessorDecorator<T, unknown>);
+	});
 };
 
 export function scoped<TClass extends ConstructorOf<unknown>>() {
@@ -40,7 +43,7 @@ export function factory<T>(
 	di.factory(dep, factory);
 }
 
-// const singletons = new Set<ConstructorOf<any>>();
+// const scopeds = new Set<ConstructorOf<any>>();
 
 export const di = Container.Default;
 export const resolve = <T>(dep: InjectionToken<T>) =>

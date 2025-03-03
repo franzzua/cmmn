@@ -5,12 +5,14 @@ import {
 	scoped,
 	uuid,
 } from '@cmmn/core';
-import { Transport } from '../transport/transport';
-import { RpcMessage, RpcService } from './types';
+import {Transport} from '../transport/transport';
+import {RpcMessage, RpcService} from './types';
 
 @scoped()
 export class RpcClient {
-	@inject(Transport<{ rpc: RpcMessage }>) transport!: Transport<{
+	@inject<Transport<{
+		rpc: RpcMessage;
+	}>>(Transport) transport!: Transport<{
 		rpc: RpcMessage;
 	}>;
 	private channel = this.transport.getChannel('rpc');
@@ -85,7 +87,7 @@ export class RpcClient {
 export type RPC<T extends RpcService> = {
 	[key in keyof T]: T[key] extends (...args: infer TArgs) => infer TResult
 		? (
-				...args: TArgs
-			) => TResult extends PromiseLike<any> ? TResult : Promise<TResult>
+			...args: TArgs
+		) => TResult extends PromiseLike<any> ? TResult : Promise<TResult>
 		: T[key];
 };
