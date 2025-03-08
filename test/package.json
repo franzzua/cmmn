@@ -1,6 +1,6 @@
 {
 	"name": "@cmmn/test",
-	"version": "3.0.0-alpha-5",
+	"version": "3.0.0-alpha-6",
 	"description": "",
 	"publishConfig": {
 		"access": "public"
@@ -20,6 +20,8 @@
 	"devDependencies": {
 		"@cmmn/tools": "workspace:~",
 		"@cmmn/uhtml": "workspace:~",
-		"@types/react-dom": "^19"
+		"@types/react": "^19",
+		"@types/react-dom": "^19",
+		"@vitejs/plugin-react-swc": "3.8.0"
 	}
 }

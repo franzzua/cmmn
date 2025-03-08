@@ -1,6 +1,6 @@
 {
 	"name": "@cmmn/framework",
-	"version": "3.0.0-alpha-5",
+	"version": "3.0.0-alpha-6",
 	"description": "",
 	"module": "package.json",
 	"private": true,
