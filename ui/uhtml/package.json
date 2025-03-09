@@ -10,7 +10,7 @@
 	},
 	"type": "module",
 	"main": "./dist/bundle/index.js",
-	"typings": "./dist/bundle/typings/index.d.ts",
+	"typings": "./dist/typings/index.d.ts",
 	"typesVersions": {
 		"*": {
 			"typings.d.ts": [

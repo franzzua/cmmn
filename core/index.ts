@@ -42,4 +42,4 @@ export {
 	MergeListener,
 } from './event-emitter';
 
-export { di, factory, inject, resolve, scoped, Container } from './di';
+export { di, factory, inject, resolve, scoped, Container, type InjectionToken } from './di';

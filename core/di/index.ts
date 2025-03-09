@@ -51,3 +51,4 @@ export const resolve = <T>(dep: InjectionToken<T>) =>
 
 const t: InjectionToken<Container> = Container;
 export { Container };
+export type { InjectionToken };

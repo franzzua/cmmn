@@ -142,6 +142,7 @@ export class Target extends EventTarget {
             mode: 'production',
             optimizeDeps:{
             },
+            keepProcessEnv: true,
             build: {
                 target: 'chrome89',
                 emptyOutDir: false,
@@ -173,6 +174,9 @@ export class Target extends EventTarget {
                     entry: this.entries,
                     formats: ['es'],
                 },
+                commonjsOptions: {
+                    transformMixedEsModules: true
+                }
             },
             base: `http://localhost:9000/_/${this.packageJson.name}`,
             plugins: [...this.getPlugins()],
@@ -240,7 +244,8 @@ export class Target extends EventTarget {
             }
         },
         resolveId: (id, importer, options) => {
-            return this.resolver?.(id);
+
+            return this.resolver?.(id, importer, options);
         },
         enforce: 'pre',
     }

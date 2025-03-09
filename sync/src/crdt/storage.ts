@@ -1,5 +1,5 @@
 export abstract class Storage<T> {
-	abstract set(key: string, value: T): Promise<void>;
+	abstract set(key: string, value: T): Promise<void | unknown>;
 
 	abstract keys();
 
