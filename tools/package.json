@@ -1,6 +1,6 @@
 {
 	"name": "@cmmn/tools",
-	"version": "3.0.0-beta-1",
+	"version": "3.0.0-beta-2",
 	"description": "Compilation, bundling, code generator, testing.",
 	"main": "dist/rollup.config.js",
 	"type": "module",
@@ -35,7 +35,8 @@
 		"compile/*",
 		"node/*",
 		"test/*",
-		"helpers/*"
+		"helpers/*",
+		"dev-server/*"
 	],
 	"dependencies": {
 		"@biomejs/biome": "1.9.4",
