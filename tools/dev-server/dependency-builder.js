@@ -154,8 +154,3 @@ export class RsPackDependencyBuilder {
 }
 
 export const DependencyBuilder = RsPackDependencyBuilder;
-
-new DependencyBuilder([], '/@id/', 'development')
-    .build('uuidv7')
-    .then(async b => console.log(b.toString()))
-    .catch(err => console.error(err));
