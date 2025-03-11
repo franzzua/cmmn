@@ -1,4 +1,4 @@
-import { VersionVector } from 'loro-crdt';
+import type { VersionVector } from 'loro-crdt';
 import type { PeerId } from '@libp2p/interface';
 import { peerIdFromCID } from '@libp2p/peer-id';
 import { CID } from 'multiformats';

@@ -21,7 +21,10 @@ export class DevServer {
         this.rewriter = new UrlRewriter(targets, this.prefix);
         this.targetServers = targets.map(t => new TargetServer(t, this.prefix, this.broadcaster));
         this.depServer = new DependencyServer(targets, process.env.NODE_ENV);
-        this.resolver = new Resolver(this.targetServers.concat(this.depServer))
+        this.resolver = new Resolver([
+            ...this.targetServers,
+            this.depServer
+        ])
 
         for (const target of targets) {
             target.hooks.resolveId = this.resolver.resolveId;

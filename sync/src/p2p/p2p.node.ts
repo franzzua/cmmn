@@ -1,6 +1,6 @@
 import { cell, ObservableSet, scoped } from '@cmmn/core';
 import type { Libp2p, PeerId, PubSub } from '@libp2p/interface';
-import { LoroDoc } from 'loro-crdt';
+import type { LoroDoc } from 'loro-crdt';
 import { LoroRoom } from './loroRoom';
 
 export abstract class P2PNode implements AsyncDisposable {

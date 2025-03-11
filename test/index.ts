@@ -1,5 +1,8 @@
-import "./src/react";
-import { uuidv7 } from 'uuidv7';
-import {di, uuid} from '@cmmn/core';
+// import "./src/react";
+// import { uuidv7 } from 'uuidv7';
+// import {di, uuid} from '@cmmn/core';
+import {LoroCell} from '@cmmn/sync';
 
-console.log(uuid === uuidv7);
+
+const loro = new LoroCell();
+// console.log(uuid === uuidv7);

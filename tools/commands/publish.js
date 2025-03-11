@@ -1,14 +1,14 @@
-import {Target} from "../helpers/target.js";
-import {exec, execSync} from "node:child_process";
+import {execSync} from "node:child_process";
+import {getPackages} from "@manypkg/get-packages";
 
 export async function publish(...flags){
-    const targets = await Target.readTargets(process.cwd(), flags);
-    for (const target of targets) {
+    const packages = await getPackages(process.cwd())
+    for (const target of packages.packages) {
         if (target.packageJson.private)
             continue;
         try {
             execSync("yarn npm publish", {
-                cwd: target.rootDir,
+                cwd: target.dir,
                 stdio: "ignore",
             });
             console.log(`publish ${target.packageJson.name}`)

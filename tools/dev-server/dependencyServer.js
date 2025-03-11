@@ -1,5 +1,7 @@
 import {DependencyBuilder} from "./dependency-builder.js";
 import {fileURLToPath} from "node:url";
+import path from "node:path";
+import fs from "node:fs/promises";
 
 export class DependencyServer {
     base = '/_/@id'
@@ -16,8 +18,21 @@ export class DependencyServer {
     }
 
     resolveId(id, importer, options) {
-        return this.optimizeDeps.some(x => id.startsWith(x))
-            && `${this.url}${this.base}/${id}`;
+        if (this.optimizeDeps.some(x => id.startsWith(x))) {
+            return `${this.url}${this.base}/${id}`;
+        }
+    }
+
+    async getExports(pkg) {
+        const resolved = import.meta.resolve(pkg);
+        const file = fileURLToPath(resolved);
+        let dir = path.dirname(file);
+        while (true) {
+            const packageJsonText = await fs.readFile(path.resolve(dir, 'package.json'), {encoding: 'utf-8'}).catch(() => null);
+            if (packageJsonText)
+                return JSON.parse(packageJsonText).exports;
+            dir = path.resolve(dir, '..');
+        }
     }
 
     /**
@@ -26,29 +41,33 @@ export class DependencyServer {
      */
     async register(app) {
         const map = new Map();
-        app.get('/_/@id*', async (req, res) => {
+        app.get('/node\\:*', async (req, res) => {
+            res.header('Content-Type', "text/javascript");
+            return '{}';
+        });
+        app.get('/_/@id/*', async (req, res) => {
             try {
-                const [pkg, version] = req.url.substring('/_/@id:'.length)
-                    .replace(/\?.*$/, '')
-                    .split('@');
-                res.header('Content-Type', "text/javascript");
-                if (req.query.format !== 'es') {
-                    const res = await import(pkg);
-                    const exports = Object.keys(res);
-                    const hasDefault = exports.includes('default');
-                    return [
-                        `import { __webpack_exports__ } from '${req.url}?format=es';`,
-                        hasDefault ? 'export default __webpack_exports__;': '',
-                        `export const {${exports.filter(x => x !== 'default').join(',')}} = __webpack_exports__;`,
-                    ].join('\n')
+                let param = req.params['*'];
+                let [pkg, path] = param.split('/_');
+                path ??= '/';
+                const exports = await this.getExports(pkg);
+                if (exports && (`.${path}` in exports)){
+                    pkg += path;
+                    path = '/';
                 }
-                const pkgPath = fileURLToPath(import.meta.resolve(pkg, process.cwd()));
-                if (!map.has(pkgPath)) {
-                    const buffer = await this.builder.build(pkgPath).catch(console.error);
-                    map.set(pkgPath, buffer);
+                if (path.endsWith('.wasm')){
+                    res.header('Content-Type', "application/wasm");
+                }else {
+                    res.header('Content-Type', "text/javascript");
                 }
-                return map.get(pkgPath);
+                if (!map.has(pkg)) {
+                    const buffer = await this.builder.build(pkg).catch(console.error);
+                    map.set(pkg, buffer);
+                }
+                return map.get(pkg)[path];
             } catch (e) {
+                console.error(e);
+                res.statusCode = 404;
                 return e.toString();
             }
         });
