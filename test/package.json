@@ -1,6 +1,6 @@
 {
 	"name": "@cmmn/test",
-	"version": "3.0.0-beta-2",
+	"version": "3.0.0-beta-3",
 	"description": "",
 	"publishConfig": {
 		"access": "public"
@@ -13,8 +13,7 @@
 		".": "./src/index.html",
 		"./index.ts": "./index.ts"
 	},
-	"dependencies": {
-	},
+	"dependencies": {},
 	"devDependencies": {
 		"@cmmn/core": "workspace:~",
 		"@cmmn/react": "workspace:~",

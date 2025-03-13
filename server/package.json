@@ -1,6 +1,6 @@
 {
 	"name": "@cmmn/server",
-	"version": "3.0.0-beta-2",
+	"version": "3.0.0-beta-3",
 	"description": "server libs for building rest api",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
