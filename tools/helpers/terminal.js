@@ -11,7 +11,7 @@ export class Terminal {
      */
     targets;
 
-    headers = ['name', 'state', 'size', 'time'];
+    headers = ['target', 'state', 'size', 'time'];
     startTime = +performance.now();
     data = {};
     constructor(flags, targets) {
@@ -82,10 +82,10 @@ export class Terminal {
         const widths = [nameWidth, 6, 10, 10];
         function setWidth(str, width, alignLeft){
             const pad = width - str.length;
-            const fill = Array(pad).fill(' ').join('');
+            const fill = Array(Math.max(pad, 0)).fill(' ').join('');
             return alignLeft ? str + fill : fill + str;
         }
-        return data.map(d => d.map((value, i) => setWidth(value, widths[i], i === 0)));
+        return data.map(d => d.map((value, i) => setWidth(value, widths[i], i < 2)));
     }
 
     getTime(time) {

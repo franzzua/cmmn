@@ -11,19 +11,21 @@
 	"type": "module",
 	"exports": {
 		".": "./src/index.html",
-		"./index.ts": "./index.ts"
+		"./index.ts": "./src/index.ts",
+		"./style.less": "./src/style.less",
+		"./icon.svg": "./src/icon.svg"
 	},
-	"dependencies": {},
 	"devDependencies": {
 		"@cmmn/core": "workspace:~",
 		"@cmmn/react": "workspace:~",
-		"react": "^19.0.0",
-		"react-dom": "^19.0.0",
-		"uuidv7": "1.0.2",
 		"@cmmn/tools": "workspace:~",
 		"@cmmn/uhtml": "workspace:~",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
-		"@vitejs/plugin-react-swc": "3.8.0"
+		"@vitejs/plugin-react-swc": "3.8.0",
+		"less": "4.2.2",
+		"react": "^19.0.0",
+		"react-dom": "^19.0.0",
+		"uuidv7": "1.0.2"
 	}
 }

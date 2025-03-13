@@ -1,4 +1,5 @@
 import {createServer} from "vite";
+import {join, resolve} from "node:path";
 
 export class TargetServer {
     broadcaster;
@@ -7,6 +8,7 @@ export class TargetServer {
      */
     target;
     prefix;
+
     /**
      * @param target {import("../helpers/target.js").Target}
      * @param prefix {string}
@@ -22,7 +24,7 @@ export class TargetServer {
      * @param id {string}
      * @returns {*}
      */
-    resolveId(id){
+    resolveId(id) {
         return id.startsWith(this.target.packageJson.name)
             && `/${this.prefix}/${id}`
     }
@@ -53,4 +55,32 @@ export class TargetServer {
         })
     }
 
+    /**
+     * @param path {string}
+     * @param req {import("fastify/types/request.js").FastifyRequest}
+     * @returns {*|string}
+     */
+    rewritePath(path, req) {
+        if (!path.startsWith(this.base))
+            return path;
+        return this.getFile(path) ?? path;
+    }
+
+    getFile(path) {
+        const file = path.substring(this.base.length);
+        if (!file || file === '/') {
+            const mainEntry = this.target.packageJson.module
+                ?? this.target.packageJson.exports?.['.']
+                ?? './index.ts';
+            return join(`${this.base}/`, mainEntry);
+        }
+        if ("." + file in (this.target.packageJson.exports ?? {})) {
+            const entry = this.target.packageJson.exports["." + file];
+            return join(`${this.base}/`, entry);
+        }
+        if (file.startsWith(`/${this.prefix}`)) {
+            return file;
+        }
+
+    }
 }

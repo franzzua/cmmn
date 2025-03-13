@@ -25,29 +25,28 @@ export abstract class BaseComponent<Props = {}> {
 	}
 }
 
-const component = () => function <This extends BaseComponent>(target: new() => This, context: ClassDecoratorContext) {
-	return memo((props, ctx) => {
-		const instance = new target();
-		instance.props = props;
-		let listener: ((s: symbol) => void) | undefined
-		const cell = useMemo(() => new Cell(() => instance.render(), {
-			onExternal() {
-				listener?.(instance.renderInstance = Symbol())
-			}
-		}), []);
-		useSyncExternalStore(
-			e => {
-				listener = e;
-			},
-			() => instance.renderInstance,
-			() => instance.renderInstance,
-		);
-		instance.cell.active();
-		return instance.cell.get();
-	}) as unknown as (new () => This & Component);
-}
+// const component = () => function <This extends BaseComponent>(target: new() => This, context: ClassDecoratorContext) {
+// 	return memo((props, ctx) => {
+// 		const instance = new target();
+// 		instance.props = props;
+// 		let listener: ((s: symbol) => void) | undefined
+// 		const cell = useMemo(() => new Cell(() => instance.render(), {
+// 			onExternal() {
+// 				listener?.(instance.renderInstance = Symbol())
+// 			}
+// 		}), []);
+// 		useSyncExternalStore(
+// 			e => {
+// 				listener = e;
+// 			},
+// 			() => instance.renderInstance,
+// 			() => instance.renderInstance,
+// 		);
+// 		instance.cell.active();
+// 		return instance.cell.get();
+// 	}) as unknown as (new () => This & Component);
+// }
 
-@component()
 @scoped()
 export class Counter extends BaseComponent<{value: any}> {
 	@inject(Store) private accessor store!: Store;

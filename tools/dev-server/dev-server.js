@@ -1,5 +1,4 @@
 import {HotUpdateBroadcaster} from "./hotUpdateBroadcaster.js";
-import {UrlRewriter} from "./urlRewriter.js";
 import {TargetServer} from "./targetServer.js";
 import {DependencyServer} from "./dependencyServer.js";
 import {Resolver} from "./resolver.js";
@@ -18,7 +17,6 @@ export class DevServer {
     constructor(targets) {
         this.targets = targets;
         this.broadcaster = new HotUpdateBroadcaster()
-        this.rewriter = new UrlRewriter(targets, this.prefix);
         this.targetServers = targets.map(t => new TargetServer(t, this.prefix, this.broadcaster));
         this.depServer = new DependencyServer(targets, process.env.NODE_ENV);
         this.resolver = new Resolver([
@@ -32,7 +30,10 @@ export class DevServer {
     }
 
     rewriteUrl = (req) => {
-        return this.rewriter.rewriteUrl(req);
+        return this.targetServers.reduceRight(
+            (path, target) => target.rewritePath(path, req),
+            req.url
+        );
     }
     /**
      * @param app {import("fastify/types/instance.js").FastifyInstance}

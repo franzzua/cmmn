@@ -113,7 +113,7 @@ export class Target extends EventTarget {
                 const importFile = this.packageJson.exports[item].require ??
                     this.packageJson.exports[item].default ?? this.packageJson.exports[item];
                 if (!importFile || !(typeof importFile === "string")) continue;
-                if (importFile.endsWith('.html')) continue;
+                // if (importFile.endsWith('.html')) continue;
                 const file = path.join(
                     this.rootDir,
                     importFile
@@ -124,7 +124,7 @@ export class Target extends EventTarget {
                     path.join(this.rootDir, importFile),
                 );
                 // console.log(exportFile);
-                result['index'] = file;
+                result[item] = file;
             }
             return result;
         }
@@ -142,18 +142,20 @@ export class Target extends EventTarget {
 
     /** @returns {import('vite').InlineConfig} **/
     async getConfig() {
+        // process.env.NODE_ENV = `"${this.flags.production ? 'production' : 'development'}"`
         return {
-            envFile: false,
             root: this.rootDir,
             logLevel: 'silent',
             mode: 'production',
             optimizeDeps:{
+                noDiscovery: true,
+                include: []
             },
             keepProcessEnv: true,
             define: {
                 process: {
                     env: {
-                        NODE_ENV: `"${this.flags.production ? 'production' : 'development'}"`
+                        NODE_ENV: this.flags.production ? 'production' : 'development'
                     }
                 }
             },
@@ -164,32 +166,37 @@ export class Target extends EventTarget {
                 emptyOutDir: false,
                 watch: this.flags.watch,
                 rollupOptions: {
-                    // input: this.entries,
-                    // output: {
-                    //     dir: path.join(this.rootDir, 'dist/bundle'),
-                    //     entryFileNames: `[name].${this.minify ? 'min.' : ''}js`,
-                    //     chunkFileNames: `assets/[name].${this.minify ? 'min.' : ''}js`,
-                    //     assetFileNames: `assets/[name].[ext]`,
-                    //     esModule: true,
-                    //     exports: "named",
-                    //     format: 'esm',
-                    //     generatedCode: 'es2015',
-                    //     strict: true
-                    // },
-                    treeshake: this.flags.production ? 'recommended' : false,
+                    output: {
+                        // dir: path.join(this.rootDir, 'dist/bundle'),
+                        entryFileNames: `bundle/[name].${this.minify ? 'min.' : ''}js`,
+                        // chunkFileNames: `chunks/[name].${this.minify ? 'min.' : ''}js`,
+                        assetFileNames: (assetInfo) => {
+                            console.log(assetInfo)
+                            return 'bundle/'+assetInfo.originalFileName.replace(/\.css$/, '');
+                        },
+                        // esModule: true,
+                        // exports: "named",
+                        // format: 'esm',
+                        // generatedCode: 'es2015',
+                        // strict: true
+                    },
+
                     external: [
-                        ...this.externalDependencies.map(x => `${x}*`),
+                        ...this.externalDependencies.map(x => new RegExp(`^${x}`.replace('/', '\\/'))),
                         ...builtin,
                         ...builtin.map((x) => `node:${x}`),
                         'fsevents',
+                        /@id/g,
                     ],
                 },
                 write: true,
-                sourcemap: true,
+                minify: this.flags.minify ? 'terser' : false,
+                sourcemap: !this.flags.minify,
                 lib: {
                     entry: this.entries,
                     formats: ['es'],
-                    fileName: (format, name) => `bundle/${name}.${this.flags.minify ? 'min.' : ''}js`
+                    fileName: (format, name) => `bundle/${name}.${this.flags.minify ? 'min.' : ''}js`,
+                    cssFileName: 'sty.css',
                 },
                 commonjsOptions: {
                     transformMixedEsModules: true
