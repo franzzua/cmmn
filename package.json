@@ -13,6 +13,7 @@
 	"scripts": {
 		"compile": "cmmn compile -b --watch",
 		"bundle": "cmmn bundle -b --watch",
+		"bundle:prod": "cmmn bundle -b --prod",
 		"typings": "cmmn typings -b --watch",
 		"prod": "cmmn bundle -b --prod",
 		"ci2": "cmmn compile -b && cmmn bundle -b && cmmn bundle -b --prod --minify",

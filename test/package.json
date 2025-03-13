@@ -5,19 +5,22 @@
 	"publishConfig": {
 		"access": "public"
 	},
+	"scripts": {
+		"bundle:prod": "cmmn bundle --prod"
+	},
 	"type": "module",
 	"exports": {
 		".": "./src/index.html",
 		"./index.ts": "./index.ts"
 	},
 	"dependencies": {
+	},
+	"devDependencies": {
 		"@cmmn/core": "workspace:~",
 		"@cmmn/react": "workspace:~",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
-		"uuidv7": "1.0.2"
-	},
-	"devDependencies": {
+		"uuidv7": "1.0.2",
 		"@cmmn/tools": "workspace:~",
 		"@cmmn/uhtml": "workspace:~",
 		"@types/react": "^19",

@@ -17,7 +17,7 @@
 	"typings": "./dist/typings/index.d.ts",
 	"scripts": {
 		"build": "cmmn compile --watch",
-		"bundle": "cmmn bundle --watch",
+		"bundle": "cmmn bundle",
 		"bundle:min": "cmmn bundle --watch",
 		"typings": "cmmn typings --watch",
 		"test": "node --test --import @cmmn/tools/import ./**/*.spec.ts"

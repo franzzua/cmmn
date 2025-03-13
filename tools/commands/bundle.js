@@ -7,42 +7,46 @@ import {Terminal} from "../helpers/terminal.js";
  */
 export async function bundle(flags) {
     const targets = await Target.readTargets(process.cwd(), flags);
-    const term = new Terminal(flags);
+    const term = new Terminal(flags, targets);
     for (const target of targets) {
         if (target.tsConfig.include?.length === 0)
             continue;
-        const info = {
-            name: target.packageJson.name,
-            state: 'idle',
-            size: ''
-        };
-        term.add(info);
-        target.addEventListener('start', () => {
-            info.state = '...'
-            if (flags.watch)
-                term.render();
-        });
-        target.addEventListener('end', () => {
-            info.state = 'ok'
-            if (flags.watch)
-                term.render();
-        });
-        target.addEventListener('change', (e) => {
-            info.state = '...'
-            if (flags.watch)
-                term.render();
-        });
+
+        if (flags.watch) {
+            target.addEventListener('start', () => {
+                term.setData(target, { state: '...'});
+            });
+            target.addEventListener('end', () => {
+                term.setData(target, { state: 'ok'});
+            });
+            target.addEventListener('change', (e) => {
+                term.setData(target, { state: '...'});
+            });
+        }
         target.addEventListener('bundle', (e) => {
             if (e.bundleName.endsWith('.map')) return;
-            info.size = e.bundle.code?.length;
             if (flags.watch) {
-                term.render();
+                term.setData(target, { size: e.bundle.code?.length });
+            } else {
+                // term.setData(target, {
+                //     state: 'ok',
+                //     size: e.bundle.code?.length,
+                // });
             }
         });
-        await target.getCompiler().then(c => {
-            // console.log(c.config.plugins.map(x => x.name));
-            return c.buildApp()
-        });
+        const compiler = await target.getCompiler();
+        for (let env in compiler.environments) {
+            const res = await compiler.build(compiler.environments[env])
+            if (!flags.watch) {
+                term.setData(target, {
+                    state: 'ok',
+                    size: res.flatMap(x => x.output).map(x => {
+                        return x.code?.length ?? 0;
+                    }).reduce((a, b) => a + b)
+                })
+            }
+        }
+        // term[Symbol.dispose]();
     }
-    term.render(false);
 }
+

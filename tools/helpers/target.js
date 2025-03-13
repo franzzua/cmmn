@@ -59,6 +59,13 @@ export class Target extends EventTarget {
         return this._packageJson ??= JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
     }
 
+    get externalDependencies(){
+        return [
+            ...Object.keys(this.packageJson.dependencies ?? {}),
+            ...Object.keys(!this.flags.production ? this.packageJson.devDependencies ?? {} : {}),
+        ]
+    }
+
     /**
      * @returns {{ compilerOptions: import("typescript").CompilerOptions}}
      */
@@ -143,42 +150,51 @@ export class Target extends EventTarget {
             optimizeDeps:{
             },
             keepProcessEnv: true,
+            define: {
+                process: {
+                    env: {
+                        NODE_ENV: `"${this.flags.production ? 'production' : 'development'}"`
+                    }
+                }
+            },
+            html: false,
+            esbuild: false,
             build: {
                 target: 'chrome89',
                 emptyOutDir: false,
                 watch: this.flags.watch,
                 rollupOptions: {
-                    input: this.entries,
-                    output: {
-                        dir: path.join(this.rootDir, 'dist/bundle'),
-                        entryFileNames: `[name].${this.minify ? 'min.' : ''}js`,
-                        chunkFileNames: `assets/[name].${this.minify ? 'min.' : ''}js`,
-                        assetFileNames: `assets/[name].[ext]`,
-                        esModule: true,
-                        exports: "named",
-                        format: 'esm',
-                        generatedCode: 'es2015',
-                        strict: true
-                    },
+                    // input: this.entries,
+                    // output: {
+                    //     dir: path.join(this.rootDir, 'dist/bundle'),
+                    //     entryFileNames: `[name].${this.minify ? 'min.' : ''}js`,
+                    //     chunkFileNames: `assets/[name].${this.minify ? 'min.' : ''}js`,
+                    //     assetFileNames: `assets/[name].[ext]`,
+                    //     esModule: true,
+                    //     exports: "named",
+                    //     format: 'esm',
+                    //     generatedCode: 'es2015',
+                    //     strict: true
+                    // },
+                    treeshake: this.flags.production ? 'recommended' : false,
                     external: [
-                        // ...Object.keys(this.packageJson.dependencies ?? {}).map(x => new RegExp(`^${x}`)),
+                        ...this.externalDependencies.map(x => `${x}*`),
                         ...builtin,
                         ...builtin.map((x) => `node:${x}`),
                         'fsevents',
                     ],
-                    plugins: [...this.getPlugins()],
                 },
-                minify: false,
+                write: true,
                 sourcemap: true,
                 lib: {
                     entry: this.entries,
                     formats: ['es'],
+                    fileName: (format, name) => `bundle/${name}.${this.flags.minify ? 'min.' : ''}js`
                 },
                 commonjsOptions: {
                     transformMixedEsModules: true
-                }
+                },
             },
-            base: `http://localhost:9000/_/${this.packageJson.name}`,
             plugins: [...this.getPlugins()],
         };
     }
@@ -194,8 +210,9 @@ export class Target extends EventTarget {
         }))()
     }
 
-    getCompiler() {
-        return createBuilder(this.getConfig());
+    async getCompiler() {
+        const config = await this.getConfig();
+        return await createBuilder(config);
     }
 
     /**
@@ -233,18 +250,8 @@ export class Target extends EventTarget {
         // },
         watchChange: (id, change) => {
             this.dispatchEvent(new ChangeEvent(id, change.event));
-            this.logger.log(change.event, id);
-        },
-        vite: {
-            configResolved: {
-                handler(config){
-                    // console.log('config:', config.root)
-                },
-                order: 'pre'
-            }
         },
         resolveId: (id, importer, options) => {
-
             return this.resolver?.(id, importer, options);
         },
         enforce: 'pre',
