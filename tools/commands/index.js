@@ -7,3 +7,4 @@ export {publish} from "./publish.js";
 export {format} from "./format.js";
 export {lint} from "./lint.js";
 export {version} from "./version.js";
+export {host} from "./host.js";

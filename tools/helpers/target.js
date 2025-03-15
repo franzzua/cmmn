@@ -1,5 +1,5 @@
 import {getDependencyOrder} from "./getProjects.js";
-import path, {resolve} from "node:path";
+import path, {join, resolve} from "node:path";
 import fs from "node:fs";
 import {getTSConfig} from "./getTSConfig.js";
 import terminalKit from "terminal-kit";
@@ -120,11 +120,14 @@ export class Target extends EventTarget {
         }
     }
 
-    term = new terminalKit.Terminal();
 
     log(text) {
+        this.term ??= new terminalKit.Terminal();
         this.term.blue(this.packageJson.name);
         this.term.white(` ${text}\n`);
+    }
+    error(text) {
+        this.log(`^BERROR: ^w` + text.toString());
     }
 
 
@@ -156,6 +159,8 @@ export class Target extends EventTarget {
                 this.packageJson.module = `./dist/bundle/${result}`;
                 delete this.packageJson.main;
                 delete this.packageJson.browser;
+                delete this.packageJson.scripts;
+                delete this.packageJson.devDependencies;
             }
         }
         await fs.promises.writeFile(
@@ -163,6 +168,16 @@ export class Target extends EventTarget {
             JSON.stringify(this.packageJson, null, '\t')
         )
 
+    }
+    get https(){
+        const host = this.packageJson.config?.host;
+        if (!host) return  null;
+        return {
+            host,
+            port: this.packageJson.config.port,
+            cert: join(this.rootDir, `dist/${host}.pem`),
+            key: join(this.rootDir, `dist/${host}-key.pem`),
+        }
     }
 }
 

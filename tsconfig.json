@@ -21,7 +21,7 @@
       "path": "./sync"
     },
     {
-      "path": "./test"
+      "path": "./examples/test"
     }
   ]
 }

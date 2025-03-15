@@ -7,6 +7,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import {createVitePlugin} from "unplugin";
 import {ChangeEvent} from "../helpers/target.js";
 import fs from "node:fs";
+import {fastify} from "fastify";
 
 export class TargetServer {
     /**
@@ -29,6 +30,37 @@ export class TargetServer {
         this.prefix = prefix;
         this.resolver = resolver;
         this.base = `/${this.prefix}/${this.target.packageJson.name}`;
+    }
+
+    async initProxy(){
+        const https = this.target.https;
+        if (https){
+            const proxy = fastify({
+                http2: true,
+                https: {
+                    cert: fs.readFileSync(https.cert),
+                    key: fs.readFileSync(https.key),
+                },
+            });
+
+            proxy.register(await import('@fastify/http-proxy'), {
+                upstream: 'http://127.0.0.1:9000',
+                websocket: true,
+                wsUpstream: 'ws://127.0.0.1:9000',
+                logLevel: 'info',
+            });
+
+            proxy.listen({
+                host: https.host,
+                port: https.port,
+            }, (err, address) => {
+                if (err){
+                    this.target.error(err.message);
+                }else {
+                    this.target.log(`listen ^Bhttps://${https.host}:${https.port}`);
+                }
+            });
+        }
     }
 
 
@@ -129,16 +161,23 @@ export class TargetServer {
 
     async getServer(app){
         if (this.devServer) return this.devServer;
+
         const config = await this.getConfig();
         this.devServer = await createServer({
             ...config,
             server: {
                 hmr: {
                     server: app.server,
+                    clientPort: 9000,
+                    host: '127.0.0.1',
+                    protocol: 'ws'
                 },
                 fs: {
                     strict: false
-                }
+                },
+                allowedHosts: [
+                    this.target.https?.host
+                ].filter(x => x)
             },
         });
         this.target.log(`Start dev server`);

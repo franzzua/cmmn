@@ -57,6 +57,7 @@ export class DependencyServer {
                     pkg += path;
                     path = '/';
                 }
+                res.header('Access-Control-Allow-Origin', '*');
                 res.header('Content-Type', mime.lookup(path) || 'text/javascript');
                 if (!this.cache.has(pkg)) {
                     const start = +performance.now();

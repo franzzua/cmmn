@@ -57,7 +57,6 @@ export class Bundler {
 
 
     async getContext() {
-        console.log(this.target.externalDependencies);
         const esbuild = await import('esbuild');
         return this.context = await esbuild.context({
             absWorkingDir: this.target.rootDir,

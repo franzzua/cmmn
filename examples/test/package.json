@@ -12,11 +12,14 @@
 	"exports": {
 		".": "./src/index.html"
 	},
-
+	"config": {
+		"host": "example.cmmn.local",
+		"port": "9002"
+	},
 	"devDependencies": {
-		"@cmmn/sync": "workspace:~",
 		"@cmmn/core": "workspace:~",
 		"@cmmn/react": "workspace:~",
+		"@cmmn/sync": "workspace:~",
 		"@cmmn/tools": "workspace:~",
 		"@cmmn/uhtml": "workspace:~",
 		"@types/react": "^19",

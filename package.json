@@ -10,6 +10,9 @@
 	"exports": {
 		".": "./test"
 	},
+	"config": {
+		"port": 9000
+	},
 	"scripts": {
 		"compile": "cmmn compile -b --watch",
 		"bundle": "cmmn bundle -b --watch",
@@ -28,7 +31,7 @@
 		"ui/uhtml",
 		"ui/react",
 		"sync",
-		"test"
+		"examples/test"
 	],
 	"author": "",
 	"license": "ISC",

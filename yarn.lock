@@ -277,7 +277,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@cmmn/sync@workspace:sync":
+"@cmmn/sync@workspace:sync, @cmmn/sync@workspace:~":
   version: 0.0.0-use.local
   resolution: "@cmmn/sync@workspace:sync"
   dependencies:
@@ -297,12 +297,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@cmmn/test@workspace:test":
+"@cmmn/test@workspace:examples/test":
   version: 0.0.0-use.local
-  resolution: "@cmmn/test@workspace:test"
+  resolution: "@cmmn/test@workspace:examples/test"
   dependencies:
     "@cmmn/core": "workspace:~"
     "@cmmn/react": "workspace:~"
+    "@cmmn/sync": "workspace:~"
     "@cmmn/tools": "workspace:~"
     "@cmmn/uhtml": "workspace:~"
     "@types/react": "npm:^19"
@@ -324,6 +325,7 @@ __metadata:
     "@craftamap/esbuild-plugin-html": "npm:^0.8.0"
     "@esbuilder/html": "npm:^0.0.6"
     "@fastify/express": "npm:^4.0.2"
+    "@fastify/http-proxy": "npm:^11.1.2"
     "@manypkg/get-packages": "npm:^2.2.2"
     "@rollup/plugin-commonjs": "npm:^28.0.3"
     "@schemastore/package": "npm:0.0.10"
@@ -684,6 +686,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fastify/http-proxy@npm:^11.1.2":
+  version: 11.1.2
+  resolution: "@fastify/http-proxy@npm:11.1.2"
+  dependencies:
+    "@fastify/reply-from": "npm:^12.0.2"
+    fast-querystring: "npm:^1.1.2"
+    fastify-plugin: "npm:^5.0.1"
+    ws: "npm:^8.18.0"
+  checksum: 10c0/857cd2ab81adcb75951489eebf08cda7be7961a23b732848dd7350e4a870c62c8ef2e66c614a9f78ef7e42308a173c3ba0af642deb37e06c9493c4557827d757
+  languageName: node
+  linkType: hard
+
 "@fastify/merge-json-schemas@npm:^0.1.0":
   version: 0.1.1
   resolution: "@fastify/merge-json-schemas@npm:0.1.1"
@@ -709,6 +723,21 @@ __metadata:
     "@fastify/forwarded": "npm:^3.0.0"
     ipaddr.js: "npm:^2.1.0"
   checksum: 10c0/5a7d667480c3699015aa9bc12a47b6044106f412725d91a1b90f4a7845390c710486f05d322a895c633fb32a5ba1a17e598cb72e727337862034034443d59bcd
+  languageName: node
+  linkType: hard
+
+"@fastify/reply-from@npm:^12.0.2":
+  version: 12.0.2
+  resolution: "@fastify/reply-from@npm:12.0.2"
+  dependencies:
+    "@fastify/error": "npm:^4.0.0"
+    end-of-stream: "npm:^1.4.4"
+    fast-content-type-parse: "npm:^2.0.0"
+    fast-querystring: "npm:^1.1.2"
+    fastify-plugin: "npm:^5.0.1"
+    toad-cache: "npm:^3.7.0"
+    undici: "npm:^7.0.0"
+  checksum: 10c0/f65b8eaedd76b71d98bb60ddc2fca448d93e776463bc23b175d2bde69279304276c400f0d4bd34d349eef36286c69644b60e9c39bda828a6a67f8d173283b071
   languageName: node
   linkType: hard
 
@@ -4163,6 +4192,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"end-of-stream@npm:^1.4.4":
+  version: 1.4.4
+  resolution: "end-of-stream@npm:1.4.4"
+  dependencies:
+    once: "npm:^1.4.0"
+  checksum: 10c0/870b423afb2d54bb8d243c63e07c170409d41e20b47eeef0727547aea5740bd6717aca45597a9f2745525667a6b804c1e7bede41f856818faee5806dd9ff3975
+  languageName: node
+  linkType: hard
+
 "entities@npm:^4.2.0, entities@npm:^4.4.0, entities@npm:^4.5.0":
   version: 4.5.0
   resolution: "entities@npm:4.5.0"
@@ -4521,6 +4559,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fast-content-type-parse@npm:^2.0.0":
+  version: 2.0.1
+  resolution: "fast-content-type-parse@npm:2.0.1"
+  checksum: 10c0/e5ff87d75a35ae4cf377df1dca46ec49e7abbdc8513689676ecdef548b94900b50e66e516e64470035d79b9f7010ef15d98c24d8ae803a881363cc59e0715e19
+  languageName: node
+  linkType: hard
+
 "fast-decode-uri-component@npm:^1.0.1":
   version: 1.0.1
   resolution: "fast-decode-uri-component@npm:1.0.1"
@@ -4584,7 +4629,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-querystring@npm:^1.0.0":
+"fast-querystring@npm:^1.0.0, fast-querystring@npm:^1.1.2":
   version: 1.1.2
   resolution: "fast-querystring@npm:1.1.2"
   dependencies:
@@ -4621,7 +4666,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fastify-plugin@npm:^5.0.0":
+"fastify-plugin@npm:^5.0.0, fastify-plugin@npm:^5.0.1":
   version: 5.0.1
   resolution: "fastify-plugin@npm:5.0.1"
   checksum: 10c0/c5e5932e7b8c5713ff881adeade3e8ee8fc288e8249d79cd193a2a2438eef1ad58ae5814f12835acbf04025dbddf2628787cd845f3e550dee847f494a08f7c5b
@@ -6530,6 +6575,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"once@npm:^1.4.0":
+  version: 1.4.0
+  resolution: "once@npm:1.4.0"
+  dependencies:
+    wrappy: "npm:1"
+  checksum: 10c0/5d48aca287dfefabd756621c5dfce5c91a549a93e9fdb7b8246bc4c4790aa2ec17b34a260530474635147aeb631a2dcc8b32c613df0675f96041cbb8244517d0
+  languageName: node
+  linkType: hard
+
 "onetime@npm:^5.1.2":
   version: 5.1.2
   resolution: "onetime@npm:5.1.2"
@@ -8200,6 +8254,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"undici@npm:^7.0.0":
+  version: 7.5.0
+  resolution: "undici@npm:7.5.0"
+  checksum: 10c0/07e1c984ff1d83516c02a716bb81abfa05087201e511c78147822073440365d2b8e875876804fb4e45857c11c412b46599c961f52aa5bdd2df481fa823e8b629
+  languageName: node
+  linkType: hard
+
 "uniq@npm:^1.0.0":
   version: 1.0.1
   resolution: "uniq@npm:1.0.1"
@@ -8656,7 +8717,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:^8.0.0":
+"wrappy@npm:1":
+  version: 1.0.2
+  resolution: "wrappy@npm:1.0.2"
+  checksum: 10c0/56fece1a4018c6a6c8e28fbc88c87e0fbf4ea8fd64fc6c63b18f4acc4bd13e0ad2515189786dd2c30d3eec9663d70f4ecf699330002f8ccb547e4a18231fc9f0
+  languageName: node
+  linkType: hard
+
+"ws@npm:^8.0.0, ws@npm:^8.18.0":
   version: 8.18.1
   resolution: "ws@npm:8.18.1"
   peerDependencies:

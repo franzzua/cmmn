@@ -46,5 +46,8 @@ export class DevServer {
         app.addHook('onError', (req, res) => {
             console.log('error');
         })
+        for (let targetServer of this.targetServers) {
+            await targetServer.initProxy();
+        }
     }
 }

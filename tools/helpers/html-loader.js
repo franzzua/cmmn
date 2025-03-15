@@ -32,7 +32,7 @@ export async function htmlLoader(path, root){
 }
 
 function resolve(src, basePath, root){
-    if (src.startsWith('.'))
-        return join(basePath, '..', src);
-    return join(root, src);
+    if (src.startsWith('/'))
+        return join(root, src);
+    return join(basePath, '..', src);
 }
