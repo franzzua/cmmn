@@ -1,4 +1,3 @@
-import {HotUpdateBroadcaster} from "./hotUpdateBroadcaster.js";
 import {TargetServer} from "./targetServer.js";
 import {DependencyServer} from "./dependencyServer.js";
 import {Resolver} from "./resolver.js";
@@ -16,24 +15,21 @@ export class DevServer {
      */
     constructor(targets) {
         this.targets = targets;
-        this.broadcaster = new HotUpdateBroadcaster()
-        this.targetServers = targets.map(t => new TargetServer(t, this.prefix, this.broadcaster));
+        this.resolver = new Resolver(this)
+        this.targetServers = targets.map(t => new TargetServer(t, this.prefix, this.resolver));
         this.depServer = new DependencyServer(targets, process.env.NODE_ENV);
-        this.resolver = new Resolver([
-            ...this.targetServers,
-            this.depServer
-        ])
-
-        for (const target of targets) {
-            target.hooks.resolveId = this.resolver.resolveId;
-        }
     }
 
     rewriteUrl = (req) => {
         return this.targetServers.reduceRight(
             (path, target) => target.rewritePath(path, req),
-            req.url
+            this.proxy(req)
         );
+    }
+
+    proxy(req){
+        if (req.url === '/') return '/_/@cmmn/test/';
+        return req.url;
     }
     /**
      * @param app {import("fastify/types/instance.js").FastifyInstance}

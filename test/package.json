@@ -10,12 +10,11 @@
 	},
 	"type": "module",
 	"exports": {
-		".": "./src/index.html",
-		"./index.ts": "./src/index.ts",
-		"./style.less": "./src/style.less",
-		"./icon.svg": "./src/icon.svg"
+		".": "./src/index.html"
 	},
+
 	"devDependencies": {
+		"@cmmn/sync": "workspace:~",
 		"@cmmn/core": "workspace:~",
 		"@cmmn/react": "workspace:~",
 		"@cmmn/tools": "workspace:~",

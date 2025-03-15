@@ -1,16 +1,8 @@
 import {getDependencyOrder} from "./getProjects.js";
-import path from "path";
+import path, {resolve} from "node:path";
 import fs from "node:fs";
 import {getTSConfig} from "./getTSConfig.js";
-import {resolve} from "node:path";
-import {build, createBuilder, mergeConfig} from "vite";
-import tsconfigPaths from 'vite-tsconfig-paths';
-import swc from 'unplugin-swc';
-import {builtinModules as builtin} from "module";
-import wasm from "vite-plugin-wasm";
-import topLevelAwait from "vite-plugin-top-level-await";
-import {createVitePlugin} from "unplugin";
-import {fileURLToPath} from "node:url";
+import terminalKit from "terminal-kit";
 
 const swcConfig = JSON.parse(await fs.promises.readFile(import.meta.dirname + "/.swcrc", {
     encoding: 'utf-8'
@@ -59,10 +51,10 @@ export class Target extends EventTarget {
         return this._packageJson ??= JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
     }
 
-    get externalDependencies(){
+    get externalDependencies() {
         return [
             ...Object.keys(this.packageJson.dependencies ?? {}),
-            ...Object.keys(!this.flags.production ? this.packageJson.devDependencies ?? {} : {}),
+            ...Object.keys(this.flags.production ? {} : this.packageJson.devDependencies ?? {}),
         ]
     }
 
@@ -99,190 +91,87 @@ export class Target extends EventTarget {
                     }
                 } : undefined
             },
-            "sourceMaps": true,
-            "inlineSourcesContent": false
+            sourceMaps: true,
+            inlineSourcesContent: false
         };
     }
 
-    /** @returns {import('webpack-dev-server').RspackOptions["entry"]} **/
+    /** @returns {Record<string, string>} **/
     get entries() {
-        const outputPath = path.join(this.rootDir, 'dist/bundle');
+        if (this._entries) return this._entries;
         if (this.packageJson.exports) {
             const result = {};
             for (let item in this.packageJson.exports) {
                 const importFile = this.packageJson.exports[item].require ??
                     this.packageJson.exports[item].default ?? this.packageJson.exports[item];
                 if (!importFile || !(typeof importFile === "string")) continue;
-                // if (importFile.endsWith('.html')) continue;
-                const file = path.join(
+                result[item] = path.join(
                     this.rootDir,
                     importFile
                 );
-                // console.log(file)
-                const exportFile = path.relative(
-                    outputPath,
-                    path.join(this.rootDir, importFile),
-                );
-                // console.log(exportFile);
-                result[item] = file;
             }
-            return result;
+            return this._entries = result;
         }
-        const entry = path.join(this.rootDir, this.packageJson.module ?? "index.ts");
-        return {
-            index: entry
+        const entry = path.join(this.rootDir, this.packageJson.module
+            ?? this.packageJson.main
+            ?? "index.ts");
+        return this._entries = {
+            '.': entry
         }
     }
 
-    get logger() {
-        return {
-            log: (...args) => console.log(this.packageJson.name, ...args)
-        };
+    term = new terminalKit.Terminal();
+
+    log(text) {
+        this.term.blue(this.packageJson.name);
+        this.term.white(` ${text}\n`);
     }
 
-    /** @returns {import('vite').InlineConfig} **/
-    async getConfig() {
-        // process.env.NODE_ENV = `"${this.flags.production ? 'production' : 'development'}"`
-        return {
-            root: this.rootDir,
-            logLevel: 'silent',
-            mode: 'production',
-            optimizeDeps:{
-                noDiscovery: true,
-                include: []
-            },
-            keepProcessEnv: true,
-            define: {
-                process: {
-                    env: {
-                        NODE_ENV: this.flags.production ? 'production' : 'development'
-                    }
-                }
-            },
-            html: false,
-            esbuild: false,
-            build: {
-                target: 'chrome89',
-                emptyOutDir: false,
-                watch: this.flags.watch,
-                rollupOptions: {
-                    output: {
-                        // dir: path.join(this.rootDir, 'dist/bundle'),
-                        entryFileNames: `bundle/[name].${this.minify ? 'min.' : ''}js`,
-                        // chunkFileNames: `chunks/[name].${this.minify ? 'min.' : ''}js`,
-                        assetFileNames: (assetInfo) => {
-                            console.log(assetInfo)
-                            return 'bundle/'+assetInfo.originalFileName.replace(/\.css$/, '');
-                        },
-                        // esModule: true,
-                        // exports: "named",
-                        // format: 'esm',
-                        // generatedCode: 'es2015',
-                        // strict: true
-                    },
-
-                    external: [
-                        ...this.externalDependencies.map(x => new RegExp(`^${x}`.replace('/', '\\/'))),
-                        ...builtin,
-                        ...builtin.map((x) => `node:${x}`),
-                        'fsevents',
-                        /@id/g,
-                    ],
-                },
-                write: true,
-                minify: this.flags.minify ? 'terser' : false,
-                sourcemap: !this.flags.minify,
-                lib: {
-                    entry: this.entries,
-                    formats: ['es'],
-                    fileName: (format, name) => `bundle/${name}.${this.flags.minify ? 'min.' : ''}js`,
-                    cssFileName: 'sty.css',
-                },
-                commonjsOptions: {
-                    transformMixedEsModules: true
-                },
-            },
-            plugins: [...this.getPlugins()],
-        };
-    }
-
-    *getPlugins(){
-        yield wasm();
-        yield topLevelAwait();
-        yield swc.vite(this.swcConfig);
-        yield tsconfigPaths();
-        yield createVitePlugin(() => ({
-            name: this.packageJson.name + '_pre',
-            ...this.hooks
-        }))()
-    }
-
-    async getCompiler() {
-        const config = await this.getConfig();
-        return await createBuilder(config);
-    }
 
     /**
-     * @type {import('vite/dist/node/index.d.ts').ViteDevServer}
+     * Real package.json.exports
+     * @returns {{[p: string]: string}}
      */
-    devServer;
-    resolver;
-    /** @type {import('unplugin').UnpluginOptions} **/
-    hooks = {
-        buildStart: (config) => {
-            this.dispatchEvent(new Event('start'));
-        },
-        buildEnd: () => {
-            this.dispatchEvent(new Event('end'));
-        },
-        writeBundle: (config, bundles) => {
-            for (let name in bundles) {
-                this.dispatchEvent(new BundleEvent(name, bundles[name]));
+    get exports() {
+        return this._exports ??= Object.fromEntries(Object.entries(this.entries).map(
+            ([entry, file]) => [entry, this.getExport(entry, file)]));
+    }
+
+    getExport(entry, file) {
+        const extension = file.match(/\.([^.]+)$/)[1];
+        const entryName = entry
+            .replace(/^\.?\/?/, '')
+            .replace(/\.[^.]+$/, '') || 'index';
+        const outExt = extension
+            .replace(/^[jt]sx?$/, 'js')
+            .replace(/^(less|css|sass|scss)$/, 'css')
+        return `${entryName}${this.flags.minify ? '.min' : ''}.${outExt}`;
+    }
+
+    async writePackageJson() {
+        for (let [entry, result] of Object.entries(this.exports)) {
+            if (this.packageJson.exports) {
+                this.packageJson.exports[entry] = `./dist/bundle/${result}`;
+            } else {
+                this.packageJson.module = `./dist/bundle/${result}`;
+                delete this.packageJson.main;
+                delete this.packageJson.browser;
             }
-        },
-        // transform: (code) => {
-        //     const loader = `${this.packageJson.name}_@vite/client_loaded`;
-        //     return code + `
-        //         if (!globalThis['${loader}']){
-        //             globalThis['${loader}'] = true;
-        //             import('@vite/client');
-        //         }
-        //     `;
-        // },
-        // load: (id, options) => {
-        //     if (!id?.startsWith('/_/@id:')) return;
-        //     const [pkg, version] = id.substring('/_/@id:'.length).split('@');
-        //     const resolved = import.meta.resolve(pkg, this.rootDir);
-        //     return `export * from "${pkg}"`;
-        // },
-        watchChange: (id, change) => {
-            this.dispatchEvent(new ChangeEvent(id, change.event));
-        },
-        resolveId: (id, importer, options) => {
-            return this.resolver?.(id, importer, options);
-        },
-        enforce: 'pre',
+        }
+        await fs.promises.writeFile(
+            path.join(this.rootDir, './dist/package.json'),
+            JSON.stringify(this.packageJson, null, '\t')
+        )
+
     }
 }
 
-class BundleEvent extends Event {
-    bundleName;
-    bundle;
+export class ChangeEvent extends Event {
+    payload;
+    from;
 
-    constructor(bundleName, bundle) {
-        super('bundle');
-        this.bundleName = bundleName;
-        this.bundle = bundle;
-    }
-}
-
-class ChangeEvent extends Event {
-    file;
-    change;
-
-    constructor(id, type) {
+    constructor(payload, from) {
         super('change');
-        this.file = id;
-        this.change = type;
+        this.payload = payload;
     }
 }

@@ -26,7 +26,6 @@ export class BaseCell<T = unknown>
 			this.isActual = false;
 		} else {
 			this.value = value;
-
 			this.isActual = true;
 		}
 	}

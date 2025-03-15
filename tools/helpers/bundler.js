@@ -1,13 +1,15 @@
-import path from "node:path";
+import path, {join, resolve, sep} from "node:path";
 import fs from "node:fs/promises";
+import {crc32} from "node:zlib";
+import {htmlLoader} from "./html-loader.js";
 
 export class Bundler {
     /** @type {import('./target.js').Target} **/
     target;
     /** @type {import('./flags.js').Flags} **/
     flags;
-    /** @type {{ entry: string; output: string; data: Uint8Array;}[]} **/
-    results;
+    /** @type {{ entry: string; output: string; data: Uint8Array; fileName; }[]} **/
+    results = [];
 
     constructor(target, flags) {
         this.target = target;
@@ -15,23 +17,65 @@ export class Bundler {
     }
 
     async bundle() {
+        await this.importHtml();
         const context = await this.getContext();
-        const result = await context.rebuild();
+        const result = await context.rebuild().catch(err => {
+            return {
+                errors: err.errors,
+                warnings: err.warnings
+            }
+        });
         await this.processResult(result);
         await context.dispose();
     }
 
+    async importHtml(){
+        for (let [entry, file] of Object.entries(this.target.entries)) {
+            if (file.endsWith('.html')) {
+                const html = await htmlLoader(file, this.target.rootDir);
+                for (let imp of html.imports) {
+                    if (Object.entries(this.target.entries).some(x => x[1] === imp.src))
+                        continue;
+                    const newEntry = entry + '/' + crc32(imp.src);
+                    this.target.entries[newEntry] = imp.src;
+                    const outFile = this.target.getExport(newEntry, imp.src);
+                    imp.update('./' + outFile);
+                }
+                const output = this.target.getExport(entry, file);
+                this.results.push({
+                    entry,
+                    fileName: output.split('/').pop(),
+                    output: path.join(this.target.rootDir, 'dist/bundle', output),
+                    get data() {
+                        return html.result;
+                    },
+                })
+                delete this.target.entries[entry];
+            }
+        }
+    }
+
+
     async getContext() {
+        console.log(this.target.externalDependencies);
         const esbuild = await import('esbuild');
-        return await esbuild.context({
+        return this.context = await esbuild.context({
             absWorkingDir: this.target.rootDir,
-            platform: 'neutral',
-            external: ['/_/@id*'],//this.target.externalDependencies.map(x => `${x}/*`),
+            platform: 'browser',
+            external: [
+                ...this.target.externalDependencies.map(x => `${x}*`),
+                ...await import('builtin-modules').then(x => x.default),
+                // '/_/@id*',
+            ],
+            logLevel: 'silent',
             outdir: './dist/bundle',
             supported: {
                 'dynamic-import': true
             },
-            alias: Object.fromEntries(this.target.externalDependencies.map(x => [`${x}`, `/_/@id/${x}`])),
+            loader: {
+                '.svg': 'copy'
+            },
+            // alias: Object.fromEntries(this.target.externalDependencies.map(x => [`${x}`, `/_/@id/${x}`])),
             define: {
                 process: JSON.stringify({
                     env: {
@@ -47,12 +91,13 @@ export class Bundler {
             treeShaking: true,
             minify: this.flags.minify,
             write: false,
-            sourcemap: "linked",
+            mainFields: ['browser', 'module', 'main'],
+            sourcemap: "inline",
             plugins: [
                 await import('esbuild-plugin-less').then(x => x.lessLoader()),
-                await import('@chialab/esbuild-plugin-html').then(x => x.default({
-                    injectStylesAs: 'link',
-                }))
+                await import('esbuild-plugin-wasm').then(x => x.wasmLoader({
+                    mode: 'embedded'
+                })),
             ],
             metafile: true,
         });
@@ -62,35 +107,34 @@ export class Bundler {
      * @param result {import("esbuild").BuildResult}
      */
     async processResult(result) {
-        this.results = [];
-        for (let chunkName in result.metafile.outputs) {
+        if (!result) return;
+        for (let error of result.errors) {
+            this.target.log(`^RERROR: ^w${error.text} at ^W${error.location?.file}`)
+        }
+        for (let chunkName in result.metafile?.outputs ?? []) {
             const file = result.outputFiles.find(x => x.path === path.join(this.target.rootDir, chunkName));
             const meta = result.metafile.outputs[chunkName];
-            const entryPoint = meta.entryPoint ?? Object.keys(meta.inputs)[0];
-            const source = Object.entries(this.target.packageJson.exports ?? {}).find(([s, t]) => t === `./${entryPoint}`)
+            const entryFile = resolve(this.target.rootDir, meta.entryPoint ?? Object.keys(meta.inputs)[0]);
+            const entry = Object.entries(this.target.entries).find(([s, t]) => t === entryFile)?.[0];
 
-            const filename = chunkName
+            const fileName = this.target.exports[entry] ?? chunkName
                 .replace(/\.[tj]s\.js$/, '.js')
-                .replace(/(\.[^.]+)+$/, '$1');
+                .replace(/(\.[^.]+)+$/, '$1')
+                .replace('dist/bundle/', '');
 
             this.results.push({
-                entry: source?.[0],
+                entry,
                 data: file.contents,
-                output: filename
+                output: join(this.target.rootDir, 'dist/bundle', fileName),
+                fileName
             })
         }
     }
 
     async write() {
         await fs.mkdir(path.join(this.target.rootDir, './dist/bundle'), {recursive: true});
-        for (let result of this.results) {
-            if (!result.entry) continue;
-            this.target.packageJson.exports[result.entry] = result.output;
-        }
-        await Promise.all([
-            ...this.results.map(f => fs.writeFile(path.join(this.target.rootDir, f.output), f.data)),
-            fs.writeFile(path.join(this.target.rootDir, './dist/package.json'), JSON.stringify(this.target.packageJson))
-        ]);
+
+        await Promise.all(this.results.map(f => fs.writeFile(f.output, f.data)));
     }
 
 }

@@ -1,106 +1,5 @@
 import {crc32} from "node:zlib";
 import fs from "node:fs/promises";
-import wasm from "vite-plugin-wasm";
-import topLevelAwait from "vite-plugin-top-level-await";
-
-export class ViteDependencyBuilder {
-
-    constructor(dependencies, basePath, mode) {
-        this.mode = mode;
-        this.basePath = basePath;
-        this.dependencies = dependencies;
-        this.externals = dependencies.map(id =>
-            [id, `${basePath}/${id}`]
-        );
-    }
-
-    canHandle(target) {
-        return this.dependencies.some(x => target.startsWith(x));
-    }
-
-    async getFileContnet(target, pkgJSON){
-        if (pkgJSON.type === 'module' || pkgJSON.module)
-            return  `export * from '${target}'`;
-        const pkg = await import(target);
-        if ('default' in pkg) {
-            const keys = Object.keys(pkg).filter(x => x !== 'default');
-            return [
-                `import * as result from '${target}';`,
-                `export const { ${keys.join(',')} } = result;`,
-                'export default result.default;'
-            ].join('\n');
-        }
-        return  `export { ${Object.keys(pkg).join(',')} } from '${target}'`;
-    }
-
-    getAlias(target){
-        return Object.fromEntries();
-    }
-
-    async build(target, pkgJSON) {
-        const start = +performance.now();
-        const vite = await import('vite');
-        const dir = './node_modules/.cmmn';
-        const id = crc32(target + new Date() + Math.random());
-        const file = `${dir}/.${id}.js`;
-        const content = await this.getFileContnet(target, pkgJSON);
-        await fs.mkdir(dir, { recursive: true });
-        await fs.writeFile(file, content, 'utf-8');
-        try {
-            const build = await vite.build({
-                logLevel: 'silent',
-                build: {
-                    lib: {
-                        entry: file,
-                        formats: ['es'],
-                    },
-                    write: false,
-                    minify: false,
-                    rollupOptions: {
-                        external: [
-                            new RegExp(`^${this.basePath}`)
-                            ]
-                    },
-                    target: 'chrome89',
-                },
-                resolve: {
-                    alias: [
-                        ...this.externals.filter(x => !target.startsWith(x[0]+'/') && target !== x[0]).map(x => ({
-                            find: x[0],
-                            replacement: x[1]
-                        })),
-                    ],
-                },
-                html: false,
-                keepProcessEnv: true,
-                define: {
-                    process: {
-                        env: {
-                            NODE_ENV: `"${this.mode ?? 'development'}"`
-                        }
-                    },
-                },
-                plugins: [
-                    topLevelAwait(), wasm()
-                ],
-                mode: 'production',
-            });
-            const end = +performance.now();
-            console.log(`[cmmn:framework] bundle ${target} for ${((end - start)/1000).toFixed(2)}s`)
-            return Object.fromEntries(
-                build.flatMap(x => x.output.map(x => [
-                    (x.isEntry ? '/' : x.fileName), x.code
-                ]))
-            );
-        } catch (e) {
-            console.error(e);
-            return '';
-        } finally {
-            await fs.rm(file).catch(() => {});
-        }
-    }
-}
-
 
 export class EsBuildDependencyBuilder {
 
@@ -132,24 +31,28 @@ export class EsBuildDependencyBuilder {
     getAlias(target){
         return Object.fromEntries(this.externals.filter(x => !target.startsWith(x[0]+'/') && target !== x[0]));
     }
+    dir = './node_modules/.cmmn';
+
+    async getEntry(target, pkgJSON){
+        const id = crc32(target + new Date() + Math.random());
+        const file = `${this.dir}/.${id}.js`;
+        const content = await this.getFileContnet(target, pkgJSON);
+        await fs.mkdir(this.dir, { recursive: true });
+        await fs.writeFile(file, content, 'utf-8');
+        return {
+            index: file,
+            [Symbol.asyncDispose](){
+                return fs.rm(file);
+            }
+        };
+    }
 
     async build(target, pkgJSON) {
-        const start = +performance.now();
         const esbuild = await import('esbuild');
-        const dir = './node_modules/.cmmn';
-        const id = crc32(target + new Date() + Math.random());
-        const file = `${dir}/.${id}.js`;
-        if (pkgJSON.type !== 'module'){
-
-        }
-        const content = await this.getFileContnet(target, pkgJSON);
-        await fs.mkdir(dir, { recursive: true });
-        await fs.writeFile(file, content, 'utf-8');
+        const entryPoints = await this.getEntry(target, pkgJSON)
         try {
             const build = await esbuild.build({
-                entryPoints: {
-                    index: file
-                },
+                entryPoints,
                 platform: 'browser',
                 alias: this.getAlias(target),
                 mainFields: ['module', 'browser', 'main'],
@@ -158,8 +61,7 @@ export class EsBuildDependencyBuilder {
                 ],
                 outdir: '/',
                 publicPath: `${this.basePath}/${target}/_/`,
-                loader: {
-                },
+                loader: {},
                 supported: {
                     'dynamic-import': true
                 },
@@ -175,16 +77,11 @@ export class EsBuildDependencyBuilder {
                     esbuildCjsExternalPlugin(this.dependencies, 'browser', this.basePath)
                 ],
             });
-            const end = +performance.now();
-            console.log(`[cmmn:framework] bundle ${target} for ${((end - start)/1000).toFixed(2)}s`)
             return Object.fromEntries(
                 build.outputFiles.map(x => [(x.path === '/index.js' ? '/' : x.path), x.contents])
             );
-        } catch (e) {
-            console.error(e);
-            return '';
         } finally {
-            await fs.rm(file).catch(() => {});
+            await entryPoints[Symbol.asyncDispose]();
         }
     }
 }

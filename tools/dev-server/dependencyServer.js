@@ -12,6 +12,7 @@ export class DependencyServer {
      * @param mode {"development"|"production"}
      */
     constructor(targets, mode) {
+        this.target = targets.at(-1);
         this.optimizeDeps = [...new Set([
             ...targets.flatMap(t => t.externalDependencies),
         ])].filter(x => targets.every(y => y.packageJson.name !== x));
@@ -58,7 +59,10 @@ export class DependencyServer {
                 }
                 res.header('Content-Type', mime.lookup(path) || 'text/javascript');
                 if (!this.cache.has(pkg)) {
+                    const start = +performance.now();
                     const buffer = await this.builder.build(pkg, pkgJSON).catch(console.error);
+                    const end = +performance.now();
+                    this.target.log(`^Wbundle ^R${pkg} ^Wfor ^R${((end - start) / 1000).toFixed(2)}s`)
                     this.cache.set(pkg, buffer);
                 }
                 return this.cache.get(pkg)[path];

@@ -9,15 +9,7 @@
 		"url": "https://github.com/franzzua/cmmn/tree/master/ui"
 	},
 	"type": "module",
-	"main": "./dist/bundle/index.js",
-	"typings": "./dist/typings/index.d.ts",
-	"typesVersions": {
-		"*": {
-			"typings.d.ts": [
-				"dist/typings/index.d.ts"
-			]
-		}
-	},
+	"module": "./index.ts",
 	"scripts": {
 		"bundle": "cmmn bundle --watch",
 		"build": "cmmn compile -b --watch"
