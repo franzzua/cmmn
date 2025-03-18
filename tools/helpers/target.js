@@ -24,6 +24,9 @@ export class Target extends EventTarget {
         this.flags = flags;
         this.deps = deps;
         this.depsMap = new Map(deps.map(x => [x.packageJson.name, x]));
+        for (let dep of this.deps) {
+            dep.addEventListener('change', e => this.dispatchEvent(new ChangeEvent(e.payload, e.from)));
+        }
     }
 
     /**
@@ -126,8 +129,9 @@ export class Target extends EventTarget {
         this.term.blue(this.packageJson.name);
         this.term.white(` ${text}\n`);
     }
+
     error(text) {
-        this.log(`^BERROR: ^w` + text.toString());
+        this.log(`^RERROR: ^w` + text.toString());
     }
 
 
@@ -169,15 +173,26 @@ export class Target extends EventTarget {
         )
 
     }
-    get https(){
+
+    get https() {
         const host = this.packageJson.config?.host;
-        if (!host) return  null;
+        if (!host) return null;
         return {
             host,
             port: this.packageJson.config.port,
             cert: join(this.rootDir, `dist/${host}.pem`),
             key: join(this.rootDir, `dist/${host}-key.pem`),
         }
+    }
+
+    get proxy() {
+        return this._proxy ??= Object.entries({
+            ...this.packageJson.config?.proxy ?? {},
+        })
+            .map(([regex, replace]) => ({
+                regex: new RegExp(regex),
+                replace
+            }));
     }
 }
 

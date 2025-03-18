@@ -21,7 +21,10 @@
       "path": "./sync"
     },
     {
-      "path": "./examples/test"
+      "path": "./examples/client"
+    },
+    {
+      "path": "./examples/server"
     }
   ]
 }

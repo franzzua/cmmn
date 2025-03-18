@@ -12,7 +12,7 @@
 
 * default `jest.config.js`:
     ```typescript
-    import config from "@cmmn/tools/test/config";
+    import config from "@cmmn/tools/client/config";
     export default config;
     ```
   

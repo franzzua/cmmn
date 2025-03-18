@@ -14,6 +14,9 @@
 		},
 		{
 			"path": "../../ui/react"
+		},
+		{
+			"path": "../server"
 		}
 	]
 }

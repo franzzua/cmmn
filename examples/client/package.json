@@ -1,10 +1,8 @@
 {
-	"name": "@cmmn/test",
+	"name": "@cmmn/examples-client",
 	"version": "3.0.0-beta-3",
 	"description": "",
-	"publishConfig": {
-		"access": "public"
-	},
+	"private": true,
 	"scripts": {
 		"bundle:prod": "cmmn bundle --prod"
 	},
@@ -14,7 +12,11 @@
 	},
 	"config": {
 		"host": "example.cmmn.local",
-		"port": "9002"
+		"port": "9002",
+		"proxy": {
+			"^\/api": "/_/@cmmn/examples-server/api",
+			"^[^.]+$": "/"
+		}
 	},
 	"devDependencies": {
 		"@cmmn/core": "workspace:~",

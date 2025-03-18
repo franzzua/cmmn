@@ -9,4 +9,4 @@ if (!existsSync(to))
 import { register } from 'node:module';
 import { pathToFileURL } from 'node:url';
 register('@swc-node/register/esm', pathToFileURL('./').toString());
-// process.addListener('beforeExit', () => rmSync(to));
+process.addListener('beforeExit', () => rmSync(to));

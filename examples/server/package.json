@@ -1,0 +1,16 @@
+{
+	"name": "@cmmn/examples-server",
+	"version": "3.0.0-beta-3",
+	"description": "",
+	"private": true,
+	"type": "module",
+	"bin": "./src/index.ts",
+	"scripts": {
+		"run": "node --import @cmmn/tools/import-dev ./src/index.ts"
+	},
+	"config": {
+	},
+	"devDependencies": {
+		"@cmmn/server": "workspace:~"
+	}
+}

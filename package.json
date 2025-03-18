@@ -31,7 +31,8 @@
 		"ui/uhtml",
 		"ui/react",
 		"sync",
-		"examples/test"
+		"examples/client",
+		"examples/server"
 	],
 	"author": "",
 	"license": "ISC",

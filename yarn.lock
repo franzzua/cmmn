@@ -245,6 +245,33 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@cmmn/examples-client@workspace:examples/client":
+  version: 0.0.0-use.local
+  resolution: "@cmmn/examples-client@workspace:examples/client"
+  dependencies:
+    "@cmmn/core": "workspace:~"
+    "@cmmn/react": "workspace:~"
+    "@cmmn/sync": "workspace:~"
+    "@cmmn/tools": "workspace:~"
+    "@cmmn/uhtml": "workspace:~"
+    "@types/react": "npm:^19"
+    "@types/react-dom": "npm:^19"
+    "@vitejs/plugin-react-swc": "npm:3.8.0"
+    less: "npm:4.2.2"
+    react: "npm:^19.0.0"
+    react-dom: "npm:^19.0.0"
+    uuidv7: "npm:1.0.2"
+  languageName: unknown
+  linkType: soft
+
+"@cmmn/examples-server@workspace:examples/server":
+  version: 0.0.0-use.local
+  resolution: "@cmmn/examples-server@workspace:examples/server"
+  dependencies:
+    "@cmmn/server": "workspace:~"
+  languageName: unknown
+  linkType: soft
+
 "@cmmn/framework@workspace:.":
   version: 0.0.0-use.local
   resolution: "@cmmn/framework@workspace:."
@@ -267,7 +294,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@cmmn/server@workspace:server":
+"@cmmn/server@workspace:server, @cmmn/server@workspace:~":
   version: 0.0.0-use.local
   resolution: "@cmmn/server@workspace:server"
   dependencies:
@@ -294,25 +321,6 @@ __metadata:
     loro-crdt: "npm:1.3.0"
     multiformats: "npm:^13.3.1"
     seqproto: "npm:^0.2.3"
-  languageName: unknown
-  linkType: soft
-
-"@cmmn/test@workspace:examples/test":
-  version: 0.0.0-use.local
-  resolution: "@cmmn/test@workspace:examples/test"
-  dependencies:
-    "@cmmn/core": "workspace:~"
-    "@cmmn/react": "workspace:~"
-    "@cmmn/sync": "workspace:~"
-    "@cmmn/tools": "workspace:~"
-    "@cmmn/uhtml": "workspace:~"
-    "@types/react": "npm:^19"
-    "@types/react-dom": "npm:^19"
-    "@vitejs/plugin-react-swc": "npm:3.8.0"
-    less: "npm:4.2.2"
-    react: "npm:^19.0.0"
-    react-dom: "npm:^19.0.0"
-    uuidv7: "npm:1.0.2"
   languageName: unknown
   linkType: soft
 

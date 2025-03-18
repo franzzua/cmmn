@@ -16,6 +16,7 @@
 	"exports": {
 		"./compile/tsconfig.json": "./compile/tsconfig.json",
 		"./import": "./node/register.js",
+		"./import-dev": "./node/register-dev.js",
 		"./test": "./test/test.ts"
 	},
 	"typesVersions": {

@@ -5,6 +5,7 @@ export default {
 		...react({
 			devTarget: 'esnext',
 			tsDecorators: true,
+
 		}),
 	],
 };

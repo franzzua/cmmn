@@ -9,6 +9,7 @@ export const App = () => {
 	return useCell(() => <>
 		<div style={{display: 'flex', gap: '1em'}}>
 			Hi there: <span>{store.value}</span>
+			Query: <span>{JSON.stringify(store.query.get())}</span>
 			<button onClick={() => store.value++}>Increment</button>
 		</div>
 	</>);

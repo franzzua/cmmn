@@ -24,11 +24,11 @@ export function request(
 	};
 }
 
-export function ctrl(route: string) {
+export function ctrl(route?: string) {
 	return function (ctrl: unknown, context: ClassDecoratorContext) {
 		routes.push(
 			...getRoutes(context.metadata).map((x) => ({
-				route: `/api/${route}${x.route}`,
+				route: `/api/${route ?? ''}/${x.route ?? ''}`.replace(/\/+/g,'/').replace(/\/$/,''),
 				method: x.method,
 				ctrl,
 				handler: x.handler,

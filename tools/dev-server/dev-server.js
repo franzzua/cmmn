@@ -1,6 +1,8 @@
 import {TargetServer} from "./targetServer.js";
 import {DependencyServer} from "./dependencyServer.js";
 import {Resolver} from "./resolver.js";
+import {TargetRunner} from "./target-runnner.js";
+import {TargetWebServer} from "./target-web-server.js";
 
 export class DevServer {
     prefix = '_';
@@ -9,28 +11,34 @@ export class DevServer {
      * @type {import("../helpers/target.js").Target[]}
      */
     targets;
+    /**
+     * @type {import("../helpers/target.js").Target}
+     */
+    rootTarget;
 
     /**
      * @param targets {import("../helpers/target.js").Target[]}
      */
     constructor(targets) {
         this.targets = targets;
+        this.rootTarget = targets.at(-1);
         this.resolver = new Resolver(this)
-        this.targetServers = targets.map(t => new TargetServer(t, this.prefix, this.resolver));
+        this.targetServers = targets.map(t => {
+            if (t.packageJson.bin){
+                return new TargetRunner(t, this.prefix, this.resolver);
+            }
+            return new TargetWebServer(t, this.prefix, this.resolver);
+        });
         this.depServer = new DependencyServer(targets, process.env.NODE_ENV);
     }
 
     rewriteUrl = (req) => {
         return this.targetServers.reduceRight(
             (path, target) => target.rewritePath(path, req),
-            this.proxy(req)
+            req.url
         );
     }
 
-    proxy(req){
-        if (req.url === '/') return '/_/@cmmn/test/';
-        return req.url;
-    }
     /**
      * @param app {import("fastify/types/instance.js").FastifyInstance}
      * @returns {Promise<void>}
@@ -44,10 +52,9 @@ export class DevServer {
             await targetServer.register(app);
         }
         app.addHook('onError', (req, res) => {
-            console.log('error');
+            this.rootTarget.error(req.url);
+            res.status = 422;
+            res.send('Failed to process request');
         })
-        for (let targetServer of this.targetServers) {
-            await targetServer.initProxy();
-        }
     }
 }

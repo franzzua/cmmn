@@ -1,0 +1,27 @@
+{
+  "extends": "@cmmn/tools/compile/tsconfig.json",
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "es2015.collection",
+      "esnext"
+    ],
+    "baseUrl": "./src",
+    "jsx": "react-jsx"
+  },
+  "include": [
+    "**/*.ts"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules"
+  ],
+  "references": [
+    {
+      "path": "../../core"
+    },
+    {
+      "path": "../../server"
+    }
+  ]
+}

@@ -22,6 +22,7 @@ export function registerRoutes(
 			handler: async function (req, reply) {
 				const container = di.child();
 				try {
+
 					// container.const(HttpContext, new HttpContext(req, reply));
 					container.const(fastify, this);
 					const instance = container.resolve(x.ctrl as never);

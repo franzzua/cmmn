@@ -15,6 +15,8 @@ export class DependencyServer {
         this.target = targets.at(-1);
         this.optimizeDeps = [...new Set([
             ...targets.flatMap(t => t.externalDependencies),
+            // '@vite/client',
+            // '@react-refresh'
         ])].filter(x => targets.every(y => y.packageJson.name !== x));
         this.builder = new DependencyBuilder(this.optimizeDeps, this.base, mode);
     }
