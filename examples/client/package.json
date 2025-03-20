@@ -14,12 +14,13 @@
 		"host": "example.cmmn.local",
 		"port": "9002",
 		"proxy": {
-			"^\/api": "/_/@cmmn/examples-server/api",
+			"^/api": "/_/@cmmn/examples-server/api",
 			"^[^.]+$": "/"
 		}
 	},
 	"devDependencies": {
 		"@cmmn/core": "workspace:~",
+		"@cmmn/examples-common": "workspace:~",
 		"@cmmn/react": "workspace:~",
 		"@cmmn/sync": "workspace:~",
 		"@cmmn/tools": "workspace:~",

@@ -250,6 +250,7 @@ __metadata:
   resolution: "@cmmn/examples-client@workspace:examples/client"
   dependencies:
     "@cmmn/core": "workspace:~"
+    "@cmmn/examples-common": "workspace:~"
     "@cmmn/react": "workspace:~"
     "@cmmn/sync": "workspace:~"
     "@cmmn/tools": "workspace:~"
@@ -264,11 +265,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@cmmn/examples-common@workspace:examples/common, @cmmn/examples-common@workspace:~":
+  version: 0.0.0-use.local
+  resolution: "@cmmn/examples-common@workspace:examples/common"
+  languageName: unknown
+  linkType: soft
+
 "@cmmn/examples-server@workspace:examples/server":
   version: 0.0.0-use.local
   resolution: "@cmmn/examples-server@workspace:examples/server"
   dependencies:
     "@cmmn/server": "workspace:~"
+  bin:
+    examples-server: ./src/index.ts
   languageName: unknown
   linkType: soft
 

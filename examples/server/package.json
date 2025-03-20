@@ -8,9 +8,9 @@
 	"scripts": {
 		"run": "node --import @cmmn/tools/import-dev ./src/index.ts"
 	},
-	"config": {
-	},
+	"config": {},
 	"devDependencies": {
-		"@cmmn/server": "workspace:~"
+		"@cmmn/server": "workspace:~",
+		"@cmmn/examples-commmon": "workspace:~"
 	}
 }

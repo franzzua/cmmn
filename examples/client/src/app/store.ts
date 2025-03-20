@@ -1,5 +1,5 @@
-import {cell, Cell, scoped} from '@cmmn/core';
-
+import {cell, Cell, di, scoped} from '@cmmn/core';
+import {data} from "@cmmn/examples-common";
 @scoped()
 export class Store {
 
@@ -8,12 +8,20 @@ export class Store {
 	}
 
 	@cell()
-	public accessor value = 1;
+	public accessor value = data.value;
 
-
-	public query = new FetchQuery('/api');
 
 }
+
+export class Api {
+	public query = new FetchQuery('/api');
+
+	[Symbol.dispose](){
+		this.query[Symbol.dispose]();
+	}
+}
+export const ApiToken = Symbol("Api")
+di.override(ApiToken, Api);
 
 class FetchQuery<T> extends Cell<{
 	result?: T;

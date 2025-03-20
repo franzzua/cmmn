@@ -17,6 +17,9 @@
 		},
 		{
 			"path": "../server"
+		},
+		{
+			"path": "../common"
 		}
 	]
 }
