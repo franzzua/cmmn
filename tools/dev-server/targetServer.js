@@ -67,6 +67,7 @@ export class TargetServer {
      * @returns {*}
      */
     resolveId = id => {
+        if (id.match(/@(vite|react)/)) console.log(id);
         return id.startsWith(this.target.packageJson.name)
             && `http://127.0.0.1:9000/${this.prefix}/${id}`
     }
@@ -77,7 +78,7 @@ export class TargetServer {
      */
     async register(app) {
         app.all(`${this.base}*`, (request, reply, next) => {
-            this.target.log(request.url);
+            // this.target.log(request.url);
             return this.handle(app, request, reply);
         });
         await this.initProxy();

@@ -10,7 +10,7 @@
 	},
 	"config": {},
 	"devDependencies": {
-		"@cmmn/server": "workspace:~",
-		"@cmmn/examples-commmon": "workspace:~"
+		"@cmmn/examples-common": "workspace:~",
+		"@cmmn/server": "workspace:~"
 	}
 }

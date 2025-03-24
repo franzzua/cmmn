@@ -131,7 +131,6 @@ export class TargetWebServer extends TargetServer {
             this.target.dispatchEvent(new ChangeEvent(payload, this.target.packageJson.name));
         };
         this.target.addEventListener('change', e => {
-            console.log(e.payload);
             emitChange.call(this.devServer.ws, e.payload);
         });
     }

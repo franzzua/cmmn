@@ -1,3 +1,3 @@
 export const data = {
-	value: 3
+	value: 2
 };

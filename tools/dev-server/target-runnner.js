@@ -6,7 +6,7 @@ import {ChangeEvent} from "../helpers/target.js";
 
 export class TargetRunner extends TargetServer {
     port = 9010;
-    /** @type {import('node:child_process').ChildProcess | undefined} **/
+    /** @type {Promise<import('node:child_process').ChildProcess> | undefined} **/
     cp;
 
     watcher = watch(this.target.rootDir, {
@@ -28,7 +28,7 @@ export class TargetRunner extends TargetServer {
         });
         app.addHook('onRequest', async (req) => {
             if (!req.url.startsWith(this.base)) return;
-            await (this.cp ??= await this.runServer());
+            await (this.cp ??= this.runServer());
         })
         await this.initProxy();
 

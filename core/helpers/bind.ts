@@ -3,7 +3,7 @@ export function bind<TInstance>() {
 		handler: (this: unknown, ...args: unknown[]) => unknown,
 		context: ClassMethodDecoratorContext,
 	) {
-		context.addInitializer(function () {
+		context?.addInitializer(function () {
 			this[context.name] = handler.bind(this);
 		});
 	};

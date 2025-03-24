@@ -1,4 +1,5 @@
 import react from '@vitejs/plugin-react-swc';
+import { ecsstatic } from '@acab/ecsstatic/vite';
 
 export default {
 	plugins: [
@@ -9,5 +10,7 @@ export default {
 				options.jsc.transform.decoratorVersion = "2022-03"
 			}
 		}),
+		ecsstatic(),
+
 	],
 };

@@ -1,7 +1,6 @@
-import {FC, ReactNode, useEffect, useMemo, useSyncExternalStore} from 'react';
-import {BaseCell, Cell, ICellOptions, InjectionToken} from '@cmmn/core';
-import {useInjected} from "./useInjected";
-import {JsxElement} from "typescript";
+import {FC, memo, ReactNode, useEffect, useMemo, useSyncExternalStore} from 'react';
+import {BaseCell, Cell, di, getOrAdd, ICellOptions, inject, InjectionToken, scoped} from '@cmmn/core';
+import {useInjected, useInjectedContainer} from "./useInjected";
 
 export function useCell<T>(
 	getter: (() => T) | BaseCell<T> | undefined,
@@ -19,29 +18,74 @@ export function useCell<T>(
 	).value;
 }
 
-type TInstances<TDeps extends InjectionToken[]> = [...(
-	TDeps extends [(new () => infer TInstance), ...(infer TOther)]
-		? [TInstance, ...TInstances<TOther>]
+type TToken<TProps, T> = new (props: TProps) => T;
+type TTokens<TProps, TInstances> = [...(
+	TInstances extends [infer TInstance, ...(infer TOther)]
+		? [TToken<TProps, TInstances>, ...TTokens<TProps, TOther>]
+		: []
+	)]
+
+type TInstances<TProps, TDeps extends InjectionToken[]> = [...(
+	TDeps extends [(new (props: TProps) => infer TInstance), ...(infer TOther)]
+		? [TInstance, ...TInstances<TProps, TOther>]
 		: []
 	)];
 
-export function useCelled<TProps = {}, TDeps extends InjectionToken[]>(
-	render: ((...TDeps: TInstances<TDeps>) => JsxElement), ...deps: TDeps): JsxElement {
-	const instances = deps.map(dep => useInjected(dep)) as TDeps;
-	return useCell(() => render(...instances));
+export function useCelled<TProps = {}, TDeps extends InjectionToken<unknown, [TProps]>[]>(
+	props: TProps,
+	render: ((...TDeps: TInstances<TProps, TDeps>) => unknown),
+	...deps: TDeps
+): ReactNode {
+	const container = useMemo(() => di.child(), []);
+	container.resolve(Props).set(props);
+	const instances = deps.map(dep => useInjectedContainer(container, dep)) as TDeps;
+	useEffect(() => {
+		return () => {
+			container[Symbol.asyncDispose]();
+		};
+	}, []);
+	return useCell(() => render(...instances)) as ReactNode;
 }
 
-export function celled<TProps = {}, TDeps extends InjectionToken[]>(
-	render: (props: TProps, ...TDeps: TInstances<TDeps>) => any,
-	...deps: TDeps
-): FC<TProps> {
-	const component = (props: TProps) => {
-		const instances = deps.map(dep => useInjected(dep)) as TDeps;
-		return useCell(() => render(props, ...instances));
-	};
-	// @ts-nocheck
-	// component.name = render.name;
-	return component as FC<TProps>;
+@scoped()
+class Props<TProps> {
+	#cells = new Map<string | symbol, Cell>();
+
+	set(props) {
+		for (let key in props) {
+			getOrAdd(this.#cells, key, (key) => {
+				const cell = new BaseCell(undefined);
+				Object.defineProperty(this, key, {
+					get(): any {
+						return cell.get();
+					},
+					set(value) {
+						cell.set(value);
+					},
+					enumerable: true
+				})
+				return cell;
+			}).set(props[key]);
+		}
+	}
+
+	[Symbol.dispose]() {
+		for (let value of this.#cells.values()) {
+			value[Symbol.dispose]();
+		}
+		this.#cells.clear();
+	}
+}
+
+export abstract class Component<TProps = {}> implements FC<TProps> {
+	protected readonly props: TProps;
+	private _render = this.render?.bind(this);
+
+	protected render(){}
+
+	protected fc(){
+		return useCell(this._render);
+	}
 }
 
 class CellRef<T> {
@@ -62,4 +106,15 @@ class CellRef<T> {
 	unsubscribe = this.cell.on('change', () => {
 		this.state = {value: this.cell.value};
 	})
+}
+
+export function component(){
+	return (target) => {
+		return props => {
+			const instance = useInjected(target);
+			instance.props = useMemo(() => new Props(), []);
+			instance.props.set(props);
+			return instance.fc();
+		};
+	}
 }

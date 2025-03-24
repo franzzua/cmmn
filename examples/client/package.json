@@ -21,6 +21,7 @@
 	"devDependencies": {
 		"@cmmn/core": "workspace:~",
 		"@cmmn/examples-common": "workspace:~",
+		"@cmmn/examples-ui-lib": "workspace:~",
 		"@cmmn/react": "workspace:~",
 		"@cmmn/sync": "workspace:~",
 		"@cmmn/tools": "workspace:~",

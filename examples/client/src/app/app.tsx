@@ -1,12 +1,36 @@
-import {type Api, ApiToken, Store} from './store';
-import {useCelled} from "@cmmn/react";
-import {JsxElement} from "typescript";
+import {Store} from './store';
+import {Component, component, useCell} from "@cmmn/react";
+import {Button} from "@cmmn/examples-ui-lib";
+import {type Api, ApiToken} from "./api";
+import {inject} from "@cmmn/core";
 
-export const App = (props) => useCelled((store, api: Api) => (
-	<div style={{display: 'flex', gap: '1em'}}>
-		Hi there: <span>{store.value}</span>
-		Query: <span>{JSON.stringify(api.query.get())}</span>
-		<button onClick={() => store.value++}>Inc</button>
-		<button onClick={() => api.query.fetch()}>Refetch</button>
-	</div> as JsxElement
-), Store, ApiToken);
+@component()
+export class App extends Component {
+
+	@inject(Store) store!: Store;
+	@inject(ApiToken) api!: Api;
+
+	render() {
+		return <div style={{display: 'flex', gap: '1em', flexDirection: 'column'}}>
+			Hi there: <span>{this.store.value}</span>
+			Query: <span>{JSON.stringify(this.api.getData.get())}</span>
+			<Buttons/>
+		</div>;
+	}
+}
+
+@component()
+export class Buttons extends Component {
+
+	@inject(Store) store!: Store;
+	@inject(ApiToken) api!: Api;
+
+	fc(){
+		return useCell(() => (
+			<div style={{display: 'flex', gap: '1em', flexDirection: 'column'}}>
+				<Button disabled={this.api.getData.get().isFetching} onClick={() => this.store.value++}>Inc</Button>
+				<Button icon={"***"} onClick={this.api.getData.fetch}>Refetch</Button>
+			</div>
+		));
+	}
+}

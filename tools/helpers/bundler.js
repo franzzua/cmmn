@@ -1,4 +1,4 @@
-import path, {join, resolve, sep} from "node:path";
+import path, {join, resolve, dirname} from "node:path";
 import fs from "node:fs/promises";
 import {crc32} from "node:zlib";
 import {htmlLoader} from "./html-loader.js";
@@ -91,7 +91,7 @@ export class Bundler {
             minify: this.flags.minify,
             write: false,
             mainFields: ['browser', 'module', 'main'],
-            sourcemap: "inline",
+            sourcemap: this.flags.production ? false : "inline",
             plugins: [
                 await import('esbuild-plugin-less').then(x => x.lessLoader()),
                 await import('esbuild-plugin-wasm').then(x => x.wasmLoader({
@@ -132,8 +132,11 @@ export class Bundler {
 
     async write() {
         await fs.mkdir(path.join(this.target.rootDir, './dist/bundle'), {recursive: true});
-
-        await Promise.all(this.results.map(f => fs.writeFile(f.output, f.data)));
+        const fileDirs = new Set(this.results.map(f => dirname(f.output)));
+        for (let fileDir of fileDirs) {
+            await fs.mkdir(fileDir, { recursive: true });
+        }
+        await Promise.all(this.results.map(async f => fs.writeFile(f.output, f.data)));
     }
 
 }
