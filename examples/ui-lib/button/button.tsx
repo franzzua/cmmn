@@ -15,12 +15,12 @@ export class Button extends Component<{
             width: auto;
             background: gray;
             border: none;
-            border-radius: 3px;
+            border-radius: 16px;
             padding: 4px 8px;
             cursor: pointer;
             align-items: center;
             justify-content: space-around;
-
+			box-shadow: inset lightblue calc(var(--x) * 1px) calc(var(--y) * 1px) 30px 15px;
             &:hover {
                 filter: brightness(1.2);
             }
@@ -38,7 +38,8 @@ export class Button extends Component<{
 	}
 	@cell()
 	accessor isLoading = false;
-
+	@cell()
+	accessor element: HTMLButtonElement | undefined;
 	@bind()
 	async onClickInternal(e: MouseEvent<HTMLButtonElement>) {
 		this.isLoading = true;
@@ -47,6 +48,24 @@ export class Button extends Component<{
 		} finally {
 			this.isLoading = false;
 		}
+	}
+	@bind()
+	async onMouseEnter(){
+		if (!this.element) return;
+		const abort = new AbortController();
+		this.element.addEventListener('pointermove', e => {
+			const rect = this.element.getBoundingClientRect();
+			const x = e.x - rect.x - rect.width / 2;
+			const y = e.y - rect.y - rect.height / 2;
+			this.element.style.setProperty('--x', x.toString());
+			this.element.style.setProperty('--y', y.toString());
+		}, { signal: abort.signal });
+		this.element.addEventListener('pointerleave', e => {
+			abort.abort();
+			// this.element.style.setProperty('--x', '0');
+			// this.element.style.setProperty('--y', '0');
+		}, { signal: abort.signal });
+
 	}
 
 	@cell()
@@ -69,7 +88,9 @@ export class Button extends Component<{
 
 	render() {
 		return <button {...this.props}
+		               ref={element => this.element = element}
 		               className={this.className}
+		               onPointerEnter={this.onMouseEnter}
 		               disabled={this.props.disabled || this.isLoading}
 		               onClick={this.props.onClick && this.onClickInternal}>
 			{this.icon}

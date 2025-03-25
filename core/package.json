@@ -9,12 +9,8 @@
 		"registry": "https://npm.local",
 		"access": "public"
 	},
-	"files": [
-		"dist"
-	],
 	"type": "module",
 	"module": "./index.ts",
-	"typings": "./dist/typings/index.d.ts",
 	"scripts": {
 		"build": "cmmn compile --watch",
 		"bundle": "cmmn bundle",

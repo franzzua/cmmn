@@ -76,11 +76,7 @@ export class Bundler {
             },
             // alias: Object.fromEntries(this.target.externalDependencies.map(x => [`${x}`, `/_/@id/${x}`])),
             define: {
-                process: JSON.stringify({
-                    env: {
-                        NODE_ENV: this.flags.production ? 'production' : 'development'
-                    }
-                })
+                "process.env.NODE_ENV": this.flags.production ? '"production"' : '"development"'
             },
             publicPath: './',
             entryPoints: this.target.entries,
@@ -89,6 +85,12 @@ export class Bundler {
             format: 'esm',
             treeShaking: true,
             minify: this.flags.minify,
+            minifyIdentifiers: this.flags.minify,
+            minifyWhitespace: this.flags.minify,
+            minifySyntax: this.flags.minify,
+            splitting: true,
+            drop: ['debugger', 'console'],
+            keepNames: !this.flags.minify,
             write: false,
             mainFields: ['browser', 'module', 'main'],
             sourcemap: this.flags.production ? false : "inline",

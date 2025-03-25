@@ -93,18 +93,18 @@ export class TargetWebServer extends TargetServer {
 
     async getServer(app) {
         if (this.devServer) return this.devServer;
-
         const config = await this.getConfig();
         this.devServer = await createServer({
             ...config,
             server: {
-                hmr: {
+                hmr: this.target.flags.production ? false : {
                     server: app.server,
                     clientPort: 9000,
                     host: '127.0.0.1',
                     protocol: 'ws',
                     path: '/@ws'
                 },
+                ws: this.target.flags.production ? false : undefined,
                 origin: 'http://127.0.0.1:9000',
                 fs: {
                     strict: false

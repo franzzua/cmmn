@@ -2,7 +2,7 @@ import {Target} from "../helpers/target.js";
 import {fastify} from "fastify";
 import {DevServer} from "../dev-server/dev-server.js";
 
-export async function dev(...flags) {
+export async function dev(flags) {
     const targets = await Target.readTargets(process.cwd(), flags);
     const devServer = new DevServer(targets);
 
@@ -11,6 +11,9 @@ export async function dev(...flags) {
         rewriteUrl: devServer.rewriteUrl
     });
 
+    if (flags.minify){
+        app.register(await import('@fastify/compress'))
+    }
     await devServer.register(app);
 
     await app.listen({

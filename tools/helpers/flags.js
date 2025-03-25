@@ -1,4 +1,5 @@
 export class Flags {
+    /** @type {string[]} **/
     args;
     watch;
     minify;
@@ -21,4 +22,9 @@ export class Flags {
         }
     }
 
+    get(arg) {
+        const index = this.args.indexOf(`--${arg}`);
+        if (index === -1) return undefined;
+        return this.args[index + 1];
+    }
 }

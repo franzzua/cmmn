@@ -1,5 +1,7 @@
-export {useCell, useCelled, Component, component} from './src/useCell';
+export {useCell, useCelled} from './src/useCell';
 export {useInjected} from './src/useInjected';
+export {component} from "./src/component";
+export {Component} from "./src/component";
 
 export function cn(...args: Array<string | Record<string, any>>) {
 	return [...cnGenerator(args)].join(' ');

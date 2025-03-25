@@ -1,5 +1,5 @@
 import {getDependencyOrder} from "./getProjects.js";
-import path, {join, resolve} from "node:path";
+import path, {join, relative, resolve} from "node:path";
 import fs from "node:fs";
 import {getTSConfig} from "./getTSConfig.js";
 import terminalKit from "terminal-kit";
@@ -155,23 +155,30 @@ export class Target extends EventTarget {
         return `${entryName}${this.flags.minify ? '.min' : ''}.${outExt}`;
     }
 
-    async writePackageJson() {
+    async getPublishPackageJson() {
+        /** @type {import('@schemastore/package').JSONSchemaForNPMPackageJsonFiles} **/
+        const packageJson = JSON.parse(JSON.stringify(this.packageJson));
         for (let [entry, result] of Object.entries(this.exports)) {
-            if (this.packageJson.exports) {
-                this.packageJson.exports[entry] = `./dist/bundle/${result}`;
+            const source = this.entries[entry];
+            const typings = source.endsWith('.ts')
+                ? join('./dist/typings', relative(this.rootDir, source.replace(/\.ts$/, '.d.ts')))
+                : null;
+            if (packageJson.exports) {
+                packageJson.exports[entry] = { default: `./dist/bundle/${result}` };
+                if (typings){
+                    packageJson.exports[entry].typings = typings;
+                }
             } else {
-                this.packageJson.module = `./dist/bundle/${result}`;
-                delete this.packageJson.main;
-                delete this.packageJson.browser;
-                delete this.packageJson.scripts;
-                delete this.packageJson.devDependencies;
+                packageJson.module = `./dist/bundle/${result}`;
+                if (typings) packageJson.typings = typings;
             }
         }
-        await fs.promises.writeFile(
-            path.join(this.rootDir, './dist/package.json'),
-            JSON.stringify(this.packageJson, null, '\t')
-        )
-
+        delete packageJson.main;
+        delete packageJson.browser;
+        delete packageJson.scripts;
+        delete packageJson.devDependencies;
+        packageJson.files = ['dist'];
+        return JSON.stringify(packageJson, null, '\t');
     }
 
     get https() {
