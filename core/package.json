@@ -10,22 +10,15 @@
 		"access": "public"
 	},
 	"type": "module",
-	"module": "./index.ts",
-	"scripts": {
-		"build": "cmmn compile --watch",
-		"bundle": "cmmn bundle",
-		"bundle:min": "cmmn bundle --watch",
-		"typings": "cmmn typings --watch",
-		"test": "node --test --import @cmmn/tools/import ./**/*.spec.ts"
-	},
-	"devDependencies": {
-		"@cmmn/tools": "workspace:~",
-		"@types/throttle-debounce": "5.0.2"
-	},
+	"module": "./dist/bundle/index.js",
 	"dependencies": {
 		"throttle-debounce": "5.0.2",
 		"uuidv7": "1.0.2"
 	},
 	"author": "",
-	"license": "ISC"
+	"license": "ISC",
+	"typings": "dist/typings/index.d.ts",
+	"files": [
+		"dist"
+	]
 }
