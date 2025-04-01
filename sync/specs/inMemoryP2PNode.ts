@@ -9,36 +9,47 @@ import { floodsub } from '@libp2p/floodsub';
 import { createLibp2p } from 'libp2p';
 import { Libp2p } from '@libp2p/interface';
 import { scoped } from '@cmmn/core';
+import {circuitRelayServer, circuitRelayTransport,} from '@libp2p/circuit-relay-v2'
+import {pubsubPeerDiscovery} from "@libp2p/pubsub-peer-discovery";
 
 @scoped()
 export class InMemoryP2PNode extends P2PNode {
 	static addresses = [] as Multiaddr[];
 	static counter = 0;
 	static instances: Libp2p[] = [];
+	static root = new InMemoryP2PNode(true);
 
+	constructor(private isRoot = false) {
+		super();
+		console.log(isRoot)
+	}
 	async createLibp2p() {
-		const p2p = await createLibp2p({
-			transports: [memory()],
+		const p2p = await createLibp2p<any>({
+			transports: [
+				memory(),
+				circuitRelayTransport(),
+			],
 			addresses: {
 				listen: [`/memory/address-${InMemoryP2PNode.counter++}`],
 			},
 			connectionEncrypters: [plaintext()],
 			streamMuxers: [yamux()],
-			peerDiscovery: InMemoryP2PNode.addresses.length
-				? [
-						bootstrap({
-							list: InMemoryP2PNode.addresses.map((x) => x.toString()),
-						}),
-					]
-				: [],
+			peerDiscovery: [
+				pubsubPeerDiscovery({
+					interval: 100
+				})
+			],
 			services: {
 				identify: identify(),
 				pubsub: floodsub(),
+				...(this.isRoot ? {
+					relay: circuitRelayServer()
+				} : {})
 			},
 		});
-		InMemoryP2PNode.addresses.push(...(p2p.getMultiaddrs() as Multiaddr[]));
-		for (let instance of InMemoryP2PNode.instances) {
-			await p2p.dial(instance.getMultiaddrs());
+		if (!this.isRoot){
+			const conn = await p2p.dial(InMemoryP2PNode.root.p2p.getMultiaddrs());
+			console.log(conn.remotePeer.toString())
 		}
 		InMemoryP2PNode.instances.push(p2p);
 

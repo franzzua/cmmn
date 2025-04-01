@@ -1,24 +1,22 @@
 {
-	"name": "@cmmn/core",
-	"version": "3.0.0-beta-6",
-	"repository": {
-		"url": "https://github.com/franzzua/cmmn/tree/master/core"
-	},
-	"description": "di, base extensions, useful functions",
-	"publishConfig": {
-		"registry": "https://npm.local",
-		"access": "public"
-	},
-	"type": "module",
-	"module": "./dist/bundle/index.js",
-	"dependencies": {
-		"throttle-debounce": "5.0.2",
-		"uuidv7": "1.0.2"
-	},
-	"author": "",
-	"license": "ISC",
-	"typings": "dist/typings/index.d.ts",
-	"files": [
-		"dist"
-	]
+  "name": "@cmmn/core",
+  "version": "3.0.0-beta-6",
+  "repository": {
+    "url": "https://github.com/franzzua/cmmn/tree/master/core"
+  },
+  "description": "di, base extensions, useful functions",
+  "publishConfig": {
+    "registry": "https://npm.local",
+    "access": "public"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "dependencies": {
+    "throttle-debounce": "5.0.2",
+    "uuidv7": "1.0.2"
+  },
+  "author": "",
+  "license": "ISC"
 }

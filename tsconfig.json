@@ -12,6 +12,9 @@
       "path": "./ui/uhtml"
     },
     {
+      "path": "./ui"
+    },
+    {
       "path": "./ui/react"
     },
     {
@@ -22,12 +25,6 @@
     },
     {
       "path": "./examples/client"
-    },
-    {
-      "path": "./examples/server"
-    },
-    {
-      "path": "./examples/common"
     }
   ]
 }

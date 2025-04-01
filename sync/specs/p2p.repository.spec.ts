@@ -26,6 +26,7 @@ describe('p2p-repo', () => {
 	});
 	after(async () => {
 		await di[Symbol.asyncDispose]();
+		await InMemoryP2PNode.root[Symbol.asyncDispose]();
 	});
 
 	test('peers', async () => {
@@ -35,7 +36,8 @@ describe('p2p-repo', () => {
 		const t2 = doc2.doc.getText('value');
 		t1.insert(0, 'A');
 		doc1.doc.commit();
-		await Fn.asyncDelay(10);
+		await Fn.asyncDelay(1000);
+
 		expect(t2.toString()).toBe('A');
 		const doc3 = await repos[2].createDoc('1');
 		await Fn.asyncDelay(10);

@@ -15,6 +15,8 @@ export class Target extends EventTarget {
     flags;
     /** @type {Target[]} **/
     deps;
+    /** @type {Target[]} **/
+    reactions = [];
     /** @type {Map<string, Target>} **/
     depsMap;
 
@@ -26,6 +28,7 @@ export class Target extends EventTarget {
         this.depsMap = new Map(deps.map(x => [x.packageJson.name, x]));
         for (let dep of this.deps) {
             dep.addEventListener('change', e => this.dispatchEvent(new ChangeEvent(e.payload, e.from)));
+            dep.reactions.push(this)
         }
     }
 
@@ -169,15 +172,16 @@ export class Target extends EventTarget {
                     packageJson.exports[entry].typings = typings;
                 }
             } else {
-                packageJson.module = `./dist/bundle/${result}`;
+                packageJson.main = `./dist/bundle/${result}`;
                 if (typings) packageJson.typings = typings;
             }
         }
-        delete packageJson.main;
+        delete packageJson.module;
         delete packageJson.browser;
         delete packageJson.scripts;
         delete packageJson.devDependencies;
-        packageJson.files = ['dist'];
+        if (!packageJson.files)
+            packageJson.files = ['dist'];
         return JSON.stringify(packageJson, null, '\t');
     }
 

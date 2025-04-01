@@ -1,0 +1,24 @@
+{
+	"name": "@cmmn/examples-network",
+	"version": "3.0.0-beta-6",
+	"description": "",
+	"private": true,
+	"type": "module",
+	"bin": "./src/index.ts",
+	"scripts": {
+		"run": "node --import @cmmn/tools/import-dev ./src/index.ts"
+	},
+	"config": {
+		"host": "network.example.cmmn.local"
+	},
+	"devDependencies": {
+		"@cmmn/examples-common": "workspace:~",
+		"@cmmn/server": "workspace:~",
+		"@libp2p/circuit-relay-v2": "3.2.8",
+		"@libp2p/pubsub-peer-discovery": "11.0.1",
+		"@libp2p/websockets": "9.2.8"
+	},
+	"dependencies": {
+		"@libp2p/autonat": "^2.0.28"
+	}
+}

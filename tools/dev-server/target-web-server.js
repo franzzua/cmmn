@@ -48,7 +48,7 @@ export class TargetWebServer extends TargetServer {
                 },
                 write: false,
                 minify: this.target.flags.minify ? 'terser' : false,
-                sourcemap: !this.target.flags.minify,
+                sourcemap: this.target.flags.minify ? false : 'inline',
                 commonjsOptions: {
                     transformMixedEsModules: true
                 },
@@ -113,7 +113,8 @@ export class TargetWebServer extends TargetServer {
                     'access-control-allow-origin': '*'
                 },
                 allowedHosts: [
-                    this.target.https?.host
+                    this.target.https?.host,
+                    ...this.target.reactions.map(x => x.https?.host)
                 ].filter(x => x)
             },
         });

@@ -10,17 +10,19 @@ export class Button extends Component<{
 
 	private styles = {
 		button: css`
+			--x: 0;
+			--y: 0;
             display: flex;
             gap: 1em;
             width: auto;
-            background: gray;
+            background: lightblue;
             border: none;
             border-radius: 16px;
             padding: 4px 8px;
             cursor: pointer;
             align-items: center;
             justify-content: space-around;
-			box-shadow: inset lightblue calc(var(--x) * 1px) calc(var(--y) * 1px) 30px 15px;
+			box-shadow: inset gray calc(var(--x) * 1px) calc(var(--y) * 1px) 30px 15px;
             &:hover {
                 filter: brightness(1.2);
             }

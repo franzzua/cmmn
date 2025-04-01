@@ -1,5 +1,5 @@
-import { LoroCell } from '../src/crdt/loro-cell';
+import { LoroDocCell } from '../src';
 
-export class TextLoroCell extends LoroCell<string> {
+export class TextLoroCell extends LoroDocCell<string> {
 	public text = this.doc.getText('value');
 }

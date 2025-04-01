@@ -13,7 +13,13 @@
 			"path": "../../core"
 		},
 		{
+			"path": "../../sync"
+		},
+		{
 			"path": "../../ui/react"
+		},
+		{
+			"path": "../../ui"
 		},
 		{
 			"path": "../server"
@@ -23,6 +29,9 @@
 		},
 		{
 			"path": "../ui-lib"
+		},
+		{
+			"path": "../network"
 		}
 	]
 }

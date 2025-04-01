@@ -34,6 +34,7 @@ export {
 	ObservableMap,
 	ObservableObject,
 	ObservableSet,
+	AsyncCell,
 } from './cell';
 
 export {
@@ -42,4 +43,5 @@ export {
 	MergeListener,
 } from './event-emitter';
 
-export { di, factory, inject, resolve, scoped, Container, type InjectionToken } from './di';
+export {di, factory, inject, singleton, resolve, scoped, Container, type InjectionToken} from './di';
+export {injectLazy} from "./di/injectLazy";

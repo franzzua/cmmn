@@ -5,7 +5,8 @@ import {watch} from "chokidar"
 import {ChangeEvent} from "../helpers/target.js";
 
 export class TargetRunner extends TargetServer {
-    port = 9010;
+    static port = 9010;
+    port = TargetRunner.port++;
     /** @type {Promise<import('node:child_process').ChildProcess> | undefined} **/
     cp;
 
@@ -15,6 +16,7 @@ export class TargetRunner extends TargetServer {
         ignored: /node_modules|dist/,
         ignoreInitial: true
     });
+
     /**
      * @param app {import("fastify/types/instance.js").FastifyInstance}
      * @returns {Promise<void>}
@@ -22,15 +24,23 @@ export class TargetRunner extends TargetServer {
     async register(app) {
         await app.register(await import('@fastify/http-proxy'), {
             upstream: `http://127.0.0.1:${this.port}`,
+            websocket: true,
+            wsUpstream: `ws://127.0.0.1:${this.port}`,
             logLevel: 'verbose',
             prefix: this.base,
-            rewritePrefix: ''
+            rewritePrefix: '',
+            wsHooks: {
+                onConnect: async (context, source, target) => {
+                    await (this.cp ??= this.runServer());
+                }
+            }
         });
+        this.target.log(`proxy to ${this.port}`);
         app.addHook('onRequest', async (req) => {
             if (!req.url.startsWith(this.base)) return;
             await (this.cp ??= this.runServer());
         })
-        await this.initProxy();
+        // await this.initProxy();
 
         this.target.addEventListener('change', async e => {
             const cp = await this.cp;
@@ -53,7 +63,7 @@ export class TargetRunner extends TargetServer {
 
         const bin = join(this.target.rootDir, this.target.packageJson.bin);
 
-        const cp = spawn('node',`--import @cmmn/tools/import-dev ${bin}`.split(' '), {
+        const cp = spawn('node', `--import @cmmn/tools/import-dev ${bin}`.split(' '), {
             env: {
                 ...process.env,
                 PORT: this.port

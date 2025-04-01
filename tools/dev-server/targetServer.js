@@ -11,6 +11,7 @@ export class TargetServer {
      * @type {import("./resolver.js").Resolver}
      */
     resolver;
+    url;
 
     /**
      * @param target {import("../helpers/target.js").Target}
@@ -69,7 +70,7 @@ export class TargetServer {
     resolveId = id => {
         if (id.match(/@(vite|react)/)) console.log(id);
         return id.startsWith(this.target.packageJson.name)
-            && `http://127.0.0.1:9000/${this.prefix}/${id}`
+            && `${this.url}/${this.prefix}/${id}`
     }
 
     /**
@@ -118,7 +119,7 @@ export class TargetServer {
         const first = this.target.proxy.find(x => x.regex.test(file))
         if (!first) return file;
         const result = file.replace(first.regex, first.replace);
-        this.target.log(`proxy ^B${file} by ^W${first.regex} to ${result}`);
+        this.target.log(`proxy ^B${file}^w by ^W${first.regex.toString().replaceAll('^','^^')} to ${result}`);
         return result;
     }
 }

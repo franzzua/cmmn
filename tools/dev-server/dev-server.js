@@ -45,7 +45,10 @@ export class DevServer {
      */
     async register(app) {
         app.addHook('preHandler', async (req, res) => {
-            this.depServer.url = `http://${req.headers.host}`
+            this.depServer.url = `https://${req.headers.host}`
+            for (let targetServer of this.targetServers) {
+                targetServer.url =`https://${req.headers.host}`
+            }
         })
         await this.depServer.register(app);
         for (let targetServer of this.targetServers) {

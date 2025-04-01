@@ -15,10 +15,14 @@
 		"port": "9002",
 		"proxy": {
 			"^/api": "/_/@cmmn/examples-server/api",
+			"^/p2p": "/_/@cmmn/examples-network",
 			"^[^.]+$": "/"
 		}
 	},
 	"devDependencies": {
+		"@acab/ecsstatic": "^0.9.0",
+		"@chainsafe/libp2p-gossipsub": "14.1.0",
+		"@chainsafe/libp2p-noise": "16.1.0",
 		"@cmmn/core": "workspace:~",
 		"@cmmn/examples-common": "workspace:~",
 		"@cmmn/examples-ui-lib": "workspace:~",
@@ -26,10 +30,17 @@
 		"@cmmn/sync": "workspace:~",
 		"@cmmn/tools": "workspace:~",
 		"@cmmn/uhtml": "workspace:~",
+		"@cmmn/ui": "workspace:~",
+		"@libp2p/circuit-relay-v2": "3.2.8",
+		"@libp2p/dcutr": "2.0.27",
+		"@libp2p/tcp": "10.1.8",
+		"@libp2p/webrtc": "5.2.9",
+		"@multiformats/multiaddr": "^12.0.0",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
 		"@vitejs/plugin-react-swc": "3.8.0",
 		"less": "4.2.2",
+		"libp2p": "2.8.2",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"uuidv7": "1.0.2"

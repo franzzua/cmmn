@@ -28,6 +28,7 @@
 		"core",
 		"tools",
 		"server",
+		"ui",
 		"ui/uhtml",
 		"ui/react",
 		"sync",

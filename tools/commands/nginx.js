@@ -15,8 +15,8 @@ export async function nginx(flags) {
         const host = target.packageJson.config?.host;
         if (!host) continue;
         const confFile = join(outDir, `${host}.conf`);
-        if (await fs.stat(confFile).catch(() => null))
-            continue;
+        // if (await fs.stat(confFile).catch(() => null))
+        //     continue;
         const content = nginxTemplate('/_/'+target.packageJson.name, host, 9000, proxy);
         await fs.writeFile(confFile, content);
         const cert = join(outDir, `${host}.pem`);
@@ -32,11 +32,23 @@ export async function nginx(flags) {
 }
 
 export const nginxTemplate = (path, host, port, proxy) => `
+map $http_upgrade $connection_upgrade {
+  default upgrade;
+  '' close;
+}
+
 server {
         listen              443 ssl http2;
         ssl_certificate     default/${host}.pem;
         ssl_certificate_key default/${host}-key.pem;
         server_name ${host};
+        location /_ {
+            proxy_set_header Host            $host;
+            proxy_set_header X-Forwarded-For $remote_addr;
+            proxy_pass http://${proxy}:${port};
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+        }
         location / {
             rewrite ^(.*) ${path}$1 break; 
             proxy_set_header Host            $host;
