@@ -1,4 +1,4 @@
-import {Target} from "../helpers/target.js";
+import {Target} from "../helpers/target.ts";
 import {fastify} from "fastify";
 import {DevServer} from "../dev-server/dev-server.js";
 

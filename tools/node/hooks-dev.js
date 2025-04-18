@@ -1,5 +1,5 @@
-import {Target} from "../helpers/target.js";
-import {Flags} from "../helpers/flags.js";
+import {Target} from "../helpers/target.ts";
+import {Flags} from "../helpers/flags.ts";
 import {join} from "node:path";
 import {pathToFileURL} from "node:url";
 

@@ -1,14 +1,13 @@
 export class Flags {
-    /** @type {string[]} **/
-    args;
-    watch;
-    minify;
-    workspace;
-    unsafe;
-    version;
-    command;
-    production;
-    constructor(args) {
+    args: string[];
+    watch: boolean;
+    minify: boolean;
+    workspace: string;
+    unsafe: boolean;
+    version: string;
+    command: string;
+    production: boolean;
+    constructor(args: string[]) {
         this.command = args[0];
         this.args = args;
         this.watch = args.includes('--watch');

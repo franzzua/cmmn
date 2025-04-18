@@ -8,16 +8,16 @@ export class DevServer {
     prefix = '_';
 
     /**
-     * @type {import("../helpers/target.js").Target[]}
+     * @type {import("../helpers/target.ts").Target[]}
      */
     targets;
     /**
-     * @type {import("../helpers/target.js").Target}
+     * @type {import("../helpers/target.ts").Target}
      */
     rootTarget;
 
     /**
-     * @param targets {import("../helpers/target.js").Target[]}
+     * @param targets {import("../helpers/target.ts").Target[]}
      */
     constructor(targets) {
         this.targets = targets;

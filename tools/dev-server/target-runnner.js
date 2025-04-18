@@ -2,7 +2,7 @@ import {TargetServer} from "./targetServer.js";
 import {exec, spawn} from "node:child_process";
 import {join} from "node:path";
 import {watch} from "chokidar"
-import {ChangeEvent} from "../helpers/target.js";
+import {ChangeEvent} from "../helpers/target.ts";
 
 export class TargetRunner extends TargetServer {
     static port = 9010;

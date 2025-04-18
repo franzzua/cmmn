@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import {getTSConfig} from "./getTSConfig.js";
+import {getTSConfig} from "./getTSConfig";
 
 function getProjectConfig(rootDir, cmmn, options) {
     return {

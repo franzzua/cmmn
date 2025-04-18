@@ -2,26 +2,25 @@ import {getDependencyOrder} from "./getProjects.js";
 import path, {join, relative, resolve} from "node:path";
 import fs from "node:fs";
 import {fileURLToPath} from "node:url";
-import {getTSConfig} from "./getTSConfig.js";
+import {getTSConfig, TypescriptConfig} from "./getTSConfig.js";
 import terminalKit from "terminal-kit";
+import {Flags} from "./flags";
+import {JSONSchemaForNPMPackageJsonFiles} from "@schemastore/package";
+import {CompilerOptions} from "typescript";
+import {Config} from "@swc/core";
 
 const swcConfig = JSON.parse(await fs.promises.readFile(fileURLToPath(import.meta.resolve('@cmmn/tools/swcrc')), {
     encoding: 'utf-8'
 }));
 
 export class Target extends EventTarget {
-    /** @type {string} **/
-    rootDir;
-    /** @type {import("./flags.js").Flags} **/
-    flags;
-    /** @type {Target[]} **/
-    deps;
-    /** @type {Target[]} **/
-    reactions = [];
-    /** @type {Map<string, Target>} **/
-    depsMap;
+    rootDir: string;
+    flags: Flags;
+    deps: Target[];
+    reactions: Target[] = [];
+    depsMap: Map<string, Target>;
 
-    constructor(rootDir, flags, deps) {
+    constructor(rootDir: string, flags: Flags, deps: Target[]) {
         super();
         this.rootDir = rootDir;
         this.flags = flags;
@@ -33,12 +32,7 @@ export class Target extends EventTarget {
         }
     }
 
-    /**
-     * @param rootDir
-     * @param flags
-     * @returns {Promise<Target[]>}
-     */
-    static async readTargets(rootDir, flags) {
+    static async readTargets(rootDir: string, flags: Flags): Promise<Target[]> {
         if (flags.workspace) {
             return [new Target(resolve(rootDir, flags.workspace), flags, [])];
         }
@@ -50,10 +44,8 @@ export class Target extends EventTarget {
         return Array.from(result.values());
     }
 
-    /**
-     * @returns {import('@schemastore/package').JSONSchemaForNPMPackageJsonFiles}
-     */
-    get packageJson() {
+    _packageJson: JSONSchemaForNPMPackageJsonFiles;
+    get packageJson(): JSONSchemaForNPMPackageJsonFiles {
         const pkgPath = path.join(this.rootDir, 'package.json');
         return this._packageJson ??= JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
     }
@@ -65,17 +57,13 @@ export class Target extends EventTarget {
         ]
     }
 
-    /**
-     * @returns {{ compilerOptions: import("typescript").CompilerOptions}}
-     */
-    get tsConfig() {
+    _tsConfig: TypescriptConfig;
+    get tsConfig(): TypescriptConfig {
         return this._tsConfig ??= getTSConfig(this.rootDir);
     }
 
-    /**
-     * @returns {import('@swc/types').Config}
-     */
-    get swcConfig() {
+    _swcConfig: Config;
+    get swcConfig(): Config {
         const tsConfig = this.tsConfig;
         return this._swcConfig ??= {
             ...swcConfig,
@@ -110,8 +98,8 @@ export class Target extends EventTarget {
         };
     }
 
-    /** @returns {Record<string, string>} **/
-    get entries() {
+    _entries: Record<string, string>
+    get entries(): Record<string, string> {
         if (this._entries) return this._entries;
         if (this.packageJson.exports) {
             const result = {};
@@ -134,7 +122,7 @@ export class Target extends EventTarget {
         }
     }
 
-
+    term;
     log(text) {
         this.term ??= new terminalKit.Terminal();
         this.term.blue(this.packageJson.name);
@@ -145,12 +133,8 @@ export class Target extends EventTarget {
         this.log(`^RERROR: ^w` + text.toString());
     }
 
-
-    /**
-     * Real package.json.exports
-     * @returns {{[p: string]: string}}
-     */
-    get exports() {
+    _exports: Record<string, string>
+    get exports(): Record<string, string> {
         return this._exports ??= Object.fromEntries(Object.entries(this.entries).map(
             ([entry, file]) => [entry, this.getExport(entry, file)]));
     }
@@ -204,9 +188,10 @@ export class Target extends EventTarget {
         }
     }
 
-    get proxy() {
+    _proxy;
+    get proxy(): Array<{ regex: RegExp; replace}> {
         return this._proxy ??= Object.entries({
-            ...this.packageJson.config?.proxy ?? {},
+            ...this.packageJson.config?.proxy as any ?? {},
         })
             .map(([regex, replace]) => ({
                 regex: new RegExp(regex),

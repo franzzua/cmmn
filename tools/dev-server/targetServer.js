@@ -3,7 +3,7 @@ import {fastify} from "fastify";
 
 export class TargetServer {
     /**
-     * @type {import("../helpers/target.js").Target}
+     * @type {import("../helpers/target.ts").Target}
      */
     target;
     prefix;
@@ -14,7 +14,7 @@ export class TargetServer {
     url;
 
     /**
-     * @param target {import("../helpers/target.js").Target}
+     * @param target {import("../helpers/target.ts").Target}
      * @param prefix {string}
      * @param resolver {import("./resolver.js").Resolver}
      */

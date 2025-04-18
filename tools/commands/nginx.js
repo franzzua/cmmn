@@ -1,10 +1,10 @@
-import {Target} from "../helpers/target.js";
+import {Target} from "../helpers/target.ts";
 import fs from "node:fs/promises";
 import {join} from "node:path";
 import {exec, spawn} from "node:child_process";
 
 /**
- * @param flags {import("../helpers/flags.js").Flags}
+ * @param flags {import("../helpers/flags.ts").Flags}
  * @returns {Promise<void>}
  */
 export async function nginx(flags) {

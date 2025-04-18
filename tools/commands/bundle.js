@@ -1,9 +1,9 @@
-import {Target} from "../helpers/target.js";
+import {Target} from "../helpers/target.ts";
 import {Terminal} from "../helpers/terminal.js";
 import {Bundler} from "../helpers/bundler.js";
 
 /**
- * @param flags {import("../helpers/flags.js").Flags}
+ * @param flags {import("../helpers/flags.ts").Flags}
  * @returns {Promise<void>}
  */
 export async function bundle(flags) {

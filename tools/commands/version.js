@@ -21,7 +21,7 @@ export async function version(flags) {
 }
 
 /**
- * @param target {import('../helpers/target.js')}
+ * @param target {import('../helpers/target.ts')}
  * @param version {string}
  */
 function updateVersion(target, version) {

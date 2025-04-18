@@ -6,7 +6,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import {createVitePlugin} from "unplugin";
 import {join, relative} from "node:path";
 import {createServer} from "vite";
-import {ChangeEvent} from "../helpers/target.js";
+import {ChangeEvent} from "../helpers/target.ts";
 import fs from "node:fs";
 
 export class TargetWebServer extends TargetServer {

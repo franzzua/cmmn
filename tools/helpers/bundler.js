@@ -4,9 +4,9 @@ import {crc32} from "node:zlib";
 import {htmlLoader} from "./html-loader.js";
 
 export class Bundler {
-    /** @type {import('./target.js').Target} **/
+    /** @type {import('./target.ts').Target} **/
     target;
-    /** @type {import('./flags.js').Flags} **/
+    /** @type {import('./flags.ts').Flags} **/
     flags;
     /** @type {{ entry: string; output: string; data: Uint8Array; fileName; }[]} **/
     results = [];
