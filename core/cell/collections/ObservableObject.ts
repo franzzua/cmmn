@@ -3,6 +3,7 @@ import { EventEmitter } from '../../event-emitter';
 import { BaseCell } from '../base-cell';
 import { ObservableMap } from './ObservableMap';
 
+@BaseCell.like()
 export class ObservableObject<T> extends EventEmitter<{
 	change: { oldValue: T; value: T; keys?: Array<string> };
 }> {
@@ -37,4 +38,3 @@ export class ObservableObject<T> extends EventEmitter<{
 		});
 	}
 }
-BaseCell.likeCells.add(ObservableObject);

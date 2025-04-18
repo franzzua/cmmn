@@ -10,13 +10,18 @@
 		"access": "public"
 	},
 	"bin": {
-		"cmmn": "bin.js"
+		"cmmn": "dist/esm/bin.js"
+	},
+	"scripts": {
+		"compile": "node --import @cmmn/tools/import ./bin.ts compile",
+		"compile:watch": "node --import @cmmn/tools/import ./bin.ts compile --watch"
 	},
 	"exports": {
-		"./compile/tsconfig.json": "./compile/tsconfig.json",
+		"./tsconfig.json": "./tsconfig.json",
 		"./import": "./node/register.js",
-		"./import-dev": "./node/register-dev.js",
-		"./test": "./test/test.ts"
+		"./import-dev": "./dist/esm/node/register-dev.js",
+		"./test": "./dist/esm/test/test.js",
+		"./swcrc": "./.swcrc"
 	},
 	"typesVersions": {
 		"*": {
@@ -30,13 +35,8 @@
 	},
 	"typings": "compile/typings.d.ts",
 	"files": [
-		"bin.js",
-		"commands/**/*",
-		"compile/*",
-		"node/*",
-		"test/*",
-		"helpers/*",
-		"dev-server/*"
+		"dist",
+		"tsconfig.json"
 	],
 	"dependencies": {
 		"@biomejs/biome": "1.9.4",

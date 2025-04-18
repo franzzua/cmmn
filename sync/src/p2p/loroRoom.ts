@@ -1,39 +1,49 @@
 import type {LoroDoc} from 'loro-crdt';
-import {Fn} from '@cmmn/core';
 import {LoroMessage, LoroMessageType} from './loro.message';
 import {LoroProtocol} from "./loro.protocol";
+import {Syncronizable} from "./syncronizable";
+import {cell, ObservableSet} from "@cmmn/core";
 
-export class LoroRoom implements AsyncDisposable {
-
-	origin = Symbol(this.constructor.name);
+export class LoroRoom extends Syncronizable<Uint8Array> implements AsyncDisposable {
 
 	constructor(
 		private protocol: LoroProtocol,
 		private topic: string,
-		private doc: LoroDoc,
 	) {
+		super();
 		this.protocol.join(this.topic);
 	}
-	async init(){
-		this.protocol.on(LoroMessageType.Update, message => {
-			if (message.topic !== this.topic) return;
-			this.doc.import(message.update);
-		});
 
+	@cell()
+	private accessor _peers = new ObservableSet<string>();
+
+	public get peers(): ReadonlySet<string> {
+		return this._peers;
+	}
+
+	protected async *getUpdates(){
+		for await (let message of this.protocol.iterate(LoroMessageType.Update)) {
+			if (message.topic !== this.topic) continue;
+			yield message.update;
+		}
+	}
+
+	async sync(doc: LoroDoc){
 		this.protocol.on(LoroMessageType.Join, async message => {
 			if (message.topic !== this.topic) return;
-			const compare = this.doc.version().compare(message.version);
+			this._peers.add(message.from.toString());
+			const compare = doc.version().compare(message.version);
 			if (compare == 0) return;
 			if (compare === undefined || compare < 0) {
 				await this.send({
 					type: LoroMessageType.Request,
-					version: this.doc.version(),
+					version: doc.version(),
 				});
 			}
 			if (compare === undefined || compare > 0) {
 				await this.send({
 					type: LoroMessageType.Update,
-					update: this.doc.export({
+					update: doc.export({
 						mode: 'update',
 						from: message.version,
 					}),
@@ -45,43 +55,22 @@ export class LoroRoom implements AsyncDisposable {
 			if (message.topic !== this.topic) return;
 			return message.reply({
 				type: LoroMessageType.Update,
-				update: this.doc.export({
+				update: doc.export({
 					mode: 'update',
 					from: message.version,
 				}),
 			});
 		})
-		await this.sendVersion();
-	}
-
-
-	printPeers(){
-		const peers = this.protocol.getPeers(this.topic);
-		console.log(this.topic, peers.map(x => x.toString()));
-	}
-
-
-	private version = this.doc.version();
-	private docUnsubscribe = this.doc.subscribe(async (e) => {
-		if (e.by == "import") return;
-		const update = this.doc.export({
-			mode: 'update',
-			from: this.version,
-		});
-		this.version = this.doc.version();
-		await this.send({
-			type: LoroMessageType.Update,
-			update: update,
-		});
-	});
-
-	private async sendVersion() {
-		await Fn.asyncDelay(5);
+		const peers = await this.protocol.waitPeers(1, this.topic);
+		for (let peer of peers) {
+			this._peers.add(peer.toString());
+		}
 		await this.send({
 			type: LoroMessageType.Join,
-			version: this.doc.version(),
+			version: doc.version(),
 		});
 	}
+
 
 	private async send(message: LoroMessage) {
 		await this.protocol.send(this.topic, message);
@@ -89,17 +78,14 @@ export class LoroRoom implements AsyncDisposable {
 
 	async [Symbol.asyncDispose]() {
 		this.protocol.leave(this.topic);
-		this.docUnsubscribe();
 	}
 
-	async waitPeers(count: number) {
-		while (true) {
-			const peers = this.protocol.getPeers(this.topic);
-			if (peers.length >= count)
-				break;
-			console.warn(`Waiting ${count} peers in topic '${this.topic}'`);
-			await Fn.asyncDelay(1000);
-		}
-		await this.init();
+	async addUpdate(update: Uint8Array) {
+		await this.send({
+			type: LoroMessageType.Update,
+			update: update,
+		});
 	}
 }
+
+

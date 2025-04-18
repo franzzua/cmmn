@@ -80,7 +80,7 @@ export function cell<T, TClass = unknown>(
 
 const cellsSymbol = Symbol('@cells');
 
-function getOrCreateCell<T>(
+export function getOrCreateCell<T>(
 	instance: {
 		[cellsSymbol]: Map<string | symbol, BaseCell<unknown>>;
 	},

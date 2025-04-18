@@ -12,7 +12,7 @@ import * as process from "process";
 import * as console from "node:console";
 import { floodsub } from '@libp2p/floodsub';
 
-process.env.PUBLIC_MULTIADDR = `/dns/network.example.cmmn.local/tcp/${process.env.PORT ?? 9090}/ws`;
+process.env.PUBLIC_MULTIADDR = `/ip4/0.0.0.0/tcp/${process.env.PORT ?? 9090}/ws`;
 
 export const node = await createLibp2p({
 	transports: [

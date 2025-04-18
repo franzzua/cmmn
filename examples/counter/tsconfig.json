@@ -2,13 +2,15 @@
 	"extends": "@cmmn/tools/tsconfig.json",
 	"compilerOptions": {
 		"lib": ["dom", "es2015.collection", "esnext"],
-		"jsx": "preserve"
+		"baseUrl": "./src",
+		"jsx": "react-jsx"
 	},
 	"include": ["**/*.ts"],
-	"exclude": ["dist", "node_modules"],
+	"exclude": [
+      "dist", "node_modules"],
 	"references": [
 		{
-			"path": "../../core"
+			"path": "../../ui/uhtml"
 		}
 	]
 }

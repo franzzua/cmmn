@@ -1,6 +1,6 @@
 export {useCell, useCelled} from './src/useCell';
 export {useInjected} from './src/useInjected';
-export {component} from "./src/component";
+export {component, effect} from "./src/component";
 export {Component} from "./src/component";
 
 export function cn(...args: Array<string | Record<string, any>>) {

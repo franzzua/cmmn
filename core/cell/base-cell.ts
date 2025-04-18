@@ -94,27 +94,21 @@ export class BaseCell<T = unknown>
 	protected notifyChange(value: T, oldValue: T) {
 		this.emit('change', { value, oldValue });
 		if (this.isActive && value !== oldValue) {
-			if (BaseCell.isLikeCell(value)) {
-				value.on('change', this.onValueContentChanged);
-			}
-			if (BaseCell.isLikeCell(oldValue)) {
-				oldValue.off('change', this.onValueContentChanged);
-			}
+			this.unsubscriber?.();
+			this.unsubscriber = this.listenLike(value);
 		}
 	}
 
 	active() {
 		this.isActive = true;
-		if (BaseCell.isLikeCell(this.value)) {
-			this.value.on('change', this.onValueContentChanged);
-		}
+		this.unsubscriber = this.listenLike(this.value);
 	}
+
+	protected unsubscriber?: () => void;
 
 	protected disactive() {
 		this.isActive = false;
-		if (BaseCell.isLikeCell(this.value)) {
-			this.value.off('change', this.onValueContentChanged);
-		}
+		this.unsubscriber?.();
 		if (this.dependencies) {
 			for (const dependency of this.dependencies) {
 				dependency.removeReaction(this);
@@ -165,7 +159,7 @@ export class BaseCell<T = unknown>
 
 	/** @internal **/
 	// register classes as cell like, so unknown "change" event will notify wrapped cell
-	public static likeCells = new Set<any>([EventEmitterBase]);
+	public static likeCells = new Map<unknown, Subscriber<unknown>>();
 	private static isLikeCell(
 		target,
 	): target is EventEmitterBase<{ change: unknown }> {
@@ -175,6 +169,7 @@ export class BaseCell<T = unknown>
 		return false;
 	}
 
+	/* @__PURE__ */
 	static like<
 		TClass extends abstract new (
 			...args: unknown[]
@@ -183,11 +178,30 @@ export class BaseCell<T = unknown>
 		},
 	>() {
 		return (target: TClass, context: ClassDecoratorContext) => {
-			BaseCell.likeCells.add(target);
+			BaseCell.addAdapter(target, function (listener){
+				return this.on('change', listener);
+			});
 		};
 	}
 
 	public static readonly Symbol: unique symbol = Symbol('BaseCell');
+
+	static addAdapter<T>(target: new (...args: unknown[]) => T,
+	                     subscriber: Subscriber<T>
+ ) {
+		BaseCell.likeCells.set(target, subscriber);
+	}
+
+	getListener(value){
+		if (!value || !value.constructor) return;
+		return BaseCell.likeCells.get(value.constructor) ?? this.getListener(value.__proto__)
+	}
+
+	listenLike(value){
+		const listener = this.getListener(value);
+		if (listener)
+			listener.call(value, this.onValueContentChanged);
+	}
 }
 
 export class CyclicalPullError extends Error {
@@ -195,3 +209,6 @@ export class CyclicalPullError extends Error {
 		super('cyclical pull');
 	}
 }
+
+BaseCell.like()(EventEmitterBase);
+export type Subscriber<T> = (this: T, listener: () => void) => (() => void);

@@ -2,8 +2,7 @@ import {inject} from '@cmmn/core';
 import {P2PNode} from '../p2p/p2p.node';
 import {LoroDocCell} from './cells/loro-doc-cell';
 import {StorageProvider} from './storage';
-import {LoroShape, LoroShaped} from "./types";
-import {LoroDoc} from "loro-crdt";
+import {LoroShape, LoroShaped} from "./cells/types";
 
 export class P2PRepository implements AsyncDisposable {
 	@inject(P2PNode) p2pNode!: P2PNode;
@@ -16,28 +15,36 @@ export class P2PRepository implements AsyncDisposable {
 
 	private disposables: (AsyncDisposable | Disposable)[] = [];
 
-	async getDoc<Shape extends LoroShape>(uri: string, shape: Shape): Promise<LoroShaped<Shape>> {
-		const data = await this.storage.get(uri);
-		const cell = new LoroDocCell(data);
-		this.syncDoc(cell.doc, uri).then(() => {
-			cell.isSynced = true;
-			console.log(cell.isSynced)
-		});
-		return cell.getShaped<Shape>(shape);
+	getRoom(uri: string){
+		return this.p2pNode.loroProtocol.getRoomOrCreate(uri);
 	}
 
-	async createDoc(uri: string) {
-		const cell = new LoroDocCell();
-		this.syncDoc(cell.doc, uri).then(() => cell.isSynced = true);
+	async getDoc(uri: string): Promise<LoroDocCell> {
+		const data = await this.storage.get(uri);
+		const cell = new LoroDocCell(data);
+		this.syncDoc(cell, uri);
 		return cell;
 	}
 
-	private async syncDoc(doc: LoroDoc, uri: string) {
-		doc.subscribe((e) => {
-			this.storage.set(uri, doc.export({mode: 'snapshot'}));
-		});
-		const room = await this.p2pNode.join(uri, doc);
-		this.disposables.push(room);
+	async shape<Shape extends LoroShape>(uri: string, shape: Shape): Promise<LoroShaped<Shape>> {
+		const doc = await this.getDoc(uri);
+		return doc.getShaped<Shape>(shape);
+	}
+
+	createDoc(uri: string) {
+		const cell = new LoroDocCell();
+		this.syncDoc(cell, uri);
+		return cell;
+	}
+
+	private async syncDoc(cell: LoroDocCell, uri: string) {
+		this.storage.getSink(uri).sink(cell.iterate('snapshot'));
+		const room = this.p2pNode.loroProtocol.getRoomOrCreate(uri);
+		await room.sync(cell.doc)
+		cell.isSynced = true;
+
+		room.sink(cell.iterate('update'))
+		cell.sink(room.updates);
 	}
 
 	async [Symbol.asyncDispose]() {

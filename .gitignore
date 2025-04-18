@@ -6,3 +6,4 @@ node_modules
 .work
 **/.swc
 **/dist
+*storybook.log

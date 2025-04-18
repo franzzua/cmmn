@@ -3,7 +3,7 @@ import {Component, component, useCelled} from "@cmmn/react";
 import {Button} from "@cmmn/examples-ui-lib";
 import {type Api, ApiToken} from "./api";
 import {inject} from "@cmmn/core";
-import {Counter} from "../counter";
+import {Counters} from "../counter";
 //
 @component()
 export class App extends Component {
@@ -13,9 +13,9 @@ export class App extends Component {
 
 	render() {
 		return <div style={{display: 'flex', gap: '1em', flexDirection: 'column'}}>
-			<Counter id={'1'}/>
-			<Counter id={'2'}/>
-			<Counter id={'3'}/>
+			<Counters id={'1'}/>
+			<Counters id={'2'}/>
+			<Counters id={'3'}/>
 		</div>;
 	}
 }

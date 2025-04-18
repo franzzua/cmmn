@@ -1,5 +1,5 @@
 import {inject, scoped} from "@cmmn/core";
-import {CounterInternal} from "./counter";
+import {CounterInternal} from "./counters";
 import {injectLazy} from "@cmmn/core";
 import {CounterRepository} from "./counter-repository";
 
@@ -12,13 +12,13 @@ export class CounterStore {
 	@inject(CounterRepository)
 	private repository!: CounterRepository;
 
-	private loroCounter = this.counter.counter;
 
 	public get value() {
-		return this.loroCounter.value;
+		return this.counter.counter.value;
 	}
 
 	inc = () => {
-		this.loroCounter.value++;
-	};
+		this.counter.counter.value++;
+	}
+	dec = () => this.counter.counter.value--;
 }

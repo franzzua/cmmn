@@ -119,7 +119,7 @@ export class TargetWebServer extends TargetServer {
             },
         });
         this.target.log(`Start dev server`);
-        this.enhanceWebSocket();
+        // this.enhanceWebSocket();
         return this.devServer;
     }
 
@@ -129,9 +129,11 @@ export class TargetWebServer extends TargetServer {
     enhanceWebSocket() {
         const emitChange = this.devServer.ws.send;
         this.devServer.ws.send = payload => {
+            this.target.log('change')
             this.target.dispatchEvent(new ChangeEvent(payload, this.target.packageJson.name));
         };
         this.target.addEventListener('change', e => {
+            this.target.log('change')
             emitChange.call(this.devServer.ws, e.payload);
         });
     }

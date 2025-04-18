@@ -1,6 +1,7 @@
 import { EventEmitter } from '../../event-emitter';
 import { BaseCell } from '../base-cell';
 
+@BaseCell.like()
 export class ObservableArray<T> extends Array<T> {
 	private emitter = new EventEmitter<{ change: unknown }>();
 	on = this.emitter.on.bind(this.emitter);
@@ -68,5 +69,3 @@ for (const key of keys) {
 		return res;
 	} as never;
 }
-
-BaseCell.likeCells.add(ObservableArray);

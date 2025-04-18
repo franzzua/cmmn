@@ -1,9 +1,11 @@
 import {Diff, LoroDoc} from 'loro-crdt';
 import {cell, EventEmitter} from "@cmmn/core";
-import {LoroShape, LoroShaped} from "../types";
+import {LoroShape, LoroShaped, LoroTypeFactory} from "./types";
+import {Syncronizable} from "../../p2p/syncronizable";
 
 export class LoroDocCell extends EventEmitter<{
-	diff: Diff
+	snapshot: Uint8Array;
+	update: Uint8Array;
 }> {
 	@cell()
 	accessor isSynced = false;
@@ -24,16 +26,50 @@ export class LoroDocCell extends EventEmitter<{
 		super[Symbol.dispose]();
 	}
 
+	protected subscribe(eventName: keyof { snapshot: Uint8Array }) {
+		this.doc.subscribe(e => {
+			this.emit('snapshot', this.doc.export({mode: 'snapshot'}))
+			this.emit('update', this.doc.export({mode: 'update'}))
+		});
+	}
+
 	getShaped<Shape extends LoroShape>(shape: Shape, path = []): LoroShaped<Shape> {
+		if (typeof shape === "function")
+			return shape(this, path.join('.'));
+
 		const result = {};
 		for (let key in shape) {
-			if (typeof shape[key] === "function") {
-				result[key] = shape[key](this, path.concat(key).join('.'));
-			} else {
-				result[key] = this.getShaped(shape[key], path.concat(key));
-			}
+			result[key] = this.getShaped(shape[key], path.concat(key));
 		}
 		return result;
 	}
-}
 
+	async sink(ai: AsyncIterator<Uint8Array>){
+		for await (let uint8Array of ai) {
+			this.doc.import(uint8Array);
+		}
+	}
+
+	extensions = {
+		// factory: {value: (type: LoroTypeFactory) => type(this)},
+		doc: this.doc,
+		commit(){
+			this.doc.commit()
+		}
+	};
+
+	extend<TExt, T>(
+		container: T, extensions: TExt
+	): LoroDocExtensions<T> & TExt {
+		return Object.create(container, {
+			base: { value: container },
+			...Object.getOwnPropertyDescriptors(this.extensions),
+			...Object.getOwnPropertyDescriptors(extensions)
+		})
+	}
+}
+export type LoroDocExtensions<T> = T & {
+	base: T;
+	doc: LoroDoc;
+	commit();
+}

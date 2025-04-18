@@ -33,7 +33,9 @@ export function component(opts: IComponentOptions = {}) {
 				this[attrs[key]] = newValue;
 			}
 		};
-		customElements.define(opts.name ?? toSnake(target.name), target);
+		const name = opts.name ?? toSnake(target.name);
+		if (!customElements.get(name))
+			customElements.define(name, target);
 	};
 }
 

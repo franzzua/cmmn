@@ -1,4 +1,3 @@
-import { uuid } from './uuid';
 import { compare } from './compare';
 import { deepAssign } from './deepAssign';
 import { debounce, Func, throttle } from './throttle';
@@ -14,7 +13,6 @@ export const Fn = {
 	Ib<T>(x: T): boolean {
 		return !!x;
 	},
-	uuid: uuid,
 	pipe,
 	join: (...functions: Array<(this: unknown, ...args: unknown[]) => unknown>) => {
 		return function (...args) {

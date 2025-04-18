@@ -6,8 +6,8 @@ import {LoroProtocol} from "./loro.protocol";
 
 export abstract class P2PNode implements AsyncDisposable {
 	protected p2p: Libp2p<LibP2PServices>;
-	public readonly init: Promise<void> = this.initP2P();
-	private loroProtocol: LoroProtocol;
+	private readonly init = this.initP2P();
+	loroProtocol: LoroProtocol = new LoroProtocol(this.init)
 	abstract createLibp2p(): Promise<Libp2p>;
 	private accessor _peers = new ObservableSet<PeerId>();
 
@@ -38,22 +38,13 @@ export abstract class P2PNode implements AsyncDisposable {
 		this.p2p.addEventListener('self:peer:update', (evt) => {
 			// Updated self multiaddrs?
 			// console.log(`Advertising with a relay address of ${this.p2p.getMultiaddrs()}`)
-		})
-		this.loroProtocol = new LoroProtocol(this.p2p)
+		});
+		return this.p2p;
 	}
 
 	async getPeers() {
 		await this.init;
 		return this.p2p.getPeers();
-	}
-
-	private rooms = new Map<string, LoroRoom>();
-
-	/** @internal **/
-	async join(uri: string, doc: LoroDoc): Promise<AsyncDisposable> {
-		await this.init;
-		const room = getOrAdd(this.rooms, uri, () => new LoroRoom(this.loroProtocol, uri, doc));
-		await room.waitPeers(1);
 	}
 
 	async [Symbol.asyncDispose]() {

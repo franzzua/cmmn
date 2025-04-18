@@ -130,6 +130,11 @@ export class Bundler {
                 fileName
             })
         }
+        this.results.push({
+            data: JSON.stringify(result.metafile),
+            output: join(this.target.rootDir, 'dist/bundle/meta.json'),
+            fileName: 'meta.json'
+        })
     }
 
     async write() {

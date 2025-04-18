@@ -3,12 +3,12 @@ import {FC, useContext, useEffect, useMemo} from "react";
 import {useCell} from "./useCell";
 import {Props} from "./props";
 import {DIContext} from "./DIContext";
-import {di} from "@cmmn/core";
+import {Cell, di} from "@cmmn/core";
 
 export function component(options: {
 	scoped: boolean
 } = {}) {
-	return (target) => {
+	return (target: new () => Component) => {
 		const c = props => {
 			const di = useContext(DIContext);
 			const container = useMemo(() => {
@@ -22,31 +22,63 @@ export function component(options: {
 			}, [di]);
 
 			const instance = useInjectedContainer(container, target);
-			instance.props = useMemo(() => new Props(), []);
 			useEffect(() => {
-				if (options.scoped){
-					return () => {
+				return () => {
+					instance[Symbol.dispose]();
+					if (options.scoped) {
 						container[Symbol.asyncDispose]();
 					}
 				}
-			}, [container])
-			instance.props.set(props);
+			}, [container]);
+			for (let effect of instance.effects) {
+				useEffect(() => Cell.OnChange(() => effect.call(instance),
+					e => e.oldValue?.()
+				), [])
+			}
+			instance.setProps(props);
 			return instance.fc();
 		};
-		Object.defineProperty(c, 'name', { value: target.name });
+		Object.defineProperty(c, 'name', {value: target.name});
 		return c;
 	}
 }
 
+export function effect<This extends Component>() {
+	return function (method: Effect, context: ClassMethodDecoratorContext<This>) {
+		context.addInitializer(function (this: This) {
+			this.effects.push(method);
+		})
+	}
+}
 
-export abstract class Component<TProps = {}> implements FC<TProps> {
-	protected readonly props: TProps;
-	private _render = this.render?.bind(this);
+type Effect = () => void | (() => unknown)
+
+export abstract class Component<TProps = {}> implements FC<TProps>, Disposable {
+	/** @internal **/
+	public effects: Effect[] = [];
+	protected readonly props: TProps = new Props() as TProps;
+
+	/** @internal **/
+	setProps(props: TProps) {
+		this.props.set(props);
+	}
+
+	private _render = () => {
+		try {
+			return this.render()
+		} catch (e) {
+			return e?.toString() + e?.stack;
+		}
+	}
 
 	protected render() {
 	}
 
-	protected fc() {
+	public fc() {
 		return useCell(this._render);
+	}
+
+	[Symbol.dispose](){
+
 	}
 }

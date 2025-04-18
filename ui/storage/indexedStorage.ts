@@ -1,7 +1,7 @@
 import {Storage, StorageProvider} from "@cmmn/sync";
 import {scoped} from "@cmmn/core";
 
-export class IndexedStorage<T> implements Storage<T> {
+export class IndexedStorage<T> extends Storage<T> {
 
 	@scoped()
 	static Provider = class IndexedStorageProvider extends StorageProvider {
@@ -30,7 +30,7 @@ export class IndexedStorage<T> implements Storage<T> {
 	});
 
 	constructor(protected name: string) {
-
+		super();
 	}
 
 	private request<T>(

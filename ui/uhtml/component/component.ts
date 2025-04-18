@@ -21,7 +21,7 @@ export abstract class Component extends globalThis.HTMLElement {
 		this.dispatchEvent(new Event('disconnected'));
 		Component.GlobalEvents.emit('disconnected', this);
 		this.hole.off('change', this.syncHtml);
-		this[Symbol.dispose]();
+		this[Symbol.dispose]?.();
 	}
 
 	public onError(

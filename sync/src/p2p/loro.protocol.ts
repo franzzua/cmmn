@@ -1,8 +1,8 @@
 import type {Libp2p, PeerId} from "@libp2p/interface";
 import {LibP2PServices} from "./p2p.node";
 import {LoroJoinMessage, LoroMessage, LoroMessageType, LoroRequestMessage, LoroUpdateMessage} from "./loro.message";
-import {bind, EventEmitter, scoped} from "@cmmn/core";
-import ts from "typescript";
+import {bind, EventEmitter, Fn, getOrAdd, scoped} from "@cmmn/core";
+import {LoroRoom} from "./loroRoom";
 
 @scoped()
 export class LoroProtocol extends EventEmitter<{
@@ -11,14 +11,17 @@ export class LoroProtocol extends EventEmitter<{
 	[LoroMessageType.Request]: LoroRequestMessage & LoroProtocolMessage;
 }> implements AsyncDisposable {
 
-	topics = new Set([this.p2p.peerId.toString()]);
+	topics = new Set();
 
 	constructor(
-		private p2p: Libp2p<LibP2PServices>,
+		private p2p: Promise<Libp2p<LibP2PServices>>,
 	) {
 		super();
-		this.p2p.services.pubsub.addEventListener('message', this.topicListener);
-		this.p2p.services.pubsub.subscribe(this.p2p.peerId.toString());
+		this.p2p.then(p2p => {
+			p2p.services.pubsub.addEventListener('message', this.topicListener);
+			p2p.services.pubsub.subscribe(p2p.peerId.toString());
+			this.topics.add(p2p.peerId.toString());
+		})
 	}
 
 	@bind()
@@ -57,28 +60,56 @@ export class LoroProtocol extends EventEmitter<{
 		return this.send(peerId.toString(), message);
 	}
 
-	public send(topic: string, message: LoroMessage) {
-		// console.log('send', LoroMessageType[message.type], topic);
-		return this.p2p.services.pubsub.publish(topic, LoroMessage.serialize(message))
+	public async send(topic: string, message: LoroMessage) {
+		const p2p = await this.p2p;
+		return p2p.services.pubsub.publish(topic, LoroMessage.serialize(message))
 	}
 
 
 	async [Symbol.asyncDispose]() {
-		this.p2p.services.pubsub.removeEventListener('message', this.topicListener);
+		const p2p = await this.p2p;
+		p2p.services.pubsub.removeEventListener('message', this.topicListener);
 	}
 
-	join(topic: string) {
+	async join(topic: string) {
+		const p2p = await this.p2p;
 		this.topics.add(topic)
-		this.p2p.services.pubsub.subscribe(topic);
+		p2p.services.pubsub.subscribe(topic);
 	}
 
-	leave(topic: string) {
+	async leave(topic: string) {
+		const p2p = await this.p2p;
 		this.topics.delete(topic);
-		this.p2p.services.pubsub.unsubscribe(topic);
+		p2p.services.pubsub.unsubscribe(topic);
 	}
 
-	getPeers(topic: string) {
-		return this.p2p.services.pubsub.getSubscribers(topic);
+	async getPeers(topic: string) {
+		const p2p = await this.p2p;
+		return p2p.services.pubsub.getSubscribers(topic);
+	}
+
+	private rooms = new Map<string, LoroRoom>();
+	getRoomOrCreate(uri: string) {
+		return getOrAdd(this.rooms, uri, () => new LoroRoom(this, uri));
+	}
+
+
+	async waitPeers(count: number, topic: string) {
+		while (true) {
+			const peers = await this.getPeers(topic);
+			if (peers.length >= count)
+				return peers;
+			// return [];
+			// TODO: change to events
+			await Fn.asyncDelay(1000);
+		}
+	}
+
+	async [Symbol.asyncDispose]() {
+		for (let room of this.rooms.values()) {
+			await room[Symbol.asyncDispose]();
+		}
+		this.rooms.clear();
 	}
 }
 

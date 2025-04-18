@@ -1,5 +1,5 @@
 {
-  "extends": "@cmmn/tools/compile/tsconfig.json",
+  "extends": "@cmmn/tools/tsconfig.json",
   "compilerOptions": {
     "lib": [
       "es2015.collection",

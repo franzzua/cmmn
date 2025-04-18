@@ -1,10 +1,11 @@
 import {getDependencyOrder} from "./getProjects.js";
 import path, {join, relative, resolve} from "node:path";
 import fs from "node:fs";
+import {fileURLToPath} from "node:url";
 import {getTSConfig} from "./getTSConfig.js";
 import terminalKit from "terminal-kit";
 
-const swcConfig = JSON.parse(await fs.promises.readFile(import.meta.dirname + "/.swcrc", {
+const swcConfig = JSON.parse(await fs.promises.readFile(fileURLToPath(import.meta.resolve('@cmmn/tools/swcrc')), {
     encoding: 'utf-8'
 }));
 
@@ -96,6 +97,13 @@ export class Target extends EventTarget {
                         asciiOnly: true
                     }
                 } : undefined
+            },
+            module: {
+                type: 'es6',
+                strict: true,
+                strictMode: false,
+
+                resolveFully: true
             },
             sourceMaps: true,
             inlineSourcesContent: false

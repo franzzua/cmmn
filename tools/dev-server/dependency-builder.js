@@ -78,7 +78,7 @@ export class EsBuildDependencyBuilder {
                 ],
             });
             return Object.fromEntries(
-                build.outputFiles.map(x => [(x.path === '/index.js' ? '/' : x.path), x.contents])
+                build.outputFiles.map(x => [(x.path.match(/\/index\.[tj]s/) ? '/' : x.path), x.contents])
             );
         } finally {
             await entryPoints[Symbol.asyncDispose]();

@@ -1,6 +1,8 @@
 import { EventEmitter } from '../../event-emitter';
 import { BaseCell } from '../base-cell';
 
+
+@BaseCell.like()
 export class ObservableList<T> extends EventEmitter<{
 	change: { value: T[] };
 	splice: { index: number; deleteCount: number; values: T[] };
@@ -84,5 +86,3 @@ export class ObservableList<T> extends EventEmitter<{
 	at: Array<T>['at'];
 	includes: Array<T>['includes'];
 }
-
-BaseCell.likeCells.add(ObservableList);
