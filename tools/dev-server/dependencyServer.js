@@ -8,7 +8,7 @@ export class DependencyServer {
     base = '/_/@id'
     url;
     /**
-     * @param targets {Array<import("../helpers/target.ts").Target>}
+     * @param targets {Array<import("../helpers/target").Target>}
      * @param mode {"development"|"production"}
      */
     constructor(targets, mode) {

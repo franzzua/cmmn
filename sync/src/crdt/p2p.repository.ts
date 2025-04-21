@@ -2,11 +2,13 @@ import {inject} from '@cmmn/core';
 import {P2PNode} from '../p2p/p2p.node';
 import {LoroDocCell} from './cells/loro-doc-cell';
 import {StorageProvider} from './storage';
-import {LoroShape, LoroShaped} from "./cells/types";
+import {LoroRoom} from "../p2p/loroRoom";
+import {P2PAuth} from "./p2PAuth";
 
 export class P2PRepository implements AsyncDisposable {
 	@inject(P2PNode) p2pNode!: P2PNode;
 	@inject(StorageProvider) storageProvider!: StorageProvider;
+	auth = new P2PAuth(this);
 
 	storage = this.storageProvider.getStorage<Uint8Array>(this.name);
 
@@ -14,21 +16,14 @@ export class P2PRepository implements AsyncDisposable {
 	}
 
 	private disposables: (AsyncDisposable | Disposable)[] = [];
+	private rooms = new Map<string, LoroRoom>();
 
-	getRoom(uri: string){
-		return this.p2pNode.loroProtocol.getRoomOrCreate(uri);
-	}
 
-	async getDoc(uri: string): Promise<LoroDocCell> {
+	async loadDoc(uri: string): Promise<LoroDocCell> {
 		const data = await this.storage.get(uri);
 		const cell = new LoroDocCell(data);
 		this.syncDoc(cell, uri);
 		return cell;
-	}
-
-	async shape<Shape extends LoroShape>(uri: string, shape: Shape): Promise<LoroShaped<Shape>> {
-		const doc = await this.getDoc(uri);
-		return doc.getShaped<Shape>(shape);
 	}
 
 	createDoc(uri: string) {
@@ -38,13 +33,14 @@ export class P2PRepository implements AsyncDisposable {
 	}
 
 	private async syncDoc(cell: LoroDocCell, uri: string) {
-		this.storage.getSink(uri).sink(cell.iterate('snapshot'));
-		const room = this.p2pNode.loroProtocol.getRoomOrCreate(uri);
-		await room.sync(cell.doc)
-		cell.isSynced = true;
-
-		room.sink(cell.iterate('update'))
-		cell.sink(room.updates);
+		cell.on('snapshot', snapshot => {
+			this.storage.set(uri, snapshot);
+		});
+		if (!this.rooms.has(uri)){
+			this.rooms.set(uri, new LoroRoom(this.p2pNode.loroProtocol, uri, this.auth));
+		}
+		cell.room = this.rooms.get(uri);
+		await cell.room.sync(cell.doc)
 	}
 
 	async [Symbol.asyncDispose]() {
@@ -54,5 +50,11 @@ export class P2PRepository implements AsyncDisposable {
 				await disposable[Symbol.asyncDispose]();
 			else disposable[Symbol.dispose]?.();
 		}
+		for (let room of this.rooms.values()) {
+			await room[Symbol.asyncDispose]();
+		}
+		this.rooms.clear();
 	}
+
 }
+

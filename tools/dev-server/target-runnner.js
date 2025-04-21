@@ -1,8 +1,8 @@
-import {TargetServer} from "./targetServer.js";
+import {TargetServer} from "./targetServer";
 import {exec, spawn} from "node:child_process";
 import {join} from "node:path";
 import {watch} from "chokidar"
-import {ChangeEvent} from "../helpers/target.ts";
+import {ChangeEvent} from "../helpers/target";
 
 export class TargetRunner extends TargetServer {
     static port = 9010;
@@ -61,13 +61,15 @@ export class TargetRunner extends TargetServer {
     async runServer() {
         this.target.log('starting...');
 
-        const bin = join(this.target.rootDir, this.target.packageJson.bin);
+        const [command, ...params] = this.target.packageJson.scripts.run.replace('@cmmn/tools/import', '@cmmn/tools/import-dev')
+            .split(' ');
 
-        const cp = spawn('node', `--import @cmmn/tools/import-dev ${bin}`.split(' '), {
+        const cp = spawn(command, params, {
             env: {
                 ...process.env,
                 PORT: this.port
             },
+            cwd: this.target.rootDir,
             stdio: 'pipe'
         });
         cp.stderr.pipe(process.stderr);

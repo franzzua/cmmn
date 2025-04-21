@@ -1,4 +1,4 @@
-import { BaseCell } from './base-cell';
+import {BaseCell, Subscriber} from './base-cell';
 import {Fn} from "../helpers";
 
 export type ICellOptions<T, TKey = T> = {
@@ -9,7 +9,8 @@ export type ICellOptions<T, TKey = T> = {
 	onExternal?: (a: T) => void;
 	startValue?: T;
 	// when cell activates it will be active till this disposable lives
-	activeWith?: Disposable
+	activeWith?: Disposable;
+	subscribe?: Subscriber<T>;
 };
 
 export class Cell<T = unknown, TKey = T> extends BaseCell<T> {
@@ -91,6 +92,9 @@ export class Cell<T = unknown, TKey = T> extends BaseCell<T> {
 			this.options.compareKey(oldValue),
 		);
 	}
+	protected getSubscriber(value){
+		return this.options.subscribe ?? super.getSubscriber(value);
+	}
 
 	public static OnChange<T, TKey>(
 		pull: () => T,
@@ -140,7 +144,13 @@ export class AICell<T> extends Cell<T> {
 			this.set(t);
 		}
 	}
+}
 
+export function eventTargetSubscriber<T extends EventTarget>(eventName: string): Subscriber<T>{
+	return function (this: T, listener: () => void){
+		this.addEventListener(eventName, listener);
+		return () => this.removeEventListener(eventName, listener);
+	}
 }
 
 export class CellFilterError<T> extends Error {

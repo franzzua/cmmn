@@ -1,4 +1,4 @@
-import {Target} from "../helpers/target.ts";
+import {Target} from "../helpers/target";
 import {spawn} from "node:child_process";
 import {stat, link, rm} from "node:fs/promises";
 import {join, resolve} from "node:path";

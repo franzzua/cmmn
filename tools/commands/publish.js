@@ -1,6 +1,6 @@
 import {execSync, spawn} from "node:child_process";
 import {getPackages} from "@manypkg/get-packages";
-import {Target} from "../helpers/target.ts";
+import {Target} from "../helpers/target";
 import fs from "node:fs/promises";
 import {join} from "node:path";
 

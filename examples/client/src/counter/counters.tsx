@@ -65,19 +65,23 @@ export class Counters extends Component<{ id: string }> {
 	@inject(CounterRepository)
 	protected repository!: CounterRepository;
 
+	readonly docQuery = AsyncCell.query(() => this.repository.loadDoc(this.props.id));
+
 	@cell()
-	private get room(){
-		return this.repository.getRoom(this.props.id);
+	private get doc(){
+		return this.docQuery.result.getShaped({
+			counters: CRDT.list(CRDT.counter),
+		})
 	}
 
-	readonly docQuery = AsyncCell.query(() => this.repository.shape(this.props.id, {
-		counters: CRDT.list(CRDT.counter),
-	}));
-
+	@cell()
+	private get room(){
+		return this.docQuery.result.room;
+	}
 
 	@cell()
 	private get counters(){
-		return this.docQuery.result.counters;
+		return this.doc.counters;
 	}
 
 	@bind()

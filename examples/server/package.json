@@ -6,7 +6,7 @@
 	"type": "module",
 	"bin": "./src/index.ts",
 	"scripts": {
-		"run": "node --import @cmmn/tools/import-dev ./src/index.ts"
+		"run": "node --env-file=.env --import @cmmn/tools/import ./src/index.ts"
 	},
 	"config": {},
 	"devDependencies": {

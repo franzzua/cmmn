@@ -1,5 +1,5 @@
-import {Target} from "../helpers/target.ts";
-import {Flags} from "../helpers/flags.ts";
+import {Target} from "../dist/esm/helpers/target";
+import {Flags} from "../dist/esm/helpers/flags";
 import {join} from "node:path";
 import {pathToFileURL} from "node:url";
 
@@ -7,13 +7,25 @@ const targets = await Target.readTargets(process.cwd(), new Flags(''));
 const serverUrl = 'http://127.0.0.1:9000';
 const base = '/_/';
 
-export async function resolve(specifier, context, nextResolve){
+export async function resolve(specifier, context, nextResolve) {
+    if (specifier.startsWith('https://')) {
+        if (specifier.startsWith(serverUrl.replace('http://', 'https://'))){
+            specifier = specifier.replace('https://', 'http://')
+        }
+
+        for (let target of targets) {
+            if (specifier.startsWith('https://' + target.https?.host)) {
+                specifier = serverUrl + specifier.substring(('https://' + target.https?.host).length);
+                console.log('HOST:', specifier, target.https.host);
+            }
+        }
+    }
     context.parentURL = urlToFile(context.parentURL);
     if (specifier.startsWith(serverUrl))
         specifier = specifier.substr(serverUrl.length);
     if (specifier.startsWith('/_/@id/'))
         return nextResolve(specifier.substr('/_/@id/'.length), context, nextResolve);
-    if (specifier.startsWith('/_/')){
+    if (specifier.startsWith('/_/')) {
         return {
             shortCircuit: true,
             url: serverUrl + base + specifier.substr('/_/'.length)
@@ -30,11 +42,11 @@ export async function resolve(specifier, context, nextResolve){
     return nextResolve(specifier, context, nextResolve);
 }
 
-function urlToFile(url){
+function urlToFile(url) {
     if (!url?.startsWith(serverUrl)) return url;
     const path = url.substr(serverUrl.length + base.length);
     for (let target of targets) {
-        if (path.startsWith(target.packageJson.name)){
+        if (path.startsWith(target.packageJson.name)) {
             const localPath = path.substr(target.packageJson.name);
             return pathToFileURL(target.entries[localPath + '.'] ?? join(target.rootDir, localPath));
         }

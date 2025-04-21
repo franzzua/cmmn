@@ -1,4 +1,4 @@
-import {Target} from "../helpers/target.ts";
+import {Target} from "../helpers/target";
 import {Terminal} from "../helpers/terminal.js";
 import {Bundler} from "../helpers/bundler.js";
 

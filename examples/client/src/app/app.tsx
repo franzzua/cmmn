@@ -14,8 +14,8 @@ export class App extends Component {
 	render() {
 		return <div style={{display: 'flex', gap: '1em', flexDirection: 'column'}}>
 			<Counters id={'1'}/>
-			<Counters id={'2'}/>
-			<Counters id={'3'}/>
+			{/*<Counters id={'2'}/>*/}
+			{/*<Counters id={'3'}/>*/}
 		</div>;
 	}
 }

@@ -2,7 +2,6 @@ import type {Libp2p, PeerId} from "@libp2p/interface";
 import {LibP2PServices} from "./p2p.node";
 import {LoroJoinMessage, LoroMessage, LoroMessageType, LoroRequestMessage, LoroUpdateMessage} from "./loro.message";
 import {bind, EventEmitter, Fn, getOrAdd, scoped} from "@cmmn/core";
-import {LoroRoom} from "./loroRoom";
 
 @scoped()
 export class LoroProtocol extends EventEmitter<{
@@ -88,10 +87,6 @@ export class LoroProtocol extends EventEmitter<{
 		return p2p.services.pubsub.getSubscribers(topic);
 	}
 
-	private rooms = new Map<string, LoroRoom>();
-	getRoomOrCreate(uri: string) {
-		return getOrAdd(this.rooms, uri, () => new LoroRoom(this, uri));
-	}
 
 
 	async waitPeers(count: number, topic: string) {
@@ -105,11 +100,9 @@ export class LoroProtocol extends EventEmitter<{
 		}
 	}
 
-	async [Symbol.asyncDispose]() {
-		for (let room of this.rooms.values()) {
-			await room[Symbol.asyncDispose]();
-		}
-		this.rooms.clear();
+
+	get peerId(){
+		return this.p2p.then(x => x.peerId);
 	}
 }
 

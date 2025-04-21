@@ -30,6 +30,9 @@
       "ESNext",
       "Decorators",
       "WebWorker"
+    ],
+    "types": [
+      "vite/client"
     ]
   },
   "exclude": [

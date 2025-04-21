@@ -17,25 +17,18 @@
 		"compile:watch": "node --import @cmmn/tools/import ./bin.ts compile --watch"
 	},
 	"exports": {
-		"./tsconfig.json": "./tsconfig.json",
+		"./tsconfig.json": {
+			"default": "./tsconfig.json"
+		},
 		"./import": "./node/register.js",
-		"./import-dev": "./dist/esm/node/register-dev.js",
+		"./import-dev": "./node/register-dev.js",
 		"./test": "./dist/esm/test/test.js",
 		"./swcrc": "./.swcrc"
-	},
-	"typesVersions": {
-		"*": {
-			"test": [
-				"./test/index.d.ts"
-			],
-			".": [
-				"./compile/typings.d.ts"
-			]
-		}
 	},
 	"typings": "compile/typings.d.ts",
 	"files": [
 		"dist",
+		"node",
 		"tsconfig.json"
 	],
 	"dependencies": {
@@ -68,6 +61,7 @@
 		"import-meta-resolve": "^4.1.0",
 		"mime-types": "2.1.35",
 		"terminal-kit": "^3.1.2",
+		"throttle-debounce": "5.0.2",
 		"unplugin": "^2.1.2",
 		"unplugin-isolated-decl": "0.11.0",
 		"unplugin-starter": "^0.1.0",
@@ -75,8 +69,7 @@
 		"vite": "6.2.1",
 		"vite-plugin-top-level-await": "^1.5.0",
 		"vite-plugin-wasm": "^3.4.1",
-		"vite-tsconfig-paths": "^5.1.4",
-		"throttle-debounce": "5.0.2"
+		"vite-tsconfig-paths": "^5.1.4"
 	},
 	"author": "",
 	"license": "ISC",

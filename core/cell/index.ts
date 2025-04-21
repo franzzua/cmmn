@@ -1,5 +1,5 @@
-export { Cell, type ICellOptions } from './cell';
-export { BaseCell } from './base-cell';
+export { Cell, type ICellOptions, eventTargetSubscriber } from './cell';
+export { BaseCell, type Subscriber } from './base-cell';
 export { cell } from './decorators';
 export { ObservableMap } from './collections/ObservableMap';
 export { ObservableList } from './collections/ObservableList';

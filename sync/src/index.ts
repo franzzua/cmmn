@@ -4,3 +4,5 @@ export {P2PRepository} from './crdt/p2p.repository';
 export {P2PNode} from './p2p/p2p.node';
 export {StorageProvider, Storage} from './crdt/storage';
 export * as CRDT from "./crdt/cells";
+export {P2PAuth} from "./crdt/p2PAuth";
+export type {Cryptor} from "./crdt/cryptor";

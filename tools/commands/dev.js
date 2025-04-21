@@ -1,6 +1,6 @@
-import {Target} from "../helpers/target.ts";
+import {Target} from "../helpers/target";
 import {fastify} from "fastify";
-import {DevServer} from "../dev-server/dev-server.js";
+import {DevServer} from "../dev-server/dev-server";
 
 export async function dev(flags) {
     const targets = await Target.readTargets(process.cwd(), flags);

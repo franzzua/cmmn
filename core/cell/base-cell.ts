@@ -95,13 +95,13 @@ export class BaseCell<T = unknown>
 		this.emit('change', { value, oldValue });
 		if (this.isActive && value !== oldValue) {
 			this.unsubscriber?.();
-			this.unsubscriber = this.listenLike(value);
+			this.unsubscriber = this.subscribeValue(value);
 		}
 	}
 
 	active() {
 		this.isActive = true;
-		this.unsubscriber = this.listenLike(this.value);
+		this.unsubscriber = this.subscribeValue(this.value);
 	}
 
 	protected unsubscriber?: () => void;
@@ -192,15 +192,15 @@ export class BaseCell<T = unknown>
 		BaseCell.likeCells.set(target, subscriber);
 	}
 
-	getListener(value){
+	protected getSubscriber(value: T): Subscriber<T> {
 		if (!value || !value.constructor) return;
-		return BaseCell.likeCells.get(value.constructor) ?? this.getListener(value.__proto__)
+		return BaseCell.likeCells.get(value.constructor) ?? this.getSubscriber(value.__proto__)
 	}
 
-	listenLike(value){
-		const listener = this.getListener(value);
-		if (listener)
-			listener.call(value, this.onValueContentChanged);
+	private subscribeValue(value: T): () => void {
+		const subscriber = this.getSubscriber(value);
+		if (subscriber)
+			return subscriber.call(value, this.onValueContentChanged);
 	}
 }
 

@@ -7,7 +7,7 @@ export class Terminal {
      */
     flags;
     /**
-     * @type {import("./target.ts").Target[]}
+     * @type {import("./target").Target[]}
      */
     targets;
 

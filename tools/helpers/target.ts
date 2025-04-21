@@ -9,10 +9,6 @@ import {JSONSchemaForNPMPackageJsonFiles} from "@schemastore/package";
 import {CompilerOptions} from "typescript";
 import {Config} from "@swc/core";
 
-const swcConfig = JSON.parse(await fs.promises.readFile(fileURLToPath(import.meta.resolve('@cmmn/tools/swcrc')), {
-    encoding: 'utf-8'
-}));
-
 export class Target extends EventTarget {
     rootDir: string;
     flags: Flags;
@@ -62,13 +58,19 @@ export class Target extends EventTarget {
         return this._tsConfig ??= getTSConfig(this.rootDir);
     }
 
+
+    swcConfigBase;
+
     _swcConfig: Config;
     get swcConfig(): Config {
+        this.swcConfigBase ??= JSON.parse(fs.readFileSync(fileURLToPath(import.meta.resolve('@cmmn/tools/swcrc')), {
+            encoding: 'utf-8'
+        }));
         const tsConfig = this.tsConfig;
         return this._swcConfig ??= {
-            ...swcConfig,
+            ...this.swcConfigBase,
             jsc: {
-                ...swcConfig.jsc,
+                ...this.swcConfigBase.jsc,
                 baseUrl: this.rootDir,
                 paths: tsConfig.compilerOptions?.paths,
                 minify: this.flags.minify ? {

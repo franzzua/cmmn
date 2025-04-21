@@ -21,6 +21,6 @@ export function map<T extends Record<string, unknown>>(){
 }
 
 
-export type Map<T> = LoroMap<T> & LoroDocExtensions;
+export type Map<T> = LoroMap<Record<string, T>> & LoroDocExtensions;
 
 BaseCell.addAdapter(LoroMovableList, LoroMovableList.prototype.subscribe);

@@ -1,4 +1,4 @@
-import {TargetServer} from "./targetServer.js";
+import {TargetServer} from "./targetServer";
 import wasm from "vite-plugin-wasm";
 import topLevelAwait from "vite-plugin-top-level-await";
 import swc from "unplugin-swc";
@@ -6,7 +6,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import {createVitePlugin} from "unplugin";
 import {join, relative} from "node:path";
 import {createServer} from "vite";
-import {ChangeEvent} from "../helpers/target.ts";
+import {ChangeEvent} from "../helpers/target";
 import fs from "node:fs";
 
 export class TargetWebServer extends TargetServer {
@@ -119,7 +119,7 @@ export class TargetWebServer extends TargetServer {
             },
         });
         this.target.log(`Start dev server`);
-        // this.enhanceWebSocket();
+        this.enhanceWebSocket();
         return this.devServer;
     }
 

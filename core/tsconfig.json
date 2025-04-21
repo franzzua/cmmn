@@ -2,7 +2,6 @@
 	"extends": "@cmmn/tools/tsconfig.json",
 	"compilerOptions": {
 		"baseUrl": ".",
-		"declarationDir": "./dist/typings",
 		"paths": {
 			"@async-queue": ["./async-queue.ts"]
 		}

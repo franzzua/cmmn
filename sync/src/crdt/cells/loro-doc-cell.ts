@@ -1,14 +1,14 @@
-import {Diff, LoroDoc} from 'loro-crdt';
+import {LoroDoc} from 'loro-crdt';
 import {cell, EventEmitter} from "@cmmn/core";
-import {LoroShape, LoroShaped, LoroTypeFactory} from "./types";
-import {Syncronizable} from "../../p2p/syncronizable";
+import {LoroShape, LoroShaped} from "./types";
+import {LoroRoom} from "../../p2p/loroRoom";
 
 export class LoroDocCell extends EventEmitter<{
 	snapshot: Uint8Array;
 	update: Uint8Array;
 }> {
 	@cell()
-	accessor isSynced = false;
+	accessor room: LoroRoom;
 
 	constructor(
 		data?: Uint8Array,
