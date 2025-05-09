@@ -50,6 +50,7 @@ export class P2PRepository implements AsyncDisposable {
 				await disposable[Symbol.asyncDispose]();
 			else disposable[Symbol.dispose]?.();
 		}
+		this.disposables.length = 0;
 		for (let room of this.rooms.values()) {
 			await room[Symbol.asyncDispose]();
 		}

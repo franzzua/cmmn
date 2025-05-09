@@ -9,13 +9,21 @@
     "registry": "https://npm.local",
     "access": "public"
   },
+  "scripts": {
+    "typings": "cmmn typings --watch"
+  },
   "type": "module",
   "exports": {
     ".": "./index.ts"
   },
+  "typings": "./index.ts",
   "dependencies": {
     "throttle-debounce": "5.0.2",
     "uuidv7": "1.0.2"
+  },
+  "devDependencies": {
+    "@cmmn/tools": "workspace:*",
+    "@types/node": "20.x.x"
   },
   "author": "",
   "license": "ISC"

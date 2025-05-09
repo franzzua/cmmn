@@ -1,4 +1,4 @@
-import { EventEmitter, Fn, inject, scoped } from '@cmmn/core';
+import { EventEmitter, uuid, inject, scoped } from '@cmmn/core';
 import { Transport } from '../transport/transport';
 
 @scoped()
@@ -13,7 +13,7 @@ export class Team
 		team: TeamMessage;
 	}>;
 	private channel = this.transport.getChannel('team');
-	public id = Fn.uuid();
+	public id = uuid();
 
 	constructor() {
 		super();

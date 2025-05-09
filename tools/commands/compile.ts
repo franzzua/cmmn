@@ -16,7 +16,7 @@ export async function compile(flags: Flags) {
 			continue;
 		compileFiles(target);
 		watcher?.watchTarget(target);
-		target.addEventListener('change', (e: FileChangeEvent) => {
+		target.addEventListener('file', (e: FileChangeEvent) => {
 			target.log(`changed: ^W${e.files.join(', ')}`);
 
 			compileFiles(target, e.files.map(f => path.join(target.rootDir, f)));

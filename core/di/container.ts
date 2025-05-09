@@ -32,7 +32,7 @@ export class Container {
 	}
 
 	protected getFactory<T>(dep: InjectionToken<T>): Factory<T> {
-		return this.factories.get(dep) ?? this.parent?.getFactory(dep);
+		return (this.factories.get(dep) ?? this.parent?.getFactory(dep)) as Factory<T>;
 	}
 
 	protected instantiate<T, TArgs extends unknown[] = []>(
@@ -97,7 +97,7 @@ export class Container {
 	scoped<T, TArgs extends unknown[]>(dependency: ConstructorOf<T, TArgs>, ...args: TArgs) {
 		this.factories.set(dependency, Object.assign(() => new dependency(...args), {
 			isScoped: true
-		}));
+		}) as Factory<T>);
 	}
 
 	child() {

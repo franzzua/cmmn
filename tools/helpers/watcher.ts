@@ -12,9 +12,9 @@ export class Watcher {
 	async watchTarget(target: Target){
 		let changes = new Set<string>();
 		const emit = throttle(100, () => {
-				target.dispatchEvent(new FileChangeEvent(Array.from(changes)));
-				changes.clear();
-			}, { debounceMode: true, leading: true, trailing: true });
+			target.dispatchEvent(new FileChangeEvent(Array.from(changes)));
+			changes.clear();
+		}, { debounceMode: true, leading: true, trailing: true });
 		for await (let file of watch(target.rootDir, {
 			recursive: true,
 			signal: this.abort.signal,
@@ -38,7 +38,7 @@ export class Watcher {
 
 export class FileChangeEvent extends Event{
 	constructor(public files: string[]) {
-		super('change');
+		super('file');
 	}
 
 }

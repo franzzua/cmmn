@@ -21,7 +21,6 @@ export class InMemoryP2PNode extends P2PNode {
 
 	constructor(private isRoot = false) {
 		super();
-		console.log(isRoot)
 	}
 	async createLibp2p() {
 		const p2p = await createLibp2p<any>({
@@ -36,7 +35,7 @@ export class InMemoryP2PNode extends P2PNode {
 			streamMuxers: [yamux()],
 			peerDiscovery: [
 				pubsubPeerDiscovery({
-					interval: 100
+					interval: 100,
 				})
 			],
 			services: {
@@ -48,8 +47,7 @@ export class InMemoryP2PNode extends P2PNode {
 			},
 		});
 		if (!this.isRoot){
-			const conn = await p2p.dial(InMemoryP2PNode.root.p2p.getMultiaddrs());
-			console.log(conn.remotePeer.toString())
+			await p2p.dial(InMemoryP2PNode.root.p2p.getMultiaddrs());
 		}
 		InMemoryP2PNode.instances.push(p2p);
 

@@ -127,24 +127,24 @@ export class Cell<T = unknown, TKey = T> extends BaseCell<T> {
 		return cell;
 	}
 
-	static fromAI<T>(ai: AsyncIterator<T>, options: ICellOptions<T> = {}): Cell<T> {
-		return new AICell(ai, options);
-	}
+	// static fromAI<T>(ai: AsyncIterator<T>, options: ICellOptions<T> = {}): Cell<T> {
+	// 	return new AICell(ai, options);
+	// }
 }
 
-export class AICell<T> extends Cell<T> {
-	constructor(private ai: AsyncIterator<T>, options: ICellOptions<T> = {}) {
-		super(undefined, options);
-	}
-
-	async active() {
-		super.active();
-		for await (let t of this.ai) {
-			if (!this.isActive) return;
-			this.set(t);
-		}
-	}
-}
+// export class AICell<T> extends Cell<T> {
+// 	constructor(private ai: AsyncIterator<T>, options: ICellOptions<T> = {}) {
+// 		super(undefined, options);
+// 	}
+//
+// 	async active() {
+// 		super.active();
+// 		for await (let t of this.ai) {
+// 			if (!this.isActive) return;
+// 			this.set(t);
+// 		}
+// 	}
+// }
 
 export function eventTargetSubscriber<T extends EventTarget>(eventName: string): Subscriber<T>{
 	return function (this: T, listener: () => void){

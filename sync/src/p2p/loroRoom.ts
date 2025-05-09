@@ -1,20 +1,18 @@
-import {LoroDoc, VersionVector} from 'loro-crdt';
+import {LoroDoc, Subscription, VersionVector} from 'loro-crdt';
 import {LoroMessage, LoroMessageType} from './loro.message';
 import {LoroProtocol} from "./loro.protocol";
-import {cell, ObservableSet} from "@cmmn/core";
-
+import {cell, Fn, inject, ObservableSet} from "@cmmn/core";
 import {Cryptor} from "../crdt/cryptor";
-
-import {KeyStore} from "../crdt/keyStore";
 
 export class LoroRoom implements AsyncDisposable {
 
-	private keyStore = new KeyStore();
-
+	@inject(Cryptor)
+	private cryptor!: Cryptor;
+	private abort = new AbortController();
+	private unsubscr: Subscription;
 	constructor(
 		private protocol: LoroProtocol,
-		private topic: string,
-		private cryptor: Cryptor<Uint8Array>
+		private topic: string
 	) {
 		this.protocol.join(this.topic);
 	}
@@ -29,65 +27,61 @@ export class LoroRoom implements AsyncDisposable {
 	async sync(doc: LoroDoc) {
 		this.protocol.on(LoroMessageType.Update, async message => {
 			if (message.topic !== this.topic) return;
-			const decrypted = await this.keyStore.decrypt(message.update);
+			const decrypted = await this.cryptor.decrypt(message.update);
 			if (!decrypted) return;
 			doc.import(decrypted)
-		})
+		}, this.abort)
 		this.protocol.on(LoroMessageType.Join, async message => {
 			if (message.topic !== this.topic) return;
 			this._peers.add(message.from.toString());
-			const decrypted = await this.keyStore.decrypt(message.version);
+			const decrypted = await this.cryptor.decrypt(message.version);
 			if (!decrypted) return;
-			await this.keyStore.add(message.from.toString(), message.publicKey);
 			const version = VersionVector.decode(decrypted);
 			const compare = doc.version().compare(version);
 			if (compare == 0) return;
 			if (compare === undefined || compare < 0) {
 				await this.send({
 					type: LoroMessageType.Request,
-					version: await this.keyStore.encrypt(doc.version().encode()),
-					publicKey: await this.keyStore.getPublicKey()
+					version: await this.cryptor.encrypt(doc.version().encode()),
 				});
 			}
 			if (compare === undefined || compare > 0) {
+				const update = doc.export({
+					mode: 'update',
+					from: version,
+				});
 				await this.send({
 					type: LoroMessageType.Update,
-					update: await this.keyStore.encrypt(doc.export({
-						mode: 'update',
-						from: version,
-					})),
-					publicKey: await this.keyStore.getPublicKey()
+					update: await this.cryptor.encrypt(update),
 				});
 			}
-		});
+		}, this.abort);
 
 		this.protocol.on(LoroMessageType.Request, async message => {
 			if (message.topic !== this.topic) return;
-			const decrypted = await this.keyStore.decrypt(message.version);
+			const decrypted = await this.cryptor.decrypt(message.version);
 			if (!decrypted) return;
 			const version = VersionVector.decode(decrypted);
 			return message.reply({
 				type: LoroMessageType.Update,
-				update: await this.keyStore.encrypt(doc.export({
+				update: await this.cryptor.encrypt(doc.export({
 					mode: 'update',
 					from: version,
 				})),
-				publicKey: await this.keyStore.getPublicKey()
 			});
-		})
-		const peers = await this.protocol.waitPeers(1, this.topic);
+		}, this.abort)
+		const peers = await this.waitPeers(1, this.topic);
+		if (this.abort.signal.aborted) return;
 		for (let peer of peers) {
 			this._peers.add(peer.toString());
 		}
-		doc.subscribe(async event => this.send({
+		this.unsubscr = doc.subscribe(async event => this.send({
 			type: LoroMessageType.Update,
-			update: await this.keyStore.encrypt(doc.export({mode: "update"})),
-			publicKey: await this.keyStore.getPublicKey()
+			update: await this.cryptor.encrypt(doc.export({mode: "update"})),
 		}));
 		await this.send({
 			type: LoroMessageType.Join,
-			version: await  this.keyStore.encrypt(doc.version().encode()),
-			publicKey: await this.keyStore.getPublicKey()
+			version: await  this.cryptor.encrypt(doc.version().encode()),
 		});
 	}
 
@@ -95,8 +89,24 @@ export class LoroRoom implements AsyncDisposable {
 		await this.protocol.send(this.topic, message);
 	}
 
-	async [Symbol.asyncDispose]() {
+	async [Symbol.asyncDispose](){
+		this.abort.abort();
+		await this.peersAwaiter;
+		this.unsubscr?.();
 		this.protocol.leave(this.topic);
+	}
+
+	peersAwaiter: Promise<void> | undefined;
+	async waitPeers(count: number, topic: string) {
+		while (!this.abort.signal.aborted) {
+			const peers = await this.protocol.getPeers(topic);
+			if (peers.length >= count)
+				return peers;
+			// return [];
+			// TODO: change to events
+			await (this.peersAwaiter = Fn.asyncDelay(1000));
+			this.peersAwaiter = undefined;
+		}
 	}
 }
 

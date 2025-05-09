@@ -1,5 +1,5 @@
 export {compile} from "./compile.ts";
-export {typings} from "./typings.js";
+export {typings} from "./typings.ts";
 export {gen} from "./gen.js";
 export {bundle} from "./bundle.js";
 export {dev} from "./dev.js";

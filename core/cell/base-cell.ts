@@ -160,14 +160,6 @@ export class BaseCell<T = unknown>
 	/** @internal **/
 	// register classes as cell like, so unknown "change" event will notify wrapped cell
 	public static likeCells = new Map<unknown, Subscriber<unknown>>();
-	private static isLikeCell(
-		target,
-	): target is EventEmitterBase<{ change: unknown }> {
-		for (const likeCell of BaseCell.likeCells) {
-			if (target instanceof likeCell) return true;
-		}
-		return false;
-	}
 
 	/* @__PURE__ */
 	static like<
@@ -186,7 +178,7 @@ export class BaseCell<T = unknown>
 
 	public static readonly Symbol: unique symbol = Symbol('BaseCell');
 
-	static addAdapter<T>(target: new (...args: unknown[]) => T,
+	static addAdapter<T>(target: abstract new (...args: unknown[]) => T,
 	                     subscriber: Subscriber<T>
  ) {
 		BaseCell.likeCells.set(target, subscriber);
@@ -194,7 +186,7 @@ export class BaseCell<T = unknown>
 
 	protected getSubscriber(value: T): Subscriber<T> {
 		if (!value || !value.constructor) return;
-		return BaseCell.likeCells.get(value.constructor) ?? this.getSubscriber(value.__proto__)
+		return BaseCell.likeCells.get(value.constructor) ?? this.getSubscriber(value['__proto__']);
 	}
 
 	private subscribeValue(value: T): () => void {
@@ -210,5 +202,9 @@ export class CyclicalPullError extends Error {
 	}
 }
 
-BaseCell.like()(EventEmitterBase);
+BaseCell.addAdapter(EventEmitterBase<{
+	change: unknown
+}>, function (listener){
+	return this.on('change', listener)
+});
 export type Subscriber<T> = (this: T, listener: () => void) => (() => void);

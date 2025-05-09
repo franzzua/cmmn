@@ -5,7 +5,7 @@ import {LoroShaped} from "./types";
 
 
 export function list<T>(shape?: T){
-	return function (docCell: LoroDocCell, id: string): List<LoroShaped<T>> {
+	return function (docCell: LoroDocCell, id: string): List<T> {
 		const list = docCell.doc.getMovableList(id);
 		return docCell.extend<ListExtensions<T>, LoroMovableList<T>>(
 			list,

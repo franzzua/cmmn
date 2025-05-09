@@ -3,7 +3,6 @@ import {LibP2PServices} from "./p2p.node";
 import {LoroJoinMessage, LoroMessage, LoroMessageType, LoroRequestMessage, LoroUpdateMessage} from "./loro.message";
 import {bind, EventEmitter, Fn, getOrAdd, scoped} from "@cmmn/core";
 
-@scoped()
 export class LoroProtocol extends EventEmitter<{
 	[LoroMessageType.Update]: LoroUpdateMessage & LoroProtocolMessage;
 	[LoroMessageType.Join]: LoroJoinMessage & LoroProtocolMessage;
@@ -65,10 +64,6 @@ export class LoroProtocol extends EventEmitter<{
 	}
 
 
-	async [Symbol.asyncDispose]() {
-		const p2p = await this.p2p;
-		p2p.services.pubsub.removeEventListener('message', this.topicListener);
-	}
 
 	async join(topic: string) {
 		const p2p = await this.p2p;
@@ -89,25 +84,22 @@ export class LoroProtocol extends EventEmitter<{
 
 
 
-	async waitPeers(count: number, topic: string) {
-		while (true) {
-			const peers = await this.getPeers(topic);
-			if (peers.length >= count)
-				return peers;
-			// return [];
-			// TODO: change to events
-			await Fn.asyncDelay(1000);
-		}
-	}
 
 
 	get peerId(){
 		return this.p2p.then(x => x.peerId);
+	}
+	abort = new AbortController();
+	async [Symbol.asyncDispose]() {
+		this.abort.abort();
+		const p2p = await this.p2p;
+		p2p.services.pubsub.removeEventListener('message', this.topicListener);
+		p2p.services.pubsub.unsubscribe(p2p.peerId.toString());
 	}
 }
 
 type LoroProtocolMessage = {
 	from: PeerId;
 	topic: string;
-	reply(message: LoroMessage): Promise<void>;
+	reply(message: LoroMessage): Promise<void | unknown>;
 }

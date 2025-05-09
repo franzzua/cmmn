@@ -364,6 +364,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@cmmn/core@workspace:core"
   dependencies:
+    "@cmmn/tools": "workspace:*"
+    "@types/node": "npm:20.x.x"
     throttle-debounce: "npm:5.0.2"
     uuidv7: "npm:1.0.2"
   languageName: unknown
@@ -466,7 +468,7 @@ __metadata:
   dependencies:
     "@chainsafe/libp2p-yamux": "npm:^7.0.1"
     "@cmmn/tools": "workspace:~"
-    typescript: "npm:5.6.3"
+    typescript: "npm:5.8.3"
   languageName: unknown
   linkType: soft
 
@@ -513,7 +515,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@cmmn/tools@workspace:tools, @cmmn/tools@workspace:~":
+"@cmmn/tools@workspace:*, @cmmn/tools@workspace:tools, @cmmn/tools@workspace:~":
   version: 0.0.0-use.local
   resolution: "@cmmn/tools@workspace:tools"
   dependencies:
@@ -4396,6 +4398,15 @@ __metadata:
   dependencies:
     undici-types: "npm:~6.19.8"
   checksum: 10c0/83550fdf72a7db5b55eceac3f4fb038844eaee20202bdd2297a8248370cfa08317bda1605b781a8043eda4f173b75e73632e652fc85509eb14dfef78fa17337f
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:20.x.x":
+  version: 20.17.46
+  resolution: "@types/node@npm:20.17.46"
+  dependencies:
+    undici-types: "npm:~6.19.2"
+  checksum: 10c0/2b8cf1ea80af3c62247636fe44ec815e64978085c6f714792ad93d9cc826395b0bf7a969870f90274bf3a129b9d23994aa3a9c5e4cf00477d43f929330953662
   languageName: node
   linkType: hard
 
@@ -12228,23 +12239,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.6.3":
-  version: 5.6.3
-  resolution: "typescript@npm:5.6.3"
+"typescript@npm:5.8.3":
+  version: 5.8.3
+  resolution: "typescript@npm:5.8.3"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/44f61d3fb15c35359bc60399cb8127c30bae554cd555b8e2b46d68fa79d680354b83320ad419ff1b81a0bdf324197b29affe6cc28988cd6a74d4ac60c94f9799
+  checksum: 10c0/5f8bb01196e542e64d44db3d16ee0e4063ce4f3e3966df6005f2588e86d91c03e1fb131c2581baf0fb65ee79669eea6e161cd448178986587e9f6844446dbb48
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>":
-  version: 5.6.3
-  resolution: "typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>::version=5.6.3&hash=8c6c40"
+"typescript@patch:typescript@npm%3A5.8.3#optional!builtin<compat/typescript>":
+  version: 5.8.3
+  resolution: "typescript@patch:typescript@npm%3A5.8.3#optional!builtin<compat/typescript>::version=5.8.3&hash=cef18b"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/7c9d2e07c81226d60435939618c91ec2ff0b75fbfa106eec3430f0fcf93a584bc6c73176676f532d78c3594fe28a54b36eb40b3d75593071a7ec91301533ace7
+  checksum: 10c0/92ea03509e06598948559ddcdd8a4ae5a7ab475766d5589f1b796f5731b3d631a4c7ddfb86a3bd44d58d10102b132cd4b4994dda9b63e6273c66d77d6a271dbd
   languageName: node
   linkType: hard
 
@@ -12338,7 +12349,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici-types@npm:~6.19.8":
+"undici-types@npm:~6.19.2, undici-types@npm:~6.19.8":
   version: 6.19.8
   resolution: "undici-types@npm:6.19.8"
   checksum: 10c0/078afa5990fba110f6824823ace86073b4638f1d5112ee26e790155f481f2a868cc3e0615505b6f4282bdf74a3d8caad715fd809e870c2bb0704e3ea6082f344

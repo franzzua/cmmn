@@ -8,7 +8,6 @@
     "baseUrl": "./",
     "experimentalDecorators": false,
     "checkJs": false,
-    "outDir": "./dist/esm",
     "skipLibCheck": true,
     "incremental": true,
     "disableSolutionSearching": true,
@@ -21,18 +20,17 @@
     "allowSyntheticDefaultImports": true,
     "emitDeclarationOnly": true,
     "noEmitHelpers": true,
-    "declarationDir": "./dist/typings",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "useDefineForClassFields": false,
-    "declaration": true,
     "lib": [
       "ESNext",
       "Decorators",
       "WebWorker"
     ],
     "types": [
-      "vite/client"
+      "vite/client",
+      "node"
     ]
   },
   "exclude": [

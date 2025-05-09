@@ -6,7 +6,7 @@ import {LoroRoom} from "../../p2p/loroRoom";
 export class LoroDocCell extends EventEmitter<{
 	snapshot: Uint8Array;
 	update: Uint8Array;
-}> {
+}> implements AsyncDisposable {
 	@cell()
 	accessor room: LoroRoom;
 
@@ -18,28 +18,34 @@ export class LoroDocCell extends EventEmitter<{
 		super();
 	}
 
+	[Symbol.asyncDispose]() {
+        return this.room?.[Symbol.asyncDispose]();
+    }
+
 	async import(update: Uint8Array) {
 		this.doc.import(update);
 	}
 
-	[Symbol.dispose]() {
-		super[Symbol.dispose]();
-	}
-
+	unsubscr: (() => void) | undefined;
 	protected subscribe(eventName: keyof { snapshot: Uint8Array }) {
-		this.doc.subscribe(e => {
+		this.unsubscr = this.doc.subscribe(e => {
 			this.emit('snapshot', this.doc.export({mode: 'snapshot'}))
 			this.emit('update', this.doc.export({mode: 'update'}))
 		});
 	}
 
+	protected unsubscribe(eventName: keyof { snapshot: Uint8Array; update: Uint8Array }) {
+		this.unsubscr?.();
+		super.unsubscribe(eventName);
+	}
+
 	getShaped<Shape extends LoroShape>(shape: Shape, path = []): LoroShaped<Shape> {
 		if (typeof shape === "function")
-			return shape(this, path.join('.'));
+			return shape(this, path.join('.') || 'root');
 
 		const result = {};
 		for (let key in shape) {
-			result[key] = this.getShaped(shape[key], path.concat(key));
+			result[key] = this.getShaped(shape[key], path.concat(key) || 'root');
 		}
 		return result;
 	}

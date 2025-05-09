@@ -14,15 +14,15 @@
 		"port": 9000
 	},
 	"scripts": {
-		"compile": "cmmn compile -b --watch",
-		"bundle": "cmmn bundle -b --watch",
-		"bundle:prod": "cmmn bundle -b --prod",
-		"typings": "cmmn typings -b --watch",
-		"prod": "cmmn bundle -b --prod",
-		"ci2": "cmmn compile -b && cmmn bundle -b && cmmn bundle -b --prod --minify",
+		"compile": "cmmn compile --watch",
+		"bundle": "cmmn bundle --watch",
+		"bundle:prod": "cmmn bundle --prod",
+		"typings": "cmmn typings --watch -w sync",
+		"prod": "cmmn bundle --prod",
+		"ci2": "cmmn compile && cmmn bundle && cmmn bundle --prod --minify",
 		"test": "node --test */dist/**/*.spec.js",
 		"publish": "wersion patch",
-		"dev": "cmmn dev -b --run"
+		"dev": "cmmn dev --run"
 	},
 	"workspaces": [
 		"core",
@@ -40,7 +40,7 @@
 	"devDependencies": {
 		"@chainsafe/libp2p-yamux": "^7.0.1",
 		"@cmmn/tools": "workspace:~",
-		"typescript": "5.6.3"
+		"typescript": "5.8.3"
 	},
 	"packageManager": "yarn@4.5.1",
 	"stableVersion": "3.0.0-alpha-2"

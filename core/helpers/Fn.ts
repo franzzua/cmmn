@@ -21,8 +21,10 @@ export const Fn = {
 			}
 		};
 	},
-	asyncDelay(timeout = 0): Promise<void> {
-		return new Promise((resolve) => setTimeout(resolve, timeout));
+	asyncDelay(timeout = 0, signal?: AbortSignal): Promise<void> {
+		return new Promise((resolve) => {
+			setTimeout(resolve, timeout);
+		});
 	},
 	/**
 	 * Сравнивает два объекта, учитывает DateTime, Duration, array, object

@@ -1,16 +1,19 @@
 import { after, afterEach, beforeEach, describe, mock, test } from 'node:test';
 import { InMemoryP2PNode } from './inMemoryP2PNode';
 import { expect } from '@cmmn/tools/test';
-import { P2PNode } from '../src/p2p/p2p.node';
-import { Cell, Container, di, Fn } from '@cmmn/core';
+import {CRDT, P2PNode } from '../src';
+import {Cell, Container, di, Fn} from '@cmmn/core';
 import { P2PRepository } from '../src';
-import { Storage, StorageProvider } from '../src/crdt/storage';
+import { StorageProvider } from '../src';
 import { InMemoryStorage } from './inMemoryStorage';
+import {Cryptor} from "../src/crdt/cryptor";
+import {CryptorMock} from "./cryptor-mock";
 
 describe('p2p-repo', () => {
 	let contexts: Container[] = [];
 	let repos: P2PRepository[] = [];
 	di.override(P2PNode, InMemoryP2PNode);
+	di.override(Cryptor, CryptorMock);
 	di.const(StorageProvider, InMemoryStorage.Provider);
 	beforeEach(() => {
 		contexts = [di.child(), di.child(), di.child()];
@@ -30,17 +33,18 @@ describe('p2p-repo', () => {
 	});
 
 	test('peers', async () => {
-		const doc1 = await repos[0].createDoc('1');
-		const doc2 = await repos[1].createDoc('1');
-		const t1 = doc1.doc.getText('value');
-		const t2 = doc2.doc.getText('value');
+		await using doc1 = repos[0].createDoc('1');
+		await using doc2 = repos[1].createDoc('1');
+		const t1 = doc1.getShaped(CRDT.text);
+		const t2 = doc2.getShaped(CRDT.text);
 		t1.insert(0, 'A');
-		doc1.doc.commit();
-		await Fn.asyncDelay(1000);
+		t1.commit();
+		await new Cell(t2).onceAsync('change');
 
 		expect(t2.toString()).toBe('A');
-		const doc3 = await repos[2].createDoc('1');
-		await Fn.asyncDelay(10);
-		expect(doc3.doc.toJSON()).toEqual({ value: 'A' });
+		await using doc3 = repos[2].createDoc('1');
+		const t3 = doc3.getShaped(CRDT.text);
+		await new Cell(t3).onceAsync('change');
+		expect(t3.toString()).toEqual('A');
 	});
 });

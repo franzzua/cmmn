@@ -59,7 +59,7 @@ export class AsyncCell<T, TKey = T> extends Cell<AsyncResult<T>, TKey> {
 	static query<T>(getter: () => (Promise<T> | AsyncGenerator<T>),
 	                options: IAsyncCellOptions<T> = {}): AsyncResult<T>{
 		const cell = new AsyncCell(getter, options);
-		return new AsyncResultWrapper(cell);
+		return new AsyncResultWrapper<T>(cell) as unknown as AsyncResult<T>;
 	}
 }
 export type AsyncResult<T> =
@@ -67,7 +67,7 @@ export type AsyncResult<T> =
 	| { isPending?: never; result: T; error?: never; }
 	| { isPending?: never; result?: never; error: Error; }
 
-class AsyncResultWrapper<T> implements AsyncResult<T> {
+class AsyncResultWrapper<T> {
 	constructor(private cell: AsyncCell<T>) {
 	}
 
