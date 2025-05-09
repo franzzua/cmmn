@@ -22,7 +22,10 @@
 		},
 		"./import": "./node/register.js",
 		"./import-dev": "./node/register-dev.js",
-		"./test": "./dist/esm/test/test.js",
+		"./test": {
+			"default": "./dist/esm/test/test.js",
+			"types": "./dist/typings/test/test.d.ts"
+		},
 		"./swcrc": "./.swcrc"
 	},
 	"typings": "compile/typings.d.ts",
