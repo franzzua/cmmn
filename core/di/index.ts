@@ -1,10 +1,6 @@
 import {Container} from './container';
-import type {AccessorDecorator, ConstructorOf, FieldDecorator, InjectionToken} from './types';
-import {injectLazy} from "./injectLazy";
-
-export const inject = <T>(dep: InjectionToken<T>): FieldDecorator<T, unknown> & AccessorDecorator<T, unknown> => {
-	return injectLazy(() => dep);
-}
+import type {ConstructorOf, InjectionToken} from './types';
+export {injectLazy, inject} from "./injectLazy";
 
 export function scoped<TClass extends ConstructorOf<unknown>>() {
 	return (target: ConstructorOf<unknown>, context: ClassDecoratorContext<TClass>) => {
@@ -25,12 +21,10 @@ export function factory<T>(
 	di.factory(dep, Object.assign(factory, { isScoped: true}));
 }
 
-// const scopeds = new Set<ConstructorOf<any>>();
 
 export const di = Container.Default;
 export const resolve = <T>(dep: InjectionToken<T>) =>
 	Container.Default.resolve(dep);
 
-const t: InjectionToken<Container> = Container;
 export { Container };
 export type { InjectionToken };

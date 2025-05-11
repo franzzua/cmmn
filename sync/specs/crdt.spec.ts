@@ -14,7 +14,7 @@ describe('crdt', () => {
 		expect(source.toString()).toEqual('Hello world!');
 		const onChange = mock.fn();
 		source.delete(11, 1);
-		Cell.OnChange(source, onChange);
+		Cell.OnChange(() => source, onChange);
 		source.doc.commit();
 		await Fn.asyncDelay(0);
 		expect(onChange.mock.callCount()).toEqual(1);

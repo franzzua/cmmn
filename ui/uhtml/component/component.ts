@@ -4,7 +4,8 @@ import { EventCycle } from '../user-events/event-cycle';
 
 export abstract class Component extends globalThis.HTMLElement {
 	attributeChangedCallback(key, oldValue, newValue) {
-		this[key] = newValue;
+		if (key in this)
+			this[key] = newValue;
 	}
 
 	public connectedCallback() {

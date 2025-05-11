@@ -53,13 +53,4 @@ export class InMemoryP2PNode extends P2PNode {
 
 		return p2p;
 	}
-
-	static async connect(nodes: InMemoryP2PNode[]) {
-		for (let i = 0; i < nodes.length; i++) {
-			await nodes[i].init;
-			for (let j = 0; j < i; j++) {
-				// await nodes[j].p2p.dial(nodes[i].p2p.getMultiaddrs()[0])
-			}
-		}
-	}
 }

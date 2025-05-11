@@ -41,19 +41,13 @@ export class LoroDocCell extends EventEmitter<{
 
 	getShaped<Shape extends LoroShape>(shape: Shape, path = []): LoroShaped<Shape> {
 		if (typeof shape === "function")
-			return shape(this, path.join('.') || 'root');
+			return shape(this, path.join('.') || 'root') as LoroShaped<Shape>;
 
-		const result = {};
+		const result = {} as LoroShaped<Shape>;
 		for (let key in shape) {
-			result[key] = this.getShaped(shape[key], path.concat(key) || 'root');
+			result[key as any] = this.getShaped(shape[key] as Shape, path.concat(key));
 		}
 		return result;
-	}
-
-	async sink(ai: AsyncIterator<Uint8Array>){
-		for await (let uint8Array of ai) {
-			this.doc.import(uint8Array);
-		}
 	}
 
 	extensions = {
@@ -64,7 +58,7 @@ export class LoroDocCell extends EventEmitter<{
 		}
 	};
 
-	extend<TExt, T>(
+	extend<TExt, T extends object>(
 		container: T, extensions: TExt
 	): LoroDocExtensions<T> & TExt {
 		return Object.create(container, {

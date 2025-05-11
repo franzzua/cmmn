@@ -8,7 +8,6 @@ import {P2PAuth} from "./p2PAuth";
 export class P2PRepository implements AsyncDisposable {
 	@inject(P2PNode) p2pNode!: P2PNode;
 	@inject(StorageProvider) storageProvider!: StorageProvider;
-	auth = new P2PAuth(this);
 
 	storage = this.storageProvider.getStorage<Uint8Array>(this.name);
 
@@ -37,7 +36,7 @@ export class P2PRepository implements AsyncDisposable {
 			this.storage.set(uri, snapshot);
 		});
 		if (!this.rooms.has(uri)){
-			this.rooms.set(uri, new LoroRoom(this.p2pNode.loroProtocol, uri, this.auth));
+			this.rooms.set(uri, new LoroRoom(this.p2pNode.loroProtocol, uri));
 		}
 		cell.room = this.rooms.get(uri);
 		await cell.room.sync(cell.doc)

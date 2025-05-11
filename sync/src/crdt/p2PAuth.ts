@@ -7,11 +7,11 @@ export class P2PAuth implements Cryptor{
 	constructor(private repository: P2PRepository) {
 	}
 
-	async decrypt(message: Uint8Array, uri: string, peerId: PeerId): Promise<Uint8Array | undefined> {
+	async decrypt(message: Uint8Array): Promise<Uint8Array | undefined> {
 		return message;
 	}
 
-	async encrypt(message: Uint8Array, uri: string, peerId: PeerId): Promise<Uint8Array> {
+	async encrypt(message: Uint8Array): Promise<Uint8Array> {
 		return message;
 	}
 }

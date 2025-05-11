@@ -2,7 +2,6 @@ import {LoroDocCell, LoroDocExtensions} from "./loro-doc-cell";
 import {LoroCounter, LoroDoc} from "loro-crdt";
 import {BaseCell} from "@cmmn/core";
 
-
 export function counter(docCell: LoroDocCell, id: string): Counter {
 	const counter = docCell.doc.getCounter(id);
 	return docCell.extend(counter, {
@@ -19,7 +18,7 @@ export function counter(docCell: LoroDocCell, id: string): Counter {
 
 BaseCell.addAdapter(LoroCounter, LoroCounter.prototype.subscribe);
 
-export type Counter = Omit<LoroCounter, "value"> & LoroDocExtensions & {
+export type Counter = Omit<LoroCounter, "value"> & LoroDocExtensions<LoroCounter> & {
 	value: number;
 	readonly id: string;
 };

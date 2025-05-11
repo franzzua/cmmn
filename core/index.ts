@@ -43,5 +43,4 @@ export {
 	MergeListener,
 } from './event-emitter';
 
-export {di, factory, inject, singleton, resolve, scoped, Container, type InjectionToken} from './di';
-export {injectLazy} from "./di/injectLazy";
+export {di, factory, inject, injectLazy, singleton, resolve, scoped, Container, type InjectionToken} from './di';

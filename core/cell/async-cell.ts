@@ -1,8 +1,5 @@
 import {Cell, type ICellOptions} from './cell';
 import {BaseCell} from './base-cell';
-import {cell, getOrCreateCell} from "./decorators";
-import {resolve} from "../di";
-import type {AccessorDecoratorResult, FieldDecoratorResult} from "../di/types";
 
 export type IAsyncCellOptions<T, TKey = T> = ICellOptions<AsyncResult<T>, TKey> & {
 	// throttle?: { time: number, leading: boolean, trailing: boolean }

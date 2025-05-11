@@ -1,14 +1,12 @@
 import type {
 	AccessorDecorator,
-	AccessorDecoratorResult,
 	FieldDecorator,
-	FieldDecoratorResult,
 	InjectionToken
 } from "./types";
 import {Container} from "./container";
 import {resolve} from "./index";
 
-export const injectLazy = <T>(dep: () => InjectionToken<T>): FieldDecorator<T, unknown> & AccessorDecorator<T, unknown> => {
+export const injectLazy = <T, This>(dep: () => InjectionToken<T>): AccessorDecorator<This, T> & FieldDecorator<This, T> => {
 	return ((
 		_: unknown,
 		ctx,
@@ -16,7 +14,7 @@ export const injectLazy = <T>(dep: () => InjectionToken<T>): FieldDecorator<T, u
 		if (ctx.kind === 'field')
 			return function (this: unknown) {
 				return resolve(dep()) as T;
-			} as unknown as (AccessorDecoratorResult<T, unknown> & FieldDecoratorResult<T, unknown>);
+			} as unknown;
 		if (ctx.kind === 'accessor') {
 			const instances = new WeakMap();
 			const containers = new WeakMap();
@@ -30,7 +28,11 @@ export const injectLazy = <T>(dep: () => InjectionToken<T>): FieldDecorator<T, u
 					}
 					return instances.get(this);
 				}
-			} as unknown as (AccessorDecoratorResult<T, unknown> & FieldDecoratorResult<T, unknown>);
+			} as unknown;
 		}
-	});
+	}) as FieldDecorator<This, T> & AccessorDecorator<This, T>;
 };
+
+export const inject = <T, This = unknown>(dep: InjectionToken<T>): AccessorDecorator<This, T> & FieldDecorator<This, T> => {
+	return injectLazy(() => dep);
+}

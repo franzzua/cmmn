@@ -14,7 +14,10 @@
   },
   "type": "module",
   "exports": {
-    ".": "./index.ts"
+    ".": {
+      "default": "./index.ts",
+      "types": "./index.ts"
+    }
   },
   "typings": "./index.ts",
   "dependencies": {

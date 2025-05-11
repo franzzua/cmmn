@@ -10,15 +10,22 @@ export type InjectionToken<T = unknown, TArgs extends unknown[] = []> =
 	ConstructorOf<T, TArgs> | AbstractConstructorOf<T, TArgs> | symbol | string | ((...args: TArgs) => T);
 
 
-export type FieldDecoratorResult<T, This> = (this: This, value: T) => T
-export type FieldDecorator<T, This> = (_: T, ctx: ClassFieldDecoratorContext) =>
-	FieldDecoratorResult<T, This>;
-export type AccessorDecoratorResult<T, This> = {
-	get?(this: This): T;
-	set?(this: This, value: T): void;
-	init?(this: This): void;
-};
-export type AccessorDecorator<T, This> = (_: T, ctx: ClassAccessorDecoratorContext) =>
-	AccessorDecoratorResult<T, This>
+export type FieldDecorator<This, Value> = (
+	target: unknown,
+	context: ClassFieldDecoratorContext<This, Value>
+) => (
+	| void
+	| ((initialValue: Value | undefined) => Value)
+	);
+
+// 	ClassAccessorDecoratorResult<This, T>
+export type AccessorDecorator<This, Value> = (
+	target: ClassAccessorDecoratorTarget<This, Value>,
+	context: ClassAccessorDecoratorContext<This, Value>
+) => (
+	| void
+	| ClassAccessorDecoratorResult<This, Value>
+	);
+
 
 export type Factory<T> = ((c: Container) => T) & { isScoped?: true }
