@@ -26,20 +26,20 @@ type TTokens<TProps, TInstances> = [...(
 		: []
 	)]
 
-type TInstances<TProps, TDeps extends InjectionToken[]> = [...(
+type TInstances<TProps, TDeps extends InjectionToken<unknown, [TProps]>[]> = [...(
 	TDeps extends [(new (props: TProps) => infer TInstance), ...(infer TOther)]
-		? [TInstance, ...TInstances<TProps, TOther>]
+		? [TInstance, ...TInstances<TProps, TOther & InjectionToken[]>]
 		: []
 	)];
 
-export function useCelled<TProps = {}, TDeps extends InjectionToken<unknown, [TProps]>[]>(
+export function useCelled<TProps = {}, TDeps extends InjectionToken<unknown, [TProps]>[] = []>(
 	props: TProps,
 	render: ((...TDeps: TInstances<TProps, TDeps>) => unknown),
 	...deps: TDeps
 ): ReactNode {
 	const container = useMemo(() => di.child(), []);
 	container.resolve(Props).set(props);
-	const instances = deps.map(dep => useInjectedContainer(container, dep)) as TDeps;
+	const instances = deps.map(dep => useInjectedContainer(container, dep)) as TInstances<TProps, TDeps>;
 	useEffect(() => {
 		return () => {
 			container[Symbol.asyncDispose]();

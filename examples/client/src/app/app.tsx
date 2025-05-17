@@ -21,7 +21,7 @@ export class App extends Component {
 }
 
 
-export const Buttons = props => useCelled<{}>(props, (store, api: Api) => (
+export const Buttons = props => useCelled(props, (store, api: Api) => (
 	<div style={{display: 'flex', gap: '1em', flexDirection: 'column'}}>
 		<Button disabled={api.getData.get().isFetching} onClick={() => store.value++}>Inc</Button>
 		<Button icon={"***"} onClick={api.getData.fetch}>Refetch</Button>

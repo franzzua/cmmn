@@ -6,14 +6,11 @@ import {Cell, Container, di, Fn} from '@cmmn/core';
 import { P2PRepository } from '../src';
 import { StorageProvider } from '../src';
 import { InMemoryStorage } from './inMemoryStorage';
-import {Cryptor} from "../src/crdt/cryptor";
-import {CryptorMock} from "./cryptor-mock";
 
 describe('p2p-repo', () => {
 	let contexts: Container[] = [];
 	let repos: P2PRepository[] = [];
 	di.override(P2PNode, InMemoryP2PNode);
-	di.override(Cryptor, CryptorMock);
 	di.const(StorageProvider, InMemoryStorage.Provider);
 	beforeEach(() => {
 		contexts = [di.child(), di.child(), di.child()];

@@ -17,10 +17,10 @@
 		"compile": "cmmn compile --watch",
 		"bundle": "cmmn bundle --watch",
 		"bundle:prod": "cmmn bundle --prod",
-		"typings": "cmmn typings --watch -w sync",
+		"typings": "cmmn typings --watch",
 		"prod": "cmmn bundle --prod",
 		"ci2": "cmmn compile && cmmn bundle && cmmn bundle --prod --minify",
-		"test": "node --test */dist/**/*.spec.js",
+		"test": "node --test --import @cmmn/tools/import **/*.spec.ts",
 		"publish": "wersion patch",
 		"dev": "cmmn dev --run"
 	},

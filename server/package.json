@@ -16,7 +16,7 @@
 		"dist"
 	],
 	"dependencies": {
-		"fastify": "4"
+		"fastify": "5.2.1"
 	},
 	"devDependencies": {
 		"@cmmn/core": "workspace:~",

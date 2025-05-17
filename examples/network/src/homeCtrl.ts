@@ -5,7 +5,7 @@ import {data} from "@cmmn/examples-common";
 @ctrl()
 export class HomeCtrl {
 	@cell()
-	cell = data.value;
+	accessor cell = data.value;
 
 	@get()
 	get() {

@@ -6,7 +6,7 @@
 	"type": "module",
 	"bin": "./src/index.ts",
 	"scripts": {
-		"run": "PORT=9004 node --import @cmmn/tools/import-dev ./src/index.ts"
+		"run": "node --import @cmmn/tools/import ./src/index.ts"
 	},
 	"config": {
 		"host": "network.example.cmmn.local"

@@ -6,9 +6,9 @@ import {DIContext} from "./DIContext";
 import {Cell, di} from "@cmmn/core";
 
 export function component(options: {
-	scoped: boolean
+	scoped?: boolean
 } = {}) {
-	return (target: new () => Component) => {
+	return <This extends Component>(target: new () => This) => {
 		const c = props => {
 			const di = useContext(DIContext);
 			const container = useMemo(() => {
@@ -39,7 +39,7 @@ export function component(options: {
 			return instance.fc();
 		};
 		Object.defineProperty(c, 'name', {value: target.name});
-		return c;
+		return c as unknown as new () => This;
 	}
 }
 
@@ -53,6 +53,7 @@ export function effect<This extends Component>() {
 
 type Effect = () => void | (() => unknown)
 
+//@ts-expect-error
 export abstract class Component<TProps = {}> implements FC<TProps>, Disposable {
 	/** @internal **/
 	public effects: Effect[] = [];
@@ -60,7 +61,7 @@ export abstract class Component<TProps = {}> implements FC<TProps>, Disposable {
 
 	/** @internal **/
 	setProps(props: TProps) {
-		this.props.set(props);
+		(this.props as Props<TProps>).set(props);
 	}
 
 	private _render = () => {

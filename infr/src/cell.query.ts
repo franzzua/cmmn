@@ -1,6 +1,6 @@
-import {AsyncCell, IAsyncCellOptions} from "@cmmn/cell";
+import {AsyncCell, IAsyncCellOptions} from "@cmmn/core";
 
-export class CellQuery<TResult, TError = Error> extends AsyncCell<QueryResult<TResult, TError>>{
+export class CellQuery<TResult, TError = Error> extends AsyncCell<TResult>{
     constructor(request: () => Promise<TResult>, options: IAsyncCellOptions<QueryResult<TResult, TError>> = {}) {
         super(() => (async function *generator(promise){
             yield {isFetching: true} as QueryResult<TResult, TError>;

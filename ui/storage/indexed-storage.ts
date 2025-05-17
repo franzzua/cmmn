@@ -1,14 +1,14 @@
 import {Storage, StorageProvider} from "@cmmn/sync";
 import {scoped} from "@cmmn/core";
 
-export class IndexedStorage<T> extends Storage<T> {
-
-	@scoped()
-	static Provider = class IndexedStorageProvider extends StorageProvider {
-		getStorage<T>(name: string): Storage<T> {
-			return new IndexedStorage(name);
-		}
+@scoped()
+class IndexedStorageProvider extends StorageProvider {
+	getStorage<T>(name: string): Storage<T> {
+		return new IndexedStorage(name);
 	}
+}
+export class IndexedStorage<T> extends Storage<T> {
+	static Provider = IndexedStorageProvider;
 
 	private db = new Promise<IDBDatabase>((resolve, reject) => {
 		const request = window.indexedDB.open(this.name, 1);

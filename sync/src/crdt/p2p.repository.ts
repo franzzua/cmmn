@@ -3,7 +3,7 @@ import {P2PNode} from '../p2p/p2p.node';
 import {LoroDocCell} from './cells/loro-doc-cell';
 import {StorageProvider} from './storage';
 import {LoroRoom} from "../p2p/loroRoom";
-import {P2PAuth} from "./p2PAuth";
+import {Cryptor} from "./cryptor";
 
 export class P2PRepository implements AsyncDisposable {
 	@inject(P2PNode) p2pNode!: P2PNode;
@@ -36,7 +36,8 @@ export class P2PRepository implements AsyncDisposable {
 			this.storage.set(uri, snapshot);
 		});
 		if (!this.rooms.has(uri)){
-			this.rooms.set(uri, new LoroRoom(this.p2pNode.loroProtocol, uri));
+			const cryptor = await this.getCryptor(uri);
+			this.rooms.set(uri, new LoroRoom(this.p2pNode.loroProtocol, uri, cryptor));
 		}
 		cell.room = this.rooms.get(uri);
 		await cell.room.sync(cell.doc)
@@ -56,5 +57,11 @@ export class P2PRepository implements AsyncDisposable {
 		this.rooms.clear();
 	}
 
+	protected async getCryptor(uri: string): Promise<Cryptor>{
+		return {
+			decrypt: async x => x,
+			encrypt: async x => x
+		} as Cryptor
+	}
 }
 

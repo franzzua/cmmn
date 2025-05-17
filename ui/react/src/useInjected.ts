@@ -4,7 +4,7 @@ import {DIContext} from "./DIContext";
 
 export function useInjected<T, TArgs extends unknown[] = []>(token: InjectionToken<T, TArgs>, deps: TArgs = [] as TArgs): T {
 	const di = useContext(DIContext);
-	return useInjectedContainer(di, token, ...deps);
+	return useInjectedContainer(di, token, deps);
 }
 
 export function useInjectedContainer<T, TArgs extends unknown[] = []>(di: Container, token: InjectionToken<T, TArgs>, deps: TArgs = [] as TArgs): T {

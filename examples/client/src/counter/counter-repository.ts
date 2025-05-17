@@ -1,4 +1,4 @@
-import {type Cryptor, P2PAuth, P2PRepository} from "@cmmn/sync";
+import {type Cryptor, P2PRepository} from "@cmmn/sync";
 import {singleton} from "@cmmn/core";
 
 @singleton()
@@ -6,10 +6,6 @@ export class CounterRepository extends P2PRepository {
 	constructor() {
 		super('counter')
 	}
-}
-
-@singleton()
-export class CounterAuth extends P2PAuth {
 
 	async getKey(uri: string) {
 		const {algo, key} = await fetch(`/api/auth/key/${uri}`).then(x => x.json());
@@ -20,12 +16,13 @@ export class CounterAuth extends P2PAuth {
 		};
 	}
 
-	getCryptor(uri: string): Cryptor<Uint8Array> {
+	protected async getCryptor(uri: string): Promise<Cryptor> {
 		return new AESCryptor(this.getKey(uri));
 	}
 }
 
-export class AESCryptor implements Cryptor<Uint8Array> {
+
+export class AESCryptor implements Cryptor {
 	constructor(private key: Promise<{ key: CryptoKey, algo }>) {
 	}
 

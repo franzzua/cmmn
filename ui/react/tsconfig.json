@@ -4,7 +4,7 @@
 		"lib": ["dom", "es2015.collection", "esnext"],
 		"jsx": "preserve"
 	},
-	"include": ["**/*.ts"],
+	"include": ["**/*.tsx?"],
 	"exclude": ["dist", "node_modules"],
 	"references": [
 		{

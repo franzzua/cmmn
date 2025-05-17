@@ -6,13 +6,12 @@ import {Cryptor} from "../crdt/cryptor";
 
 export class LoroRoom implements AsyncDisposable {
 
-	@inject(Cryptor)
-	private cryptor!: Cryptor;
 	private abort = new AbortController();
 	private unsubscr: Subscription;
 	constructor(
 		private protocol: LoroProtocol,
-		private topic: string
+		private topic: string,
+		private cryptor: Cryptor
 	) {
 		this.protocol.join(this.topic);
 	}

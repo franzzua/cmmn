@@ -13,11 +13,11 @@ export class AsyncCellSpec {
 		const cell = new AsyncCell<number>(() => gen.getValues());
 		cell.active();
 		await Fn.asyncDelay(20);
-		expect(cell.get()).toEqual(7);
+		expect(cell.get().result).toEqual(7);
 		gen.Next(10);
 		// TODO: works slightly slow, why?
 		await Fn.asyncDelay(20);
-		expect(cell.get()).toEqual(10);
+		expect(cell.get().result).toEqual(10);
 	}
 
 	@test
@@ -27,7 +27,7 @@ export class AsyncCellSpec {
 		);
 		asyncCell.active();
 		await Fn.asyncDelay(30);
-		expect(asyncCell.get()).toEqual('hello world');
+		expect(asyncCell.get().result).toEqual('hello world');
 	}
 
 	@test
@@ -42,14 +42,14 @@ export class AsyncCellSpec {
 		);
 		cell.active();
 		await Fn.asyncDelay(10);
-		expect(cell.get()).toEqual(0);
+		expect(cell.get().result).toEqual(0);
 		await Fn.asyncDelay(100);
-		expect(cell.get()).toEqual(1);
+		expect(cell.get().result).toEqual(1);
 		baseCell.set(2);
 		await Fn.asyncDelay(10);
-		expect(cell.get()).toEqual(0);
+		expect(cell.get().result).toEqual(0);
 		await Fn.asyncDelay(100);
-		expect(cell.get()).toEqual(2);
+		expect(cell.get().result).toEqual(2);
 	}
 
 	@test
@@ -62,14 +62,14 @@ export class AsyncCellSpec {
 		});
 		asyncCell.active();
 		await Fn.asyncDelay(0);
-		expect(asyncCell.get()).toEqual(0);
+		expect(asyncCell.get().result).toEqual(0);
 		delay.set(200);
 		await Fn.asyncDelay(150);
 		delay.set(100);
 		await Fn.asyncDelay(70);
-		expect(asyncCell.get()).toEqual(0);
+		expect(asyncCell.get().result).toEqual(0);
 		await Fn.asyncDelay(40);
-		expect(asyncCell.get()).toEqual(100);
+		expect(asyncCell.get().result).toEqual(100);
 	}
 }
 

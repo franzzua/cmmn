@@ -1,4 +1,4 @@
-import {HTMLProps, MouseEvent, ReactNode} from "react";
+import {MouseEvent, ReactNode, JSX} from "react";
 import {cn, component, Component} from "@cmmn/react";
 import {bind, cell} from "@cmmn/core";
 import {css} from '@acab/ecsstatic';
@@ -6,7 +6,7 @@ import {css} from '@acab/ecsstatic';
 @component()
 export class Button extends Component<{
 	icon?: ReactNode
-} & HTMLProps<HTMLButtonElement>> {
+} & JSX.IntrinsicElements["button"]> {
 
 	private styles = {
 		button: css`
@@ -90,7 +90,7 @@ export class Button extends Component<{
 
 	render() {
 		return <button {...this.props}
-		               ref={element => this.element = element}
+		               ref={element => {this.element = element}}
 		               className={this.className}
 		               onPointerEnter={this.onMouseEnter}
 		               disabled={this.props.disabled || this.isLoading}
