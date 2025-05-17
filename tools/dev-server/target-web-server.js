@@ -129,6 +129,7 @@ export class TargetWebServer extends TargetServer {
     enhanceWebSocket() {
         const emitChange = this.devServer.ws.send;
         this.devServer.ws.send = payload => {
+            // if (this.target.isExcluded("")) return;
             this.target.log('change')
             this.target.dispatchEvent(new ChangeEvent(payload, this.target.packageJson.name));
         };

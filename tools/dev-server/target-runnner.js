@@ -3,6 +3,7 @@ import {exec, spawn} from "node:child_process";
 import {join} from "node:path";
 import {watch} from "chokidar"
 import {ChangeEvent} from "../helpers/target";
+import {Watcher} from "../helpers/watcher.js";
 
 export class TargetRunner extends TargetServer {
     static port = 9010;
@@ -10,12 +11,7 @@ export class TargetRunner extends TargetServer {
     /** @type {Promise<import('node:child_process').ChildProcess> | undefined} **/
     cp;
 
-    watcher = watch(this.target.rootDir, {
-        cwd: this.target.rootDir,
-        depth: 99,
-        ignored: /node_modules|dist/,
-        ignoreInitial: true
-    });
+    watcher = new Watcher();
 
     /**
      * @param app {import("fastify/types/instance.js").FastifyInstance}
@@ -51,10 +47,13 @@ export class TargetRunner extends TargetServer {
             this.target.log(`Stopping due to change...`);
             this.cp = null;
         });
-        this.watcher.addListener('change', e => this.target.dispatchEvent(new ChangeEvent({
-            type: 'full-reload',
-            triggeredBy: e
-        }, this.target.packageJson.name)))
+        this.watcher.watchTarget(this.target);
+        this.target.addEventListener('file', e => {
+            this.target.dispatchEvent(new ChangeEvent({
+                type: 'full-reload',
+                triggeredBy: e.files
+            }, this.target.packageJson.name))
+        });
     }
 
 

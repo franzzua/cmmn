@@ -36,7 +36,7 @@ export class P2PRepository implements AsyncDisposable {
 			this.storage.set(uri, snapshot);
 		});
 		if (!this.rooms.has(uri)){
-			const cryptor = await this.getCryptor(uri);
+			const cryptor = this.getCryptor(uri);
 			this.rooms.set(uri, new LoroRoom(this.p2pNode.loroProtocol, uri, cryptor));
 		}
 		cell.room = this.rooms.get(uri);
@@ -57,11 +57,11 @@ export class P2PRepository implements AsyncDisposable {
 		this.rooms.clear();
 	}
 
-	protected async getCryptor(uri: string): Promise<Cryptor>{
+	protected getCryptor(uri: string): Cryptor{
 		return {
 			decrypt: async x => x,
 			encrypt: async x => x
-		} as Cryptor
+		}
 	}
 }
 

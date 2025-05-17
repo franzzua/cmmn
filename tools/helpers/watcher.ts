@@ -6,12 +6,11 @@ import {throttle} from "throttle-debounce";
 export class Watcher {
 	abort = new AbortController();
 
-	constructor(private targets: Target[]) {
+	constructor() {
 	}
 
 	async watchTarget(target: Target){
 		let changes = new Set<string>();
-		const exclude = target.tsConfig.exclude ?? ['dist', 'node_modules'];
 		const emit = throttle(100, () => {
 			target.dispatchEvent(new FileChangeEvent(Array.from(changes)));
 			changes.clear();
@@ -21,8 +20,7 @@ export class Watcher {
 			signal: this.abort.signal,
 			persistent: true
 		})) {
-			if (file.filename.endsWith('~')
-				|| exclude.some(x => file.filename.startsWith(x)))
+			if (file.filename.endsWith('~') || target.isExcluded(file.filename))
 				continue;
 			for (let string of target.tsConfig.exclude) {
 			}

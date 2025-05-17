@@ -58,6 +58,10 @@ export class Target extends EventTarget {
         return this._tsConfig ??= getTSConfig(this.rootDir);
     }
 
+    isExcluded(fileName: string){
+        const exclude = this.tsConfig.exclude ?? ['dist', 'node_modules'];
+        return exclude.some(x => fileName.startsWith(x));
+    }
 
     swcConfigBase;
 
