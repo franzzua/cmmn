@@ -1,38 +1,40 @@
-import {LoroDocCell, LoroDocExtensions} from "./loro-doc-cell";
-import {LoroMovableList} from "loro-crdt";
+import {LoroDoc, type LoroMovableList as LoroMovableListType, LoroMovableList} from "loro-crdt";
 import {BaseCell} from "@cmmn/core";
 import {LoroShape, LoroShaped} from "./types";
+import {extend, LoroDocExtensions} from "./extend";
+import {factory} from "./factory";
 
+export abstract class List<T extends LoroShape> extends LoroMovableList
+	implements LoroDocExtensions<LoroMovableList, T> {
+	protected constructor(
+		public base: LoroMovableList,
+		public doc: LoroDoc,
+		public commit: () => void,
+		public shape?: T
+	) {
+		super();
+	}
 
-export function list<T extends LoroShape>(shape?: T){
-	return function (docCell: LoroDocCell, id: string): List<T> {
-		const list = docCell.doc.getMovableList(id);
-		return docCell.extend<ListExtensions<T>, LoroMovableList<T>>(
-			list as LoroMovableList<T>,
-			{
-				id: id,
-				push(this: LoroDocExtensions<LoroShaped<T>>){
-					const id = Id();
-					list.push(id);
-					this.commit();
-					return docCell.getShaped(shape, [id])
-				},
-				toArray(this: LoroDocExtensions<LoroShaped<T>>){
-					const ids = list.toArray();
-					return ids.map(id => docCell.getShaped(shape, [id])) as T[];
-				}
-			}
-		);
+	push() {
+		const id = Id();
+		this.base.push(id);
+		this.commit();
+		return factory(this.doc, this.shape, [id])
+	}
+
+	toArray() {
+		const ids = this.base.toArray();
+		return ids.map(id => factory(this.doc, this.shape, [id])) as T[];
 	}
 }
 
-export type ListExtensions<T extends LoroShape> = {
-	id: string;
-	push(): LoroShaped<T>;
-	toArray(): T[];
+export function list<T extends LoroShape>(shape?: T) {
+	return function (doc: LoroDoc, id: string): List<T> & LoroMovableListType<T> {
+		const list = doc.getMovableList(id);
+		return extend(list, List<T>, doc, shape) as List<T> & LoroMovableListType<T>;
+	}
 }
 
-export type List<T extends LoroShape> = LoroDocExtensions<LoroMovableList<T>> & ListExtensions<T>;
 
 BaseCell.addAdapter(LoroMovableList, LoroMovableList.prototype.subscribe);
-export const Id = () => Math.random().toString();
+export const Id = () => Math.random().toString(36).substring(2);

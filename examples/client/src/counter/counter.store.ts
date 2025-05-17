@@ -1,13 +1,13 @@
 import {inject, scoped} from "@cmmn/core";
-import {CounterInternal} from "./counters";
 import {injectLazy} from "@cmmn/core";
 import {CounterRepository} from "./counter-repository";
+import {Counter} from "./counter";
 
 @scoped()
 export class CounterStore {
 
-	@injectLazy(() => CounterInternal)
-	accessor counter!: CounterInternal;
+	@injectLazy(() => Counter)
+	accessor counter!: Counter;
 
 	@inject(CounterRepository)
 	private repository!: CounterRepository;

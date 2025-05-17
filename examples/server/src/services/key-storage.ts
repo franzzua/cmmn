@@ -1,9 +1,7 @@
 import {subtle} from "node:crypto";
 import fs from "node:fs/promises";
 import process from "node:process";
-import {singleton} from "@cmmn/core";
 
-@singleton()
 export class KeyStorage {
 	constructor(private readonly name: string,
 	            public readonly keyAlgorithm: AlgorithmIdentifier | RsaHashedKeyGenParams | EcKeyGenParams | AesKeyGenParams | HmacKeyGenParams | Pbkdf2Params,
@@ -40,7 +38,7 @@ export class KeyStorage {
 			]);
 			return keys.map(key => Buffer.from(key).toString('base64')).join('.');
 		} else {
-			return Buffer(await subtle.exportKey('raw', key)).toString('base64');
+			return new Buffer(await subtle.exportKey('raw', key)).toString('base64');
 		}
 	}
 

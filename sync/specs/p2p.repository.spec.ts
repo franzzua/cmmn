@@ -32,15 +32,15 @@ describe('p2p-repo', () => {
 	test('peers', async () => {
 		await using doc1 = repos[0].createDoc('1');
 		await using doc2 = repos[1].createDoc('1');
-		const t1 = doc1.getShaped(CRDT.text);
-		const t2 = doc2.getShaped(CRDT.text);
+		const t1 = doc1.getModel(CRDT.text);
+		const t2 = doc2.getModel(CRDT.text);
 		t1.insert(0, 'A');
 		t1.commit();
 		await new Cell(t2).onceAsync('change');
 
 		expect(t2.toString()).toBe('A');
 		await using doc3 = repos[2].createDoc('1');
-		const t3 = doc3.getShaped(CRDT.text);
+		const t3 = doc3.getModel(CRDT.text);
 		await new Cell(t3).onceAsync('change');
 		expect(t3.toString()).toEqual('A');
 	});

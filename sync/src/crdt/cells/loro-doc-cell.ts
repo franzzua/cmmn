@@ -2,6 +2,8 @@ import {LoroDoc} from 'loro-crdt';
 import {cell, EventEmitter} from "@cmmn/core";
 import {LoroShape, LoroShaped} from "./types";
 import {LoroRoom} from "../../p2p/loroRoom";
+import {Container} from "loro-crdt/bundler/loro_wasm";
+import {factory} from "./factory";
 
 export class LoroDocCell extends EventEmitter<{
 	snapshot: Uint8Array;
@@ -39,37 +41,9 @@ export class LoroDocCell extends EventEmitter<{
 		super.unsubscribe(eventName);
 	}
 
-	getShaped<Shape extends LoroShape>(shape: Shape, path = []): LoroShaped<Shape> {
-		if (typeof shape === "function")
-			return shape(this, path.join('.') || 'root') as LoroShaped<Shape>;
-
-		const result = {} as LoroShaped<Shape>;
-		for (let key in shape) {
-			result[key as any] = this.getShaped(shape[key] as Shape, path.concat(key));
-		}
-		return result;
+	getModel<Model extends LoroShape>(shape: Model, path = []): LoroShaped<Model> {
+		return factory(this.doc, shape, path);
 	}
 
-	extensions = {
-		// factory: {value: (type: LoroTypeFactory) => type(this)},
-		doc: this.doc,
-		commit(){
-			this.doc.commit()
-		}
-	};
+}
 
-	extend<TExt, T extends object>(
-		container: T, extensions: TExt
-	): LoroDocExtensions<T> & TExt {
-		return Object.create(container, {
-			base: { value: container },
-			...Object.getOwnPropertyDescriptors(this.extensions),
-			...Object.getOwnPropertyDescriptors(extensions)
-		})
-	}
-}
-export type LoroDocExtensions<T> = T & {
-	base: T;
-	doc: LoroDoc;
-	commit();
-}

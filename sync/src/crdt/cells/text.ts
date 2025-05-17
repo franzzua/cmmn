@@ -1,22 +1,19 @@
-import {LoroDocCell, LoroDocExtensions} from "./loro-doc-cell";
-import {LoroText} from "loro-crdt";
+import {LoroDoc, LoroText} from "loro-crdt";
 import {BaseCell} from "@cmmn/core";
+import {extend, LoroDocExtensions} from "./extend";
 
-
-export function text(docCell: LoroDocCell, id: string): Text {
-	const text = docCell.doc.getText(id);
-	return docCell.extend<TextExtensions, LoroText>(
-		text,
-		{
-			id: id
-		}
-	);
+export class Text extends LoroText implements LoroDocExtensions<LoroText, never> {
+	protected constructor(
+		public readonly base: LoroText,
+		public doc: LoroDoc,
+		public readonly commit: () => void,
+	) {
+		super();
+	}
 }
-
-export type TextExtensions = {
-	id: string;
+export function text(doc: LoroDoc, id: string): Text {
+	const text = doc.getText(id);
+	return extend(text, Text, doc);
 }
-
-export type Text = LoroDocExtensions<LoroText> & TextExtensions;
 
 BaseCell.addAdapter(LoroText, LoroText.prototype.subscribe);

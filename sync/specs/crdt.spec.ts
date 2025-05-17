@@ -7,7 +7,7 @@ import {CRDT, LoroDocCell} from "../src";
 describe('crdt', () => {
 	test('text', async function text() {
 		const doc = new LoroDocCell();
-		const source = doc.getShaped(CRDT.text);
+		const source = doc.getModel(CRDT.text);
 		source.insert(0, 'Hello');
 		source.insert(5, ' world!');
 		source.commit();

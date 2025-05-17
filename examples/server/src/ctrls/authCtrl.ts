@@ -45,7 +45,7 @@ export class AuthCtrl {
 
 	@get('public')
 	async getPublic() {
-		const masterKey = await this.masterKeyStorage.getOrCreateKey();
+		const masterKey = await this.masterKeyStorage.getOrCreateKey() as CryptoKeyPair;
 		return subtle.exportKey('jwk', masterKey.publicKey);
 	}
 }
