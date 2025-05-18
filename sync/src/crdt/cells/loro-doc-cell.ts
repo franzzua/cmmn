@@ -1,6 +1,6 @@
 import {LoroDoc} from 'loro-crdt';
 import {cell, EventEmitter} from "@cmmn/core";
-import {LoroShape, LoroShaped} from "./types";
+import {Scheme, Infer} from "./types";
 import {LoroRoom} from "../../p2p/loroRoom";
 import {Container} from "loro-crdt/bundler/loro_wasm";
 import {factory} from "./factory";
@@ -41,7 +41,7 @@ export class LoroDocCell extends EventEmitter<{
 		super.unsubscribe(eventName);
 	}
 
-	getModel<Model extends LoroShape>(shape: Model, path = []): LoroShaped<Model> {
+	getModel<Model extends Scheme>(shape: Model, path = []): Infer<Model> {
 		return factory(this.doc, shape, path);
 	}
 

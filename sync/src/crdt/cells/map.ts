@@ -4,11 +4,11 @@ import {
 	LoroMovableList
 } from "loro-crdt";
 import {BaseCell} from "@cmmn/core";
-import {LoroShape} from "./types";
+import {Infer, LWWValue, Scheme, Value} from "./types";
 import {extend, LoroDocExtensions} from "./extend";
 
 
-export abstract class Map<T extends LoroShape> extends LoroMap<Record<string, T>>
+export abstract class Map<T extends Scheme> extends LoroMap<Record<string, T>>
 	implements LoroDocExtensions<LoroMap, T> {
 	protected constructor(
 		public readonly base: LoroMap<Record<string, T>>,
@@ -23,7 +23,7 @@ export abstract class Map<T extends LoroShape> extends LoroMap<Record<string, T>
 		this.commit();
 	}
 }
-export function map<T extends LoroShape>(){
+export function map<T extends Scheme>(){
 
 	return function (doc: LoroDoc, id: string): Map<T> {
 		const map = (id ? doc.getMap(id) : new LoroMap()) as LoroMap<Record<string, T>>;

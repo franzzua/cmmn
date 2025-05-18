@@ -1,10 +1,10 @@
-import {LoroShape} from "./types";
+import {Scheme} from "./types";
 import {Container, LoroCounter, LoroDoc} from "loro-crdt";
 
 export function extend<
 	TContainer extends Container,
 	TExtension extends Extension<TContainer, TShape>,
-	TShape extends LoroShape,
+	TShape extends Scheme,
 >(container: TContainer, extender: { prototype: TExtension }, doc: LoroDoc, shape?: TShape): TExtension {
 	return Object.create(container, {
 		base: {value: container},
@@ -23,11 +23,11 @@ export type LoroDocExtensions<T, Shape> = {
 }
 
 
-export type Extension<TContainer extends Container, TShape extends LoroShape> = (new (
+export type Extension<TContainer extends Container, TShape extends Scheme> = (new (
 	base: TContainer,
 	doc: LoroDoc,
 	commit: () => void,
-	shape?: LoroShape
+	shape?: Scheme
 ) => TContainer) | (new (
 	base: TContainer,
 	doc: LoroDoc,

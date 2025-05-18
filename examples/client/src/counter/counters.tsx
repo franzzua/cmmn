@@ -4,6 +4,7 @@ import {Button} from "@cmmn/examples-ui-lib";
 import {CounterRepository} from "./counter-repository";
 import {CRDT} from "@cmmn/sync";
 import {Counter} from "./counter";
+import {lww} from "@cmmn/sync/src/crdt/cells";
 
 @component()
 export class Counters extends Component<{ id: string }> {
@@ -16,6 +17,7 @@ export class Counters extends Component<{ id: string }> {
 	private get doc(){
 		return this.docQuery.result.getModel({
 			counters: CRDT.list(CRDT.counter),
+			value: lww<number>,
 		})
 	}
 
