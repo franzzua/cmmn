@@ -1,33 +1,33 @@
 {
-  "name": "@cmmn/core",
-  "version": "3.0.0-beta-6",
-  "repository": {
-    "url": "https://github.com/franzzua/cmmn/tree/master/core"
-  },
-  "description": "di, base extensions, useful functions",
-  "publishConfig": {
-    "registry": "https://npm.local",
-    "access": "public"
-  },
-  "scripts": {
-    "typings": "cmmn typings --watch"
-  },
-  "type": "module",
-  "exports": {
-    ".": {
-      "default": "./index.ts",
-      "types": "./index.ts"
-    }
-  },
-  "typings": "./index.ts",
-  "dependencies": {
-    "throttle-debounce": "5.0.2",
-    "uuidv7": "1.0.2"
-  },
-  "devDependencies": {
-    "@cmmn/tools": "workspace:*",
-    "@types/node": "20.x.x"
-  },
-  "author": "",
-  "license": "ISC"
+	"name": "@cmmn/core",
+	"version": "3.0.0-beta-7",
+	"repository": {
+		"url": "https://github.com/franzzua/cmmn/tree/master/core"
+	},
+	"description": "di, base extensions, useful functions",
+	"publishConfig": {
+		"registry": "https://npm.local",
+		"access": "public"
+	},
+	"scripts": {
+		"typings": "cmmn typings --watch"
+	},
+	"type": "module",
+	"exports": {
+		".": {
+			"default": "./index.ts",
+			"types": "./index.ts"
+		}
+	},
+	"typings": "./index.ts",
+	"dependencies": {
+		"throttle-debounce": "5.0.2",
+		"uuidv7": "1.0.2"
+	},
+	"devDependencies": {
+		"@cmmn/tools": "workspace:*",
+		"@types/node": "20.x.x"
+	},
+	"author": "",
+	"license": "ISC"
 }
