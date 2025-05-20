@@ -34,7 +34,8 @@ export {
 	ObservableMap,
 	ObservableObject,
 	ObservableSet,
-	AsyncCell
+	AsyncCell,
+	type AsyncResult
 } from './cell';
 
 export {

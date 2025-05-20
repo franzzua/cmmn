@@ -9,13 +9,13 @@
       "path": "./core"
     },
     {
+      "path": "./ui/react"
+    },
+    {
       "path": "./ui/uhtml"
     },
     {
       "path": "./ui"
-    },
-    {
-      "path": "./ui/react"
     },
     {
       "path": "./server"

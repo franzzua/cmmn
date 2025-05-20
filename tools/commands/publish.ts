@@ -2,14 +2,19 @@ import {execSync, spawn} from "node:child_process";
 import {getPackages} from "@manypkg/get-packages";
 import {Target} from "../helpers/target";
 import fs from "node:fs/promises";
-import {join} from "node:path";
+import {join, resolve} from "node:path";
+import {Flags} from "../helpers/flags";
 
-export async function publish(...flags){
+export async function publish(flags: Flags){
     const packages = await getPackages(process.cwd())
     for (const pkg of packages.packages) {
+        if (flags.workspace && flags.workspace != pkg.relativeDir)
+            continue;
         const target = new Target(pkg.dir, flags, []);
         if (target.packageJson.private)
             continue;
+        console.log(target.packageJson.name, target.exports);
+        continue;
         if (target.tsConfig) {
             await fs.rename(
                 join(target.rootDir, './package.json'),

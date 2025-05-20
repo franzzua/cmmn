@@ -2,11 +2,11 @@ import {LoroCounter, LoroDoc} from "loro-crdt";
 import {BaseCell} from "@cmmn/core";
 import {extend, Extension, LoroDocExtensions} from "./extend";
 
-export class Counter extends LoroCounter implements LoroDocExtensions<LoroCounter, never>{
+export class Counter extends LoroCounter implements LoroDocExtensions<LoroCounter>{
 	protected constructor(
-		public base: LoroCounter,
-		public doc: LoroDoc,
-		public commit: () => void,
+		public readonly base: LoroCounter,
+		public readonly doc: LoroDoc,
+		public readonly commit: () => void,
 	) {
 		super();
 	}

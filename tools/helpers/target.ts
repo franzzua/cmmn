@@ -8,6 +8,7 @@ import {Flags} from "./flags";
 import {JSONSchemaForNPMPackageJsonFiles} from "@schemastore/package";
 import {CompilerOptions} from "typescript";
 import {Config} from "@swc/core";
+import { minimatch } from 'minimatch';
 
 export class Target extends EventTarget {
     rootDir: string;
@@ -58,9 +59,19 @@ export class Target extends EventTarget {
         return this._tsConfig ??= getTSConfig(this.rootDir);
     }
 
-    isExcluded(fileName: string){
+    isExcluded(fileName: string, relative: boolean = false){
+        const check = (pattern: string) => {
+            if (!relative)
+                pattern = join(this.rootDir, pattern);
+            return fileName.startsWith(pattern) || minimatch(fileName, pattern);
+        };
+        const include = this.tsConfig.include ?? [];
+        if (include.length > 0){
+            if (!include.some(check))
+                return true;
+        }
         const exclude = this.tsConfig.exclude ?? ['dist', 'node_modules'];
-        return exclude.some(x => fileName.startsWith(x));
+        return exclude.some(check);
     }
 
     swcConfigBase;
@@ -142,10 +153,13 @@ export class Target extends EventTarget {
     _exports: Record<string, string>
     get exports(): Record<string, string> {
         return this._exports ??= Object.fromEntries(Object.entries(this.entries).map(
-            ([entry, file]) => [entry, this.getExport(entry, file)]));
+            ([entry, file]) => [entry, this.getExport(entry, file)]
+        ));
     }
 
     getExport(entry, file) {
+        if (this.isExcluded(file))
+            return './' + relative(this.rootDir, file);
         const extension = file.match(/\.([^.]+)$/)[1];
         const entryName = entry
             .replace(/^\.?\/?/, '')
@@ -157,7 +171,6 @@ export class Target extends EventTarget {
     }
 
     async getPublishPackageJson() {
-        /** @type {import('@schemastore/package').JSONSchemaForNPMPackageJsonFiles} **/
         const packageJson = JSON.parse(JSON.stringify(this.packageJson));
         for (let [entry, result] of Object.entries(this.exports)) {
             const source = this.entries[entry];
@@ -167,7 +180,7 @@ export class Target extends EventTarget {
             if (packageJson.exports) {
                 packageJson.exports[entry] = { default: `./dist/bundle/${result}` };
                 if (typings){
-                    packageJson.exports[entry].typings = typings;
+                    packageJson.exports[entry].typings = './'+ typings;
                 }
             } else {
                 packageJson.main = `./dist/bundle/${result}`;

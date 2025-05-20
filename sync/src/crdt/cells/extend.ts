@@ -15,11 +15,11 @@ export function extend<
 	})
 }
 
-export type LoroDocExtensions<T, Shape> = {
+export type LoroDocExtensions<T> = {
 	base: T;
 	doc: LoroDoc;
 	commit();
-	shape?: Shape
+	shape?: Scheme
 }
 
 

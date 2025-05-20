@@ -4,10 +4,10 @@ import {DIContext} from "./DIContext";
 
 export function useInjected<T, TArgs extends unknown[] = []>(token: InjectionToken<T, TArgs>, deps: TArgs = [] as TArgs): T {
 	const di = useContext(DIContext);
-	return useInjectedContainer(di, token, deps);
+	return useInjectedFrom(di, token, deps);
 }
 
-export function useInjectedContainer<T, TArgs extends unknown[] = []>(di: Container, token: InjectionToken<T, TArgs>, deps: TArgs = [] as TArgs): T {
+export function useInjectedFrom<T, TArgs extends unknown[] = []>(di: Container, token: InjectionToken<T, TArgs>, deps: TArgs = [] as TArgs): T {
 	const result = useMemo(() => di.resolve<T, TArgs>(token, ...deps), deps);
 	useEffect(() => {
 		// token is scoped to container therefore container is responsible for disposing this token

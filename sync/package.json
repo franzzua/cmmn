@@ -1,7 +1,7 @@
 {
 	"name": "@cmmn/sync",
 	"version": "3.0.0-beta-8",
-	"description": "collaborative with yjs",
+	"description": "collaborative with loro-crdt",
 	"publishConfig": {
 		"access": "public"
 	},

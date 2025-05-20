@@ -20,7 +20,7 @@ export class Watcher {
 			signal: this.abort.signal,
 			persistent: true
 		})) {
-			if (file.filename.endsWith('~') || target.isExcluded(file.filename))
+			if (file.filename.endsWith('~') || target.isExcluded(file.filename, true))
 				continue;
 			for (let string of target.tsConfig.exclude) {
 			}

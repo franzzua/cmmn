@@ -2,10 +2,10 @@ import {LoroDoc, LoroText} from "loro-crdt";
 import {BaseCell} from "@cmmn/core";
 import {extend, LoroDocExtensions} from "./extend";
 
-export class Text extends LoroText implements LoroDocExtensions<LoroText, never> {
+export class Text extends LoroText implements LoroDocExtensions<LoroText> {
 	protected constructor(
 		public readonly base: LoroText,
-		public doc: LoroDoc,
+		public readonly doc: LoroDoc,
 		public readonly commit: () => void,
 	) {
 		super();

@@ -4,7 +4,8 @@ import { expect } from '@cmmn/tools/test';
 import { InMemoryP2PNode } from './inMemoryP2PNode';
 import {CRDT, LoroDocCell} from "../src";
 import {LoroCounter} from "loro-crdt";
-import {Counter} from "../src/crdt/cells";
+import {Counter, List} from "../src/crdt/cells";
+import {Infer} from "../src/crdt/cells/types";
 
 describe('crdt', () => {
 	test('text', async function text() {
@@ -56,12 +57,14 @@ describe('crdt', () => {
 
 	test('list of counters', async function text() {
 		const doc = new LoroDocCell();
-		const source = doc.getModel(CRDT.list({counter: CRDT.counter}));
+		const source: List<{
+			counter: Counter;
+		}> = doc.getModel(CRDT.list({counter: CRDT.counter}));
 		expect(source.toArray()).toEqual([]);
 		source.push();
 		expect(source.toArray().map(x => x.counter.value)).toEqual([0]);
 		expect(source.toArray()[0].counter).toBeInstanceOf(LoroCounter);
-		const c = source.toArray()[0].counter as Counter;
+		const c = source.toArray()[0].counter;
 		c.value = 3;
 		expect(source.toArray().map(x => x.counter.value)).toEqual([3]);
 		source.push();

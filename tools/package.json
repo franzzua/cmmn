@@ -17,15 +17,10 @@
 		"compile:watch": "node --import @cmmn/tools/import ./bin.ts compile --watch"
 	},
 	"exports": {
-		"./tsconfig.json": {
-			"default": "./tsconfig.json"
-		},
+		"./tsconfig.json": "./tsconfig.json",
 		"./import": "./node/register.js",
 		"./import-dev": "./node/register-dev.js",
-		"./test": {
-			"default": "./dist/esm/test/test.js",
-			"types": "./dist/typings/test/test.d.ts"
-		},
+		"./test": "./test/test.ts",
 		"./swcrc": "./.swcrc"
 	},
 	"typings": "compile/typings.d.ts",

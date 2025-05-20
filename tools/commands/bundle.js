@@ -30,6 +30,7 @@ export async function bundle(flags) {
                     }
                 }
             }).then(() => bundler.write());
+        } else {
         }
         // term[Symbol.dispose]();
     }

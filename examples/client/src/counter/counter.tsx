@@ -10,10 +10,6 @@ export class Counter extends Component<{
 	counter: CRDT.Counter;
 	active: boolean;
 }> {
-	constructor() {
-		super();
-	}
-
 	@inject(CounterStore)
 	protected accessor store!: CounterStore;
 

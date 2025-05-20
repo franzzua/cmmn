@@ -1,5 +1,13 @@
-import {useInjectedContainer} from "./useInjected";
-import {FC, useContext, useEffect, useMemo} from "react";
+import {useInjectedFrom} from "./useInjected";
+import React, {
+	FC,
+	ReactNode,
+	useContext,
+	useEffect,
+	useMemo,
+	Component as ReactComponent,
+	FunctionComponent
+} from "react";
 import {useCell} from "./useCell";
 import {Props} from "./props";
 import {DIContext} from "./DIContext";
@@ -8,8 +16,8 @@ import {Cell, di} from "@cmmn/core";
 export function component(options: {
 	scoped?: boolean
 } = {}) {
-	return <This extends Component>(target: new () => This) => {
-		const c = props => {
+	return <Props, This extends Component<Props>, TClass extends new () => This>(target: TClass, context: ClassDecoratorContext) => {
+		const c = (props: Props) => {
 			const di = useContext(DIContext);
 			const container = useMemo(() => {
 				if (!options.scoped) {
@@ -21,7 +29,7 @@ export function component(options: {
 				return child;
 			}, [di]);
 
-			const instance = useInjectedContainer(container, target);
+			const instance = useInjectedFrom<This>(container, target);
 			useEffect(() => {
 				return () => {
 					instance[Symbol.dispose]();
@@ -39,7 +47,7 @@ export function component(options: {
 			return instance.fc();
 		};
 		Object.defineProperty(c, 'name', {value: target.name});
-		return c as unknown as new () => This;
+		return c as unknown as TClass;
 	}
 }
 
@@ -53,11 +61,13 @@ export function effect<This extends Component>() {
 
 type Effect = () => void | (() => unknown)
 
-//@ts-expect-error
-export abstract class Component<TProps = {}> implements FC<TProps>, Disposable {
+export class Component<TProps = {}> implements Disposable {
+	private abort = new AbortController();
+	protected get signal() { return this.abort.signal }
 	/** @internal **/
 	public effects: Effect[] = [];
-	protected readonly props: TProps = new Props() as TProps;
+	public static props: { va: number };
+	public props: TProps = new Props() as TProps;
 
 	/** @internal **/
 	setProps(props: TProps) {
@@ -72,14 +82,38 @@ export abstract class Component<TProps = {}> implements FC<TProps>, Disposable {
 		}
 	}
 
-	protected render() {
+	protected render(): ReactNode {
+		return null;
 	}
 
-	public fc() {
+	public fc(): ReactNode {
 		return useCell(this._render);
 	}
 
-	[Symbol.dispose](){
+	[Symbol.dispose]() {
+		this.abort.abort();
+	}
+}
 
+
+@component()
+class App extends Component<{
+	id: { value: number };
+}> {
+
+	protected render(): React.ReactNode {
+		return <>
+			<Wrapper/>
+			<OldComponent id={+this.props.id}/>
+		</>;
+	}
+}
+
+function Wrapper(){
+	return <App id={{ value: 1}}></App>
+}
+class OldComponent extends ReactComponent<{ id: number}> {
+	render() {
+		return <App id={{ value: this.props.id }}/>;
 	}
 }

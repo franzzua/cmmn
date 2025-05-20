@@ -5,4 +5,4 @@ export { ObservableMap } from './collections/ObservableMap';
 export { ObservableList } from './collections/ObservableList';
 export { ObservableObject } from './collections/ObservableObject';
 export { ObservableSet } from './collections/ObservableSet';
-export { AsyncCell, type IAsyncCellOptions } from './async-cell';
+export { AsyncCell, type IAsyncCellOptions, type AsyncResult } from './async-cell';

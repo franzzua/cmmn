@@ -1,37 +1,47 @@
 {
-	"extends": "@cmmn/tools/tsconfig.json",
-	"compilerOptions": {
-		"lib": ["dom", "es2015.collection", "esnext"],
-		"baseUrl": "./src",
-		"jsx": "react-jsx"
-	},
-	"include": ["**/*.tsx?"],
-	"exclude": [
-      "dist", "node_modules"],
-	"references": [
-		{
-			"path": "../../core"
-		},
-		{
-			"path": "../../sync"
-		},
-		{
-			"path": "../../ui/react"
-		},
-		{
-			"path": "../../ui"
-		},
-		{
-			"path": "../server"
-		},
-		{
-			"path": "../common"
-		},
-		{
-			"path": "../ui-lib"
-		},
-		{
-			"path": "../network"
-		}
-	]
+  "extends": "@cmmn/tools/tsconfig.json",
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "es2015.collection",
+      "esnext"
+    ],
+    "baseUrl": "./src",
+    "jsx": "react-jsx",
+    "jsxImportSource": "@cmmn/react"
+  },
+  "include": [
+    "**/*.tsx",
+    "**/*.ts"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules"
+  ],
+  "references": [
+    {
+      "path": "../../core"
+    },
+    {
+      "path": "../../sync"
+    },
+    {
+      "path": "../../ui/react"
+    },
+    {
+      "path": "../../ui"
+    },
+    {
+      "path": "../server"
+    },
+    {
+      "path": "../common"
+    },
+    {
+      "path": "../ui-lib"
+    },
+    {
+      "path": "../network"
+    }
+  ]
 }

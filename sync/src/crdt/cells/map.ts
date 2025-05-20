@@ -9,12 +9,12 @@ import {extend, LoroDocExtensions} from "./extend";
 
 
 export abstract class Map<T extends Scheme> extends LoroMap<Record<string, T>>
-	implements LoroDocExtensions<LoroMap, T> {
+	implements LoroDocExtensions<LoroMap> {
 	protected constructor(
 		public readonly base: LoroMap<Record<string, T>>,
-		public doc: LoroDoc,
+		public readonly doc: LoroDoc,
 		public readonly commit: () => void,
-		public shape?: T
+		public readonly shape?: T
 	) {
 		super();
 	}

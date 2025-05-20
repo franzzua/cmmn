@@ -24,7 +24,9 @@
 		"react": ">=17.0.0"
 	},
 	"files": [
-		"dist"
+		"dist",
+		"jsx-runtime.d.ts",
+		"jsx-runtime.js"
 	],
 	"author": "",
 	"license": "ISC",

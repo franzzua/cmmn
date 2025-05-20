@@ -1,6 +1,6 @@
 import {ReactNode, useEffect, useMemo, useSyncExternalStore} from 'react';
 import {BaseCell, Cell, di, ICellOptions, InjectionToken} from '@cmmn/core';
-import {useInjectedContainer} from "./useInjected";
+import {useInjectedFrom} from "./useInjected";
 import {Props} from "./props";
 
 export function useCell<T>(
@@ -39,7 +39,7 @@ export function useCelled<TProps = {}, TDeps extends InjectionToken<unknown, [TP
 ): ReactNode {
 	const container = useMemo(() => di.child(), []);
 	container.resolve(Props).set(props);
-	const instances = deps.map(dep => useInjectedContainer(container, dep)) as TInstances<TProps, TDeps>;
+	const instances = deps.map(dep => useInjectedFrom(container, dep)) as TInstances<TProps, TDeps>;
 	useEffect(() => {
 		return () => {
 			container[Symbol.asyncDispose]();

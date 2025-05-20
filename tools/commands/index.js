@@ -3,7 +3,7 @@ export {typings} from "./typings.ts";
 export {gen} from "./gen.js";
 export {bundle} from "./bundle.js";
 export {dev} from "./dev.js";
-export {publish} from "./publish.js";
+export {publish} from "./publish.ts";
 export {format} from "./format.js";
 export {lint} from "./lint.js";
 export {version} from "./version.js";
