@@ -8,13 +8,9 @@
 	"repository": {
 		"url": "https://github.com/franzzua/cmmn/tree/master/server"
 	},
-	"typings": "dist/typings/index.d.ts",
 	"publishConfig": {
 		"access": "public"
 	},
-	"files": [
-		"dist"
-	],
 	"dependencies": {
 		"fastify": "5.2.1"
 	},
