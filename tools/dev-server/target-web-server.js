@@ -66,9 +66,6 @@ export class TargetWebServer extends TargetServer {
         yield createVitePlugin(() => ({
             name: this.target.packageJson.name + '_pre',
             resolveId: this.resolver.resolveId,
-            watchChange: (id, change) => {
-                this.target.log(`change ^W${relative(this.target.rootDir, id)}`)
-            },
             enforce: 'pre',
         }))();
         yield {
@@ -88,29 +85,25 @@ export class TargetWebServer extends TargetServer {
     }
 
     handle(app, request, reply) {
-        this.getServer(app).then(s => s.middlewares(request.raw, reply.raw));
+        (this.devServerRequest ??= this.getServer(app)).then(s => s.middlewares(request.raw, reply.raw));
     }
 
     async getServer(app) {
-        if (this.devServer) return this.devServer;
         const config = await this.getConfig();
-        this.devServer = await createServer({
+        const server = await createServer({
             ...config,
             server: {
                 hmr: this.target.flags.production ? false : {
                     server: app.server,
-                    clientPort: 9000,
-                    host: '127.0.0.1',
-                    protocol: 'ws',
-                    path: '/@ws'
+                    path: this.wsPrefix,
                 },
                 ws: this.target.flags.production ? false : undefined,
-                origin: 'http://127.0.0.1:9000',
+                // origin: 'http://127.0.0.1:9000',
                 fs: {
                     strict: false
                 },
                 headers: {
-                    'access-control-allow-origin': '*'
+                    // 'access-control-allow-origin': '*'
                 },
                 allowedHosts: [
                     this.target.https?.host,
@@ -119,23 +112,23 @@ export class TargetWebServer extends TargetServer {
             },
         });
         this.target.log(`Start dev server`);
-        this.enhanceWebSocket();
-        return this.devServer;
+        this.enhanceWebSocket(server);
+        return server;
     }
 
     /**
      * Emit event on ws and proxies events from dependent dev-servers
      */
-    enhanceWebSocket() {
-        const emitChange = this.devServer.ws.send;
-        this.devServer.ws.send = payload => {
+    enhanceWebSocket(server) {
+        const emitChange = server.ws.send;
+        server.ws.send = payload => {
             // if (this.target.isExcluded("")) return;
             this.target.log('change')
             this.target.dispatchEvent(new ChangeEvent(payload, this.target.packageJson.name));
         };
         this.target.addEventListener('change', e => {
             this.target.log('change')
-            emitChange.call(this.devServer.ws, e.payload);
+            emitChange.call(server.ws, e.payload);
         });
     }
 

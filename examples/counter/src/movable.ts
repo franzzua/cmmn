@@ -2,22 +2,6 @@ import {component, Component, documentEvents, html} from "@cmmn/uhtml";
 import {bind, Cell, cell} from "@cmmn/core";
 import {css} from "@acab/ecsstatic";
 
-const styles = {
-	movable: css`
-		position: absolute;
-		left: 50%;
-		top: 50%;
-        opacity: .3;
-        background: red;
-        width: 5em;
-        height: 5em;
-        will-change: transform;
-	`,
-	move: css`
-        cursor: move;
-	`
-}
-
 @component()
 export class MovableDiv extends Component {
 
@@ -32,22 +16,24 @@ export class MovableDiv extends Component {
 	}
 
 	@cell()
-	private totalShift = {x: 0, y: 0};
+	private position = {x: 0, y: 0};
 
 	@cell()
 	get isDragging() {
 		if (!this.divEvents) return false;
 		if (!this.divEvents.pointerdown) return false;
 		if (!this.divEvents.pointerup) return true;
-		return this.divEvents.pointerdown.timeStamp > this.divEvents.pointerup.timeStamp;
+		return this.divEvents.pointerdown.timeStamp > this.divEvents.pointerup.timeStamp
+			&& this.divEvents.pointermove;
 	}
 
 	@cell()
 	get transform() {
-		if (!this.isDragging || !this.divEvents.pointermove) {
-			return `translate(${this.totalShift.x}px,${this.totalShift.y}px)`;
-		}
-		const {x, y} = sum(this.totalShift, diff(this.divEvents.pointermove, this.divEvents.pointerdown));
+		if (!this.isDragging) return `translate(${this.position.x}px,${this.position.y}px)`;
+		const {x, y} = sum(
+			this.position,
+			diff(this.divEvents.pointermove, this.divEvents.pointerdown)
+		);
 		return `translate(${x}px, ${y}px)`;
 	}
 
@@ -58,7 +44,7 @@ export class MovableDiv extends Component {
 	@bind()
 	onUp(e: PointerEvent) {
 		this.div.releasePointerCapture(e.pointerId);
-		this.totalShift = sum(this.totalShift, diff(e, this.divEvents.pointerdown));
+		this.position = sum(this.position, diff(e, this.divEvents.pointerdown));
 	}
 
 	get hoveredElements(){
@@ -66,15 +52,35 @@ export class MovableDiv extends Component {
 		return document.elementsFromPoint(documentEvents.pointermove.clientX, documentEvents.pointermove.clientY);
 	}
 
+	get styles(){
+		return {
+			movable: css`
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				opacity: .3;
+				background: red;
+				width: 5em;
+				height: 5em;
+				will-change: transform;
+			`,
+			move: css`
+				cursor: move;
+			`
+		}
+	}
+
 	render() {
 		return html`
-            <div class=${[styles.movable, this.isDragging ? styles.move : null]}
+            <div class=${[this.styles.movable, this.isDragging ? this.styles.move : null]}
                  onpointerdown=${this.onDown}
-                 onpointerup=${this.onUp} style=${{ transform: this.transform }}/>
+                 onpointerup=${this.onUp} 
+				 style=${{ transform: this.transform }}/>
             ${this.hoveredElements.map(x => html`<li>${x.tagName}</li>`)}
 		`;
 	}
 }
+
 
 function diff(x: PointerEvent, y: PointerEvent) {
 	return {x: x.pageX - y.pageX, y: x.pageY - y.pageY};

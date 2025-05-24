@@ -12,6 +12,7 @@ export class TargetServer {
      */
     resolver;
     url;
+    wsPrefix = '/@ws';
 
     /**
      * @param target {import("../helpers/target").Target}
@@ -26,15 +27,18 @@ export class TargetServer {
     }
 
     async initProxy() {
+        return ;
         const https = this.target.https;
         if (!https) return;
+
+        const cert = await fs.promises.readFile(https.cert).catch(() => void 0);
+        const key = await fs.promises.readFile(https.key).catch(() => void 0);
+        if (!cert || !key)
+            return this.target.error(`cert not found for ^W${https.host}:${https.port} `)
         this.target.log(`init proxy ^W${https.host}:${https.port}`)
         const proxy = fastify({
             http2: true,
-            https: {
-                cert: fs.readFileSync(https.cert),
-                key: fs.readFileSync(https.key),
-            },
+            https: { cert, key },
         });
         proxy.register(await import('@fastify/http-proxy'), {
             upstream: 'http://127.0.0.1:9000',
@@ -79,7 +83,7 @@ export class TargetServer {
      */
     async register(app) {
         app.all(`${this.base}*`, (request, reply, next) => {
-            // this.target.log(request.url);
+            if (request.url.startsWith(this.base + this.wsPrefix)) return ;
             return this.handle(app, request, reply);
         });
         await this.initProxy();

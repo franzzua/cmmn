@@ -11,8 +11,6 @@
 		".": "./src/index.html"
 	},
 	"config": {
-		"host": "example.cmmn.local",
-		"port": "9002",
 		"proxy": {
 			"^/api": "/_/@cmmn/examples-server/api",
 			"^/p2p": "/_/@cmmn/examples-network",

@@ -11,7 +11,12 @@
 		".": "./test"
 	},
 	"config": {
-		"port": 9000
+		"host": "cmmn.framework.app",
+		"port": "9009",
+		"proxy": {
+			"^/example/react": "/_/@cmmn/examples-client",
+			"^/example/uhtml": "/_/@cmmn/examples-counter"
+		}
 	},
 	"scripts": {
 		"compile": "cmmn compile --watch",
