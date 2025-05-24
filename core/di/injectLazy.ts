@@ -20,7 +20,7 @@ export const injectLazy = <T, This>(dep: () => InjectionToken<T>): AccessorDecor
 			const containers = new WeakMap();
 			return {
 				init() {
-					containers.set(this, Container.Default);
+					containers.set(this, Container.Current);
 				},
 				get() {
 					if (!instances.has(this)) {

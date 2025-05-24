@@ -15,7 +15,7 @@ export abstract class Component extends globalThis.HTMLElement {
 			child.remove();
 		}
 		this.hole.on('change', this.syncHtml);
-		this.syncHtml();
+		this.syncHtml({ value: this.hole.get() });
 	}
 
 	public disconnectedCallback() {
@@ -49,14 +49,37 @@ export abstract class Component extends globalThis.HTMLElement {
 	abstract render(): Hole;
 
 	@bind()
-	private async syncHtml() {
-		await EventCycle.onceAsync('animationFrame');
-		render(this, this.hole.get());
-		this.dispatchEvent(new Event('render'));
-		this.renderCallback();
+	private async syncHtml(change: { value: Hole }) {
+		Component.render(this, change.value);
 	}
 
-	protected renderCallback() {}
+	static renderTasks = new Map<Component, Hole>();
+	static renderQueueId: number;
+	static render(component: Component, hole: Hole){
+		this.renderTasks.set(component, hole);
+		this.renderQueueId ??= requestAnimationFrame(this.runRender);
+	}
+	static runRender(){
+		Component.renderQueueId = undefined;
+		for (let [component, hole] of Component.renderTasks) {
+			render(component, hole);
+			component.renderCallback();
+		}
+		Component.renderTasks.clear();
+	}
+
+	protected renderCallback() {
+		this.dispatchEvent(new RenderEvent());
+	}
 
 	protected injectedChildren: Element[];
+
+	public onrender: ((this: Component, ev: CustomEvent<HTMLElement>) => any) | null = console.log;
+	public events = Cell.events(this as Component);
+}
+export class RenderEvent extends Event {
+	constructor() {
+		super('render');
+	}
+
 }

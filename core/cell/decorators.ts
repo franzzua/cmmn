@@ -57,9 +57,8 @@ export function cell<T, TClass = unknown>(
 			case 'accessor': {
 				const target = initialValue as ClassAccessorDecoratorTarget<TClass, T>;
 				const createCell = (self: TClass) => {
-					const startValue = options?.startValue ?? target.get.call(self);
 					options.startValue = undefined;
-					return new Cell(startValue, options);
+					return new Cell(() => target.get.call(self), options);
 				};
 				return {
 					get(this: TClass) {

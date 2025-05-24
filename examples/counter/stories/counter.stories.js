@@ -1,4 +1,4 @@
-import '../src/index.ts';
+import '../src/counter.ts';
 
 export default {
     parameters: {

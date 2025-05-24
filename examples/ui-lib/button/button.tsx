@@ -1,13 +1,12 @@
 import {MouseEvent, ReactNode, JSX} from "react";
 import {cn, component, Component} from "@cmmn/react";
-import {bind, cell} from "@cmmn/core";
+import {bind, Cell, cell} from "@cmmn/core";
 import {css} from '@acab/ecsstatic';
 
 @component()
 export class Button extends Component<{
 	icon?: ReactNode
 } & JSX.IntrinsicElements["button"]> {
-
 	private styles = {
 		button: css`
 			--x: 0;
@@ -42,6 +41,7 @@ export class Button extends Component<{
 	accessor isLoading = false;
 	@cell()
 	accessor element: HTMLButtonElement | undefined;
+
 	@bind()
 	async onClickInternal(e: MouseEvent<HTMLButtonElement>) {
 		this.isLoading = true;

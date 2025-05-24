@@ -45,10 +45,10 @@ class Visitor {
         const sourceFileDir = path.dirname(sourceFile.fileName);
 
         return [
-            importPath + "/index.ts",
+            importPath + "/counter.ts",
             importPath + ".ts",
             importPath + ".tsx",
-            importPath + "/index.ts",
+            importPath + "/counter.ts",
             importPath + ".js",
             importPath + ".jsx",
             importPath,
@@ -196,7 +196,7 @@ class Visitor {
         //     );
         // }
         // if (fs.existsSync(abs + '/')) {
-        //     const indexFile = `${file}/index.ts`;
+        //     const indexFile = `${file}/counter.ts`;
         //     return this.context.factory.updateImportDeclaration(
         //         importNode,
         //         importNode.decorators,

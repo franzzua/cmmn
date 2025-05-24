@@ -1,5 +1,7 @@
 import {BaseCell, Subscriber} from './base-cell';
 import {Fn} from "../helpers";
+import {subscribe} from "node:diagnostics_channel";
+import {EventEmitter, EventEmitterBase} from "../event-emitter";
 
 export type ICellOptions<T, TKey = T> = {
 	compare?: (a: TKey, b: TKey) => boolean;
@@ -10,7 +12,7 @@ export type ICellOptions<T, TKey = T> = {
 	startValue?: T;
 	// when cell activates it will be active till this disposable lives
 	activeWith?: Disposable;
-	subscribe?: Subscriber<T>;
+	subscribe?: Subscriber<T, any>;
 };
 
 export class Cell<T = unknown, TKey = T> extends BaseCell<T> {
@@ -30,22 +32,24 @@ export class Cell<T = unknown, TKey = T> extends BaseCell<T> {
 				this.options.tap?.(this.value);
 			}
 		}
-		if (options.activeWith){
+		if (options.activeWith) {
 			const dispose = () => {
 				options.activeWith = null;
 				this.disactive();
 			}
-			options.activeWith[Symbol.dispose] = options.activeWith[Symbol.dispose]  ? Fn.pipe(
+			options.activeWith[Symbol.dispose] = options.activeWith[Symbol.dispose] ? Fn.pipe(
 				options.activeWith[Symbol.dispose],
 				dispose
 			) : dispose;
 		}
 	}
+
 	protected disactive() {
 		if (this.options.activeWith)
 			return;
 		super.disactive();
 	}
+
 	public setInternal(value: T) {
 		if (this.handleFilterError(value)) {
 			return;
@@ -92,7 +96,8 @@ export class Cell<T = unknown, TKey = T> extends BaseCell<T> {
 			this.options.compareKey(oldValue),
 		);
 	}
-	protected getSubscriber(value){
+
+	protected getSubscriber(value) {
 		return this.options.subscribe ?? super.getSubscriber(value);
 	}
 
@@ -127,11 +132,54 @@ export class Cell<T = unknown, TKey = T> extends BaseCell<T> {
 		return cell;
 	}
 
-	// static fromAI<T>(ai: AsyncIterator<T>, options: ICellOptions<T> = {}): Cell<T> {
-	// 	return new AICell(ai, options);
-	// }
+	static from<T>(subscribe: Subscriber<any, T>): BaseCell<T>;
+	static from<TEventName extends string, T, TEventEmitter extends EventEmitter<Record<TEventName, T>>>(eventTarget: TEventEmitter, eventName: TEventName): BaseCell<T>
+	static from<TEventName, TEventTarget extends EventTarget>(eventTarget: TEventTarget, eventName: TEventName): BaseCell<
+		TEventTarget extends {
+			addEventListener(eventName: TEventName, listener: (this: TEventTarget, ev: infer T) => any);
+		} ? T : never
+	>;
+	static from<T>(something, eventName?): BaseCell<T> {
+		if (something instanceof EventEmitterBase) {
+			return new EventCell<T>(listener => something.on(eventName, listener));
+		}
+		if (something instanceof EventTarget){
+			return new EventCell<T>(listener => eventTargetSubscriber(eventName).call(something, listener));
+		}
+		return new EventCell<T>(something);
+	}
+
+	static events<TEventTarget extends EventTarget>(eventTarget: TEventTarget): EventTargetProxy<TEventTarget> {
+		if (!eventTarget) return null;
+		return new Proxy<EventTargetProxy<TEventTarget>>({} as any, {
+			get(target: EventTargetProxy<TEventTarget>, p: string | symbol, receiver: any): any{
+				const cell = target[p] ??= Cell.from(eventTarget, p) as any;
+				if (cell instanceof BaseCell)
+					return cell.get();
+				return cell;
+			}
+		})
+	}
 }
 
+class EventCell<T> extends BaseCell<T> {
+	constructor(private subscriber: Subscriber<any, T>) {
+		super(null);
+	}
+
+	unsusbscribe;
+
+	active() {
+		this.unsusbscribe = this.subscriber((e) => this.set(e));
+		super.active();
+	}
+
+	protected disactive() {
+		super.disactive();
+		this.unsusbscribe?.();
+		this.value = null;
+	}
+}
 // export class AICell<T> extends Cell<T> {
 // 	constructor(private ai: AsyncIterator<T>, options: ICellOptions<T> = {}) {
 // 		super(undefined, options);
@@ -146,8 +194,8 @@ export class Cell<T = unknown, TKey = T> extends BaseCell<T> {
 // 	}
 // }
 
-export function eventTargetSubscriber<T extends EventTarget>(eventName: string): Subscriber<T>{
-	return function (this: T, listener: () => void){
+export function eventTargetSubscriber<T extends EventTarget, Args extends Event>(eventName: string): Subscriber<T, Args> {
+	return function (this: T, listener: (e: Args) => void) {
 		this.addEventListener(eventName, listener);
 		return () => this.removeEventListener(eventName, listener);
 	}
@@ -162,3 +210,12 @@ export class CellFilterError<T> extends Error {
 		super(`Cell have not accepted value: ${value}`);
 	}
 }
+
+
+type RemoveOn<T extends string> = T extends `on${infer S}` ? S : never;
+type EventTargetProxy<TEventTarget> = {
+	[key in RemoveOn<keyof TEventTarget & string>]: EventType<TEventTarget, key>
+}
+type EventType<TEventTarget, TKey extends string> = TEventTarget extends {
+	[key in `on${TKey}`]: ((this: TEventTarget, ev: infer T) => any) | null;
+} ? T : never;

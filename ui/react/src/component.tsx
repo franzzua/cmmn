@@ -10,26 +10,25 @@ import React, {
 } from "react";
 import {useCell} from "./useCell";
 import {Props} from "./props";
-import {DIContext} from "./DIContext";
+import {DIContext} from "./di.context";
 import {Cell, di} from "@cmmn/core";
+
 
 export function component(options: {
 	scoped?: boolean
 } = {}) {
-	return <Props, This extends Component<Props>, TClass extends new () => This>(target: TClass, context: ClassDecoratorContext) => {
-		const c = (props: Props) => {
+	return <Props, This extends Component<Props>, TClass extends new () => This>(
+		target: TClass, context: ClassDecoratorContext
+	) => {
+		const FC = ((props: Props) => {
 			const di = useContext(DIContext);
 			const container = useMemo(() => {
-				if (!options.scoped) {
-					return di;
-				}
-				const child = di.child();
-				child.scoped(target);
-				child.override(c as any, target);
+				const child = options.scoped ? di : di.child();
+				child.override(FC as any, target);
 				return child;
 			}, [di]);
 
-			const instance = useInjectedFrom<This>(container, target);
+			const instance = useInjectedFrom<This>(container, FC);
 			useEffect(() => {
 				return () => {
 					instance[Symbol.dispose]();
@@ -45,9 +44,9 @@ export function component(options: {
 			}
 			instance.setProps(props);
 			return instance.fc();
-		};
-		Object.defineProperty(c, 'name', {value: target.name});
-		return c as unknown as TClass;
+		}) as unknown as TClass;
+		Object.defineProperty(FC, 'name', {value: target.name});
+		return FC;
 	}
 }
 
@@ -62,11 +61,10 @@ export function effect<This extends Component>() {
 type Effect = () => void | (() => unknown)
 
 export class Component<TProps = {}> implements Disposable {
-	private abort = new AbortController();
-	protected get signal() { return this.abort.signal }
+	#abort = new AbortController();
+	protected get disposeSignal() { return this.#abort.signal }
 	/** @internal **/
 	public effects: Effect[] = [];
-	public static props: { va: number };
 	public props: TProps = new Props() as TProps;
 
 	/** @internal **/
@@ -91,7 +89,7 @@ export class Component<TProps = {}> implements Disposable {
 	}
 
 	[Symbol.dispose]() {
-		this.abort.abort();
+		this.#abort.abort();
 	}
 }
 

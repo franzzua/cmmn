@@ -1,5 +1,12 @@
-import { attr } from 'uhtml';
+import {attr} from 'uhtml';
 
-attr.set('style', (el: HTMLElement, value) => {
-	Object.assign(el.style, value);
-});
+attr.set('style', setStyleByCssText);
+
+
+function setStyleByCssText(el: HTMLElement, value: object) {
+	let style = "";
+	for (let key in value) {
+		style += key + ':' + value[key] + ';'
+	}
+	el.style.cssText = style;
+}

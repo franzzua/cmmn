@@ -25,6 +25,9 @@
     },
     {
       "path": "./examples/client"
+    },
+    {
+      "path": "./examples/counter"
     }
   ]
 }

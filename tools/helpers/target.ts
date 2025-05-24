@@ -133,7 +133,7 @@ export class Target extends EventTarget {
         }
         const entry = path.join(this.rootDir, this.packageJson.module
             ?? this.packageJson.main
-            ?? "index.ts");
+            ?? "counter.ts");
         return this._entries = {
             '.': entry
         }

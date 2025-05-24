@@ -10,9 +10,10 @@
 	},
 	"type": "module",
 	"exports": {
-		".": "./src/index.ts"
+		".": "./index.html"
 	},
 	"devDependencies": {
+		"@acab/ecsstatic": "0.9.0",
 		"@cmmn/uhtml": "workspace:~",
 		"@storybook/addon-essentials": "^8.6.12",
 		"@storybook/addon-interactions": "^8.6.12",

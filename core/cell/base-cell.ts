@@ -166,7 +166,7 @@ export class BaseCell<T = unknown>
 		TClass extends abstract new (
 			...args: unknown[]
 		) => {
-			on(key: 'change', listener: () => void): () => void;
+			on(key: 'change', listener: (e: unknown) => void): () => void;
 		},
 	>() {
 		return (target: TClass, context: ClassDecoratorContext) => {
@@ -207,4 +207,4 @@ BaseCell.addAdapter(EventEmitterBase<{
 }>, function (listener){
 	return this.on('change', listener)
 });
-export type Subscriber<T> = (this: T, listener: () => void) => (() => void);
+export type Subscriber<T, Args = unknown> = (this: T, listener: (e: Args) => void) => (() => void);

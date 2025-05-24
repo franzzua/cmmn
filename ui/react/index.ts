@@ -3,6 +3,7 @@ export {useInjected} from './src/useInjected';
 export {component, effect} from "./src/component";
 export {Component} from "./src/component";
 
+export {Scope} from "./src/scope";
 export function cn(...args: Array<string | Record<string, any>>) {
 	return [...cnGenerator(args)].join(' ');
 }

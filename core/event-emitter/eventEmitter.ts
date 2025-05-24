@@ -5,7 +5,7 @@ export class EventEmitter<TEvents> extends EventEmitterBase<TEvents>  implements
 	protected listeners = new Map<
 		keyof TEvents,
 		Array<{
-			listener: (data, stop?) => void;
+			listener: (data) => void;
 			options: SubscriptionOptions;
 		}>
 	>();
@@ -58,7 +58,9 @@ export class EventEmitter<TEvents> extends EventEmitterBase<TEvents>  implements
 	) {
 		const arr = this.listeners.get(eventName);
 		if (!arr) return;
-		arr.slice().forEach((x) => x.listener(data));
+		for (let x of arr) {
+			x.listener(data);
+		}
 	}
 
 	public [Symbol.dispose]() {
@@ -69,6 +71,7 @@ export class EventEmitter<TEvents> extends EventEmitterBase<TEvents>  implements
 			}
 		}
 	}
+
 }
 
 export type SubscriptionOptions = {

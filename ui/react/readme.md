@@ -25,7 +25,7 @@ export const Icon = celled<{ size: number; title: string; }>(props => {
 @component()
 export class Icon extends Component<{ size: number; title: string; }> {
 	
-	@inject(Service) service!: Service;
+	service = resolve(Service);
 	
 	onClick = (e: PointerEvent) => this.service.onIconClick(this.props.size);
 	

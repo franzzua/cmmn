@@ -22,9 +22,9 @@ export function factory<T>(
 }
 
 
-export const di = Container.Default;
-export const resolve = <T>(dep: InjectionToken<T>) =>
-	Container.Default.resolve(dep);
+export const di = Container.Current;
+export const resolve = <T>(dep: InjectionToken<T, any>) =>
+	Container.Current.resolve(dep);
 
 export { Container };
 export type { InjectionToken };

@@ -23,6 +23,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "useDefineForClassFields": false,
+    "stripInternal": true,
     "lib": [
       "ESNext",
       "Decorators",

@@ -1,9 +1,10 @@
-import {component, Component} from "@cmmn/react";
+import {component, Component, Scope} from "@cmmn/react";
 import {AsyncCell, bind, cell, inject} from "@cmmn/core";
 import {Button} from "@cmmn/examples-ui-lib";
 import {CounterRepository} from "./counter-repository";
 import {CRDT} from "@cmmn/sync";
 import {Counter} from "./counter";
+import {CounterStore} from "./counter.store";
 
 @component()
 export class Counters extends Component<{ id: string }> {
@@ -40,7 +41,9 @@ export class Counters extends Component<{ id: string }> {
 			return <>Loading...</>;
 		return <>
 			{this.counters.toArray().map(c => <div key={c.id}>
-				<Counter counter={c} active={this.room.peers.size > 0} />
+				<Scope provide={[CounterStore, c]}>
+					<Counter active={this.room.peers.size > 0} />
+				</Scope>
 			</div>)}
 			<Button onClick={this.add}>Add</Button>
 			<Button onClick={() => {
