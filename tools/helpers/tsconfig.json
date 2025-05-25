@@ -1,0 +1,45 @@
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "target": "ESNext",
+    "composite": true,
+    "sourceMap": false,
+    "baseUrl": "./",
+    "experimentalDecorators": false,
+    "checkJs": false,
+    "skipLibCheck": true,
+    "incremental": true,
+    "disableSolutionSearching": true,
+    "assumeChangesOnlyAffectDirectDependencies": true,
+    "skipDefaultLibCheck": true,
+    "isolatedModules": true,
+    "allowJs": true,
+    "disableReferencedProjectLoad": true,
+    "disableSourceOfProjectReferenceRedirect": true,
+    "allowSyntheticDefaultImports": true,
+    "emitDeclarationOnly": true,
+    "noEmitHelpers": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "useDefineForClassFields": false,
+    "stripInternal": true,
+    "lib": [
+      "ESNext",
+      "Decorators",
+      "WebWorker"
+    ],
+    "types": [
+      "vite/client",
+      "node"
+    ]
+  },
+  "include": [
+    "**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "node"
+  ]
+}

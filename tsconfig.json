@@ -24,6 +24,9 @@
       "path": "./sync"
     },
     {
+      "path": "./tools"
+    },
+    {
       "path": "./examples/client"
     },
     {

@@ -48,7 +48,7 @@ function urlToFile(url) {
     for (let target of targets) {
         if (path.startsWith(target.packageJson.name)) {
             const localPath = path.substr(target.packageJson.name);
-            return pathToFileURL(target.entries[localPath + '.'] ?? join(target.rootDir, localPath));
+            return pathToFileURL(target.getEntry('.' + localPath) ?? join(target.rootDir, localPath));
         }
     }
     if (path.startsWith('@id/'))

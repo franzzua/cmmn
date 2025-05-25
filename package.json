@@ -19,6 +19,7 @@
 		}
 	},
 	"scripts": {
+		"init": "yarn && cd tools && yarn run compile && cd .. && yarn",
 		"compile": "cmmn compile --watch",
 		"bundle": "cmmn bundle --watch",
 		"bundle:prod": "cmmn bundle --prod",

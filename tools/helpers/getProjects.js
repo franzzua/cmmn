@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import {getTSConfig} from "./getTSConfig";
+import {join} from "node:path";
 
 function getProjectConfig(rootDir, cmmn, options) {
     return {
@@ -16,7 +17,7 @@ function getProjectConfig(rootDir, cmmn, options) {
  * @returns {AsyncGenerator<{ root: string, deps: string[] }>}
  */
 export async function *getDependencyOrder(rootDir, visited = []) {
-    const tsConfig = getTSConfig(rootDir);
+    const tsConfig = getTSConfig(join(rootDir, 'tsconfig.json'));
     const deps = [];
     for (let reference of tsConfig.references ?? []){
         const refRoot = path.resolve(rootDir, reference.path);

@@ -17,7 +17,7 @@
 		"compile:watch": "node --import @cmmn/tools/import ./bin.ts compile --watch"
 	},
 	"exports": {
-		"./tsconfig.json": "./tsconfig.json",
+		"./tsconfig.json": "./helpers/tsconfig.json",
 		"./import": "./node/register.js",
 		"./import-dev": "./node/register-dev.js",
 		"./test": "./test/test.ts",

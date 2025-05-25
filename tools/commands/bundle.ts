@@ -1,12 +1,9 @@
 import {Target} from "../helpers/target";
 import {Terminal} from "../helpers/terminal.js";
-import {Bundler} from "../helpers/bundler.js";
+import {Bundler} from "../helpers/bundler";
+import {Flags} from "../helpers/flags";
 
-/**
- * @param flags {import("../helpers/flags.ts").Flags}
- * @returns {Promise<void>}
- */
-export async function bundle(flags) {
+export async function bundle(flags: Flags) {
     const targets = await Target.readTargets(process.cwd(), flags);
 
     const term = new Terminal(flags, targets);
@@ -16,23 +13,23 @@ export async function bundle(flags) {
 
         const bundler = new Bundler(target, flags);
 
-        if (!flags.watch) {
+        // if (!flags.watch) {
             bundler.bundle().then(res => {
                 term.setData(target, {
                     state: 'ok',
-                    size: bundler.results.map(x => x.data.length).reduce((a, b) => a + b, 0)
+                    size: bundler.results.map(x => x.data?.length ?? 0).reduce((a, b) => a + b, 0)
                 });
                 for (let result of bundler.results) {
                     if (result.entry) {
-                        term.term.yellow(`\t\t${result.entry} -> ${result.fileName}\n`)
+                        term.term.yellow(`\t\t${result.entry.name} -> ${result.fileName}\n`)
                     } else {
                         term.term.yellow(`\t\t${result.fileName}\n`)
                     }
                 }
             }).then(() => bundler.write());
-        } else {
-        }
-        // term[Symbol.dispose]();
+        // } else {
+        //
+        // }
     }
 }
 

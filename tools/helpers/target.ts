@@ -8,7 +8,7 @@ import {Flags} from "./flags";
 import {JSONSchemaForNPMPackageJsonFiles} from "@schemastore/package";
 import {CompilerOptions} from "typescript";
 import {Config} from "@swc/core";
-import { minimatch } from 'minimatch';
+import {minimatch} from 'minimatch';
 
 export class Target extends EventTarget {
     rootDir: string;
@@ -56,17 +56,17 @@ export class Target extends EventTarget {
 
     _tsConfig: TypescriptConfig;
     get tsConfig(): TypescriptConfig {
-        return this._tsConfig ??= getTSConfig(this.rootDir);
+        return this._tsConfig ??= getTSConfig(join(this.rootDir, 'tsconfig.json'));
     }
 
-    isExcluded(fileName: string, relative: boolean = false){
+    isExcluded(fileName: string, relative: boolean = false) {
         const check = (pattern: string) => {
             if (!relative)
                 pattern = join(this.rootDir, pattern);
             return fileName.startsWith(pattern) || minimatch(fileName, pattern);
         };
         const include = this.tsConfig.include ?? [];
-        if (include.length > 0){
+        if (include.length > 0) {
             if (!include.some(check))
                 return true;
         }
@@ -115,31 +115,45 @@ export class Target extends EventTarget {
         };
     }
 
-    _entries: Record<string, string>
-    get entries(): Record<string, string> {
+    _entries: Entry[]
+    get entries(): Entry[] {
         if (this._entries) return this._entries;
-        if (this.packageJson.exports) {
-            const result = {};
+        if (this.packageJson.exports && typeof this.packageJson.exports == "object") {
+            const result = [] as Entry[];
             for (let item in this.packageJson.exports) {
                 const importFile = this.packageJson.exports[item].require ??
                     this.packageJson.exports[item].default ?? this.packageJson.exports[item];
                 if (!importFile || !(typeof importFile === "string")) continue;
-                result[item] = path.join(
-                    this.rootDir,
-                    importFile
-                );
+                result.push(this.createEntry(item, importFile));
             }
             return this._entries = result;
         }
         const entry = path.join(this.rootDir, this.packageJson.module
             ?? this.packageJson.main
-            ?? "counter.ts");
-        return this._entries = {
-            '.': entry
+            ?? this.packageJson.exports as string
+            ?? "index.ts");
+        return this._entries = [this.createEntry('.', entry)];
+    }
+
+    getEntry(name: string): Entry | undefined {
+        return this.entries.find(x => x.name === name);
+    }
+
+    createEntry(name: string, source: string): Entry {
+        source = resolve(this.rootDir, source);
+        return {
+            name,
+            source,
+            isExcluded: this.isExcluded(source),
+            isHTML: /\.html$/i.test(source),
+            output: this.getExport(name, source),
+            isTypeScript: /\.tsx?$/i.test(source),
+            isJavaScript: /\.jsx?$/i.test(source)
         }
     }
 
     term;
+
     log(text) {
         this.term ??= new terminalKit.Terminal();
         this.term.blue(this.packageJson.name);
@@ -150,14 +164,7 @@ export class Target extends EventTarget {
         this.log(`^RERROR: ^w` + text.toString());
     }
 
-    _exports: Record<string, string>
-    get exports(): Record<string, string> {
-        return this._exports ??= Object.fromEntries(Object.entries(this.entries).map(
-            ([entry, file]) => [entry, this.getExport(entry, file)]
-        ));
-    }
-
-    getExport(entry, file) {
+    getExport(entry: string, file: string) {
         if (this.isExcluded(file))
             return './' + relative(this.rootDir, file);
         const extension = file.match(/\.([^.]+)$/)[1];
@@ -172,19 +179,15 @@ export class Target extends EventTarget {
 
     async getPublishPackageJson() {
         const packageJson = JSON.parse(JSON.stringify(this.packageJson));
-        for (let [entry, result] of Object.entries(this.exports)) {
-            const source = this.entries[entry];
-            const typings = source.endsWith('.ts')
-                ? join('./dist/typings', relative(this.rootDir, source.replace(/\.ts$/, '.d.ts')))
-                : null;
+        for (let entry of this.entries) {
+            if (entry.isHTML || entry.isExcluded) continue;
+            const typings = entry.isTypeScript ? './' + join('./dist/typings', relative(this.rootDir, entry.source.replace(/\.ts$/, '.d.ts'))) : undefined;
+            const bundle = `./dist/bundle/${entry.output}`;
             if (packageJson.exports) {
-                packageJson.exports[entry] = { default: `./dist/bundle/${result}` };
-                if (typings){
-                    packageJson.exports[entry].typings = './'+ typings;
-                }
+                packageJson.exports[entry.name] = {default: bundle, typings};
             } else {
-                packageJson.main = `./dist/bundle/${result}`;
-                if (typings) packageJson.typings = typings;
+                packageJson.main = bundle;
+                packageJson.typings = typings;
             }
         }
         delete packageJson.module;
@@ -208,7 +211,7 @@ export class Target extends EventTarget {
     }
 
     _proxy;
-    get proxy(): Array<{ regex: RegExp; replace}> {
+    get proxy(): Array<{ regex: RegExp; replace }> {
         return this._proxy ??= Object.entries({
             ...this.packageJson.config?.proxy as any ?? {},
         })
@@ -227,4 +230,16 @@ export class ChangeEvent extends Event {
         super('change');
         this.payload = payload;
     }
+}
+
+export type Entry = {
+    name: string;
+    source: string;
+    isHTML: boolean;
+    isExcluded: boolean;
+    output: string;
+    isTypeScript: boolean;
+    isJavaScript: boolean;
+    // compiledPath: string;
+    // typingsPath: string;
 }

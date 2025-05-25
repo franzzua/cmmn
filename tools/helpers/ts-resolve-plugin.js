@@ -45,10 +45,10 @@ class Visitor {
         const sourceFileDir = path.dirname(sourceFile.fileName);
 
         return [
-            importPath + "/counter.ts",
+            importPath + "/index.ts",
             importPath + ".ts",
             importPath + ".tsx",
-            importPath + "/counter.ts",
+            importPath + "/index.ts",
             importPath + ".js",
             importPath + ".jsx",
             importPath,
@@ -167,45 +167,6 @@ class Visitor {
         );
         newNode.flags = importNode.flags;
         return newNode;
-        // const caseSensitiveFileNames = this.context.getEmitHost().useCaseSensitiveFileNames();
-        // const formatPath = caseSensitiveFileNames ? x => x : x => x.toLowerCase();
-        // const sourceFileDir = path.dirname(sourceFile.path);
-        // const abs = formatPath(path.resolve(sourceFileDir, formatPath(file)));
-        // if (/\.(less|css|scss|sass|svg|png|html)$/.node(file)) {
-        //     const absSource = formatPath(path.join(this.options.outDir, formatPath(path.relative(this.options.baseUrl, sourceFileDir))));
-        //     const relFile = path.relative(absSource, abs).replaceAll(path.sep, '/');
-        //     return this.context.factory.updateImportDeclaration(
-        //         importNode,
-        //         importNode.decorators,
-        //         importNode.modifiers,
-        //         importNode.importClause,
-        //         importNode.assertClause,
-        //         this.context.factory.createStringLiteral(relFile)
-        //     );
-        // }
-        // if (/\.(json|tsx?|jsx?)$/.node(file))
-        //     return;
-        // if (fs.existsSync(abs + '.ts') || fs.existsSync(abs + '.tsx')) {
-        //     return this.context.factory.updateImportDeclaration(
-        //         importNode,
-        //         importNode.decorators,
-        //         importNode.modifiers,
-        //         importNode.importClause,
-        //         importNode.assertClause,
-        //         this.context.factory.createStringLiteral(file + '.js')
-        //     );
-        // }
-        // if (fs.existsSync(abs + '/')) {
-        //     const indexFile = `${file}/counter.ts`;
-        //     return this.context.factory.updateImportDeclaration(
-        //         importNode,
-        //         importNode.decorators,
-        //         importNode.modifiers,
-        //         importNode.importClause,
-        //         importNode.assertClause,
-        //         this.context.factory.createStringLiteral(indexFile)
-        //     );
-        // }
     }
 
     /**

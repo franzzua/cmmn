@@ -52,7 +52,11 @@ function compileFiles(target: Target, filenames = [target.rootDir]): Promise<voi
 				target.log(`compiled for ^W${e.duration.toFixed(0)}ms ^w ${e.compiled} files.`);
 			},
 
-			onFail: e => target.error(e),
+			onFail: e => {
+				for (let [file, error] of e.reasons) {
+					target.error(`${file}\n${error}`)
+				}
+			},
 			// onWatchReady: (e) => {
 			//     console.log('watch ready');
 			// },

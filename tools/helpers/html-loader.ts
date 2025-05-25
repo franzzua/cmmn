@@ -1,12 +1,13 @@
 import fs from "node:fs/promises";
 import {join, relative} from "node:path";
 
-/**
- * @param path
- * @param root
- * @returns {Promise<{readonly result: string, imports: {update(path: string): void; src: string;}[]}|string>}
- */
-export async function htmlLoader(path, root){
+export async function htmlLoader(path: string, root: string): Promise<{
+    imports: Array<{
+        src: string;
+        update(path: string): void;
+    }>;
+    get result(): string;
+}>{
     const html = await fs.readFile(path, 'utf-8');
     const {parseHTML} = await import('linkedom');
     const dom = parseHTML(html);

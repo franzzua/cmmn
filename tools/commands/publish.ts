@@ -13,14 +13,14 @@ export async function publish(flags: Flags){
         const target = new Target(pkg.dir, flags, []);
         if (target.packageJson.private)
             continue;
-        console.log(target.packageJson.name, target.exports);
+        const content = await target.getPublishPackageJson();
+        console.log(target.packageJson.name, JSON.parse(content).exports);
         continue;
         if (target.tsConfig) {
             await fs.rename(
                 join(target.rootDir, './package.json'),
                 join(target.rootDir, './.package.json')
             );
-            const content = await target.getPublishPackageJson();
 
             await fs.writeFile(
                 join(target.rootDir, 'package.json'),
