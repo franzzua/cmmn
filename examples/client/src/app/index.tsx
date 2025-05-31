@@ -4,5 +4,5 @@ import {StrictMode} from "react";
 import {Movable} from "../movable/movable";
 
 createRoot(document.getElementById('root')).render((
-	<Movable />
+	<App />
 ));

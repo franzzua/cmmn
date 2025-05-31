@@ -15,7 +15,6 @@
 			"types": "./index.ts"
 		}
 	},
-	"typings": "./index.ts",
 	"dependencies": {
 		"throttle-debounce": "5.0.2",
 		"uuidv7": "1.0.2"

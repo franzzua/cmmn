@@ -14,8 +14,6 @@ export async function publish(flags: Flags){
         if (target.packageJson.private)
             continue;
         const content = await target.getPublishPackageJson();
-        console.log(target.packageJson.name, JSON.parse(content).exports);
-        continue;
         if (target.tsConfig) {
             await fs.rename(
                 join(target.rootDir, './package.json'),

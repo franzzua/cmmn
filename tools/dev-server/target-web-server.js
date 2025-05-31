@@ -148,7 +148,7 @@ export class TargetWebServer extends TargetServer {
 
     resolvePath(file, req) {
         if (file === '/') file = '';
-        const resolved = this.target.entries.find(x => x.name === '.' + file) ?? this.resolveByReferrer(req, file);
+        const resolved = this.target.entries.find(x => x.name === '.' + file)?.source ?? this.resolveByReferrer(req, file);
         if (resolved)
             return '/' + relative(this.target.rootDir, resolved);
     }

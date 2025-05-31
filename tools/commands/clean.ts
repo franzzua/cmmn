@@ -1,19 +1,16 @@
-import {getPackages} from "@manypkg/get-packages";
 import fs from "node:fs/promises";
 import {join} from "node:path";
 import {Flags} from "../helpers/flags";
 import {Target} from "../helpers/target";
+import * as process from "node:process";
 
 export async function clean(flags: Flags){
-    const packages = await getPackages(process.cwd())
-    for (const pkg of packages.packages) {
-        if (flags.workspace && flags.workspace != pkg.relativeDir)
-            continue;
-        const target = new Target(pkg.dir, flags, []);
+    const targets = await Target.readTargets(process.cwd(), flags);
+    for (const target of targets) {
         target.log('remove dist');
-        await fs.rm(join(pkg.dir, 'dist'), { recursive: true }).catch(() => void 0);
+        await fs.rm(join(target.rootDir, 'dist'), { recursive: true }).catch(() => void 0);
         target.log('remove node_modules');
         if (flags.args.includes('--modules'))
-            await fs.rm(join(pkg.dir, 'node_modules'), { recursive: true }).catch(() => void 0);
+            await fs.rm(join(target.rootDir, 'node_modules'), { recursive: true }).catch(() => void 0);
     }
 }

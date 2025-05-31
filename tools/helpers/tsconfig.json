@@ -19,6 +19,7 @@
     "disableSourceOfProjectReferenceRedirect": true,
     "allowSyntheticDefaultImports": true,
     "emitDeclarationOnly": true,
+    "declaration": true,
     "noEmitHelpers": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -34,12 +35,8 @@
       "node"
     ]
   },
-  "include": [
-    "**/*.ts"
-  ],
   "exclude": [
     "node_modules",
-    "dist",
-    "node"
+    "dist"
   ]
 }

@@ -78,7 +78,9 @@ export class Bundler {
                 "process.env.NODE_ENV": this.flags.production ? '"production"' : '"development"'
             },
             publicPath: './',
-            entryPoints: Object.fromEntries(this.target.entries.filter(entry => !entry.isExcluded).map(e => [e.name, e.source])),
+            entryPoints: Object.fromEntries(this.target.entries.filter(entry =>
+                !entry.isExcluded && !entry.isHTML
+            ).map(e => [e.name, e.source])),
             bundle: true,
             target: 'esnext',
             format: 'esm',

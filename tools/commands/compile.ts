@@ -10,7 +10,7 @@ const rootDir = process.cwd();
 export async function compile(flags: Flags) {
 	const targets = await Target.readTargets(rootDir, flags);
 	events.defaultMaxListeners = Math.max(targets.length * 2, events.defaultMaxListeners);
-	const watcher = flags.watch ? new Watcher(targets) : null;
+	const watcher = flags.watch ? new Watcher() : null;
 	for (const target of targets) {
 		if (target.tsConfig.include?.length === 0)
 			continue;

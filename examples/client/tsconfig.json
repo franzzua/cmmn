@@ -12,7 +12,10 @@
   },
   "include": [
     "**/*.tsx",
-    "**/*.ts"
+    "**/*.ts",
+    "**/*.svg",
+    "**/*.less",
+    "**/*.html"
   ],
   "exclude": [
     "dist",

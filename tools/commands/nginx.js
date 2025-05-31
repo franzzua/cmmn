@@ -17,7 +17,7 @@ export async function nginx(flags) {
         const confFile = join(outDir, `${host}.conf`);
         // if (await fs.stat(confFile).catch(() => null))
         //     continue;
-        const content = nginxTemplate('/_/'+target.packageJson.name, host, 9000, proxy);
+        const content = nginxTemplate('/_/'+target.packageJson.name, host, target.packageJson.config?.port ?? 9000, proxy);
         await fs.writeFile(confFile, content);
         const cert = join(outDir, `${host}.pem`);
         const key = join(outDir, `${host}-key.pem`);
