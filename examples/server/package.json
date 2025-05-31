@@ -1,6 +1,6 @@
 {
 	"name": "@cmmn/examples-server",
-	"version": "3.0.0-beta-8",
+	"version": "3.0.0-beta-9",
 	"description": "",
 	"private": true,
 	"type": "module",
@@ -10,8 +10,9 @@
 		"run": "node --env-file=.env --import @cmmn/tools/import ./src/index.ts"
 	},
 	"config": {},
-	"devDependencies": {
+	"dependencies": {
 		"@cmmn/examples-common": "workspace:~",
-		"@cmmn/server": "workspace:~"
+		"@cmmn/server": "workspace:~",
+		"fastify": "^5"
 	}
 }
