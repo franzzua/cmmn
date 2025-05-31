@@ -1,14 +1,10 @@
 {
 	"name": "@cmmn/core",
-	"version": "3.0.0-beta-9",
+	"version": "3.0.0-beta-A",
 	"repository": {
 		"url": "https://github.com/franzzua/cmmn/tree/master/core"
 	},
 	"description": "di, base extensions, useful functions",
-	"publishConfig": {
-		"registry": "https://npm.local",
-		"access": "public"
-	},
 	"scripts": {
 		"typings": "cmmn typings --watch"
 	},
