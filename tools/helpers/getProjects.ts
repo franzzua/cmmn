@@ -1,7 +1,6 @@
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path, {join} from "node:path";
 import {getTSConfig} from "./getTSConfig";
-import {join} from "node:path";
 
 function getProjectConfig(rootDir, cmmn, options) {
     return {
@@ -11,14 +10,9 @@ function getProjectConfig(rootDir, cmmn, options) {
     };
 }
 
-/**
- * @param rootDir
- * @param visited
- * @returns {AsyncGenerator<{ root: string, deps: string[] }>}
- */
-export async function *getDependencyOrder(rootDir, visited = []) {
+export async function *getDependencyOrder(rootDir: string, visited: string[] = []): AsyncGenerator<{ root: string; deps: string[] }> {
     const tsConfig = getTSConfig(join(rootDir, 'tsconfig.json'));
-    const deps = [];
+    const deps: string[] = [];
     for (let reference of tsConfig.references ?? []){
         const refRoot = path.resolve(rootDir, reference.path);
         if (visited.includes(refRoot)) {
@@ -35,7 +29,7 @@ export async function *getDependencyOrder(rootDir, visited = []) {
 }
 
 
-async function getPackageConfigs(rootDir, options, name = null, visited = []) {
+async function getPackageConfigs(rootDir, options, name = null) {
     const pckPath = path.join(rootDir, 'package.json');
     if (!fs.existsSync(pckPath))
         return [];
