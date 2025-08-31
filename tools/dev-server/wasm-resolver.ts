@@ -5,7 +5,7 @@ export const wasmResolver = {
 	name: 'wasm-resolver',
 	setup(r) {
 		r.onResolve({filter: /\.(?:wasm)$/}, o => {
-			const resolved = import.meta.resolve(o.path);
+			const resolved = new URL(o.path, url.pathToFileURL(o.importer));
 			return {
 				path: url.fileURLToPath(resolved),
 				namespace: 'wasm-module'
@@ -19,4 +19,4 @@ export const wasmResolver = {
 			loader: "file"
 		}))
 	}
-},
+};

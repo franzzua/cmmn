@@ -3,6 +3,7 @@ import {fileURLToPath} from "node:url";
 import path from "node:path";
 import fs from "node:fs/promises";
 import mime from "mime-types";
+import {RolldownDependencyBuilder} from "./rolldown-dependency-builder";
 
 export class DependencyServer {
     base = '/_/@id'
@@ -18,7 +19,7 @@ export class DependencyServer {
             // '@vite/client',
             // '@react-refresh'
         ])].filter(x => targets.every(y => y.packageJson.name !== x));
-        this.builder = new DependencyBuilder(this.optimizeDeps, this.base, mode);
+        this.builder = new RolldownDependencyBuilder(this.optimizeDeps, this.base, mode);
     }
 
     resolveId(id, importer, options) {
@@ -56,10 +57,10 @@ export class DependencyServer {
         app.get('/_/@id/*', async (req, res) => {
             try {
                 let param = req.params['*'];
-                let [pkg, path] = param.split('/_');
+                let [pkg, path] = param.split('/@_');
                 path ??= '/';
                 res.header('Access-Control-Allow-Origin', '*');
-                res.header('Content-Type', mime.lookup(pkgPath) || 'text/javascript');
+                res.header('Content-Type', mime.lookup(pkg) || 'text/javascript');
                 if (pkg.endsWith('.wasm')){
                     const url = path.relative(process.cwd(), fileURLToPath(import.meta.resolve(pkg)));
                     return `

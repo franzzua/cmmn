@@ -5,8 +5,7 @@ import {wasmResolver} from "./wasm-resolver";
 
 export class EsBuildDependencyBuilder {
 
-    constructor(dependencies, basePath, mode) {
-        this.mode = mode;
+    constructor(dependencies, basePath) {
         this.basePath = basePath;
         this.dependencies = dependencies;
         this.externals = dependencies.map(id =>
@@ -37,7 +36,7 @@ export class EsBuildDependencyBuilder {
 
     async getEntry(target, pkgJSON){
         const id = crc32(target + new Date() + Math.random());
-        const file = `${this.dir}/.${id}.js`;
+        const file = `${this.dir}/.${id}.mjs`;
         const content = await this.getFileContnet(target, pkgJSON);
         await fs.mkdir(this.dir, { recursive: true });
         await fs.writeFile(file, content, 'utf-8');
@@ -55,7 +54,7 @@ export class EsBuildDependencyBuilder {
         try {
             const build = await esbuild.build({
                 entryPoints,
-                platform: 'browser',
+                platform: 'neutral',
                 alias: this.getAlias(target),
                 mainFields: ['module', 'browser', 'main'],
                 external: [
@@ -74,7 +73,7 @@ export class EsBuildDependencyBuilder {
                 globalName: 'result',
                 plugins: [
                     wasmResolver,
-                    esbuildCjsExternalPlugin(this.dependencies, 'browser', this.basePath)
+                   // esbuildCjsExternalPlugin(this.dependencies, 'browser', this.basePath)
                 ],
             });
             return Object.fromEntries(

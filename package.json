@@ -7,9 +7,6 @@
 	"repository": {
 		"url": "https://npm.local"
 	},
-	"exports": {
-		".": "./test"
-	},
 	"config": {
 		"host": "cmmn.framework.app",
 		"port": "9009",
