@@ -47,20 +47,31 @@ export class DependencyServer {
      * @returns {Promise<void>}
      */
     async register(app) {
+        app.get('/_/@fs/*', async (req, res)=>{
+            const filePath = './'+req.params['*'];
+            res.header('Access-Control-Allow-Origin', '*');
+            res.header('Content-Type', mime.lookup(filePath) || 'text');
+            return fs.readFile(filePath);
+        });
         app.get('/_/@id/*', async (req, res) => {
             try {
                 let param = req.params['*'];
                 let [pkg, path] = param.split('/_');
                 path ??= '/';
-
+                res.header('Access-Control-Allow-Origin', '*');
+                res.header('Content-Type', mime.lookup(pkgPath) || 'text/javascript');
+                if (pkg.endsWith('.wasm')){
+                    const url = path.relative(process.cwd(), fileURLToPath(import.meta.resolve(pkg)));
+                    return `
+                        export default '/_/@fs/${url}';
+                    `;
+                }
                 const pkgJSON = await this.getPackageJSON(pkg);
                 const exports = pkgJSON.exports;
                 if (exports && (`.${path}` in exports)){
                     pkg += path;
                     path = '/';
                 }
-                res.header('Access-Control-Allow-Origin', '*');
-                res.header('Content-Type', mime.lookup(path) || 'text/javascript');
                 if (!this.cache.has(pkg)) {
                     const start = +performance.now();
                     const buffer = await this.builder.build(pkg, pkgJSON).catch(console.error);

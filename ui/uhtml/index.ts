@@ -2,8 +2,8 @@ import {Cell} from "@cmmn/core";
 
 export { component, property } from './component/decorators';
 export { Component } from './component/component';
-export { html, svg } from 'uhtml';
-// export { htmlFor, svgFor } from 'uhtml/keyed';
+export { html, svg, Hole } from 'uhtml';
+export { htmlFor, svgFor } from 'uhtml/keyed';
 // export { EventListener } from "./user-events/eventListener"
 // export { EventCycle } from "./user-events/event-cycle"
 // export { intersectionObserver } from "./user-events/intersectionObserver"

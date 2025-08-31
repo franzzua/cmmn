@@ -5,6 +5,7 @@ import {htmlLoader} from "./html-loader.js";
 import {Flags} from "./flags";
 import {Target, Entry} from "./target";
 import {BuildContext} from "esbuild";
+import {wasmResolver} from "../dev-server/wasm-resolver";
 
 export class Bundler {
     results: Array<{
@@ -96,10 +97,8 @@ export class Bundler {
             mainFields: ['browser', 'module', 'main'],
             sourcemap: this.flags.production ? false : "inline",
             plugins: [
+                wasmResolver,
                 await import('esbuild-plugin-less').then(x => x.lessLoader()),
-                await import('esbuild-plugin-wasm').then(x => x.wasmLoader({
-                    mode: 'embedded'
-                })),
             ],
             metafile: true,
         });

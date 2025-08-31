@@ -58,7 +58,8 @@ export function cell<T, TClass = unknown>(
 				const target = initialValue as ClassAccessorDecoratorTarget<TClass, T>;
 				const createCell = (self: TClass) => {
 					options.startValue = undefined;
-					return new Cell(() => target.get.call(self), options);
+					const initialValue = target.get.call(self);
+					return new Cell(initialValue, options);
 				};
 				return {
 					get(this: TClass) {

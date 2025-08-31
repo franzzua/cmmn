@@ -1,15 +1,16 @@
 import { Component } from './component';
-import { cell, ICellOptions } from '@cmmn/core';
+import {cell, Fn, ICellOptions} from '@cmmn/core';
+import {ComponentRegistry} from "./registry";
 
 export type IComponentOptions = {
 	name?: `${string}-${string}`;
+	scoped?: boolean;
 };
 
 export function component(opts: IComponentOptions = {}) {
 	return (
 		target: {
 			new (): Component;
-			Name?: string;
 		},
 		context: ClassDecoratorContext,
 	) => {
@@ -24,18 +25,17 @@ export function component(opts: IComponentOptions = {}) {
 				},
 			});
 		}
-		target.prototype.attributeChangedCallback = function (
-			key,
-			oldValue,
-			newValue,
-		) {
-			if (key in attrs) {
-				this[attrs[key]] = newValue;
+		target.prototype.attributeChangedCallback = Fn.join(
+			target.prototype.attributeChangedCallback,
+			function (
+				key,
+				oldValue,
+				newValue,
+			) {
+				this[key] = newValue;
 			}
-		};
-		const name = opts.name ?? toSnake(target.name);
-		if (!customElements.get(name))
-			customElements.define(name, target);
+		)
+		ComponentRegistry.Instance.register(target, opts);
 	};
 }
 
@@ -45,8 +45,8 @@ export function property<T>(
 	} & ICellOptions<T> = {},
 ) {
 	return function (
-		initial: ClassAccessorDecoratorTarget<Element, T>,
-		context: ClassAccessorDecoratorContext<Element, T>,
+		initial: T,
+		context: ClassFieldDecoratorContext<Element, T>,
 	) {
 		const attrName = options?.name ?? toSnake(context.name.toString());
 		const set = (context.metadata.observedAttributes ??= {}) as Record<
@@ -55,11 +55,14 @@ export function property<T>(
 		>;
 		set[attrName] = context.name;
 		if (initial) {
+			// TODO: what is it for?
 			context.addInitializer(function (...args) {
 				// this.setAttribute(attrName, 'Hi!')
 			});
 		}
-		return cell<T, Element>(options)(initial, context);
+		return cell<T, Element>({
+			...(options ?? {}),
+		})(initial, context);
 	};
 }
 

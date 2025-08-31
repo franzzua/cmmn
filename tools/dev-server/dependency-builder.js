@@ -1,5 +1,7 @@
 import {crc32} from "node:zlib";
 import fs from "node:fs/promises";
+import url from "url";
+import {wasmResolver} from "./wasm-resolver";
 
 export class EsBuildDependencyBuilder {
 
@@ -71,9 +73,7 @@ export class EsBuildDependencyBuilder {
                 write: false,
                 globalName: 'result',
                 plugins: [
-                    await import('esbuild-plugin-wasm').then(x => x.wasmLoader({
-                        mode: 'embedded'
-                    })),
+                    wasmResolver,
                     esbuildCjsExternalPlugin(this.dependencies, 'browser', this.basePath)
                 ],
             });

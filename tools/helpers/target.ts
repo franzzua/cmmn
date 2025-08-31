@@ -74,11 +74,17 @@ export class Target extends EventTarget {
         return exclude.some(check);
     }
 
+    get swcConfigPath(){
+        const local = join(this.rootDir, '.swcrc');
+        if (fs.existsSync(local))
+            return local;
+        return fileURLToPath(import.meta.resolve('@cmmn/tools/swcrc'));
+    }
     swcConfigBase;
 
     _swcConfig: Config;
     get swcConfig(): Config {
-        this.swcConfigBase ??= JSON.parse(fs.readFileSync(fileURLToPath(import.meta.resolve('@cmmn/tools/swcrc')), {
+        this.swcConfigBase ??= JSON.parse(fs.readFileSync(this.swcConfigPath, {
             encoding: 'utf-8'
         }));
         const tsConfig = this.tsConfig;
@@ -101,7 +107,7 @@ export class Target extends EventTarget {
                         comments: false,
                         asciiOnly: true
                     }
-                } : undefined
+                } : undefined,
             },
             module: {
                 type: 'es6',

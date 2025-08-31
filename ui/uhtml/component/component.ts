@@ -1,8 +1,7 @@
 import { Hole, render } from 'uhtml';
 import { bind, Cell, EventEmitter } from '@cmmn/core';
-import { EventCycle } from '../user-events/event-cycle';
 
-export abstract class Component extends globalThis.HTMLElement {
+export abstract class Component extends HTMLElement {
 	attributeChangedCallback(key, oldValue, newValue) {
 		if (key in this)
 			this[key] = newValue;
@@ -69,17 +68,12 @@ export abstract class Component extends globalThis.HTMLElement {
 	}
 
 	protected renderCallback() {
-		this.dispatchEvent(new RenderEvent());
+		this.dispatchEvent(new Event('render'));
 	}
 
 	protected injectedChildren: Element[];
 
-	public onrender: ((this: Component, ev: CustomEvent<HTMLElement>) => any) | null = console.log;
+	public onrender: ((this: Component, ev: Event) => any) | null;
+	public onconnected: ((this: Component, ev: Event) => any) | null;
 	public events = Cell.events(this as Component);
-}
-export class RenderEvent extends Event {
-	constructor() {
-		super('render');
-	}
-
 }

@@ -14,6 +14,7 @@
 		"host": "cmmn.framework.app",
 		"port": "9009",
 		"proxy": {
+			"^/example/react/api": "/_/@cmmn/examples-server/api",
 			"^/example/react": "/_/@cmmn/examples-client",
 			"^/example/uhtml": "/_/@cmmn/examples-counter"
 		}

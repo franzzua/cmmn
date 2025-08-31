@@ -132,7 +132,7 @@ export class Cell<T = unknown, TKey = T> extends BaseCell<T> {
 		return cell;
 	}
 
-	static from<T>(subscribe: Subscriber<any, T>): BaseCell<T>;
+	static from<T>(subscribe: {subscribe: Subscriber<any, T>}): BaseCell<T>;
 	static from<TEventName extends string, T, TEventEmitter extends EventEmitter<Record<TEventName, T>>>(eventTarget: TEventEmitter, eventName: TEventName): BaseCell<T>
 	static from<TEventName, TEventTarget extends EventTarget>(eventTarget: TEventTarget, eventName: TEventName): BaseCell<
 		TEventTarget extends {
@@ -141,10 +141,14 @@ export class Cell<T = unknown, TKey = T> extends BaseCell<T> {
 	>;
 	static from<T>(something, eventName?): BaseCell<T> {
 		if (something instanceof EventEmitterBase) {
-			return new EventCell<T>(listener => something.on(eventName, listener));
+			return new EventCell<T>({
+				subscribe: listener => something.on(eventName, listener)
+			});
 		}
 		if (something instanceof EventTarget){
-			return new EventCell<T>(listener => eventTargetSubscriber(eventName).call(something, listener));
+			return new EventCell<T>({
+				subscribe: listener => eventTargetSubscriber(eventName).call(something, listener)
+			});
 		}
 		return new EventCell<T>(something);
 	}
@@ -163,14 +167,14 @@ export class Cell<T = unknown, TKey = T> extends BaseCell<T> {
 }
 
 class EventCell<T> extends BaseCell<T> {
-	constructor(private subscriber: Subscriber<any, T>) {
+	constructor(private subscriber: {subscribe: Subscriber<any, T>}) {
 		super(null);
 	}
 
 	unsusbscribe;
 
 	active() {
-		this.unsusbscribe = this.subscriber((e) => this.set(e));
+		this.unsusbscribe = this.subscriber.subscribe((e) => this.set(e));
 		super.active();
 	}
 
@@ -180,19 +184,6 @@ class EventCell<T> extends BaseCell<T> {
 		this.value = null;
 	}
 }
-// export class AICell<T> extends Cell<T> {
-// 	constructor(private ai: AsyncIterator<T>, options: ICellOptions<T> = {}) {
-// 		super(undefined, options);
-// 	}
-//
-// 	async active() {
-// 		super.active();
-// 		for await (let t of this.ai) {
-// 			if (!this.isActive) return;
-// 			this.set(t);
-// 		}
-// 	}
-// }
 
 export function eventTargetSubscriber<T extends EventTarget, Args extends Event>(eventName: string): Subscriber<T, Args> {
 	return function (this: T, listener: (e: Args) => void) {
@@ -200,6 +191,7 @@ export function eventTargetSubscriber<T extends EventTarget, Args extends Event>
 		return () => this.removeEventListener(eventName, listener);
 	}
 }
+
 
 export class CellFilterError<T> extends Error {
 	constructor(

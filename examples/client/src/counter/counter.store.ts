@@ -16,7 +16,7 @@ export class CounterStore {
 	dec = () => this.counter.value--;
 
 
-	lastEvent = Cell.from<LoroEventBatch>(this.counter.subscribe)
+	lastEvent = Cell.from<LoroEventBatch>(this.counter.subscribe.bind(this.counter));2
 
 	get lastDiffs(){
 		return this.lastEvent.get()?.events?.map(x => x.diff as CounterDiff) ?? []
