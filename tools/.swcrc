@@ -10,7 +10,8 @@
             "decoratorVersion": "2022-03",
             "react": {
                 "runtime": "automatic"
-            }
+            },
+            "useDefineForClassFields": false
         },
         "target": "esnext",
         "externalHelpers": true

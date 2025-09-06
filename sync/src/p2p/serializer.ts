@@ -1,9 +1,8 @@
 export class Serializer {
-	public uint8: Uint8Array;
+	public uint8 = new Uint8Array(this.size);
 	private index = 0;
 
 	constructor(private size: number) {
-		this.uint8 = new Uint8Array(this.size);
 	}
 
 	writeByte(value: number) {
