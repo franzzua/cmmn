@@ -1,15 +1,13 @@
 import {fileURLToPath} from "node:url";
-import {wasmResolver} from "./wasm-resolver.js";
-import {PackageConfig} from "import-meta-resolve/lib/resolve";
+
 import {crc32} from "node:zlib";
 import fs from "node:fs/promises";
-import {JSONSchemaForNPMPackageJsonFiles} from "@schemastore/package";
 
 export class RolldownDependencyBuilder {
-    constructor(private dependencies: string[], private basePath: string) {
+    constructor(private externals: string[], private basePath: string) {
     }
 
-    async getFileContnet(target: string){
+    async getFileContent(target: string){
         const pkg = await import(target);
         const keys = Object.keys(pkg).filter(x => x !== 'default');
         return [
@@ -21,18 +19,10 @@ export class RolldownDependencyBuilder {
 
     dir = './node_modules/.cmmn';
 
-    async getEntry(target: string, pkgJSON: JSONSchemaForNPMPackageJsonFiles): Promise<AsyncDisposable & Record<string, string>>{
-        if (pkgJSON.type === 'module' || pkgJSON.module){
-            const targetUrl = import.meta.resolve(target);
-            const targetFile = fileURLToPath(targetUrl);
-            return {
-                index: targetFile,
-                [Symbol.asyncDispose]: () => Promise.resolve()
-            }
-        }
+    async getEntry(target: string): Promise<AsyncDisposable & Record<string, string>>{
         const id = crc32(target + new Date() + Math.random());
         const file = `${this.dir}/.${id}.js`;
-        const content = await this.getFileContnet(target);
+        const content = await this.getFileContent(target);
         await fs.mkdir(this.dir, { recursive: true });
         await fs.writeFile(file, content, 'utf-8');
         return {
@@ -43,25 +33,34 @@ export class RolldownDependencyBuilder {
         };
     }
 
-    async build(target: string, pkgJSON: JSONSchemaForNPMPackageJsonFiles) {
-        const rolldown = await import("rolldown");
+    getModuleEntry(target: string){
+        const targetUrl = import.meta.resolve(target);
+        const targetFile = fileURLToPath(targetUrl);
+        return {
+            index: targetFile,
+            [Symbol.asyncDispose]: () => Promise.resolve()
+        }
+    }
+
+    async build(target: string, isModule: boolean) {
+        const {build} = await import("rolldown");
         const {esmExternalRequirePlugin} = await import("rolldown/experimental");
         const wasmPlugin = await import("@rollup/plugin-wasm");
-        await using input = await this.getEntry(target, pkgJSON);
+        await using input = isModule ? this.getModuleEntry(target) : await this.getEntry(target);
         try {
-            const result = await rolldown.build({
+            const result = await build({
                 input,
                 write: false,
                 output: {
                     format: 'esm',
                     chunkFileNames: chunk =>  target + '/@_/' + chunk.name + '.js',
-                    preserveModulesRoot: '/preserveModulesRoot'
                 },
                 experimental: {
 
                 },
                 platform: 'browser',
                 resolve: {
+
                     // alias: Object.fromEntries(this.dependencies
                     //     .filter(x => x !== target)
                     //     .map(dep =>
@@ -76,6 +75,10 @@ export class RolldownDependencyBuilder {
                 external: [
                     `${this.basePath}/*`,
                 ],
+                optimization: {
+                    inlineConst: false,
+                },
+                treeshake: true,
                 plugins: [
                     wasmPlugin.wasm({
                         publicPath: this.basePath + '/' +target + '/',
@@ -94,23 +97,26 @@ export class RolldownDependencyBuilder {
                         name: 'externals',
                         resolveId: (id, importer, options)=> {
                             if (options.kind !== 'require-call' && id !== target
-                                && this.dependencies.includes(id) )
+                                && this.externals.includes(id) )
                                 return {
-                                    external: true,
+                                    external: "absolute",
                                     id: this.basePath + '/' + id
                                 }
                         }
                     },
                     esmExternalRequirePlugin({
-                        external: this.dependencies.filter(x => x !== target),
+                        external: this.externals.filter(x => x !== target),
                     })
                 ]
             });
-            return Object.fromEntries(
-                result.output
+            return Object.fromEntries([
+                ...result.output
                     .filter(x => x.type == "chunk")
-                    .map(x => [(x.name === 'index' ? '/' : x.fileName.substring(target.length + 3)), x.code])
-            );
+                    .map(x => [(x.name === 'index' ? '/' : x.fileName.substring(target.length + 3)), x.code]),
+                ...result.output
+                    .filter(x => x.type !== "chunk")
+                    .map(x => [x.fileName, x.source.toString()])
+            ]);
         } finally {
             // await entryPoints[Symbol.asyncDispose]();
         }

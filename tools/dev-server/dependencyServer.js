@@ -4,6 +4,7 @@ import path from "node:path";
 import fs from "node:fs/promises";
 import mime from "mime-types";
 import {RolldownDependencyBuilder} from "./rolldown-dependency-builder";
+import {JSONSchemaForNPMPackageJsonFiles} from "@schemastore/package";
 
 export class DependencyServer {
     base = '/_/@id'
@@ -19,7 +20,7 @@ export class DependencyServer {
             // '@vite/client',
             // '@react-refresh'
         ])].filter(x => targets.every(y => y.packageJson.name !== x));
-        this.builder = new RolldownDependencyBuilder(this.optimizeDeps, this.base, mode);
+        this.builder = new RolldownDependencyBuilder(this.optimizeDeps, this.base);
     }
 
     resolveId(id, importer, options) {
@@ -75,7 +76,8 @@ export class DependencyServer {
                 }
                 if (!this.cache.has(pkg)) {
                     const start = +performance.now();
-                    const buffer = await this.builder.build(pkg, pkgJSON).catch(console.error);
+                    const isModule = pkgJSON.type === 'module' || pkgJSON.module;
+                    const buffer = await this.builder.build(pkg, isModule).catch(console.error);
                     const end = +performance.now();
                     this.target.log(`^Wbundle ^R${pkg} ^Wfor ^R${((end - start) / 1000).toFixed(2)}s`)
                     this.cache.set(pkg, buffer);

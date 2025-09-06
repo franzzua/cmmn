@@ -60,7 +60,8 @@ export class TargetRunner extends TargetServer {
     async runServer() {
         this.target.log('starting...');
 
-        const [command, ...params] = this.target.packageJson.scripts.run.replace('@cmmn/tools/import', '@cmmn/tools/import-dev')
+        const [command, ...params] = this.target.packageJson.scripts.run
+            // .replace('@cmmn/tools/import', '@cmmn/tools/import-dev')
             .split(' ');
 
         const cp = spawn(command, params, {

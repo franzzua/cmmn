@@ -8,7 +8,7 @@ export async function dev(flags) {
 
 
     const app = fastify({
-        rewriteUrl: devServer.rewriteUrl
+        rewriteUrl: devServer.rewriteUrl,
     });
 
     if (flags.minify){
@@ -18,7 +18,7 @@ export async function dev(flags) {
 
     await app.listen({
         host: '0.0.0.0',
-        port: +(targets.at(-1).packageJson.config?.port ?? 9000)
+        port: +(targets.at(-1).packageJson.config?.port ?? 9000),
     });
 
     console.log('listen:\n', app.addresses().map(x => `\t${x.address}:${x.port}`).join('\n'))
