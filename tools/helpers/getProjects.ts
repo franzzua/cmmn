@@ -4,11 +4,11 @@ import {PackageJSON} from "@manypkg/tools/src/Tool";
 export async function *getDependencyOrder(rootDir: string): AsyncGenerator<{
     root: string;
     deps: string[];
-    pkg: PackageJSON;
 }> {
     const packages = await getPackages(rootDir);
     const monorepo = new Monorepo(packages.packages);
     yield * monorepo.getTargets();
+    yield { root: rootDir, deps: packages.packages.map(x => x.dir)};
 }
 
 class Monorepo{
@@ -33,12 +33,12 @@ class Monorepo{
             const depPkg = this.packageMap.get(dep);
             if (depPkg) {
                 yield * this.getTargetsOf(depPkg, visited);
-                deps.push(dep);
+                deps.push(depPkg.dir);
             }
         }
         if(visited.has(pkg)) return;
         visited.add(pkg);
-        yield { pkg: pkg.packageJson, root: pkg.dir, deps };
+        yield { root: pkg.dir, deps };
     }
     *getDeps(pkg: Package){
         for (let dep in pkg.packageJson.dependencies)

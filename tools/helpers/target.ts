@@ -18,7 +18,7 @@ export class Target extends EventTarget {
     reactions: Target[] = [];
     depsMap: Map<string, Target>;
 
-    constructor(rootDir: string, flags: Flags, deps: Target[], private pkg: PackageJSON) {
+    constructor(rootDir: string, flags: Flags, deps: Target[]) {
         super();
         this.rootDir = rootDir;
         this.flags = flags;
@@ -34,18 +34,20 @@ export class Target extends EventTarget {
 
     static async readTargets(rootDir: string, flags: Flags): Promise<Target[]> {
         if (flags.workspace) {
-            return [new Target(resolve(rootDir, flags.workspace), flags, [], JSON.parse(await fs.promises.readFile(join(rootDir, "package.json"), "utf-8")))];
+            return [new Target(resolve(rootDir, flags.workspace), flags, [])];
         }
         const result = new Map();
         for await (let project of getDependencyOrder(rootDir)) {
             const depProjects = project.deps.map(x => result.get(x));
-            result.set(project.pkg.name, new Target(project.root, flags, depProjects, project.pkg));
+            result.set(project.root, new Target(project.root, flags, depProjects));
         }
         return Array.from(result.values());
     }
 
+    _packageJson: JSONSchemaForNPMPackageJsonFiles;
     get packageJson(): JSONSchemaForNPMPackageJsonFiles {
-        return this.pkg as JSONSchemaForNPMPackageJsonFiles;
+        const pkgPath = path.join(this.rootDir, 'package.json');
+        return this._packageJson ??= JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
     }
 
     get externalDependencies() {
