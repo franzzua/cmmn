@@ -6,11 +6,5 @@
 		"jsx": "react-jsx"
 	},
 	"include": ["**/*.ts"],
-	"exclude": [
-      "dist", "node_modules"],
-	"references": [
-		{
-			"path": "../../ui/uhtml"
-		}
-	]
+	"exclude": ["dist", "node_modules"]
 }

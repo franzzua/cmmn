@@ -6,10 +6,5 @@
 		}
 	},
 	"include": ["**/*.ts"],
-	"exclude": ["dist", "node_modules"],
-	"references": [
-		{
-			"path": "../core"
-		}
-	]
+	"exclude": ["dist", "node_modules"]
 }

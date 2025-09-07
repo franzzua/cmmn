@@ -7,7 +7,7 @@ import {di} from "@cmmn/core";
 
 const app = fastify();
 
-await registerRoutes(app, undefined, di);
+await registerRoutes(app as any, undefined, di);
 
 app.listen({
 	port: +(process.env.PORT ?? 9003),

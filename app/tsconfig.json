@@ -3,13 +3,5 @@
   "compilerOptions": {
   },
   "include": ["**/*.ts"],
-  "exclude": ["dist", "node_modules"],
-  "references": [
-    {
-      "path": "../core"
-    },
-    {
-      "path": "../ui"
-    }
-  ]
+  "exclude": ["dist", "node_modules"]
 }

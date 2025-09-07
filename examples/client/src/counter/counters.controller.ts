@@ -1,11 +1,13 @@
-import {AsyncCell, bind, Cell, cell, inject, resolve, scoped} from "@cmmn/core";
+import {AsyncCell, bind, Cell, cell, getOrAdd, inject, resolve, scoped} from "@cmmn/core";
 import {CounterRepository} from "./counter-repository";
 import {DraggableContext} from "../draggable/draggable.context";
 import {CRDT} from "@cmmn/sync";
+import {CounterModel} from "./counterModel";
 
 @scoped()
 export class CountersController {
 
+	private modelCache = new Map<string, CounterModel>();
 	@inject(CounterRepository)
 	protected repository!: CounterRepository;
 	draggableContext = resolve(DraggableContext);
@@ -48,6 +50,12 @@ export class CountersController {
 	@bind()
 	public add(){
 		this.counters.push();
+	}
+
+	@cell()
+	public get models(): CounterModel[] {
+		return this.counters.toArray()
+			.map(c => getOrAdd(this.modelCache, c.id, () => new CounterModel(c)))
 	}
 
 	@bind()

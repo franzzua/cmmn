@@ -23,7 +23,6 @@
 		"./test": "./test/test.ts",
 		"./swcrc": "./.swcrc"
 	},
-	"typings": "compile/typings.d.ts",
 	"files": [
 		"dist",
 		"node",

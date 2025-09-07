@@ -16,10 +16,5 @@
     "dist",
     "node_modules",
     ".env"
-  ],
-  "references": [
-    {
-      "path": "../common"
-    }
   ]
 }

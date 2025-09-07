@@ -16,8 +16,8 @@ process.env.PUBLIC_MULTIADDR = `/ip4/0.0.0.0/tcp/${process.env.PORT ?? 9090}/ws`
 
 export const node = await createLibp2p({
 	transports: [
-		webSockets({}),
-		circuitRelayTransport(),
+		webSockets({}) as any,
+		circuitRelayTransport() as any,
 		// webRTC()
 	],
 	addresses: {
@@ -68,7 +68,7 @@ export const node = await createLibp2p({
 			// 	}
 			// },
 		}),
-		autoNat: autoNAT(),
+		autoNat: autoNAT() as any,
 		identify: identify(),
 
 		relay: circuitRelayServer({
@@ -79,7 +79,7 @@ export const node = await createLibp2p({
 			// reservations: {
 			// 	maxReservations: 200,
 			// }
-		}),
+		}) as any,
 	},
 })
 await node.start()

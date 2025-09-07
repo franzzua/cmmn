@@ -4,13 +4,10 @@ import {Target} from "../helpers/target";
 import fs from "node:fs/promises";
 import {join, resolve} from "node:path";
 import {Flags} from "../helpers/flags";
+import * as process from "node:process";
 
 export async function publish(flags: Flags){
-    const packages = await getPackages(process.cwd())
-    for (const pkg of packages.packages) {
-        if (flags.workspace && flags.workspace != pkg.relativeDir)
-            continue;
-        const target = new Target(pkg.dir, flags, []);
+    for (const target of await Target.readTargets(process.cwd(), flags)) {
         if (target.packageJson.private)
             continue;
         const content = await target.getPublishPackageJson();

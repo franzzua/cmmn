@@ -9,6 +9,7 @@ import {JSONSchemaForNPMPackageJsonFiles} from "@schemastore/package";
 import {CompilerOptions} from "typescript";
 import {Config} from "@swc/core";
 import {minimatch} from 'minimatch';
+import {PackageJSON} from "@manypkg/tools/src/Tool";
 
 export class Target extends EventTarget {
     rootDir: string;
@@ -17,34 +18,34 @@ export class Target extends EventTarget {
     reactions: Target[] = [];
     depsMap: Map<string, Target>;
 
-    constructor(rootDir: string, flags: Flags, deps: Target[]) {
+    constructor(rootDir: string, flags: Flags, deps: Target[], private pkg: PackageJSON) {
         super();
         this.rootDir = rootDir;
         this.flags = flags;
         this.deps = deps;
         this.depsMap = new Map(deps.map(x => [x.packageJson.name, x]));
         for (let dep of this.deps) {
-            dep.addEventListener('change', e => this.dispatchEvent(new ChangeEvent(e.payload, e.from)));
+            dep.addEventListener('change', (e: ChangeEvent) => {
+                this.dispatchEvent(new ChangeEvent(e.payload, e.from));
+            });
             dep.reactions.push(this)
         }
     }
 
     static async readTargets(rootDir: string, flags: Flags): Promise<Target[]> {
         if (flags.workspace) {
-            return [new Target(resolve(rootDir, flags.workspace), flags, [])];
+            return [new Target(resolve(rootDir, flags.workspace), flags, [], JSON.parse(await fs.promises.readFile(join(rootDir, "package.json"), "utf-8")))];
         }
         const result = new Map();
         for await (let project of getDependencyOrder(rootDir)) {
             const depProjects = project.deps.map(x => result.get(x));
-            result.set(project.root, new Target(project.root, flags, depProjects));
+            result.set(project.pkg.name, new Target(project.root, flags, depProjects, project.pkg));
         }
         return Array.from(result.values());
     }
 
-    _packageJson: JSONSchemaForNPMPackageJsonFiles;
     get packageJson(): JSONSchemaForNPMPackageJsonFiles {
-        const pkgPath = path.join(this.rootDir, 'package.json');
-        return this._packageJson ??= JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+        return this.pkg as JSONSchemaForNPMPackageJsonFiles;
     }
 
     get externalDependencies() {

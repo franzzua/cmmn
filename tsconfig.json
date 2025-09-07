@@ -1,36 +1,5 @@
 {
   "extends": "@cmmn/tools/tsconfig.json",
-  "compilerOptions": {
-  },
   "files": [],
-  "include": [],
-  "references": [
-    {
-      "path": "./core"
-    },
-    {
-      "path": "./ui/react"
-    },
-    {
-      "path": "./ui/uhtml"
-    },
-    {
-      "path": "./ui"
-    },
-    {
-      "path": "./server"
-    },
-    {
-      "path": "./sync"
-    },
-    {
-      "path": "./tools"
-    },
-    {
-      "path": "./examples/client"
-    },
-    {
-      "path": "./examples/counter"
-    }
-  ]
+  "include": []
 }

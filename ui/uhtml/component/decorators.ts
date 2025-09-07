@@ -32,7 +32,7 @@ export function component(opts: IComponentOptions = {}) {
 				oldValue,
 				newValue,
 			) {
-				this[key] = newValue;
+				this[key as any] = newValue;
 			}
 		)
 		ComponentRegistry.Instance.register(target, opts);
@@ -62,7 +62,7 @@ export function property<T>(
 		}
 		return cell<T, Element>({
 			...(options ?? {}),
-		})(initial, context);
+		})(initial as any, context as any);
 	};
 }
 

@@ -49,7 +49,7 @@ export function useCelled<TProps = {}, TDeps extends InjectionToken<unknown, [TP
 }
 
 class CellRef<T> {
-	private unsubscribe: () => void;
+	unsubscribe: () => void;
 	constructor(private cell: BaseCell<T>) {
 		this.unsubscribe = this.cell.on('change', () => {
 			this.state = {value: this.cell.value};

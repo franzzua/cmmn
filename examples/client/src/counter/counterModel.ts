@@ -2,7 +2,7 @@ import {CRDT} from "@cmmn/sync";
 import {cell, Cell} from "@cmmn/core";
 import {CounterDiff, LoroEvent, LoroEventBatch} from 'loro-crdt/bundler';
 
-export class CounterStore {
+export class CounterModel {
 	constructor(public counter: CRDT.Counter) {
 	}
 
