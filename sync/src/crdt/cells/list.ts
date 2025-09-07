@@ -3,7 +3,7 @@ import {
 	LoroMovableList,
 	type LoroMovableList as LoroMovableListType,
 	Container,
-} from "loro-crdt";
+} from 'loro-crdt/bundler';
 import {BaseCell} from "@cmmn/core";
 import {Factory, Infer, Scheme} from "./types";
 import {extend, LoroDocExtensions} from "./extend";

@@ -1,4 +1,4 @@
-import {LoroDoc} from 'loro-crdt';
+import {LoroDoc} from 'loro-crdt/bundler';
 import {cell, EventEmitter} from "@cmmn/core";
 import {Scheme, Infer} from "./types";
 import {LoroRoom} from "../../p2p/loroRoom";

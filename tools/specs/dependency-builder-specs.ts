@@ -29,7 +29,7 @@ describe('dependencyBuilder', async function dependencyBuilder(){
     await test('wasm', async function wasm(){
         await using wasm = await createTemporaryFile('0ABCF1', 'wasm')
         await using file = await createTemporaryFile(`
-            const wasm = await import('${wasm.fileName}');
+            import wasm from '${wasm.fileName}';
             export { wasm };
         `);
         const builder = new DependencyBuilderSpecs([], '/@base');

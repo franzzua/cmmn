@@ -1,6 +1,6 @@
 import {cell, Fn, getOrAdd, ObservableSet} from '@cmmn/core';
 import type { Libp2p, PeerId, PubSub } from '@libp2p/interface';
-import type { LoroDoc } from 'loro-crdt';
+import type { LoroDoc } from 'loro-crdt/bundler';
 import { LoroRoom } from './loroRoom';
 import {LoroProtocol} from "./loro.protocol";
 

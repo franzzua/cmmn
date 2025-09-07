@@ -1,4 +1,4 @@
-import {LoroDoc, Subscription, VersionVector} from 'loro-crdt';
+import {LoroDoc, Subscription, VersionVector} from 'loro-crdt/bundler';
 import {LoroMessage, LoroMessageType} from './loro.message';
 import {LoroProtocol} from "./loro.protocol";
 import {cell, Fn, inject, ObservableSet} from "@cmmn/core";

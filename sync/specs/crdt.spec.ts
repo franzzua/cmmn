@@ -3,7 +3,7 @@ import { describe, test, mock } from 'node:test';
 import { expect } from '@cmmn/tools/test';
 import { InMemoryP2PNode } from './inMemoryP2PNode';
 import {CRDT, LoroDocCell} from "../src";
-import {LoroCounter} from "loro-crdt";
+import {LoroCounter} from "loro-crdt/bundler";
 import {Counter, List} from "../src/crdt/cells";
 import {Infer} from "../src/crdt/cells/types";
 

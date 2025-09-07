@@ -1,4 +1,4 @@
-import { VersionVector } from 'loro-crdt';
+import { VersionVector } from 'loro-crdt/bundler';
 import { Serializer } from './serializer';
 import { Deserializer } from './deserializer';
 

@@ -1,5 +1,5 @@
 import {Scheme, Infer} from "./types";
-import {LoroDoc} from "loro-crdt";
+import {LoroDoc} from 'loro-crdt/bundler';
 
 export function factory<Model extends Scheme>(doc: LoroDoc, shape: Model, path = []): Infer<Model> {
 	if (typeof shape === "function")

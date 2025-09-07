@@ -1,7 +1,8 @@
 import {fileURLToPath} from "node:url";
 
 import {crc32} from "node:zlib";
-import fs from "node:fs/promises";
+import fs, {readFile} from "node:fs/promises";
+import {dirname, relative} from "node:path";
 
 export class RolldownDependencyBuilder {
     constructor(private externals: string[], private basePath: string) {
@@ -45,30 +46,24 @@ export class RolldownDependencyBuilder {
     async build(target: string, isModule: boolean) {
         const {build} = await import("rolldown");
         const {esmExternalRequirePlugin} = await import("rolldown/experimental");
-        const wasmPlugin = await import("@rollup/plugin-wasm");
         await using input = isModule ? this.getModuleEntry(target) : await this.getEntry(target);
+        const chunkBase = target.split('/').pop() + '/@_'
         try {
             const result = await build({
                 input,
                 write: false,
                 output: {
                     format: 'esm',
-                    chunkFileNames: chunk =>  target + '/@_/' + chunk.name + '.js',
+                    chunkFileNames: chunk =>  chunkBase+ '/' + chunk.name + '.js',
                 },
                 experimental: {
 
                 },
                 platform: 'browser',
                 resolve: {
-
-                    // alias: Object.fromEntries(this.dependencies
-                    //     .filter(x => x !== target)
-                    //     .map(dep =>
-                    //         [dep, this.basePath + '/' + dep]
-                    //     )),
                     mainFields: [
-                        'module',
                         'browser',
+                        'module',
                         'main',
                     ],
                 },
@@ -80,10 +75,33 @@ export class RolldownDependencyBuilder {
                 },
                 treeshake: true,
                 plugins: [
-                    wasmPlugin.wasm({
-                        publicPath: this.basePath + '/' +target + '/',
-                        maxFileSize: Number.MAX_SAFE_INTEGER
-                    }),
+                    {
+                        name: 'wasm',
+                        async load(id) {
+                            if (!/\.wasm$/.test(id)) return null;
+                            const rel = relative(input.index, id);
+                            this.emitFile({
+                                type: 'asset',
+                                source: await this.fs.readFile(id),
+                                name: 'Rollup WASM Asset',
+                                fileName: '/'+rel
+                            });
+                            return rel;
+                        },
+                        transform(code, id){
+                            if (!/\.wasm$/.test(id)) return null;
+                            return {
+                                map: {
+                                    mappings: ''
+                                },
+                                code: [
+                                    `const url = new URL('./${code}', import.meta.url);`,
+                                    `const ab = await fetch(url).then(x => x.arrayBuffer())`,
+                                    `export default new WebAssembly.Module(ab);`
+                                ].join('\n')
+                            }
+                        }
+                    },
                     {
                         name: 'require',
                         load: id => {
@@ -112,10 +130,10 @@ export class RolldownDependencyBuilder {
             return Object.fromEntries([
                 ...result.output
                     .filter(x => x.type == "chunk")
-                    .map(x => [(x.name === 'index' ? '/' : x.fileName.substring(target.length + 3)), x.code]),
+                    .map(x => [(x.name === 'index' ? '/' : x.fileName.substring(chunkBase.length)), x.code]),
                 ...result.output
                     .filter(x => x.type !== "chunk")
-                    .map(x => [x.fileName, x.source.toString()])
+                    .map(x => [x.fileName, x.source])
             ]);
         } finally {
             // await entryPoints[Symbol.asyncDispose]();

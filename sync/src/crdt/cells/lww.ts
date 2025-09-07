@@ -1,4 +1,4 @@
-import {LoroDoc, Container} from "loro-crdt";
+import {LoroDoc, Container} from 'loro-crdt/bundler';
 import {LWWValue} from "./types";
 
 export function lww<T>(doc: LoroDoc, id: string): LWWValue<T> {

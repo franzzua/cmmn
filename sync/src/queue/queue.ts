@@ -1,6 +1,6 @@
 import { EventEmitter, inject } from '@cmmn/core';
 import { Transport } from '../transport/transport';
-import { LoroDoc, LoroList } from 'loro-crdt/web/index.js';
+import { LoroDoc, LoroList } from 'loro-crdt/bundler';
 import { Team } from './team';
 
 export class Queue<T> extends EventEmitter<{

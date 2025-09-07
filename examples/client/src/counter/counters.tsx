@@ -1,57 +1,28 @@
-import {component, Component, Scope} from "@cmmn/react";
-import {AsyncCell, bind, cell, inject} from "@cmmn/core";
+import {component, Component, effect, Scope} from "@cmmn/react";
+import {AsyncCell, bind, cell, inject, resolve} from "@cmmn/core";
 import {Button} from "@cmmn/examples-ui-lib";
-import {CounterRepository} from "./counter-repository";
-import {CRDT} from "@cmmn/sync";
 import {Counter} from "./counter";
 import {CounterStore} from "./counter.store";
+import {DraggableContext} from "../draggable/draggable.context";
+import {CountersController} from "./counters.controller";
 
 @component()
-export class Counters extends Component<{ id: string }> {
-	@inject(CounterRepository)
-	protected repository!: CounterRepository;
-
-	readonly docQuery = AsyncCell.query(() => this.repository.loadDoc(this.props.id));
-
-	@cell()
-	private get doc(){
-		return this.docQuery.result.getModel({
-			counters: CRDT.list(CRDT.counter),
-			value: CRDT.lww<number>,
-		})
-	}
-
-	@cell()
-	private get room(){
-		return this.docQuery.result.room;
-	}
-
-	@cell()
-	private get counters(){
-		return this.doc.counters;
-	}
-
-	@bind()
-	private add(){
-		this.counters.push();
-	}
+export class Counters extends Component {
+	private ctrl = resolve(CountersController);
 
 	protected render() {
-		if (this.docQuery.isPending)
+		if (this.ctrl.docQuery.isPending)
 			return <>Loading...</>;
 		return <>
-			{this.counters.toArray().map(c => <div key={c.id}>
+			{this.ctrl.counters.toArray().map(c => <div key={c.id}>
 				<Scope provide={[CounterStore, c]}>
-					<Counter active={this.room.peers.size > 0} />
+					<Counter active={this.ctrl.isActive} />
 				</Scope>
 			</div>)}
-			<Button onClick={this.add}>Add</Button>
-			<Button onClick={() => {
-				this.counters.delete(this.counters.length - 1, 1);
-				this.counters.commit();
-			}}>Remove</Button>
-			{Array.from(this.room.peers).map(p => <span key={p}>{p}</span>)}
+			<Button onClick={this.ctrl.add}>Add</Button>
+			<Button onClick={this.ctrl.deleteLast}>Remove</Button>
 		</>
 
 	}
 }
+

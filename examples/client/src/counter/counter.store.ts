@@ -1,11 +1,14 @@
 import {CRDT} from "@cmmn/sync";
 import {cell, Cell} from "@cmmn/core";
-import {CounterDiff, LoroEvent, LoroEventBatch} from "loro-crdt";
+import {CounterDiff, LoroEvent, LoroEventBatch} from 'loro-crdt/bundler';
 
 export class CounterStore {
-	constructor(private counter: CRDT.Counter) {
+	constructor(public counter: CRDT.Counter) {
 	}
 
+	public get id (){
+		return this.counter.id;
+	}
 	public get value() {
 		return this.counter.value;
 	}

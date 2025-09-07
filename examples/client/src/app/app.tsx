@@ -1,9 +1,14 @@
 import {Store} from './store';
-import {Component, component, useCelled} from "@cmmn/react";
+import {Component, component, Scope, useCelled, useInjected} from "@cmmn/react";
 import {Button} from "@cmmn/examples-ui-lib";
 import {type Api, ApiToken} from "./api";
-import {inject} from "@cmmn/core";
+import {Fn, inject} from "@cmmn/core";
 import {Counters} from "../counter";
+import {Draggable} from "../draggable";
+import {DraggableTarget} from "../draggable/draggable.target";
+import {DraggableClone} from "../draggable/draggable.clone";
+import {DraggableContext} from "../draggable/draggable.context";
+import {CountersController} from "../counter/counters.controller";
 //
 @component()
 export class App extends Component {
@@ -13,7 +18,10 @@ export class App extends Component {
 
 	render() {
 		return <div style={{display: 'flex', gap: '1em', flexDirection: 'column'}}>
-			<Counters id={'1'}/>
+			<Scope provide={[CountersController, '1']}>
+				<Counters />
+			</Scope>
+			<DraggableClone/>
 			{/*<Counters id={'2'}/>*/}
 			{/*<Counters id={'3'}/>*/}
 		</div>;

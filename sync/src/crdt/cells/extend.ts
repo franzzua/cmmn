@@ -1,5 +1,5 @@
 import {Scheme} from "./types";
-import {Container, LoroCounter, LoroDoc} from "loro-crdt";
+import {Container, LoroCounter, LoroDoc} from 'loro-crdt/bundler';
 
 export function extend<
 	TContainer extends Container,
