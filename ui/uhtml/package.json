@@ -1,6 +1,6 @@
 {
 	"name": "@cmmn/uhtml",
-	"version": "3.0.0-beta-A",
+	"version": "3.0.0-beta-B",
 	"description": "",
 	"publishConfig": {
 		"access": "public"

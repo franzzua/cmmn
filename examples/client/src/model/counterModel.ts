@@ -2,24 +2,24 @@ import {CRDT} from "@cmmn/sync";
 import {cell, Cell} from "@cmmn/core";
 import {CounterDiff, LoroEvent, LoroEventBatch} from 'loro-crdt/bundler';
 
-export class CounterModel {
-	constructor(public counter: CRDT.Counter) {
+export class TaskModel {
+	constructor(public task: CRDT.Counter) {
 	}
 
 	public get id (){
-		return this.counter.id;
+		return this.task.id;
 	}
 	public get value() {
-		return this.counter.value;
+		return this.task.value;
 	}
 
 	inc = () => {
-		this.counter.value++;
+		this.task.value++;
 	}
-	dec = () => this.counter.value--;
+	dec = () => this.task.value--;
 
 
-	lastEvent = Cell.from<LoroEventBatch>(this.counter);
+	lastEvent = Cell.from<LoroEventBatch>(this.task);
 
 	get lastDiffs(){
 		return this.lastEvent.get()?.events?.map(x => x.diff as CounterDiff) ?? []

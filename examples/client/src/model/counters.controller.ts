@@ -2,7 +2,7 @@ import {AsyncCell, bind, Cell, cell, getOrAdd, inject, resolve, scoped} from "@c
 import {CounterRepository} from "./counter-repository";
 import {DraggableContext} from "../draggable/draggable.context";
 import {CRDT} from "@cmmn/sync";
-import {CounterModel} from "./counterModel";
+import {CounterModel} from "../model/counterModel";
 
 @scoped()
 export class CountersController {
@@ -33,7 +33,11 @@ export class CountersController {
 	@cell()
 	private get doc(){
 		return this.docQuery.result.getModel({
-			counters: CRDT.list(CRDT.counter),
+			counters: CRDT.list({
+				value: CRDT.counter,
+				title: CRDT.text,
+				description: CRDT.text
+			}),
 		})
 	}
 
