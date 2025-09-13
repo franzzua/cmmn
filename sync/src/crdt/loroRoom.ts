@@ -1,4 +1,4 @@
-import {LoroDoc, Subscription, VersionVector} from 'loro-crdt/nodejs';
+import {LoroDoc, Subscription, VersionVector} from 'loro-crdt';
 import {LoroMessageType} from './loro.message';
 import {cell, Fn, ObservableSet} from "@cmmn/core";
 import {Cryptor} from "./cryptor";

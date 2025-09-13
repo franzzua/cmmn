@@ -1,5 +1,5 @@
 import {Scheme} from "./types";
-import {Container, LoroCounter, LoroDoc} from 'loro-crdt/nodejs';
+import {Container, LoroCounter, LoroDoc} from 'loro-crdt';
 
 export function extend<
 	TContainer extends Container,

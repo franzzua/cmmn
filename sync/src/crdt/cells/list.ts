@@ -3,11 +3,12 @@ import {
 	LoroMovableList,
 	type LoroMovableList as LoroMovableListType,
 	Container,
-} from 'loro-crdt/nodejs';
+} from 'loro-crdt';
 import {BaseCell} from "@cmmn/core";
 import {Factory, Infer, Scheme} from "./types";
 import {extend, LoroDocExtensions} from "./extend";
 import {factory} from "./factory";
+import {updateMovableList} from "../update-movable-list";
 
 export abstract class List<T> extends LoroMovableList<T> implements LoroDocExtensions<LoroMovableList> {
 	protected constructor(
@@ -23,7 +24,9 @@ export abstract class List<T> extends LoroMovableList<T> implements LoroDocExten
 		const id = Id();
 		this.base.push(id);
 		this.commit();
-		return factory(this.doc, this.shape, [id])
+		if(this.shape) {
+			return factory(this.doc, this.shape, [id]);
+		}
 	}
 
 	toArray(): T[] {
@@ -31,6 +34,10 @@ export abstract class List<T> extends LoroMovableList<T> implements LoroDocExten
 		return ids.map(id => factory(this.doc, this.shape, [id])) as T[];
 	}
 
+	update(source: ReadonlyArray<T>){
+		updateMovableList(this, source);
+		this.commit();
+	}
 }
 
 export function list<T>(shape: T): Factory<List<Infer<T>>>;

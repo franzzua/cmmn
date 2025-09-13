@@ -1,8 +1,7 @@
-import {LoroDoc} from 'loro-crdt/nodejs';
+import {LoroDoc} from 'loro-crdt';
 import {cell, EventEmitter, ResolvablePromise} from "@cmmn/core";
 import {Scheme, Infer} from "./types";
 import {LoroRoom} from "../loroRoom";
-import {Container} from "loro-crdt/nodejs/loro_wasm";
 import {factory} from "./factory";
 import {LoroProtocol} from "../loroProtocol";
 

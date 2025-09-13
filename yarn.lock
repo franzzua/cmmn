@@ -548,7 +548,7 @@ __metadata:
     "@libp2p/plaintext": "npm:2.0.20"
     "@waku/sdk": "npm:^0.0.30"
     libp2p: "npm:2.8.2"
-    loro-crdt: "npm:1.5.3"
+    loro-crdt: "npm:1.7.3"
     multiformats: "npm:^13.3.1"
     seqproto: "npm:^0.2.3"
   languageName: unknown
@@ -9713,10 +9713,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"loro-crdt@npm:1.5.3":
-  version: 1.5.3
-  resolution: "loro-crdt@npm:1.5.3"
-  checksum: 10c0/f2fd99d9b0f91444f9dec02de3df414cd880cf80a3ab57b87ce4156fec93ac012a7e420e8f90500e33ccf6871ec331e0852be005d919f0e8bcbe9a868d400c78
+"loro-crdt@npm:1.7.3":
+  version: 1.7.3
+  resolution: "loro-crdt@npm:1.7.3"
+  checksum: 10c0/a6b7eb5be48dc63b1edebee1ed22eb065ddbd1e78985934765e0734c3610ca2dba082c35cc442048ee782dbb5861ae1bc1e42e2cb9f421357b0bbf74adbb2879
   languageName: node
   linkType: hard
 

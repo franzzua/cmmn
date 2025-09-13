@@ -1,6 +1,6 @@
 import {CRDT} from "@cmmn/sync";
 import {cell, Cell} from "@cmmn/core";
-import {CounterDiff, LoroEvent, LoroEventBatch} from 'loro-crdt/nodejs';
+import {CounterDiff, LoroEvent, LoroEventBatch} from 'loro-crdt';
 
 export class CounterModel {
 	constructor(public counter: CRDT.Counter) {

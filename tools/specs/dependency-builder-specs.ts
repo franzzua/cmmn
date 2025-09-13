@@ -36,6 +36,13 @@ describe('dependencyBuilder', async function dependencyBuilder(){
         const res = await builder.build(file.path, true);
         expect(res['/']).not.toBeNull();
     })
+
+    await test('loro-crdt', async function wasm(){
+        const builder = new DependencyBuilderSpecs([], '/@base');
+        const res = await builder.build('loro-crdt', true);
+        expect(res['/']).not.toBeNull();
+    })
+
     await test('commonjs', async function commonjs(){
         await using file = await createTemporaryFile(`
             module.exports = { x: 2 };

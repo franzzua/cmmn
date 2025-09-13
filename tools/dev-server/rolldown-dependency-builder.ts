@@ -2,13 +2,15 @@ import {fileURLToPath} from "node:url";
 
 import {crc32} from "node:zlib";
 import fs, {readFile} from "node:fs/promises";
-import {dirname, relative} from "node:path";
+import path, {dirname, relative} from "node:path";
+import * as process from "node:process";
 
 export class RolldownDependencyBuilder {
     constructor(private externals: string[], private basePath: string) {
     }
 
-    async getFileContent(target: string){
+    async getFileContent(target: string, isModule: boolean){
+        if (isModule) return `export * from '${target}';`
         const pkg = await import(target);
         const keys = Object.keys(pkg).filter(x => x !== 'default');
         return [
@@ -18,12 +20,12 @@ export class RolldownDependencyBuilder {
         ].join('\n');
     }
 
-    dir = './node_modules/.cmmn';
+    dir = path.join(process.cwd(), './node_modules/.cmmn');
 
-    async getEntry(target: string): Promise<AsyncDisposable & Record<string, string>>{
+    async getEntry(target: string, isModule: boolean): Promise<AsyncDisposable & Record<string, string>>{
         const id = crc32(target + new Date() + Math.random());
         const file = `${this.dir}/.${id}.js`;
-        const content = await this.getFileContent(target);
+        const content = await this.getFileContent(target, isModule);
         await fs.mkdir(this.dir, { recursive: true });
         await fs.writeFile(file, content, 'utf-8');
         return {
@@ -46,7 +48,7 @@ export class RolldownDependencyBuilder {
     async build(target: string, isModule: boolean) {
         const {build} = await import("rolldown");
         const {esmExternalRequirePlugin} = await import("rolldown/experimental");
-        await using input = isModule ? this.getModuleEntry(target) : await this.getEntry(target);
+        await using input = await this.getEntry(target, isModule);
         const chunkBase = target.split('/').pop() + '/@_'
         try {
             const result = await build({
@@ -55,6 +57,7 @@ export class RolldownDependencyBuilder {
                 output: {
                     format: 'esm',
                     chunkFileNames: chunk =>  chunkBase+ '/' + chunk.name + '.js',
+                    assetFileNames: asset =>  chunkBase+ '/' + asset.name + '.js',
                 },
                 experimental: {
 
@@ -77,30 +80,30 @@ export class RolldownDependencyBuilder {
                 plugins: [
                     {
                         name: 'wasm',
-                        async load(id) {
+                        async load(id, importer) {
                             if (!/\.wasm$/.test(id)) return null;
-                            const rel = relative(input.index, id);
+                            const fileId = Math.random().toString(36).substring(2) + '.wasm';
                             this.emitFile({
                                 type: 'asset',
                                 source: await this.fs.readFile(id),
                                 name: 'Rollup WASM Asset',
-                                fileName: '/'+rel
+                                fileName: '/'+fileId
                             });
-                            return rel;
+                            return [
+                                `const url = new URL('./${fileId}', import.meta.url);`,
+                                `const ab = await fetch(url).then(x => x.arrayBuffer())`,
+                                `export default new WebAssembly.Module(ab);`
+                            ].join('\n');
                         },
-                        transform(code, id){
-                            if (!/\.wasm$/.test(id)) return null;
-                            return {
-                                map: {
-                                    mappings: ''
-                                },
-                                code: [
-                                    `const url = new URL('./${code}', import.meta.url);`,
-                                    `const ab = await fetch(url).then(x => x.arrayBuffer())`,
-                                    `export default new WebAssembly.Module(ab);`
-                                ].join('\n')
-                            }
-                        }
+                        // transform(code, id){
+                        //     if (!/\.wasm$/.test(id)) return null;
+                        //     return {
+                        //         map: {
+                        //             mappings: ''
+                        //         },
+                        //         code:
+                        //     }
+                        // }
                     },
                     {
                         name: 'require',

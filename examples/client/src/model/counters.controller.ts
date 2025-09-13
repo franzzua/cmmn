@@ -73,7 +73,7 @@ export class CountersController {
 	}
 
 	get isActive(){
-		return this.room.peers.size > 0;
+		return this.room?.peers.size > 0;
 	}
 
 }
