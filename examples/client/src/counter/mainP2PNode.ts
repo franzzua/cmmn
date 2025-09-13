@@ -67,7 +67,7 @@ export class MainP2PNode extends P2PNode {
 					// 	graylistThreshold: Number.NEGATIVE_INFINITY,
 					// 	opportunisticGraftThreshold: Number.NEGATIVE_INFINITY,
 					// },
-				}),
+				}) as any,
 				dcutr: dcutr()
 			},
 		});

@@ -1,4 +1,4 @@
-import {LoroDoc, LoroText} from 'loro-crdt/bundler';
+import {LoroDoc, LoroText} from 'loro-crdt/nodejs';
 import {BaseCell} from "@cmmn/core";
 import {extend, LoroDocExtensions} from "./extend";
 

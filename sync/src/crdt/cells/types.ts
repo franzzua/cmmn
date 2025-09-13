@@ -2,7 +2,7 @@ import type {List} from "./list";
 import type {Counter} from "./counter";
 import {Text} from "./text";
 import {Map} from "./map";
-import {LoroDoc} from 'loro-crdt/bundler';
+import {LoroDoc} from 'loro-crdt/nodejs';
 
 export type LWWValue<T> = { get(): T; set(value: T): void; }
 export type Value = List<any> | Counter | Text | Map<any> | LWWValue<any>;

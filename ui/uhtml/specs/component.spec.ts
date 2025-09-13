@@ -22,7 +22,7 @@ describe('component', async () => {
 		@component()
 		class HelloWorld extends Component {
 			@property()
-			subTitle: string = 'World';
+			accessor subTitle: string = 'World';
 
 			render() {
 				return html`<span>Hello ${this.subTitle}</span>`;

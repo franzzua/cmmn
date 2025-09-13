@@ -46,7 +46,7 @@ export function property<T>(
 ) {
 	return function (
 		initial: T,
-		context: ClassFieldDecoratorContext<Element, T>,
+		context: ClassAccessorDecoratorContext<Element, T>,
 	) {
 		const attrName = options?.name ?? toSnake(context.name.toString());
 		const set = (context.metadata.observedAttributes ??= {}) as Record<
@@ -60,9 +60,9 @@ export function property<T>(
 				// this.setAttribute(attrName, 'Hi!')
 			});
 		}
-		return cell<T, Element>({
+		return cell<T>({
 			...(options ?? {}),
-		})(initial as any, context as any);
+		})(initial as any, context as any) as ClassAccessorDecoratorResult<T, any>;
 	};
 }
 

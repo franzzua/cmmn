@@ -7,7 +7,7 @@ export class MovableDiv extends Component {
 
 	@cell()
 	get div(): HTMLDivElement | undefined {
-		return this.events.render?.target.firstElementChild;
+		return (this.events.render?.target as HTMLDivElement).firstElementChild as HTMLDivElement;
 	}
 
 	@cell()
@@ -16,7 +16,7 @@ export class MovableDiv extends Component {
 	}
 
 	@cell()
-	private position = {x: 0, y: 0};
+	private accessor position = {x: 0, y: 0};
 
 	@cell()
 	get isDragging() {

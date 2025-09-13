@@ -1,10 +1,8 @@
 import {component, Component, effect, Scope} from "@cmmn/react";
-import {AsyncCell, bind, cell, inject, resolve} from "@cmmn/core";
+import {resolve} from "@cmmn/core";
 import {Button} from "@cmmn/examples-ui-lib";
 import {Counter} from "./counter";
-import {CounterModel} from "./counterModel";
-import {DraggableContext} from "../draggable/draggable.context";
-import {CountersController} from "./counters.controller";
+import {CountersController} from "../model/counters.controller";
 
 @component()
 export class Counters extends Component {
@@ -13,6 +11,7 @@ export class Counters extends Component {
 	protected render() {
 		if (this.ctrl.docQuery.isPending)
 			return <>Loading...</>;
+			console.log(this.ctrl.tasks.toArray());
 		return <>
 			{this.ctrl.models.map(c => <div key={c.id}>
 				<Counter active={this.ctrl.isActive} model={c} />

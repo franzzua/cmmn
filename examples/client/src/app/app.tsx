@@ -8,7 +8,7 @@ import {Draggable} from "../draggable";
 import {DraggableTarget} from "../draggable/draggable.target";
 import {DraggableClone} from "../draggable/draggable.clone";
 import {DraggableContext} from "../draggable/draggable.context";
-import {CountersController} from "../counter/counters.controller";
+import {CountersController} from "../model/counters.controller";
 //
 @component()
 export class App extends Component {

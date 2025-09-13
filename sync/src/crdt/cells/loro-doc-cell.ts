@@ -1,9 +1,10 @@
-import {LoroDoc} from 'loro-crdt/bundler';
-import {cell, EventEmitter} from "@cmmn/core";
+import {LoroDoc} from 'loro-crdt/nodejs';
+import {cell, EventEmitter, ResolvablePromise} from "@cmmn/core";
 import {Scheme, Infer} from "./types";
-import {LoroRoom} from "../../p2p/loroRoom";
-import {Container} from "loro-crdt/bundler/loro_wasm";
+import {LoroRoom} from "../loroRoom";
+import {Container} from "loro-crdt/nodejs/loro_wasm";
 import {factory} from "./factory";
+import {LoroProtocol} from "../loroProtocol";
 
 export class LoroDocCell extends EventEmitter<{
 	snapshot: Uint8Array;
@@ -20,14 +21,19 @@ export class LoroDocCell extends EventEmitter<{
 		super();
 	}
 
-	[Symbol.asyncDispose]() {
-        return this.room?.[Symbol.asyncDispose]();
-    }
+	async [Symbol.asyncDispose]() {
+		await this.isSyncStarted;
+		for (let disposable of this.disposables) {
+			await disposable[Symbol.asyncDispose]();
+		}
+		super[Symbol.dispose]();
+	}
 
 	async import(update: Uint8Array) {
 		this.doc.import(update);
 	}
 
+	disposables: AsyncDisposable[] = [];
 	unsubscr: (() => void) | undefined;
 	protected subscribe(eventName: keyof { snapshot: Uint8Array }) {
 		this.unsubscr = this.doc.subscribe(e => {
@@ -45,5 +51,13 @@ export class LoroDocCell extends EventEmitter<{
 		return factory(this.doc, shape, path);
 	}
 
+	private isSyncStarted = new ResolvablePromise();
+	async sync(room: LoroRoom, ...protocols: LoroProtocol[]) {
+		this.room = room;
+		for (let protocol of protocols) {
+			this.disposables.push(await room.sync(this.doc, protocol));
+		}
+		this.isSyncStarted.resolve();
+	}
 }
 

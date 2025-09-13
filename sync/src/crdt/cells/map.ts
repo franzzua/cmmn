@@ -2,7 +2,7 @@ import {
 	LoroDoc,
 	LoroMap,
 	LoroMovableList
-} from 'loro-crdt/bundler';
+} from 'loro-crdt/nodejs';
 import {BaseCell} from "@cmmn/core";
 import {Infer, LWWValue, Scheme, Value} from "./types";
 import {extend, LoroDocExtensions} from "./extend";

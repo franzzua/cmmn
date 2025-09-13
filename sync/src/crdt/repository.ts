@@ -1,22 +1,24 @@
-import {inject} from '@cmmn/core';
-import {P2PNode} from '../p2p/p2p.node';
 import {LoroDocCell} from './cells/loro-doc-cell';
-import {StorageProvider} from './storage';
-import {LoroRoom} from "../p2p/loroRoom";
+import {Storage, StorageProvider} from './storage';
+import {LoroRoom} from "./loroRoom";
 import {Cryptor} from "./cryptor";
+import {LoroProtocol} from "./loroProtocol";
+import {resolve} from "@cmmn/core";
 
-export class P2PRepository implements AsyncDisposable {
-	@inject(P2PNode) p2pNode!: P2PNode;
-	@inject(StorageProvider) storageProvider!: StorageProvider;
+export class Repository implements AsyncDisposable {
+	private readonly storageProvider = resolve(StorageProvider);
+	private readonly storage: Storage<Uint8Array> = this.storageProvider.getStorage(this.name)
 
-	storage = this.storageProvider.getStorage<Uint8Array>(this.name);
-
-	constructor(private name: string) {
-	}
-
+	private protocols = new Set<Promise<LoroProtocol>|LoroProtocol>();
 	private disposables: (AsyncDisposable | Disposable)[] = [];
 	private rooms = new Map<string, LoroRoom>();
 
+	constructor(private name: string) {
+	}
+	async addProtocol(protocol: Promise<LoroProtocol> | LoroProtocol){
+		this.protocols.add(protocol);
+		this.disposables.push(await protocol);
+	}
 
 	async loadDoc(uri: string): Promise<LoroDocCell> {
 		const data = await this.storage.get(uri);
@@ -37,10 +39,11 @@ export class P2PRepository implements AsyncDisposable {
 		});
 		if (!this.rooms.has(uri)){
 			const cryptor = this.getCryptor(uri);
-			this.rooms.set(uri, new LoroRoom(this.p2pNode.loroProtocol, uri, cryptor));
+			this.rooms.set(uri, new LoroRoom(uri, cryptor));
 		}
-		cell.room = this.rooms.get(uri);
-		await cell.room.sync(cell.doc)
+		const protools = await Promise.all([...this.protocols.values()]);
+		await cell.sync(this.rooms.get(uri), ...protools);
+
 	}
 
 	async [Symbol.asyncDispose]() {
@@ -51,9 +54,6 @@ export class P2PRepository implements AsyncDisposable {
 			else disposable[Symbol.dispose]?.();
 		}
 		this.disposables.length = 0;
-		for (let room of this.rooms.values()) {
-			await room[Symbol.asyncDispose]();
-		}
 		this.rooms.clear();
 	}
 

@@ -1,10 +1,10 @@
 import {AsyncCell, bind, Cell, cell, getOrAdd, inject, resolve, scoped} from "@cmmn/core";
-import {CounterRepository} from "./counter-repository";
+import {CounterRepository} from "../counter/counter-repository";
 import {DraggableContext} from "../draggable/draggable.context";
 import {CRDT} from "@cmmn/sync";
-import {CounterModel} from "../model/counterModel";
+import {CounterModel} from "./counterModel";
+import {str} from "iter-tools";
 
-@scoped()
 export class CountersController {
 
 	private modelCache = new Map<string, CounterModel>();
@@ -33,11 +33,11 @@ export class CountersController {
 	@cell()
 	private get doc(){
 		return this.docQuery.result.getModel({
-			counters: CRDT.list({
-				value: CRDT.counter,
+			counters: CRDT.list(CRDT.counter),
+			tasks: CRDT.list({
 				title: CRDT.text,
 				description: CRDT.text
-			}),
+			})
 		})
 	}
 
@@ -50,10 +50,14 @@ export class CountersController {
 	public get counters(){
 		return this.doc.counters;
 	}
+	@cell()
+	public get tasks(){
+		return this.doc.tasks;
+	}
 
 	@bind()
 	public add(){
-		this.counters.push();
+		this.doc.tasks.push();
 	}
 
 	@cell()
