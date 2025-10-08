@@ -1,10 +1,9 @@
-import {component, Component, effect, Scope} from "@cmmn/react";
-import {AsyncCell, bind, cell, inject, resolve} from "@cmmn/core";
+import {component, Component} from "@cmmn/react";
+import {resolve} from "@cmmn/core";
 import {Button} from "@cmmn/examples-ui-lib";
 import {Counter} from "./counter";
-import {CounterModel} from "./counterModel";
-import {DraggableContext} from "../draggable/draggable.context";
 import {CountersController} from "./counters.controller";
+import("@cmmn/examples-ui-lib/css")
 
 @component()
 export class Counters extends Component {

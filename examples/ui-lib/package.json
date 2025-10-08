@@ -5,10 +5,16 @@
 	"private": true,
 	"type": "module",
 	"main": "./index.ts",
+	"exports": {
+		".": "./index.ts",
+		"./css": "./dist/bundle/examples-ui-lib.css"
+	},
 	"dependencies": {
+		"@cmmn/core": "workspace:~",
 		"@cmmn/react": "workspace:~"
 	},
 	"devDependencies": {
-		"@acab/ecsstatic": "^0.9.0"
+		"@acab/ecsstatic": "^0.9.0",
+		"@cmmn/tools": "workspace:~"
 	}
 }

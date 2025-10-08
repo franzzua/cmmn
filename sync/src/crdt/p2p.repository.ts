@@ -1,7 +1,7 @@
-import {inject} from '@cmmn/core';
+import {di, inject} from '@cmmn/core';
 import {P2PNode} from '../p2p/p2p.node';
 import {LoroDocCell} from './cells/loro-doc-cell';
-import {StorageProvider} from './storage';
+import {StorageProvider} from '@cmmn/sync/storage';
 import {LoroRoom} from "../p2p/loroRoom";
 import {Cryptor} from "./cryptor";
 

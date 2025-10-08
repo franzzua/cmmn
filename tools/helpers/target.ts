@@ -17,6 +17,9 @@ export class Target extends EventTarget {
     deps: Target[];
     reactions: Target[] = [];
     depsMap: Map<string, Target>;
+    get publicPath(): string | undefined {
+        return this.packageJson.config?.publicPath as string;
+    }
 
     constructor(rootDir: string, flags: Flags, deps: Target[]) {
         super();
@@ -62,10 +65,12 @@ export class Target extends EventTarget {
         return this._tsConfig ??= getTSConfig(join(this.rootDir, 'tsconfig.json'));
     }
 
-    isExcluded(fileName: string, relative: boolean = false) {
+    isExcluded(fileName: string, isRelative: boolean = false) {
+        if (!isRelative)
+            fileName = relative(this.rootDir, fileName);
+        if (fileName.startsWith('./'))
+            fileName = fileName.substring(2);
         const check = (pattern: string) => {
-            if (!relative)
-                pattern = join(this.rootDir, pattern);
             return fileName.startsWith(pattern) || minimatch(fileName, pattern);
         };
         const include = this.tsConfig.include ?? [];
@@ -132,15 +137,18 @@ export class Target extends EventTarget {
             for (let item in this.packageJson.exports) {
                 const importFile = this.packageJson.exports[item].require ??
                     this.packageJson.exports[item].default ?? this.packageJson.exports[item];
-                if (!importFile || !(typeof importFile === "string")) continue;
+                if (!importFile || !(typeof importFile === "string")) {
+                    this.error(`Failed to read entry '${item}' in ${this.packageJson.name}`)
+                    continue;
+                }
                 result.push(this.createEntry(item, importFile));
             }
             return this._entries = result;
         }
-        const entry = path.join(this.rootDir, this.packageJson.module
+        const entry = this.packageJson.module
             ?? this.packageJson.main
+            ?? this.packageJson.browser
             ?? this.packageJson.exports as string
-            ?? "index.ts");
         return this._entries = [this.createEntry('.', entry)];
     }
 
@@ -149,11 +157,13 @@ export class Target extends EventTarget {
     }
 
     createEntry(name: string, source: string): Entry {
-        source = resolve(this.rootDir, source);
+        const absolute = resolve(this.rootDir, source);
+        const isExcluded = this.isExcluded(source, true);
         return {
             name,
-            source,
-            isExcluded: this.isExcluded(source),
+            source: absolute,
+            relative: source,
+            isExcluded,
             isHTML: /\.html$/i.test(source),
             output: this.getExport(name, source),
             isTypeScript: /\.tsx?$/i.test(source),
@@ -174,8 +184,8 @@ export class Target extends EventTarget {
     }
 
     getExport(entry: string, file: string) {
-        if (this.isExcluded(file))
-            return './' + relative(this.rootDir, file);
+        // if (this.isExcluded(file, true))
+        //     return file;
         const extension = file.match(/\.([^.]+)$/)[1];
         const entryName = entry
             .replace(/^\.?\/?/, '')
@@ -229,6 +239,7 @@ export class Target extends EventTarget {
                 replace
             }));
     }
+
 }
 
 export class ChangeEvent extends Event {
@@ -244,6 +255,7 @@ export class ChangeEvent extends Event {
 export type Entry = {
     name: string;
     source: string;
+    relative: string;
     isHTML: boolean;
     isExcluded: boolean;
     output: string;

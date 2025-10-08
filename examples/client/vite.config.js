@@ -11,7 +11,9 @@ export default env => {
 					options.jsc.transform.decoratorVersion = "2022-03"
 				}
 			}),
-			ecsstatic(),
+			ecsstatic({
+				classNamePrefix: 'ec'
+			}),
 		],
 	});
 };

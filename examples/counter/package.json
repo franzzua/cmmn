@@ -12,9 +12,14 @@
 	"exports": {
 		".": "./index.html"
 	},
+	"config": {
+		"proxy": {
+			"^[^.]*$": ""
+		},
+		"publicPath": "/example/uhtml"
+	},
 	"devDependencies": {
 		"@acab/ecsstatic": "0.9.0",
-		"@cmmn/uhtml": "workspace:~",
 		"@storybook/addon-essentials": "^8.6.12",
 		"@storybook/addon-interactions": "^8.6.12",
 		"@storybook/blocks": "^8.6.12",
@@ -22,7 +27,11 @@
 		"@storybook/html": "^8.6.12",
 		"@storybook/html-vite": "^8.6.12",
 		"@storybook/test": "^8.6.12",
-		"@umijs/mako": "^0.11.6",
 		"storybook": "8.6.12"
+	},
+	"dependencies": {
+		"@cmmn/core": "workspace:~",
+		"@cmmn/uhtml": "workspace:~",
+		"@cmmn/service-worker": "workspace:~"
 	}
 }

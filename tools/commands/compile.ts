@@ -43,7 +43,7 @@ function compileFiles(target: Target, filenames = [target.rootDir]): Promise<voi
 				'dist/**/*',
 				'specs/*',
 				...target.tsConfig.exclude?.map(x => `${x}/**/*`)
-			].map(p => path.join(target.rootDir, p))
+			].map(p => path.join(target.rootDir, p)),
 		},
 		swcOptions,
 		logWatchCompilation: false,

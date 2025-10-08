@@ -1,6 +1,6 @@
 import {Container, Provider, ProviderOrValue} from "@cmmn/core";
 import {IRouterOptions, Router} from "./router";
-import {setDefaultContainer} from "ui/uhtml";
+import {setDefaultContainer} from "web/uhtml";
 
 export class Builder{
     private container: Container = new Container();

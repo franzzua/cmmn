@@ -12,10 +12,10 @@
 		"access": "public"
 	},
 	"dependencies": {
+		"@cmmn/core": "workspace:~",
 		"fastify": "5.2.1"
 	},
 	"devDependencies": {
-		"@cmmn/core": "workspace:~",
 		"@cmmn/tools": "workspace:~"
 	},
 	"type": "module",

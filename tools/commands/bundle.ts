@@ -1,35 +1,58 @@
 import {Target} from "../helpers/target";
 import {Terminal} from "../helpers/terminal.js";
-import {Bundler} from "../helpers/bundler";
 import {Flags} from "../helpers/flags";
+import {TargetWebServer} from "../dev-server/target-web-server";
+import {build} from "vite";
+import path from "node:path";
+import {DevServer} from "../dev-server/dev-server";
+import {RollupOutput} from "rollup";
+import {getAssets} from "../dev-server/asset-collection";
+import {writeFile} from "node:fs/promises";
 
 export async function bundle(flags: Flags) {
+    const origWorkspace = flags.workspace;
+    flags.workspace = undefined;
     const targets = await Target.readTargets(process.cwd(), flags);
-
+    const devServer = new DevServer(targets);
+    devServer.depServer.url = ''
     const term = new Terminal(flags, targets);
-    for (const target of targets) {
-        if (target.tsConfig.include?.length === 0)
+    for (let targetServer of devServer.targetServers) {
+        targetServer.url = '';
+        if (origWorkspace && targetServer.target.rootDir !== path.join(devServer.rootTarget.rootDir, origWorkspace))
             continue;
+        if (targetServer instanceof TargetWebServer){
+            const config = await targetServer.getBundleConfig();
+            config.build.write = true;
+            // config.base = './'
 
-        const bundler = new Bundler(target, flags);
-
-        // if (!flags.watch) {
-            bundler.bundle().then(res => {
-                term.setData(target, {
+            try {
+                const results = await build(config) as RollupOutput[];
+                const assets = await getAssets(results);
+                console.log(assets)
+                term.setData(targetServer.target, {
                     state: 'ok',
-                    size: bundler.results.map(x => x.data?.length ?? 0).reduce((a, b) => a + b, 0)
+                    size: assets.map(x => x.size).reduce((a, b) => a + b, 0)
                 });
-                for (let result of bundler.results) {
-                    if (result.entry) {
-                        term.term.yellow(`\t\t${result.entry.name} -> ${result.fileName}\n`)
-                    } else {
-                        term.term.yellow(`\t\t${result.fileName}\n`)
+                await writeFile(
+                    path.join(targetServer.target.rootDir, 'dist/bundle/assets.json'),
+                    JSON.stringify(assets)
+                );
+                for (let res of results) {
+                    for (let out of res.output) {
+                        if (out.type == "chunk") {
+                            term.term.yellow(`\t\t${out.name} -> ${out.fileName}\n`)
+                        } else {
+                            term.term.yellow(`\t\t${out.fileName}\n`)
+                        }
                     }
                 }
-            }).then(() => bundler.write());
-        // } else {
-        //
-        // }
+            } catch (e) {
+                // term.setData(target, {
+                //     state: 'fail'
+                // });
+                console.error(e.message);
+            }
+        }
     }
 }
 

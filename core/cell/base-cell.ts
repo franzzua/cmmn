@@ -161,7 +161,6 @@ export class BaseCell<T = unknown>
 	// register classes as cell like, so unknown "change" event will notify wrapped cell
 	public static likeCells = new Map<unknown, Subscriber<unknown>>();
 
-	/* @__PURE__ */
 	static like<
 		TClass extends abstract new (
 			...args: unknown[]

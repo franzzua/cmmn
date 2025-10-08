@@ -1,0 +1,18 @@
+{
+	"extends": "@cmmn/tools/tsconfig.json",
+	"compilerOptions": {
+		"baseUrl": ".",
+		"isolatedModules": false,
+		"lib": ["dom", "es2015.collection", "esnext"]
+	},
+	"include": ["**/*.ts"],
+	"exclude": ["dist", "node_modules", "react", "uhtml"],
+	"references": [
+		{
+			"path": "../core"
+		},
+		{
+			"path": "../sync"
+		}
+	]
+}

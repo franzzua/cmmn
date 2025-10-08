@@ -1,29 +1,46 @@
-import {Store} from './store';
-import {Component, component, Scope, useCelled, useInjected} from "@cmmn/react";
-import {Button} from "@cmmn/examples-ui-lib";
+import {Component, component, ReactRouter, Scope} from "@cmmn/react";
 import {type Api, ApiToken} from "./api";
-import {Fn, inject} from "@cmmn/core";
-import {Counters} from "../counter";
-import {Draggable} from "../draggable";
-import {DraggableTarget} from "../draggable/draggable.target";
-import {DraggableClone} from "../draggable/draggable.clone";
-import {DraggableContext} from "../draggable/draggable.context";
-import {CountersController} from "../counter/counters.controller";
-//
+import {bind, cell, inject} from "@cmmn/core";
+import type {FC} from "react";
+
+
+const router = ReactRouter.fromTable({
+	root: {
+		fc: AppPage,
+		route: ''
+	},
+	counter: {
+		route: '/counter?id=:id',
+		loadFC: () => import("./counter.page").then(x => x.CounterPage as FC)
+	}
+}, '/example/react');
+
 @component()
 export class App extends Component {
+	@cell()
+	private accessor ctrl;
+	private counters;
 
-	@inject(Store) store!: Store;
+
+	// @inject(Store) store!: Store;
 	@inject(ApiToken) api!: Api;
 
+	@bind()
+	async load(){
+		this.counters = await import('../counter');
+		this.ctrl = await import('../counter/counters.controller');
+	}
+
 	render() {
-		return <div style={{display: 'flex', gap: '1em', flexDirection: 'column'}}>
-			<Scope provide={[CountersController, '1']}>
-				<Counters />
-			</Scope>
-			<DraggableClone/>
-			{/*<Counters id={'2'}/>*/}
-			{/*<Counters id={'3'}/>*/}
-		</div>;
+		return router.Current;
 	}
 }
+
+export function AppPage(){
+	return (<>
+		<button onClick={() => router.go('counter', {id: 1})}>Load 1</button>
+		<button onClick={() => router.go('counter', {id: 3})}>Load 3</button>
+		<button onClick={() => router.go('counter', {id: 5})}>Load 5</button>
+	</>)
+}
+

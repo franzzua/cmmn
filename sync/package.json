@@ -8,10 +8,13 @@
 	"repository": {
 		"url": "https://github.com/franzzua/cmmn/tree/master/sync"
 	},
-	"module": "./index.ts",
 	"scripts": {
 		"bundle": "cmmn bundle -b --watch",
 		"build": "cmmn compile -b --watch"
+	},
+	"exports": {
+		".": "./index.ts",
+		"./storage": "./src/crdt/storage.ts"
 	},
 	"files": [
 		"dist"

@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import {fastify} from "fastify";
+import {join} from "node:path";
 
 export class TargetServer {
     /**
@@ -8,7 +9,11 @@ export class TargetServer {
     target;
     prefix;
     /**
-     * @type {import("./resolver.js").Resolver}
+     * @type string
+     */
+    base
+    /**
+     * @type {import("./resolver.ts").Resolver}
      */
     resolver;
     url;
@@ -17,7 +22,7 @@ export class TargetServer {
     /**
      * @param target {import("../helpers/target").Target}
      * @param prefix {string}
-     * @param resolver {import("./resolver.js").Resolver}
+     * @param resolver {import("./resolver.ts").Resolver}
      */
     constructor(target, prefix, resolver) {
         this.target = target;
@@ -71,10 +76,21 @@ export class TargetServer {
      * @param id {string}
      * @returns {*}
      */
-    resolveId = id => {
-        if (id.match(/@(vite|react)/)) console.log(id);
-        return id.startsWith(this.target.packageJson.name)
-            && `${this.url}/${this.prefix}/${id}`
+    resolveId = (id, importer, options) => {
+        const path = id.match(new RegExp(`^\/?${this.target.packageJson.name}(?<path>.*)$`))?.groups.path;
+        if (path === undefined)
+            return null;
+        const entry = this.target.getEntry("." + path);
+        if (!entry) {
+            this.target.error(`Entry not found for path: ${path}`);
+            return
+        }
+        const relative = this.target.flags.production ? entry.output : entry.relative.substring(2);
+        const resolvedId = `${this.url}${this.base}/${relative}`;
+        return {
+            id: resolvedId,
+            external: true
+        };
     }
 
     /**

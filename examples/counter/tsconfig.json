@@ -5,6 +5,5 @@
 		"baseUrl": "./src",
 		"jsx": "react-jsx"
 	},
-	"include": ["**/*.ts"],
 	"exclude": ["dist", "node_modules"]
 }

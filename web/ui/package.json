@@ -1,0 +1,22 @@
+{
+	"name": "@cmmn/ui",
+	"version": "3.0.0-beta-A",
+	"description": "",
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": {
+		"url": "https://github.com/franzzua/cmmn/tree/master/ui"
+	},
+	"type": "module",
+	"module": "index.ts",
+	"dependencies": {
+		"@cmmn/core": "workspace:~",
+		"@cmmn/sync": "workspace:~"
+	},
+	"devDependencies": {
+		"route-parser": "0.0.5"
+	},
+	"author": "",
+	"license": "ISC"
+}

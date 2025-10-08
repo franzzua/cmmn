@@ -1,5 +1,5 @@
 import {Fn, resolve} from "@cmmn/core";
-import {CounterModel} from "./counterModel";
+import {CounterModel} from "examples/model";
 import {css, } from "@acab/ecsstatic";
 import {Button} from "@cmmn/examples-ui-lib";
 import {cn, Component, component} from "@cmmn/react";

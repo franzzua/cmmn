@@ -3,7 +3,6 @@ import {bind, cell, ObservableMap, scoped, singleton} from "@cmmn/core";
 @singleton()
 export class DraggableContext {
 	constructor() {
-		console.log(this)
 	}
 	targets = new ObservableMap<Node, any>();
 

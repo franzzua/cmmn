@@ -1,7 +1,8 @@
 {
   "extends": "@cmmn/tools/tsconfig.json",
   "compilerOptions": {
-    "baseUrl": "."
+    "baseUrl": ".",
+    "allowJs": true
   },
   "exclude": [
     "node_modules",

@@ -1,8 +1,7 @@
 import {AsyncCell, bind, Cell, cell, getOrAdd, inject, resolve, scoped} from "@cmmn/core";
-import {CounterRepository} from "./counter-repository";
+import {CounterRepository, CounterModel} from "@cmmn/examples-model";
 import {DraggableContext} from "../draggable/draggable.context";
 import {CRDT} from "@cmmn/sync";
-import {CounterModel} from "./counterModel";
 
 @scoped()
 export class CountersController {

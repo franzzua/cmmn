@@ -2,7 +2,7 @@ import {component, Component, documentEvents, html} from "@cmmn/uhtml";
 import {bind, Cell, cell} from "@cmmn/core";
 import {css} from "@acab/ecsstatic";
 
-@component()
+@component({name: 'movable-div'})
 export class MovableDiv extends Component {
 
 	@cell()
@@ -16,7 +16,7 @@ export class MovableDiv extends Component {
 	}
 
 	@cell()
-	private position = {x: 0, y: 0};
+	private accessor position = {x: 0, y: 0};
 
 	@cell()
 	get isDragging() {

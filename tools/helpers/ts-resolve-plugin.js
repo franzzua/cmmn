@@ -45,10 +45,10 @@ class Visitor {
         const sourceFileDir = path.dirname(sourceFile.fileName);
 
         return [
-            importPath + "/index.ts",
+            importPath + "/worker.ts",
             importPath + ".ts",
             importPath + ".tsx",
-            importPath + "/index.ts",
+            importPath + "/worker.ts",
             importPath + ".js",
             importPath + ".jsx",
             importPath,

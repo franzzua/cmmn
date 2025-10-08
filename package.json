@@ -11,7 +11,6 @@
 		"host": "cmmn.framework.app",
 		"port": "9009",
 		"proxy": {
-			"^/example/react/api": "/_/@cmmn/examples-server/api",
 			"^/example/react": "/_/@cmmn/examples-client",
 			"^/example/uhtml": "/_/@cmmn/examples-counter"
 		}
@@ -26,15 +25,14 @@
 		"ci2": "cmmn compile && cmmn bundle && cmmn bundle --prod --minify",
 		"test": "node --test --import @cmmn/tools/import **/*.spec.ts",
 		"publish": "wersion patch",
-		"dev": "cmmn dev --run"
+		"dev": "cmmn dev",
+		"dev:prod": "cmmn dev --prod --minify"
 	},
 	"workspaces": [
 		"core",
 		"tools",
 		"server",
-		"ui",
-		"ui/uhtml",
-		"ui/react",
+		"web/*",
 		"sync",
 		"examples/*"
 	],
@@ -44,6 +42,8 @@
 	"devDependencies": {
 		"@chainsafe/libp2p-yamux": "^7.0.1",
 		"@cmmn/tools": "workspace:~",
+		"@types/route-parser": "^0",
+		"route-parser": "^0.0.5",
 		"typescript": "5.8.3"
 	},
 	"packageManager": "yarn@4.5.1",

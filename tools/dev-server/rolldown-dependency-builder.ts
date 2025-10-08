@@ -2,7 +2,7 @@ import {fileURLToPath} from "node:url";
 
 import {crc32} from "node:zlib";
 import fs, {readFile} from "node:fs/promises";
-import {dirname, relative} from "node:path";
+import {wasm} from "./plugins/wasm";
 
 export class RolldownDependencyBuilder {
     constructor(private externals: string[], private basePath: string) {
@@ -75,33 +75,10 @@ export class RolldownDependencyBuilder {
                 },
                 treeshake: true,
                 plugins: [
-                    {
-                        name: 'wasm',
-                        async load(id) {
-                            if (!/\.wasm$/.test(id)) return null;
-                            const rel = relative(input.index, id);
-                            this.emitFile({
-                                type: 'asset',
-                                source: await this.fs.readFile(id),
-                                name: 'Rollup WASM Asset',
-                                fileName: '/'+rel
-                            });
-                            return rel;
-                        },
-                        transform(code, id){
-                            if (!/\.wasm$/.test(id)) return null;
-                            return {
-                                map: {
-                                    mappings: ''
-                                },
-                                code: [
-                                    `const url = new URL('./${code}', import.meta.url);`,
-                                    `const ab = await fetch(url).then(x => x.arrayBuffer())`,
-                                    `export default new WebAssembly.Module(ab);`
-                                ].join('\n')
-                            }
-                        }
-                    },
+                    wasm({
+                        emitAsset: true,
+                        assetName: `${target}/{name}`
+                    }),
                     {
                         name: 'require',
                         load: id => {
@@ -133,7 +110,7 @@ export class RolldownDependencyBuilder {
                     .map(x => [(x.name === 'index' ? '/' : x.fileName.substring(chunkBase.length)), x.code]),
                 ...result.output
                     .filter(x => x.type !== "chunk")
-                    .map(x => [x.fileName, x.source])
+                    .map(x => ['/' + x.fileName, x.source])
             ]);
         } finally {
             // await entryPoints[Symbol.asyncDispose]();

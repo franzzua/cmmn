@@ -25,9 +25,15 @@ export class DependencyServer {
 
     resolveId(id, importer, options) {
         if (id.startsWith(`${this.base}`))
-            return `${this.url}${id}`;
+            return {
+                id: `${this.url}${id}`,
+                external: true
+            };
         if (this.optimizeDeps.some(x => id.startsWith(x))) {
-            return `${this.url}${this.base}/${id}`;
+            return {
+                id: `${this.url}${this.base}/${id}`,
+                external: true
+            };
         }
     }
 

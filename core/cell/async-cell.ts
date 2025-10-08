@@ -18,7 +18,7 @@ export class AsyncCell<T, TKey = T> extends Cell<AsyncResult<T>, TKey> {
 	}
 
 	private onChange = async (gen: { value: AsyncGenerator<T> | Promise<T> }) => {
-		if (!gen.value) return this.set(null);
+		if (!gen.value) return this.set({ result: gen.value });
 		if (Symbol.asyncIterator in gen.value)
 			for await (const value of gen.value as AsyncGenerator<T>) {
 				// prevent race
@@ -59,10 +59,11 @@ export class AsyncCell<T, TKey = T> extends Cell<AsyncResult<T>, TKey> {
 		return new AsyncResultWrapper<T>(cell) as unknown as AsyncResult<T>;
 	}
 }
-export type AsyncResult<T> =
+export type AsyncResult<T> = { getResult(): Promise<T>} & (
 	| { isPending: true; result?: never; error?: never; }
 	| { isPending?: never; result: T; error?: never; }
 	| { isPending?: never; result?: never; error: Error; }
+);
 
 class AsyncResultWrapper<T> {
 	constructor(private cell: AsyncCell<T>) {
@@ -78,6 +79,13 @@ class AsyncResultWrapper<T> {
 
 	public get error(){
 		return this.cell.get().error;
+	}
+
+	public async getResult(): Promise<T> {
+		while (this.isPending) {
+			await this.cell.onceAsync('change');
+		}
+		return this.result;
 	}
 }
 

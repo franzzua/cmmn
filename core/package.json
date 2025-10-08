@@ -6,14 +6,12 @@
 	},
 	"description": "di, base extensions, useful functions",
 	"scripts": {
-		"typings": "cmmn typings --watch"
+		"typings": "cmmn typings --watch",
+		"bundle": "cmmn bundle"
 	},
 	"type": "module",
 	"exports": {
-		".": {
-			"default": "./index.ts",
-			"types": "./index.ts"
-		}
+		".": "./index.ts"
 	},
 	"dependencies": {
 		"throttle-debounce": "5.0.2",

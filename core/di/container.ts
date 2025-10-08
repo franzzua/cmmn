@@ -1,14 +1,18 @@
 import type {ConstructorOf, Factory, InjectionToken} from './types';
 
-
 export class Container {
 	readonly #parent: Container
 	private constructor(parent: Container = null) {
 		this.#parent = parent;
 	}
-
 	/** @internal **/
 	public static Current: Container = new Container();
+	static {
+		if (globalThis.di)
+			throw new Error(`Loading DI container second time`)
+		globalThis.di = Container.Current;
+	}
+
 	readonly #instances = new Map<InjectionToken, unknown>();
 	readonly #consts = new Map<InjectionToken, unknown>();
 	readonly #overrides = new Map<

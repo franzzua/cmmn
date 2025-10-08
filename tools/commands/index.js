@@ -2,7 +2,7 @@ export {compile} from "./compile.ts";
 export {typings} from "./typings.ts";
 export {gen} from "./gen.js";
 export {bundle} from "./bundle.ts";
-export {dev} from "./dev.js";
+export {dev} from "./dev.ts";
 export {publish} from "./publish.ts";
 export {format} from "./format.js";
 export {lint} from "./lint.js";

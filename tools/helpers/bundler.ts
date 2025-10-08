@@ -4,8 +4,8 @@ import {crc32} from "node:zlib";
 import {htmlLoader} from "./html-loader.js";
 import {Flags} from "./flags";
 import {Target, Entry} from "./target";
-import {BuildContext} from "esbuild";
 import {wasmResolver} from "../dev-server/wasm-resolver";
+import type {ViteBuilder} from "vite";
 
 export class Bundler {
     results: Array<{
@@ -14,7 +14,7 @@ export class Bundler {
         data: Uint8Array | string;
         fileName: string;
     }> = [];
-    private context: BuildContext;
+    private builder: ViteBuilder;
 
     constructor(private target: Target, private flags: Flags) {
     }
@@ -22,14 +22,13 @@ export class Bundler {
     async bundle() {
         await this.importHtml();
         const context = await this.getContext();
-        const result = await context.rebuild().catch(err => {
+        const result = await context.buildApp().catch(err => {
             return {
                 errors: err.errors,
                 warnings: err.warnings
             }
         });
-        await this.processResult(result);
-        await context.dispose();
+        // await this.processResult(result);
     }
 
     async importHtml(){
@@ -57,8 +56,8 @@ export class Bundler {
 
 
     async getContext() {
-        const esbuild = await import('esbuild');
-        return this.context = await esbuild.context({
+        const vite = await import('vite');
+        return this.builder = await vite.createBuilder({
             absWorkingDir: this.target.rootDir,
             platform: 'browser',
             external: [
