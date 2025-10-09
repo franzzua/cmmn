@@ -1,6 +1,6 @@
 {
 	"name": "@cmmn/tools",
-	"version": "3.0.0-c",
+	"version": "3.0.0-c2",
 	"description": "Compilation, bundling, code generator, testing.",
 	"type": "module",
 	"repository": {
