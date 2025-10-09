@@ -1,5 +1,0 @@
-{
-	"extends": "@cmmn/tools/tsconfig.json",
-	"include": ["**/*.ts"],
-	"exclude": []
-}

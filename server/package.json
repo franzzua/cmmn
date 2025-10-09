@@ -1,6 +1,6 @@
 {
 	"name": "@cmmn/server",
-	"version": "3.0.0-beta-A",
+	"version": "3.0.0-c",
 	"description": "server libs for building rest api",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
@@ -19,6 +19,7 @@
 		"@cmmn/tools": "workspace:~"
 	},
 	"type": "module",
+	"module": "./index.ts",
 	"author": "",
 	"license": "ISC",
 	"gitHead": "2755b333808bf97f1d9454601c2a2c9a88e4a021"
