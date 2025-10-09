@@ -8,7 +8,7 @@ import {swcMinifyPlugin} from "./plugins/minify";
 export class RolldownDependencyBuilder {
     constructor(private externals: string[],
                 private basePath: string,
-                private minify: boolean) {
+                private minify: boolean = false) {
     }
 
     async getFileContent(target: string){

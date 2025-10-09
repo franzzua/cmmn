@@ -20,8 +20,10 @@ jobs:
       - uses: pnpm/action-setup@v2
         with:
           version: 8
-      - run: pnpm i
-      - run: pnpm run ci2
-      - run: pnpm publish -r --no-git-checks
+      - run: corepack yarn
+      - run: cmmn compile
+      - run: cmmn typings
+      - run: cmmn bundle --prod
+      - run: cmmn publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}

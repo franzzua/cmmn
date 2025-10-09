@@ -7,7 +7,7 @@ export class MovableDiv extends Component {
 
 	@cell()
 	get div(): HTMLDivElement | undefined {
-		return this.events.render?.target.firstElementChild;
+		return (this.events.render?.target as HTMLElement).firstElementChild as HTMLDivElement;
 	}
 
 	@cell()

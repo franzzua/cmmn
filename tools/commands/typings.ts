@@ -11,32 +11,27 @@ const rootDir = process.cwd();
 
 export async function typings(flags: Flags) {
     const targets = await Target.readTargets(rootDir, flags);
-    events.defaultMaxListeners = Math.max(targets.length * 2, events.defaultMaxListeners);
+    events.setMaxListeners(Math.max(targets.length * 2, events.defaultMaxListeners));
     const watcher = flags.watch ? new Watcher() : null;
     for (const target of targets) {
         if (target.tsConfig.include?.length === 0)
             continue;
         generateTypings(target);
-        watcher?.watchTarget(target);
-        target.addEventListener('file', (e: FileChangeEvent) => {
-            target.log(`changed: ^W${e.files.join(', ')}`);
+        if (watcher) {
+            watcher.watchTarget(target);
+            target.addEventListener('change', (e: FileChangeEvent) => {
+                target.log(`changed: ^W${e.files.join(', ')}`);
 
-            generateTypings(target, e.files.map(f => path.join(target.rootDir, f)));
-        });
+                generateTypings(target);
+            });
+        }
     }
 }
 
-export function generateTypings(target: Target, files: string[] = []) {
-
+export function generateTypings(target: Target) {
+    const start = performance.now();
     const host = ts.createSolutionBuilderWithWatchHost(ts.sys, createProgram);
-    // host.getCustomTransformers = (pkg) => ({
-    //     before: [
-    //         tsResolvePlugin
-    //     ],
-    //     afterDeclarations: [
-    //         tsResolvePlugin
-    //     ]
-    // });
+
     host.useCaseSensitiveFileNames();
 
     const builder = ts.createSolutionBuilder(host, [target.rootDir], {
@@ -49,7 +44,12 @@ export function generateTypings(target: Target, files: string[] = []) {
         force: true,
     });
     builder.clean(target.rootDir);
-    builder.build(target.rootDir);
+    const files: string[] = [];
+    builder.build(target.rootDir, null, wf => {
+        files.push(wf);
+    });
+    const duration = performance.now() - start;
+    target.log(`typings for ^W${duration.toFixed()}ms. ^w${files.length} files`)
 }
 
 const cleanedBaseDirs = new Set();
@@ -68,7 +68,6 @@ function createProgram(rootNames, options, host, oldProgram, configFileParsingDi
         fs.rmSync(options.tsBuildInfoFile, {force: true});
         cleanedBaseDirs.add(options.baseUrl);
     }
-    console.log('\t', relative(process.cwd(), options.baseUrl));
     return ts.createEmitAndSemanticDiagnosticsBuilderProgram(
         rootNames, options, host, oldProgram, configFileParsingDiagnostics, projectReferences
     )

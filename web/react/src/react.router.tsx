@@ -2,19 +2,20 @@ import {Router, BaseRouteData} from "@cmmn/ui";
 import {FC} from "react";
 
 export class ReactRouter<TRoute extends string> extends Router<TRoute, ReactRouteData> {
-	public static fromTable<TRoute extends string>(table: Record<TRoute, ReactRouteData | FC | {
-		loadFC(): Promise<FC>
-	}>, base: string) {
+	public static fromTable<TRoute extends string>(table: {
+		[route in TRoute]: ReactRouteData | FC | { loadFC(): Promise<FC> }
+	}, base: string) {
 		const result = new ReactRouter<TRoute>(base);
 		for (let [route, data] of Object.entries(table)) {
 			if (typeof data === "function")
 				data = { fc: data } as ReactRouteData;
-			if (!data.fc && data.loadFC){
-				data.load = async () => {
-					data.fc = await data.loadFC()
+			const info = data as ReactRouteData & { loadFC(): Promise<FC> };
+			if (!info.fc && info.loadFC){
+				info.load = async () => {
+					info.fc = await info.loadFC()
 				}
 			}
-			result.addRoute(route as TRoute, data as ReactRouteData);
+			result.addRoute(route as TRoute, info);
 		}
 		return result;
 	}

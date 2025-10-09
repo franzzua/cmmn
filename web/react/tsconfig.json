@@ -1,6 +1,8 @@
 {
   "extends": "@cmmn/tools/tsconfig.json",
   "compilerOptions": {
+    "baseUrl": ".",
+    "rootDir": ".",
     "lib": [
       "dom",
       "es2015.collection",

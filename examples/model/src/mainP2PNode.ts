@@ -1,6 +1,6 @@
 import {yamux} from '@chainsafe/libp2p-yamux';
 import {identify} from '@libp2p/identify';
-import {createLibp2p} from 'libp2p';
+import {createLibp2p, Libp2p} from 'libp2p';
 import {multiaddr} from '@multiformats/multiaddr';
 import {Cell, scoped} from "@cmmn/core";
 import {noise} from "@chainsafe/libp2p-noise";
@@ -24,7 +24,7 @@ export class MainP2PNode extends P2PNode {
 	}
 	private server = `/dns/network.example.cmmn.local/tcp/443/tls/ws`;
 
-	async createLibp2p() {
+	async createLibp2p(): Promise<Libp2p> {
 		const libp2p = await createLibp2p({
 			transports: [
 				webSockets(),
@@ -65,7 +65,7 @@ export class MainP2PNode extends P2PNode {
 					// 	graylistThreshold: Number.NEGATIVE_INFINITY,
 					// 	opportunisticGraftThreshold: Number.NEGATIVE_INFINITY,
 					// },
-				}),
+				}) as any,
 				dcutr: dcutr()
 			},
 		});

@@ -2,17 +2,7 @@
 	"extends": "@cmmn/tools/tsconfig.json",
 	"compilerOptions": {
 		"baseUrl": ".",
-		"isolatedModules": false,
-		"lib": ["dom", "es2015.collection", "esnext"]
+		"lib": ["dom", "webworker"]
 	},
-	"include": ["**/*.ts"],
-	"exclude": ["dist", "node_modules", "react", "uhtml"],
-	"references": [
-		{
-			"path": "../core"
-		},
-		{
-			"path": "../sync"
-		}
-	]
+	"exclude": ["dist", "node_modules"]
 }

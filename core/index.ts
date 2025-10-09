@@ -27,7 +27,6 @@ export {
 export {
 	Cell,
 	BaseCell,
-	cell,
 	type IAsyncCellOptions,
 	type ICellOptions,
 	ObservableList,
@@ -35,8 +34,10 @@ export {
 	ObservableObject,
 	ObservableSet,
 	AsyncCell,
-	type AsyncResult
+	type AsyncResult,
+	type AsyncResultWrapper
 } from './cell';
+export {cell} from "./cell/decorators";
 
 export {
 	EventEmitterBase,

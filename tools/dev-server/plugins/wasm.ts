@@ -1,14 +1,12 @@
 import fs from "node:fs/promises";
+import {Plugin} from "vite";
 
 export function wasm(options: {
 	emitAsset?: boolean
 	assetName?: string
-} = {}){
+} = {}): Plugin{
 	return {
 		name: 'wasm',
-		setup(){
-
-		},
 		async load(id) {
 			if (!/\.wasm$/.test(id)) return null;
 			const name = id.split('/').pop();

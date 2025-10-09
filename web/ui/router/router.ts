@@ -1,5 +1,6 @@
 import Route from "route-parser";
 import {AsyncCell, BaseCell, cell} from "@cmmn/core";
+import {type AsyncResultWrapper} from "@cmmn/core";
 
 export class Router<TRoute extends string = string, TData extends BaseRouteData = BaseRouteData> {
 	protected location = new LocationCell();
@@ -7,12 +8,7 @@ export class Router<TRoute extends string = string, TData extends BaseRouteData 
 	constructor(protected base: string) {
 	}
 	@cell()
-	private get currentRoute(): {
-		route: TRoute;
-		data: TData;
-		params: Record<string, string>;
-		url: URL;
-	} {
+	private get currentRoute(): RouteInfo<TRoute, TData> {
 		const url = this.location.get();
 		for (let [id, { route, data }] of this.routes) {
 			if (url.pathname.endsWith('/'))
@@ -29,7 +25,9 @@ export class Router<TRoute extends string = string, TData extends BaseRouteData 
 		}
 	}
 
-	protected activatedRoute = AsyncCell.query(() => this.activate(this.currentRoute))
+	protected activatedRoute: AsyncResultWrapper<RouteInfo<TRoute, TData>> = AsyncCell.query(
+		() => this.activate()
+	);
 
 	@cell()
 	protected accessor routes = new Map<TRoute, {
@@ -53,7 +51,7 @@ export class Router<TRoute extends string = string, TData extends BaseRouteData 
 		this.location.goTo(new URL(path, location.origin));
 	}
 
-	protected async activate(){
+	protected async activate(): Promise<RouteInfo<TRoute, TData>> {
 		if (!this.currentRoute) return null;
 		await this.currentRoute.data.load?.(this.currentRoute.params)
 		if (await this.currentRoute.data.guard?.(this.currentRoute.params) === false){
@@ -94,4 +92,10 @@ class LocationCell extends BaseCell<URL> {
 		this.set(url);
 		window.history.pushState(null, '', url);
 	}
+}
+type RouteInfo<TRoute, TData> = {
+	route: TRoute;
+	data: TData;
+	params: Record<string, string>;
+	url: URL;
 }

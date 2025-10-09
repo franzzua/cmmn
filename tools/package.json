@@ -34,7 +34,6 @@
 	"dependencies": {
 		"@biomejs/biome": "1.9.4",
 		"@fastify/caching": "9.0.3",
-		"@fastify/express": "4.0.2",
 		"@fastify/http-proxy": "11.3.0",
 		"@manypkg/get-packages": "^2.2.2",
 		"@schemastore/package": "0.0.10",

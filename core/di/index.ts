@@ -2,14 +2,14 @@ import {Container} from './container';
 import type {ConstructorOf, InjectionToken} from './types';
 export {injectLazy, inject} from "./injectLazy";
 
-export function scoped<TClass extends ConstructorOf<unknown>>() {
-	return (target: ConstructorOf<unknown>, context: ClassDecoratorContext<TClass>) => {
+export function scoped<TClass extends ConstructorOf<unknown, any[]>>() {
+	return (target: ConstructorOf<unknown, any[]>, context: ClassDecoratorContext<TClass>) => {
 		di.scoped(target);
 	};
 }
 
-export function singleton<TClass extends ConstructorOf<unknown>>() {
-	return (target: ConstructorOf<unknown>, context: ClassDecoratorContext<TClass>) => {
+export function singleton<TClass extends ConstructorOf<unknown, any[]>>() {
+	return (target: ConstructorOf<unknown, any[]>, context: ClassDecoratorContext<TClass>) => {
 		di.factory(target, () => new target());
 	};
 }
@@ -20,7 +20,6 @@ export function factory<T>(
 ) {
 	di.factory(dep, Object.assign(factory, { isScoped: true}));
 }
-
 
 export const di = Container.Current;
 export const resolve = <T>(dep: InjectionToken<T, any>) =>

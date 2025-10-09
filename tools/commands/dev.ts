@@ -15,7 +15,7 @@ export async function dev(flags: Flags) {
 
     if (flags.minify){
         fastifyCompress(app);
-        app.register(fastifyCaching, {
+        app.register(fastifyCaching as any, {
             privacy: fastifyCaching.privacy.PUBLIC,
             expiresIn: 86400
         })

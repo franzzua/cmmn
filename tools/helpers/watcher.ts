@@ -22,8 +22,6 @@ export class Watcher {
 		})) {
 			if (file.filename.endsWith('~') || target.isExcluded(file.filename, true))
 				continue;
-			for (let string of target.tsConfig.exclude) {
-			}
 			changes.add(file.filename);
 			emit();
 		}

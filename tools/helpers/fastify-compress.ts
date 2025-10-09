@@ -13,7 +13,7 @@ const encoders = {
 export function fastifyCompress(app: FastifyInstance, options: FastifyCompressOptions = {
 	encodings: ['br', 'zstd', 'gzip', 'deflate']
 }) {
-	app.addHook('onSend', async (request: FastifyRequest, reply: FastifyReply, payload) => {
+	app.addHook('onSend', async (request: FastifyRequest, reply: FastifyReply, payload: string | Uint8Array) => {
 		for (const encoding of options.encodings) {
 			if (!encoders[encoding] || !request.headers["accept-encoding"].includes(encoding)) continue;
 			reply.header('content-encoding', encoding);

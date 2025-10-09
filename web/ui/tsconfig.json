@@ -1,3 +1,8 @@
 {
 	"extends": "@cmmn/tools/tsconfig.json",
+	"compilerOptions": {
+		"baseUrl": ".",
+		"lib": ["DOM"]
+	},
+	"exclude": ["dist", "node_modules"]
 }

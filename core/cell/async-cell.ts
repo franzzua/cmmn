@@ -18,7 +18,7 @@ export class AsyncCell<T, TKey = T> extends Cell<AsyncResult<T>, TKey> {
 	}
 
 	private onChange = async (gen: { value: AsyncGenerator<T> | Promise<T> }) => {
-		if (!gen.value) return this.set({ result: gen.value });
+		if (!gen.value) return this.set({ result: gen.value as T });
 		if (Symbol.asyncIterator in gen.value)
 			for await (const value of gen.value as AsyncGenerator<T>) {
 				// prevent race
@@ -54,21 +54,20 @@ export class AsyncCell<T, TKey = T> extends Cell<AsyncResult<T>, TKey> {
 	}
 
 	static query<T>(getter: () => (Promise<T> | AsyncGenerator<T>),
-	                options: IAsyncCellOptions<T> = {}): AsyncResult<T>{
+	                options: IAsyncCellOptions<T> = {}): AsyncResultWrapper<T>{
 		const cell = new AsyncCell(getter, options);
-		return new AsyncResultWrapper<T>(cell) as unknown as AsyncResult<T>;
+		return new AsyncResultWrapper<T>(cell)
 	}
 }
-export type AsyncResult<T> = { getResult(): Promise<T>} & (
+export type AsyncResult<T> = (
 	| { isPending: true; result?: never; error?: never; }
 	| { isPending?: never; result: T; error?: never; }
 	| { isPending?: never; result?: never; error: Error; }
 );
 
-class AsyncResultWrapper<T> {
+export class AsyncResultWrapper<T> {
 	constructor(private cell: AsyncCell<T>) {
 	}
-
 	public get result(): T {
 		return this.cell.get().result;
 	}

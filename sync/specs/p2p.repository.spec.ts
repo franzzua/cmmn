@@ -4,8 +4,8 @@ import { expect } from '@cmmn/tools/test';
 import {CRDT, P2PNode } from '../src';
 import {Cell, Container, di, Fn} from '@cmmn/core';
 import { P2PRepository } from '../src';
-import { StorageProvider } from '../src';
 import { InMemoryStorage } from './inMemoryStorage';
+import {StorageProvider} from "@cmmn/sync/storage";
 
 describe('p2p-repo', () => {
 	let contexts: Container[] = [];

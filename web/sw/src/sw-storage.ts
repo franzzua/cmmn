@@ -1,4 +1,5 @@
 import {InitMessageData} from "./types";
+declare var self: ServiceWorkerGlobalScope;
 
 export class StorageInfo {
 	private dbName = '@cmmn/service-worker/worker-storage';

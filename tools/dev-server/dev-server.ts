@@ -26,8 +26,8 @@ export class DevServer {
                 return new TargetRunner(t, this.prefix, this.resolver);
             }
             return new TargetWebServer(t, this.prefix, this.resolver);
-        });
-        this.depServer = new DependencyServer(targets, process.env.NODE_ENV);
+        }).filter(x => x != null);
+        this.depServer = new DependencyServer(targets, this.rootTarget.flags.production ? 'production' : 'development');
     }
 
     rewriteUrl = (req) => {

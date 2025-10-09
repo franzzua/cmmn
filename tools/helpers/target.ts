@@ -10,6 +10,7 @@ import {CompilerOptions} from "typescript";
 import {Config} from "@swc/core";
 import {minimatch} from 'minimatch';
 import {PackageJSON} from "@manypkg/tools/src/Tool";
+import {FileChangeEvent} from "./watcher";
 
 export class Target extends EventTarget {
     rootDir: string;
@@ -30,6 +31,9 @@ export class Target extends EventTarget {
         for (let dep of this.deps) {
             dep.addEventListener('change', (e: ChangeEvent) => {
                 this.dispatchEvent(new ChangeEvent(e.payload, e.from));
+            });
+            dep.addEventListener('file', (e: FileChangeEvent) => {
+                this.dispatchEvent(new FileChangeEvent([]));
             });
             dep.reactions.push(this)
         }

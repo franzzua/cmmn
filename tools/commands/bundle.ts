@@ -3,11 +3,11 @@ import {Terminal} from "../helpers/terminal.js";
 import {Flags} from "../helpers/flags";
 import {TargetWebServer} from "../dev-server/target-web-server";
 import {build} from "vite";
-import path from "node:path";
+import path, {dirname, join} from "node:path";
 import {DevServer} from "../dev-server/dev-server";
 import {RollupOutput} from "rollup";
 import {getAssets} from "../dev-server/asset-collection";
-import {writeFile} from "node:fs/promises";
+import {cp, mkdir, stat, writeFile} from "node:fs/promises";
 
 export async function bundle(flags: Flags) {
     const origWorkspace = flags.workspace;
@@ -21,7 +21,6 @@ export async function bundle(flags: Flags) {
         if (origWorkspace && targetServer.target.rootDir !== path.join(devServer.rootTarget.rootDir, origWorkspace))
             continue;
         if (targetServer instanceof TargetWebServer){
-
             try {
                 const bundle = await targetServer.getBundle();
                 term.setData(targetServer.target, {
@@ -29,12 +28,19 @@ export async function bundle(flags: Flags) {
                     size: Object.values(bundle).map(x => x.length).reduce((a, b) => a + b, 0)
                 });
                 for (let fileName in bundle) {
+                    const path = join(targetServer.target.rootDir, 'dist/bundle', fileName);
+                    const dir = dirname(path);
+                    await mkdir(dir, { recursive: true });
                     await writeFile(
-                        path.join(targetServer.target.rootDir, 'dist/bundle', fileName),
-                        bundle[fileName]
+                        path,
+                        bundle[fileName],
                     );
                     term.term.yellow(`\t\t${fileName}\n`)
                 }
+                const publicDir = join(targetServer.target.rootDir, 'public');
+                await cp(publicDir, join(targetServer.target.rootDir, 'dist/bundle/'), {
+                    recursive: true
+                }).catch(() => {});
             } catch (e) {
                 // term.setData(target, {
                 //     state: 'fail'

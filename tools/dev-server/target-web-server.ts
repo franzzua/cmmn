@@ -2,9 +2,9 @@ import {TargetServer} from "./targetServer";
 import {wasm} from "./plugins/wasm.js";
 import swc from "unplugin-swc";
 import tsconfigPaths from "vite-tsconfig-paths";
-import {createVitePlugin} from "unplugin";
+import {createVitePlugin, VitePlugin} from "unplugin";
 import path, {join, relative} from "node:path";
-import {build, createServer, HtmlTagDescriptor, InlineConfig} from "vite";
+import {build, createServer, HtmlTagDescriptor, InlineConfig, Plugin} from "vite";
 import {ChangeEvent} from "../helpers/target";
 import {FastifyReply, FastifyRequest} from "fastify";
 import {RollupOutput} from "rollup";
@@ -56,16 +56,13 @@ export class TargetWebServer extends TargetServer {
                 },
             },
             plugins: [...this.getPlugins()],
-
         };
     }
 
     async getBundleConfig(): Promise<InlineConfig>{
         const config = await this.getConfig();
         config.build.lib = {
-            entry: Object.fromEntries(Object.entries(this.target.packageJson.exports as any ?? {
-                '.': this.target.packageJson.module ?? this.target.packageJson.main ?? 'worker.ts'
-            }).filter(x => x[1].match(/\.(tsx?|jsx?|html)$/))) as any,
+            entry: Object.fromEntries(this.target.entries.map(x => [x.name, x.source])) as any,
             fileName: (format, entryName) => {
                 if (entryName == '.') entryName = 'index';
                 return `${entryName.replace(/^[./]*/, '')}.js`;
@@ -78,12 +75,12 @@ export class TargetWebServer extends TargetServer {
         return config;
     }
 
-    * getPlugins() {
+    * getPlugins(): Generator<Plugin> {
         yield wasm();
         // yield topLevelAwait({});
-        yield swc.vite(this.target.swcConfig);
+        yield swc.vite(this.target.swcConfig) as unknown as Plugin;
         yield tsconfigPaths();
-        yield createVitePlugin(() => ({
+        yield {
             name: this.target.packageJson.name + '_pre',
             resolveId: (id: string, importer, opts) => {
                 if(this.target.flags.production){
@@ -104,10 +101,10 @@ export class TargetWebServer extends TargetServer {
                 return this.resolver?.resolveId(id, importer, opts);
             },
             enforce: 'pre',
-        }))();
+        };
         yield {
             name: "cmmn:html-base-tag",
-            order: 'pre',
+            enforce: 'pre',
             transformIndexHtml: (_, config) => {
                 const dirname = this.target.flags.production ? '' : config.path.substr(0, config.path.lastIndexOf('/'));
                 const result: HtmlTagDescriptor[] = [
@@ -136,6 +133,8 @@ export class TargetWebServer extends TargetServer {
 
     private bundle: Promise<RollupOutput[]>;
     private async createBundle(): Promise<RollupOutput[]> {
+        if (!this.target.entries.length)
+            return [];
         const config = await this.getBundleConfig();
         return build(config).catch(err => {
             this.target.error(err.message);
@@ -281,7 +280,7 @@ export class TargetWebServer extends TargetServer {
             this.target.log('change')
             this.target.dispatchEvent(new ChangeEvent(payload, this.target.packageJson.name));
         };
-        this.target.addEventListener('change', e => {
+        this.target.addEventListener('change', (e: ChangeEvent) => {
             this.target.log('change')
             emitChange.call(server.ws, e.payload);
         });
@@ -320,5 +319,8 @@ export type BundleJson = {
         path: string;
     }[]
     publicPath?: string;
-    proxy?: Record<string, string>;
+    proxy?: {
+        regex: string;
+        replace: string;
+    }[]
 }
