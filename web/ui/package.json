@@ -9,7 +9,7 @@
 		"url": "https://github.com/franzzua/cmmn/tree/master/ui"
 	},
 	"type": "module",
-	"module": "index.ts",
+	"module": "./index.ts",
 	"dependencies": {
 		"@cmmn/core": "workspace:~",
 		"@cmmn/sync": "workspace:~"

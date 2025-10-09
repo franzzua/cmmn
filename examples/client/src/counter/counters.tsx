@@ -1,9 +1,8 @@
 import {component, Component} from "@cmmn/react";
 import {resolve} from "@cmmn/core";
-import {Button} from "@cmmn/examples-ui-lib";
+import {Button} from "@cmmn/examples-ui-lib/button";
 import {Counter} from "./counter";
 import {CountersController} from "./counters.controller";
-import("@cmmn/examples-ui-lib/css")
 
 @component()
 export class Counters extends Component {
@@ -22,4 +21,3 @@ export class Counters extends Component {
 
 	}
 }
-

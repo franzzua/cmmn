@@ -6,8 +6,8 @@
 	"type": "module",
 	"main": "./index.ts",
 	"exports": {
-		".": "./index.ts",
-		"./css": "./dist/bundle/examples-ui-lib.css"
+		"./button": "./button/button.tsx",
+		"./green-button": "./button-green/button.green.tsx"
 	},
 	"dependencies": {
 		"@cmmn/core": "workspace:~",
@@ -15,6 +15,7 @@
 	},
 	"devDependencies": {
 		"@acab/ecsstatic": "^0.9.0",
-		"@cmmn/tools": "workspace:~"
+		"@cmmn/tools": "workspace:~",
+		"vite-plugin-css-injected-by-js": "^3.5.2"
 	}
 }

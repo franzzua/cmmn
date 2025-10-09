@@ -9,9 +9,10 @@ import {ChangeEvent} from "../helpers/target";
 import {FastifyReply, FastifyRequest} from "fastify";
 import {RollupOutput} from "rollup";
 import mime from "mime-types";
-import {getAssets} from "./asset-collection";
+import {Asset, getAssets} from "./asset-collection";
 import {readdir, readFile, stat} from "node:fs/promises";
 import fs from "fs";
+import {swcMinifyPlugin} from "./plugins/minify";
 
 export class TargetWebServer extends TargetServer {
 
@@ -19,7 +20,7 @@ export class TargetWebServer extends TargetServer {
         return {
             root: this.target.rootDir,
             logLevel: 'silent',
-            mode: 'debug',
+            mode: this.target.flags.production ? "production" : 'debug',
             optimizeDeps: {
                 noDiscovery: true,
                 include: []
@@ -34,7 +35,6 @@ export class TargetWebServer extends TargetServer {
             },
             html: {},
             base: this.base + '/',
-            esbuild: false,
             build: {
                 target: 'chrome89',
                 emptyOutDir: false,
@@ -49,7 +49,7 @@ export class TargetWebServer extends TargetServer {
                     ],
                 },
                 write: false,
-                minify: this.target.flags.minify ? 'terser' : false,
+                minify: false,
                 sourcemap: this.target.flags.minify ? false : 'inline',
                 commonjsOptions: {
                     transformMixedEsModules: true
@@ -109,10 +109,11 @@ export class TargetWebServer extends TargetServer {
             name: "cmmn:html-base-tag",
             order: 'pre',
             transformIndexHtml: (_, config) => {
+                const dirname = this.target.flags.production ? '' : config.path.substr(0, config.path.lastIndexOf('/'));
                 const result: HtmlTagDescriptor[] = [
                     {
                         tag: "base",
-                        attrs: {href: `${this.base}/`},
+                        attrs: {href: `${this.base}${dirname}/`},
                         children: '/** injected **/'
                     }
                 ];
@@ -128,6 +129,8 @@ export class TargetWebServer extends TargetServer {
                 return result;
             },
         }
+        if (this.target.flags.minify)
+            yield swcMinifyPlugin();
         // yield analyzer();
     }
 
@@ -146,81 +149,96 @@ export class TargetWebServer extends TargetServer {
                 s.middlewares(request.raw, reply.raw);
             } else {
                 const relPath = path.relative(this.base, request.url).split('?')[0];
-                const bundle = await (this.bundle ??= this.createBundle());
-                const outputs = bundle.flatMap(x => x.output);
-                if (relPath == 'bundle.json'){
-                    const data = {
-                        publicPath: this.target.publicPath,
-                        proxy: this.target.proxy.map(x => ({
-                            regex: x.regex.source,
-                            replace: this.target.getEntry("."+x.replace)?.output
-                        }))
-                    };
-                    const assets = await getAssets(bundle);
-                    for (let asset of assets) {
-                        asset.path = `${this.base}/${asset.path}`;
-                    }
-                    const publicDir = path.join(this.target.rootDir, 'public');
-                    for (let file of await readdir(publicDir, {
-                        recursive: true
-                    }).catch(() => [])){
-                        const info = await stat(path.join(publicDir, file));
-                        assets.push({
-                            path: `${this.base}/${file}`,
-                            hash: info.mtimeMs.toString(36),
-                            size: info.size
-                        });
-                    }
-                    const deps = [];
-                    for (let output of outputs) {
-                        if (output.type === "chunk"){
-                            const imports = [
-                                ...output.imports,
-                                ...output.dynamicImports
-                            ];
-                            for (let dependency of imports) {
-                                if (!dependency.startsWith(`${this.url}/${this.prefix}/`)) continue;
-                                const path = dependency.replace(`${this.url}/${this.prefix}/`, '');
-                                if (path.startsWith('@id')){
-                                    deps.push({
-                                        baseURI: this.url + '/_/@id/',
-                                        path
-                                    })
-                                } else {
-                                    for (let dep of this.target.externalDependencies) {
-                                        if (!path.startsWith(dep)) continue;
-                                        deps.push({
-                                            baseURI: this.url + `/_/${dep}/`,
-                                            path
-                                        })
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    return reply.type('application/json').send(JSON.stringify({
-                        ...data,
-                        assets,
-                        deps
-                    }));
+                const bundle = await this.getBundle();
+                const mimeType = mime.lookup(relPath);
+                if (relPath in bundle)
+                    return reply.type(mimeType).send(bundle[relPath]);
+                try {
+                    const file = await readFile(path.join(this.target.rootDir, 'public', relPath))
+                    return reply.type(mime.lookup(relPath)).send(file);
+                } catch {
+                    return reply.status(404).send('Not found');
                 }
-                const output = outputs.find(o => o.fileName == relPath)
-                    ?? outputs.find(o => o.type == "chunk" && o.facadeModuleId == path.join(this.target.rootDir, relPath))
-                if (!output) {
-                    try {
-                        const file = await readFile(path.join(this.target.rootDir, 'public', relPath))
-                        return reply.type(mime.lookup(relPath)).send(file);
-                    } catch {
-                        return reply.status(404).send('Not found');
-                    }
-                }
-                const mimeType = mime.lookup(output.fileName);
-                const result = output.type == "asset"
-                    ? output.source
-                    : output.code;
-                reply.type(mimeType).send(result);
             }
         });
+    }
+    async getBundle(){
+        const bundle = await (this.bundle ??= this.createBundle());
+        const outputs = bundle.flatMap(x => x.output);
+        const result: Record<string, string | Uint8Array> = {
+            '@_/bundle.json': JSON.stringify(await this.getBundleJson()),
+        };
+        for (let output of outputs) {
+            const entry = this.target.entries.find(x => x.relative == './'+output.fileName);
+            result[entry?.output ?? output.fileName] =  output.type == "asset"
+                ? output.source
+                : output.code;
+        }
+        return result;
+    }
+
+    async getBundleJson(): Promise<BundleJson> {
+        const bundle = await (this.bundle ??= this.createBundle());
+        const outputs = bundle.flatMap(x => x.output);
+        const data = {
+            publicPath: this.target.publicPath,
+            proxy: this.target.proxy.map(x => ({
+                regex: x.regex.source,
+                replace: this.target.getEntry("."+x.replace)?.output
+            }))
+        };
+        const assets = await getAssets(bundle);
+        for (let asset of assets) {
+            const entry = this.target.entries.find(x => x.relative == './'+asset.path);
+            if (entry){
+                asset.path = entry.output;
+            }
+        }
+        const publicDir = path.join(this.target.rootDir, 'public');
+        for (let file of await readdir(publicDir, {
+            recursive: true
+        }).catch(() => [])){
+            const info = await stat(path.join(publicDir, file));
+            assets.push({
+                path: file,
+                hash: info.mtimeMs.toString(36),
+                size: info.size
+            });
+        }
+        const deps = [];
+        for (let output of outputs) {
+            if (output.type === "chunk"){
+                const imports = [
+                    ...output.imports,
+                    ...output.dynamicImports
+                ];
+                for (let dependency of imports) {
+                    if (!dependency.startsWith(`${this.url}/${this.prefix}/`)) continue;
+                    const path = dependency.replace(`${this.url}/${this.prefix}/`, '');
+                    if (path.startsWith('@id')){
+                        // let dep = path.replace('@id/','');
+                        // dep = dep.split('/').slice(0, dep.startsWith('@') ? 2 : 1).join('/')
+                        deps.push({
+                            baseURI: `${this.url}/_/${path}/`,
+                            path: ''
+                        })
+                    } else {
+                        for (let dep of this.target.externalDependencies) {
+                            if (!path.startsWith(dep)) continue;
+                            deps.push({
+                                baseURI: `${this.url}/_/${dep}/`,
+                                path: path.substring(dep.length + 1)
+                            })
+                        }
+                    }
+                }
+            }
+        }
+        return {
+            ...data,
+            assets,
+            deps
+        };
     }
 
     async getServer(app) {
@@ -285,9 +303,22 @@ export class TargetWebServer extends TargetServer {
 
     resolvePath(file, req) {
         if (file === '/') file = '';
-        const resolved = this.target.entries.find(x => x.name === '.' + file)?.source ?? this.resolveByReferrer(req, file);
-        if (resolved)
-            return '/' + relative(this.target.rootDir, resolved);
+        const entry = this.target.entries.find(x => x.name === '.' + file);
+        if (entry){
+            const path = this.target.flags.production ? entry.output : entry.relative.substring(2);
+            return '/' + path;
+        }
+        return this.resolveByReferrer(req, file);
     }
 
+}
+
+export type BundleJson = {
+    assets: Asset[];
+    deps: {
+        baseURI: string;
+        path: string;
+    }[]
+    publicPath?: string;
+    proxy?: Record<string, string>;
 }

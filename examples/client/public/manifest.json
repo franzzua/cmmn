@@ -1,6 +1,7 @@
 {
-  "id": "/_/@cmmn/counter",
-  "name": "cmmn-counter",
+  "id": "/_/@cmmn/client",
+  "start_url": "/_/@cmmn/client",
+  "name": "cmmn-client",
   "display": "standalone",
   "theme_color": "#FFF",
   "background_color": "#FFF",

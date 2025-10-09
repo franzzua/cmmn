@@ -6,7 +6,7 @@ export async function getAssets(result: RollupOutput[]){
 	));
 }
 
-async function getHash(data: string | Uint8Array) {
+export async function getHash(data: string | Uint8Array) {
 	const buffer = Buffer.from(data);
 	const hash = await subtle.digest('SHA-1', buffer);
 	return Buffer.from(hash).toString('base64');
@@ -24,6 +24,4 @@ export type Asset = {
 	path: string;
 	hash: string;
 	size: number;
-	proxy?: string;
-	publicPath?: string;
 }

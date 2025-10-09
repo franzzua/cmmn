@@ -1,5 +1,6 @@
 import react from '@vitejs/plugin-react-swc';
 import { ecsstatic } from '@acab/ecsstatic/vite';
+import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
 
 export default {
 	plugins: [
@@ -11,8 +12,8 @@ export default {
 			}
 		}),
 		ecsstatic({
-			classNamePrefix: 'web'
+			classNamePrefix: 'web',
 		}),
-
+		cssInjectedByJsPlugin()
 	],
 };

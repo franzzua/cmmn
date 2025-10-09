@@ -21,30 +21,19 @@ export async function bundle(flags: Flags) {
         if (origWorkspace && targetServer.target.rootDir !== path.join(devServer.rootTarget.rootDir, origWorkspace))
             continue;
         if (targetServer instanceof TargetWebServer){
-            const config = await targetServer.getBundleConfig();
-            config.build.write = true;
-            // config.base = './'
 
             try {
-                const results = await build(config) as RollupOutput[];
-                const assets = await getAssets(results);
-                console.log(assets)
+                const bundle = await targetServer.getBundle();
                 term.setData(targetServer.target, {
                     state: 'ok',
-                    size: assets.map(x => x.size).reduce((a, b) => a + b, 0)
+                    size: Object.values(bundle).map(x => x.length).reduce((a, b) => a + b, 0)
                 });
-                await writeFile(
-                    path.join(targetServer.target.rootDir, 'dist/bundle/assets.json'),
-                    JSON.stringify(assets)
-                );
-                for (let res of results) {
-                    for (let out of res.output) {
-                        if (out.type == "chunk") {
-                            term.term.yellow(`\t\t${out.name} -> ${out.fileName}\n`)
-                        } else {
-                            term.term.yellow(`\t\t${out.fileName}\n`)
-                        }
-                    }
+                for (let fileName in bundle) {
+                    await writeFile(
+                        path.join(targetServer.target.rootDir, 'dist/bundle', fileName),
+                        bundle[fileName]
+                    );
+                    term.term.yellow(`\t\t${fileName}\n`)
                 }
             } catch (e) {
                 // term.setData(target, {

@@ -1,10 +1,6 @@
 import { compare } from './compare';
 import { deepAssign } from './deepAssign';
-import { debounce, Func, throttle } from './throttle';
 import { pipe } from './pipe';
-//
-// import { generator, BASE } from "flexid";
-// const ulid = generator(BASE["58"]);
 
 export const Fn = {
 	I<T>(x: T): T {

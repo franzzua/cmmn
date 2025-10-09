@@ -87,4 +87,20 @@ describe('target', async function target() {
 			expect(entry.isTypeScript).toBe(false);
 		});
 	});
+
+	await describe('@cmmn/ui', function (){
+		const target = map.get('@cmmn/ui');
+		test('entries', function (){
+			expect(target.entries).toHaveLength(1);
+			const entry = target.getEntry(".");
+			expect(entry.name).toBe(".");
+			expect(entry.source).toBe(fileURLToPath(import.meta.resolve("@cmmn/ui")));
+			expect(entry.relative).toBe("./index.ts");
+			expect(entry.output).toBe("index.js");
+			expect(entry.isExcluded).toBe(false);
+			expect(entry.isHTML).toBe(false);
+			expect(entry.isJavaScript).toBe(false);
+			expect(entry.isTypeScript).toBe(true);
+		});
+	});
 });

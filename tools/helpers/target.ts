@@ -193,7 +193,7 @@ export class Target extends EventTarget {
         const outExt = extension
             .replace(/^[jt]sx?$/, 'js')
             .replace(/^(less|css|sass|scss)$/, 'css')
-        return `${entryName}${this.flags.minify ? '.min' : ''}.${outExt}`;
+        return `${entryName}.${outExt}`;
     }
 
     async getPublishPackageJson() {

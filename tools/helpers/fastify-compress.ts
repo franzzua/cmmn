@@ -4,14 +4,14 @@ import zlib from "node:zlib";
 
 
 const encoders = {
-	zstd: zlib['createZstdCompress'],
-	br: zlib.createBrotliCompress,
-	gzip: zlib.createGzip,
-	deflate: zlib.createDeflate,
+	zstd: () => zlib['createZstdCompress'],
+	br: () => zlib.createBrotliCompress(),
+	gzip: () => zlib.createGzip(),
+	deflate: () => zlib.createDeflate(),
 }
 
 export function fastifyCompress(app: FastifyInstance, options: FastifyCompressOptions = {
-	encodings: ['zstd', 'br', 'gzip', 'deflate']
+	encodings: ['br', 'zstd', 'gzip', 'deflate']
 }) {
 	app.addHook('onSend', async (request: FastifyRequest, reply: FastifyReply, payload) => {
 		for (const encoding of options.encodings) {

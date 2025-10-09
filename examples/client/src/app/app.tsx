@@ -2,7 +2,7 @@ import {Component, component, ReactRouter, Scope} from "@cmmn/react";
 import {type Api, ApiToken} from "./api";
 import {bind, cell, inject} from "@cmmn/core";
 import type {FC} from "react";
-
+import {ButtonGreen as Button} from "@cmmn/examples-ui-lib/green-button";
 
 const router = ReactRouter.fromTable({
 	root: {
@@ -38,9 +38,9 @@ export class App extends Component {
 
 export function AppPage(){
 	return (<>
-		<button onClick={() => router.go('counter', {id: 1})}>Load 1</button>
-		<button onClick={() => router.go('counter', {id: 3})}>Load 3</button>
-		<button onClick={() => router.go('counter', {id: 5})}>Load 5</button>
+		<Button onClick={() => router.go('counter', {id: 1})}>Load 1</Button>
+		<Button onClick={() => router.go('counter', {id: 3})}>Load 3</Button>
+		<Button onClick={() => router.go('counter', {id: 5})}>Load 5</Button>
 	</>)
 }
 

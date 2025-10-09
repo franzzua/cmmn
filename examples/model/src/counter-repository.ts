@@ -8,11 +8,17 @@ export class CounterRepository extends P2PRepository {
 	}
 
 	async getKey(uri: string) {
-		const {algo, key} = await fetch(`/example/react/api/auth/key/${uri}`).then(x => x.json());
-		return {
-			key: await crypto.subtle.importKey('jwk', key, algo, true, ['decrypt', 'encrypt']),
-			algo: algo as AesGcmParams
-		};
+		try {
+			const url = import.meta.resolve('/example/react');
+			const {algo, key} = await fetch(`${url}/api/auth/key/${uri}`).then(x => x.json());
+			return {
+				key: await crypto.subtle.importKey('jwk', key, algo, true, ['decrypt', 'encrypt']),
+				algo: algo as AesGcmParams
+			};
+		}catch (e){
+			// TODO: store key somewhere..
+			console.error(`Can't load auth key...`);
+		}
 	}
 
 	protected getCryptor(uri: string): Cryptor {

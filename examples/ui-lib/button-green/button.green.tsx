@@ -4,7 +4,7 @@ import {bind, Cell, cell} from "@cmmn/core";
 import {css} from '@acab/ecsstatic';
 
 @component()
-export class Button extends Component<{
+export class ButtonGreen extends Component<{
 	icon?: ReactNode
 } & JSX.IntrinsicElements["button"]> {
 	@cell()
@@ -86,7 +86,7 @@ const styles = {
             cursor: pointer;
             align-items: center;
             justify-content: space-around;
-			box-shadow: inset gray calc(var(--x) * 1px) calc(var(--y) * 1px) 30px 15px;
+			box-shadow: inset green calc(var(--x) * 1px) calc(var(--y) * 1px) 30px 15px;
             &:hover {
                 filter: brightness(1.2);
             }

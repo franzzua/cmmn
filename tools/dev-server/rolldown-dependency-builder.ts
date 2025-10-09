@@ -3,9 +3,12 @@ import {fileURLToPath} from "node:url";
 import {crc32} from "node:zlib";
 import fs, {readFile} from "node:fs/promises";
 import {wasm} from "./plugins/wasm";
+import {swcMinifyPlugin} from "./plugins/minify";
 
 export class RolldownDependencyBuilder {
-    constructor(private externals: string[], private basePath: string) {
+    constructor(private externals: string[],
+                private basePath: string,
+                private minify: boolean) {
     }
 
     async getFileContent(target: string){
@@ -43,18 +46,20 @@ export class RolldownDependencyBuilder {
         }
     }
 
-    async build(target: string, isModule: boolean) {
+    async build(target: string, isModule: boolean): Promise<Record<string, string | Uint8Array>> {
         const {build} = await import("rolldown");
         const {esmExternalRequirePlugin} = await import("rolldown/experimental");
         await using input = isModule ? this.getModuleEntry(target) : await this.getEntry(target);
-        const chunkBase = target.split('/').pop() + '/@_'
+        const chunkBase = target.split('/').pop() + '/@_/'
         try {
             const result = await build({
                 input,
                 write: false,
                 output: {
                     format: 'esm',
-                    chunkFileNames: chunk =>  chunkBase+ '/' + chunk.name + '.js',
+                    chunkFileNames: chunk =>  chunkBase + chunk.name + '.js',
+                    minify: false,
+                    sourcemap: this.minify ? false : "inline",
                 },
                 experimental: {
 
@@ -71,7 +76,7 @@ export class RolldownDependencyBuilder {
                     `${this.basePath}/*`,
                 ],
                 optimization: {
-                    inlineConst: false,
+                    inlineConst: this.minify,
                 },
                 treeshake: true,
                 plugins: [
@@ -101,16 +106,17 @@ export class RolldownDependencyBuilder {
                     },
                     esmExternalRequirePlugin({
                         external: this.externals.filter(x => x !== target),
-                    })
+                    }),
+                    ...(this.minify ? [swcMinifyPlugin()] : [])
                 ]
             });
             return Object.fromEntries([
                 ...result.output
                     .filter(x => x.type == "chunk")
-                    .map(x => [(x.name === 'index' ? '/' : x.fileName.substring(chunkBase.length)), x.code]),
+                    .map(x => [(x.name === 'index' ? '' : x.fileName.replace(chunkBase, '@_/')), x.code]),
                 ...result.output
                     .filter(x => x.type !== "chunk")
-                    .map(x => ['/' + x.fileName, x.source])
+                    .map(x => ['@_/'+x.fileName, x.source])
             ]);
         } finally {
             // await entryPoints[Symbol.asyncDispose]();

@@ -1,6 +1,4 @@
-import "./app";
-
-import {StorageProvider} from '@cmmn/sync/storage';
-import {IndexedStorage} from "@cmmn/ui";
-import {di} from "@cmmn/core";
-di.override(StorageProvider, IndexedStorage.Provider);
+if(process.env.NODE_ENV === 'production'){
+	await import('@cmmn/service-worker/client');
+}
+export default await import("./app");

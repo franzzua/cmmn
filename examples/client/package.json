@@ -13,8 +13,9 @@
 	"config": {
 		"proxy": {
 			"^/api": "/_/@cmmn/examples-server/api",
-			"^[^.]*$": "/"
-		}
+			"^[^.]*$": ""
+		},
+		"publicPath": "/example/react"
 	},
 	"devDependencies": {
 		"@acab/ecsstatic": "^0.9.0",

@@ -45,20 +45,23 @@ export class StorageInfo {
 	async save(store: string, data: any){
 		await this.request('readwrite', x => x.put(data, store));
 	}
+
+	async clear() {
+		await new Promise(r => self.indexedDB.deleteDatabase(this.dbName).addEventListener('success', r));
+	}
 }
 
 export class SwStorage {
 	private static instances = new Map<string, SwStorage>();
 	private static info = new StorageInfo();
 	public static async get(data: InitMessageData){
-		let storage = this.instances.get(data.baseURI);name
+		let storage = this.instances.get(data.baseURI);
 		if (!storage) {
-			this.instances.set(data.baseURI, storage = new SwStorage(data));
+			this.instances.set(data.baseURI, storage = new SwStorage(data.baseURI, data.bundleJson));
 		}
 		return storage;
 	}
 	static fetch(request: Request) {
-		const url = new URL(request.url);
 		for (let [key, storage] of this.instances) {
 			const response = storage.fetch(request);
 			if (response) return response;
@@ -78,23 +81,22 @@ export class SwStorage {
 		for (let [key, storage] of this.instances) {
 			await storage.clear();
 		}
+		this.instances.clear();
+		await this.info.clear();
 	}
-	private readonly baseURI = this.config.baseURI;
 	private readonly name = `main:${this.baseURI}`;
 	private readonly cloneName = `clone:${this.baseURI}`;
-	private readonly bundleUrl = new URL(`${this.baseURI}bundle.json`);
+	private readonly bundleUrl = new URL(`${this.baseURI}@_/bundle.json`, self.origin);
 	private readonly cache: Promise<Cache> = caches.open(this.name);
-	private readonly hashHeader = this.config.hashHeader ?? 'sw-hash';
 	protected platforms = new Set<string>();
+
 	loading: Promise<void>;
-	constructor(private config: {
-		baseURI: string;
+	constructor(private readonly baseURI: string, private bundleJson: {
 		assets: Asset[];
 		deps: any[];
 		proxy: Array<{regex: string; replace: string;}>;
 		publicPath: string;
-        hashHeader?: string;
-	}) {
+	}, private hashHeader: string = 'sw-hash') {
 	}
 	save(data: any){
 		return SwStorage.info.save(this.baseURI, data);
@@ -113,7 +115,6 @@ export class SwStorage {
 			checkInterval
 		) as any;
 	}
-
 
 	async checkUpdate(force = false) {
 		const clone = await this.cloneCache()
@@ -163,26 +164,34 @@ export class SwStorage {
 	}
 
 	async load() {
-		const bundleData = await fetch(this.bundleUrl).then(x => x.json()).catch(() => []);
-		this.assets = bundleData.assets;
-		this.deps = bundleData.deps;
-		await (this.loading ??= this.loadAssets(await this.cache).then(() => this.loadDeps()));
-		Object.assign(this.config, bundleData);
-		await this.save({
-			...bundleData,
-			baseURI: this.baseURI
-		})
+		if (this.bundleJson){
+			// TODO: check expiration and update json
+		} else {
+			this.bundleJson = await fetch(this.bundleUrl).then(async x => {
+				if (x.ok) {
+					return await x.json();
+				}
+				console.error(this.bundleUrl.href, await x.text());
+				return null;
+			});
+			await this.save({
+				bundleJson: this.bundleJson,
+				baseURI: this.baseURI
+			});
+		}
+		await this.loadAssets(await this.cache);
+		await this.loadDeps();
 	}
-	assets: Asset[];
-	deps: Array<{ baseURI: string, path: string }>;
 
 	protected async loadAssets(cache: Cache) {
 		let updated = false;
 		const cacheKeys = new Set((await cache.keys()).map(x => x.url));
-		for (let asset of this.assets) {
+		for (let asset of this.bundleJson.assets) {
 			if (asset.platforms && asset.platforms.every(p => !this.platforms.has(p)))
 				continue;
-			const request = new Request(asset.path);
+			let url = `${this.baseURI}${asset.path}`;
+			if(url.endsWith('/')) url = url.substring(0, url.length - 1);
+			const request = new Request(url);
 			cacheKeys.delete(request.url);
 			const matched = await cache.match(request);
 			if (matched){
@@ -208,12 +217,9 @@ export class SwStorage {
 	}
 
 	private async loadDeps(){
-		for (let dep of this.deps) {
+		for (let dep of this.bundleJson.deps) {
 			const storage = await SwStorage.get(dep);
-			if (dep.baseURI.includes('/_/@id'))
-				await storage.getFromCacheOrFetchAndPut(new Request(dep.path))
-			else
-				await storage.load();
+			await storage.load();
 		}
 	}
 
@@ -229,11 +235,14 @@ export class SwStorage {
 
 	async getFromCache(request: Request) {
 		const cache = await this.cache;
-		return  await cache.match(request)
+		return  await cache.match(request, { ignoreSearch: true })
 	}
 
 	async getFromCacheOrFetch(request: Request) {
-		return await this.getFromCache(request) ?? await fetch(request);
+		const cached = await this.getFromCache(request);
+		if (cached)
+			return cached;
+		return await fetch(request);
 	}
 
 
@@ -247,11 +256,11 @@ export class SwStorage {
 	}
 
 	fetch(request: Request) {
-		if (request.mode == "navigate" && this.config.publicPath){
+		if (request.mode == "navigate" && this.bundleJson.publicPath){
 			const path = new URL(request.url).pathname;
-			if(path.startsWith(this.config.publicPath)){
-				const rest = path.substring(this.config.publicPath.length);
-				for (let proxy of this.config.proxy) {
+			if(path.startsWith(this.bundleJson.publicPath)){
+				const rest = path.substring(this.bundleJson.publicPath.length);
+				for (let proxy of this.bundleJson.proxy) {
 					if (rest.match(new RegExp(proxy.regex))){
 						const url = new URL(this.baseURI + proxy.replace, self.origin);
 						return this.getFromCacheOrFetch(new Request(url));
@@ -262,8 +271,8 @@ export class SwStorage {
 		if (request.cache == "reload"){
 
 		}
-		if(request.url.startsWith(this.baseURI))
-			return this.getFromCacheOrFetch(new Request(request));
+		if(request.url.startsWith(this.baseURI) || request.url == this.baseURI.substring(0, this.baseURI.length - 1))
+			return this.getFromCacheOrFetch(request);
 	}
 }
 

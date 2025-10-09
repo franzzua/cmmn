@@ -1,7 +1,7 @@
 import {Fn, resolve} from "@cmmn/core";
 import {CounterModel} from "examples/model";
 import {css, } from "@acab/ecsstatic";
-import {Button} from "@cmmn/examples-ui-lib";
+import {Button} from "@cmmn/examples-ui-lib/button";
 import {cn, Component, component} from "@cmmn/react";
 import {DraggableContext} from "../draggable/draggable.context";
 
