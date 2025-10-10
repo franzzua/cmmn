@@ -44,12 +44,9 @@ export function generateTypings(target: Target) {
         force: true,
     });
     builder.clean(target.rootDir);
-    const files: string[] = [];
-    builder.build(target.rootDir, null, wf => {
-        files.push(wf);
-    });
+    builder.build(target.rootDir, null);
     const duration = performance.now() - start;
-    target.log(`typings for ^W${duration.toFixed()}ms. ^w${files.length} files`)
+    target.log(`typings for ^W${duration.toFixed()}ms.`)
 }
 
 const cleanedBaseDirs = new Set();

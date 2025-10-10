@@ -1,5 +1,5 @@
 import {LoroDocCell} from './cells/loro-doc-cell';
-import {Storage, StorageProvider} from './storage';
+import {type Storage, StorageProvider} from '@cmmn/sync/storage';
 import {LoroRoom} from "./loroRoom";
 import {Cryptor} from "./cryptor";
 import {LoroProtocol} from "./loroProtocol";

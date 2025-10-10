@@ -98,7 +98,7 @@ export class RolldownDependencyBuilder {
                         name: 'externals',
                         resolveId: (id, importer, options)=> {
                             if (options.kind !== 'require-call' && id !== target
-                                && this.externals.includes(id) )
+                                && this.externals.some(x => x == id || id.startsWith(x + '/')))
                                 return {
                                     external: "absolute",
                                     id: this.basePath + '/' + id

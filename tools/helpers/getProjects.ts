@@ -28,16 +28,16 @@ class Monorepo{
 
     *getTargetsOf(pkg: Package, visited: Set<Package>){
         if(visited.has(pkg)) return;
+        visited.add(pkg);
         const deps = [];
         for (let dep of this.getDeps(pkg)) {
             const depPkg = this.packageMap.get(dep);
+            if(visited.has(depPkg)) continue;
             if (depPkg) {
                 yield * this.getTargetsOf(depPkg, visited);
                 deps.push(depPkg.dir);
             }
         }
-        if(visited.has(pkg)) return;
-        visited.add(pkg);
         yield { root: pkg.dir, deps };
     }
     *getDeps(pkg: Package){
