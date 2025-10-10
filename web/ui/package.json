@@ -15,6 +15,7 @@
 		"@cmmn/sync": "workspace:~"
 	},
 	"devDependencies": {
+		"@types/route-parser": "^0",
 		"route-parser": "0.0.5"
 	},
 	"author": "",

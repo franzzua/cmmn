@@ -14,7 +14,7 @@ export class TargetWebServer extends TargetServer {
     async handle(app: FastifyInstance, request: FastifyRequest, reply: FastifyReply) {
         if (!this.target.flags.production) {
             const server = await this.viteBuilder.getServer(app.server);
-            server.middlewares(request.raw, reply.raw);
+            return new Promise(resolve => server.middlewares(request.raw, reply.raw, resolve));
         } else {
             const relPath = path.relative(this.base, request.url).split('?')[0];
             const bundle = await this.getBundle();
@@ -69,7 +69,6 @@ export class TargetWebServer extends TargetServer {
         const deps = new Set<string>();
         for (let output of bundle) {
             for (let dependency of output.deps) {
-                console.log(dependency);
                 if (!dependency.package.startsWith(`${this.url}/${this.prefix}/`)) continue;
                 const path = dependency.package.replace(`${this.url}/${this.prefix}/`, '');
                 if (path.startsWith('@id')){

@@ -40,11 +40,7 @@
 	"license": "ISC",
 	"files": [],
 	"devDependencies": {
-		"@chainsafe/libp2p-yamux": "^7.0.1",
 		"@cmmn/tools": "workspace:~",
-		"@swc/cli": "^0.7.8",
-		"@types/route-parser": "^0",
-		"route-parser": "^0.0.5",
 		"typescript": "5.8.3"
 	},
 	"packageManager": "yarn@4.5.1",
