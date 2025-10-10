@@ -1,6 +1,6 @@
 {
 	"name": "@cmmn/sync",
-	"version": "3.0.0-d",
+	"version": "3.0.0-d3",
 	"description": "collaborative with loro-crdt",
 	"publishConfig": {
 		"access": "public"
@@ -30,6 +30,7 @@
 	},
 	"devDependencies": {
 		"@cmmn/tools": "workspace:~",
+		"@cmmn/sync": "workspace:~",
 		"@libp2p/bootstrap": "11.0.32",
 		"@libp2p/floodsub": "10.1.31",
 		"@libp2p/identify": "3.0.27",

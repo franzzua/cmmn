@@ -1,6 +1,6 @@
 {
 	"name": "@cmmn/service-worker",
-	"version": "3.0.0-d",
+	"version": "3.0.0-d3",
 	"description": "",
 	"publishConfig": {
 		"access": "public"

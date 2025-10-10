@@ -1,6 +1,6 @@
 {
 	"name": "@cmmn/ui",
-	"version": "3.0.0-d",
+	"version": "3.0.0-d2",
 	"description": "",
 	"publishConfig": {
 		"access": "public"
