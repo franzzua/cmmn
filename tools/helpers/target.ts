@@ -6,14 +6,14 @@ import {getTSConfig, TypescriptConfig} from "./getTSConfig.js";
 import terminalKit from "terminal-kit";
 import {Flags} from "./flags";
 import {JSONSchemaForNPMPackageJsonFiles} from "@schemastore/package";
-import {CompilerOptions} from "typescript";
 import {Config} from "@swc/core";
 import {minimatch} from 'minimatch';
-import {PackageJSON} from "@manypkg/tools/src/Tool";
 import {FileChangeEvent} from "./watcher";
+import {readdir, stat} from "node:fs/promises";
+import {Asset} from "../dev-server/asset-collection";
 
 export class Target extends EventTarget {
-    rootDir: string;
+    public readonly publicDir = join(this.rootDir, 'public');
     flags: Flags;
     deps: Target[];
     reactions: Target[] = [];
@@ -22,9 +22,8 @@ export class Target extends EventTarget {
         return this.packageJson.config?.publicPath as string;
     }
 
-    constructor(rootDir: string, flags: Flags, deps: Target[]) {
+    constructor(public readonly rootDir: string, flags: Flags, deps: Target[]) {
         super();
-        this.rootDir = rootDir;
         this.flags = flags;
         this.deps = deps;
         this.depsMap = new Map(deps.map(x => [x.packageJson.name, x]));
@@ -220,6 +219,19 @@ export class Target extends EventTarget {
         if (!packageJson.files)
             packageJson.files = ['dist'];
         return JSON.stringify(packageJson, null, '\t');
+    }
+
+    async *getPublicAssets(): AsyncGenerator<Asset> {
+        for (let file of await readdir(this.publicDir, {
+            recursive: true
+        }).catch(() => [])){
+            const info = await stat(path.join(this.publicDir, file));
+            yield {
+                path: file,
+                hash: info.mtimeMs.toString(36),
+                size: info.size
+            };
+        }
     }
 
     get https() {

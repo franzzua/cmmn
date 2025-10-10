@@ -1,4 +1,4 @@
-import {TargetServer} from "./targetServer";
+import {TargetServer} from "./targetServer.js";
 import {exec, spawn} from "node:child_process";
 import {ChangeEvent} from "../helpers/target";
 import {Watcher} from "../helpers/watcher.js";

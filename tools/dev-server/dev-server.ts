@@ -4,33 +4,27 @@ import {Resolver} from "./resolver";
 import {TargetRunner} from "./target-runnner.js";
 import {TargetWebServer} from "./target-web-server";
 import {Target} from "../helpers/target";
-import {FastifyInstance} from "fastify";
+import {FastifyInstance, FastifyRequest} from "fastify";
 
 export class DevServer {
     prefix = '_';
-
-    rootTarget: Target;
-    targetServers: TargetServer[];
-    depServer: DependencyServer;
+    rootTarget: Target = this.targets.at(-1);
     resolver = new Resolver(this);
+    targetServers = this.targets.map(t => {
+        if (t.packageJson.bin){
+            return new TargetRunner(t, this.prefix, this.resolver);
+        }
+        return new TargetWebServer(t, this.prefix, this.resolver);
+    }).filter(x => x != null);
+    depServer: DependencyServer = new DependencyServer(this.targets, this.rootTarget.flags.production ? 'production' : 'development');
     get isBundler(){
         return this.rootTarget.flags.production;
     }
-    /**
-     * @param targets {import("../helpers/target").Target[]}
-     */
+
     constructor(private targets: Target[]) {
-        this.rootTarget = targets.at(-1);
-        this.targetServers = targets.map(t => {
-            if (t.packageJson.bin){
-                return new TargetRunner(t, this.prefix, this.resolver);
-            }
-            return new TargetWebServer(t, this.prefix, this.resolver);
-        }).filter(x => x != null);
-        this.depServer = new DependencyServer(targets, this.rootTarget.flags.production ? 'production' : 'development');
     }
 
-    rewriteUrl = (req) => {
+    rewriteUrl = (req: FastifyRequest) => {
         return this.targetServers.reduceRight(
             (path, target) => target.rewritePath(path, req),
             req.url

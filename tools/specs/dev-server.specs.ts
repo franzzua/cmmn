@@ -5,18 +5,20 @@ import {expect} from "expect";
 import {DevServer} from "../dev-server/dev-server";
 import {BundleJson, TargetWebServer} from "../dev-server/target-web-server";
 
-describe('bundles', async function target() {
+describe('dev-server', async function target() {
 	const targets = await Target.readTargets(process.cwd(), new Flags(['--prod']));
 	const devServer = new DevServer(targets);
 	devServer.depServer.url = 'https://example.server'
+	for (let targetServer of devServer.targetServers) {
+		targetServer.url = devServer.depServer.url;
+	}
 	function getBundle(pkg: string){
 		const targetServer = devServer.targetServers.find(x => x.target.packageJson.name == pkg);
-		targetServer.url = devServer.depServer.url;
 		if (targetServer instanceof TargetWebServer) {
 			return  targetServer.getBundleJson();
 		}
 	}
-	await describe('@cmmn/core', async function () {
+	describe('@cmmn/core', async function () {
 		const bundle = await getBundle('@cmmn/core');
 		await test('assets', function () {
 			expect(bundle.assets).toHaveLength(1);
@@ -24,7 +26,7 @@ describe('bundles', async function target() {
 		});
 	});
 
-	await describe('@cmmn/examples-client', async function () {
+	describe('@cmmn/examples-client', async function () {
 		const bundle = await getBundle('@cmmn/examples-client');
 		await test('assets', function () {
 			const assets = bundle.assets.map(x => x.path);
@@ -32,19 +34,21 @@ describe('bundles', async function target() {
 			expect(assets).toContain('index.html')
 			expect(assets).toContain('manifest.json')
 			expect(assets).toContain('icon.svg')
+			expect(assets.find(x => x.endsWith('.wasm'))).toBeUndefined();
 		});
 		await test('deps', function () {
 			const deps = Object.fromEntries(bundle.deps.map(x => [x.baseURI, x.path]));
-			expect(deps[`${devServer.depServer.url}/_/@cmmn/ui/`]).toBe('index.js')
+			expect(deps[`${devServer.depServer.url}/_/@cmmn/ui/`]).toBe('')
+			expect(deps[`${devServer.depServer.url}/_/@cmmn/react/`]).toBe('')
 			expect(deps[`${devServer.depServer.url}/_/@id/react/`]).toBe('')
 			expect(deps[`${devServer.depServer.url}/_/@id/react/jsx-runtime/`]).toBe('')
 		});
 	});
 
-	await describe('react', () => testPackage('react', [
+	describe('react', () => testPackage('react', [
 		/^$/
 	]));
-	await describe('loro-crdt', () => testPackage('loro-crdt/bundler', [
+	describe('loro-crdt', () => testPackage('loro-crdt/bundler', [
 		/^$/, /^@_\/.*/, /^@_\/.*/, /^@_\/.*/
 	]));
 

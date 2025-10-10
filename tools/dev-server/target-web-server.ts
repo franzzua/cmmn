@@ -1,184 +1,47 @@
 import {TargetServer} from "./targetServer";
-import {wasm} from "./plugins/wasm.js";
-import swc from "unplugin-swc";
-import tsconfigPaths from "vite-tsconfig-paths";
-import {createVitePlugin, VitePlugin} from "unplugin";
-import path, {join, relative} from "node:path";
-import {build, createServer, HtmlTagDescriptor, InlineConfig, Plugin} from "vite";
-import {ChangeEvent} from "../helpers/target";
-import {FastifyReply, FastifyRequest} from "fastify";
-import {RollupOutput} from "rollup";
+import path, {join} from "node:path";
+import {FastifyInstance, FastifyReply, FastifyRequest} from "fastify";
 import mime from "mime-types";
 import {Asset, getAssets} from "./asset-collection";
 import {readdir, readFile, stat} from "node:fs/promises";
 import fs from "fs";
-import {swcMinifyPlugin} from "./plugins/minify";
+import {Output, ViteBuilder} from "./vite.builder";
 
 export class TargetWebServer extends TargetServer {
 
-    async getConfig(): Promise<InlineConfig> {
-        return {
-            root: this.target.rootDir,
-            logLevel: 'silent',
-            mode: this.target.flags.production ? "production" : 'debug',
-            optimizeDeps: {
-                noDiscovery: true,
-                include: []
-            },
-            keepProcessEnv: true,
-            define: {
-                process: {
-                    env: {
-                        NODE_ENV: this.target.flags.production ? 'production' : 'development'
-                    }
-                }
-            },
-            html: {},
-            base: this.base + '/',
-            build: {
-                target: 'chrome89',
-                emptyOutDir: false,
-                rollupOptions: {
-                    external: [
-                        // ...this.target.externalDependencies.map(x =>
-                        //     new RegExp(`^${x}`.replace('/', '\\/'))
-                        // ),
-                        // ...builtinModules,
-                        'fsevents',
-                        /@id/g,
-                    ],
-                },
-                write: false,
-                minify: false,
-                sourcemap: this.target.flags.minify ? false : 'inline',
-                commonjsOptions: {
-                    transformMixedEsModules: true
-                },
-            },
-            plugins: [...this.getPlugins()],
-        };
-    }
+    private viteBuilder = new ViteBuilder(this.target, this.resolver, this.base);
 
-    async getBundleConfig(): Promise<InlineConfig>{
-        const config = await this.getConfig();
-        config.build.lib = {
-            entry: Object.fromEntries(this.target.entries.map(x => [x.name, x.source])) as any,
-            fileName: (format, entryName) => {
-                if (entryName == '.') entryName = 'index';
-                return `${entryName.replace(/^[./]*/, '')}.js`;
-            },
-            formats: ['es'],
-        }
-        config.build.outDir = './dist/bundle';
-        config.build.emptyOutDir = true;
-        config.build.modulePreload = false;
-        return config;
-    }
-
-    * getPlugins(): Generator<Plugin> {
-        yield wasm();
-        // yield topLevelAwait({});
-        yield swc.vite(this.target.swcConfig) as unknown as Plugin;
-        yield tsconfigPaths();
-        yield {
-            name: this.target.packageJson.name + '_pre',
-            resolveId: (id: string, importer, opts) => {
-                if(this.target.flags.production){
-                    if(id.includes(this.target.packageJson.name)) {
-                        return this.resolveId(id, importer, opts);
-                    }
-
-                    for (let external of this.target.externalDependencies) {
-                        if (id == external || id.startsWith(external + '/') ||
-                            id.includes(external)) {
-                            return this.resolver?.resolveId(id, importer, opts);
-                        }
-                    }
-                    if(id.includes('@swc/helpers'))
-                        return this.resolver?.resolveId(id, importer, opts);
-                    return null;
-                }
-                return this.resolver?.resolveId(id, importer, opts);
-            },
-            enforce: 'pre',
-        };
-        yield {
-            name: "cmmn:html-base-tag",
-            enforce: 'pre',
-            transformIndexHtml: (_, config) => {
-                const dirname = this.target.flags.production ? '' : config.path.substr(0, config.path.lastIndexOf('/'));
-                const result: HtmlTagDescriptor[] = [
-                    {
-                        tag: "base",
-                        attrs: {href: `${this.base}${dirname}/`},
-                        children: '/** injected **/'
-                    }
-                ];
-                if (this.target.flags.production){
-                    result.push({
-                        tag: "link",
-                        attrs: {
-                            rel: 'manifest',
-                            href: this.base + '/manifest.json'
-                        }
-                    });
-                }
-                return result;
-            },
-        }
-        if (this.target.flags.minify)
-            yield swcMinifyPlugin();
-        // yield analyzer();
-    }
-
-    private bundle: Promise<RollupOutput[]>;
-    private async createBundle(): Promise<RollupOutput[]> {
-        if (!this.target.entries.length)
-            return [];
-        const config = await this.getBundleConfig();
-        return build(config).catch(err => {
-            this.target.error(err.message);
-            return [];
-        }) as Promise<RollupOutput[]>;
-    }
-    devServerRequest;
-    handle(app, request: FastifyRequest, reply: FastifyReply) {
-        (this.devServerRequest ??= this.getServer(app)).then(async s => {
-            if (!this.target.flags.production) {
-                s.middlewares(request.raw, reply.raw);
-            } else {
-                const relPath = path.relative(this.base, request.url).split('?')[0];
-                const bundle = await this.getBundle();
-                const mimeType = mime.lookup(relPath);
-                if (relPath in bundle)
-                    return reply.type(mimeType).send(bundle[relPath]);
-                try {
-                    const file = await readFile(path.join(this.target.rootDir, 'public', relPath))
-                    return reply.type(mime.lookup(relPath)).send(file);
-                } catch {
-                    return reply.status(404).send('Not found');
-                }
+    async handle(app: FastifyInstance, request: FastifyRequest, reply: FastifyReply) {
+        if (!this.target.flags.production) {
+            const server = await this.viteBuilder.getServer(app.server);
+            server.middlewares(request.raw, reply.raw);
+        } else {
+            const relPath = path.relative(this.base, request.url).split('?')[0];
+            const bundle = await this.getBundle();
+            const mimeType = mime.lookup(relPath);
+            if (relPath in bundle)
+                return reply.type(mimeType).send(bundle[relPath]);
+            try {
+                const file = await readFile(path.join(this.target.publicDir, relPath))
+                return reply.type(mime.lookup(relPath)).send(file);
+            } catch {
+                return reply.status(404).send('Not found');
             }
-        });
+        }
     }
     async getBundle(){
-        const bundle = await (this.bundle ??= this.createBundle());
-        const outputs = bundle.flatMap(x => x.output);
-        const result: Record<string, string | Uint8Array> = {
-            '@_/bundle.json': JSON.stringify(await this.getBundleJson()),
+        const bundle = await this.viteBuilder.getBundle();
+        const result: Bundle = {
+            '@_/bundle.json': await this.getBundleJson().then(JSON.stringify)
         };
-        for (let output of outputs) {
+        for (let output of bundle) {
             const entry = this.target.entries.find(x => x.relative == './'+output.fileName);
-            result[entry?.output ?? output.fileName] =  output.type == "asset"
-                ? output.source
-                : output.code;
+            result[entry?.output ?? output.fileName] = output.data;
         }
         return result;
     }
-
     async getBundleJson(): Promise<BundleJson> {
-        const bundle = await (this.bundle ??= this.createBundle());
-        const outputs = bundle.flatMap(x => x.output);
+        const bundle = await this.viteBuilder.getBundle();
         const data = {
             publicPath: this.target.publicPath,
             proxy: this.target.proxy.map(x => ({
@@ -193,42 +56,28 @@ export class TargetWebServer extends TargetServer {
                 asset.path = entry.output;
             }
         }
-        const publicDir = path.join(this.target.rootDir, 'public');
-        for (let file of await readdir(publicDir, {
+        for (let file of await readdir(this.target.publicDir, {
             recursive: true
         }).catch(() => [])){
-            const info = await stat(path.join(publicDir, file));
+            const info = await stat(path.join(this.target.publicDir, file));
             assets.push({
                 path: file,
                 hash: info.mtimeMs.toString(36),
                 size: info.size
             });
         }
-        const deps = [];
-        for (let output of outputs) {
-            if (output.type === "chunk"){
-                const imports = [
-                    ...output.imports,
-                    ...output.dynamicImports
-                ];
-                for (let dependency of imports) {
-                    if (!dependency.startsWith(`${this.url}/${this.prefix}/`)) continue;
-                    const path = dependency.replace(`${this.url}/${this.prefix}/`, '');
-                    if (path.startsWith('@id')){
-                        // let dep = path.replace('@id/','');
-                        // dep = dep.split('/').slice(0, dep.startsWith('@') ? 2 : 1).join('/')
-                        deps.push({
-                            baseURI: `${this.url}/_/${path}/`,
-                            path: ''
-                        })
-                    } else {
-                        for (let dep of this.target.externalDependencies) {
-                            if (!path.startsWith(dep)) continue;
-                            deps.push({
-                                baseURI: `${this.url}/_/${dep}/`,
-                                path: path.substring(dep.length + 1)
-                            })
-                        }
+        const deps = new Set<string>();
+        for (let output of bundle) {
+            for (let dependency of output.deps) {
+                console.log(dependency);
+                if (!dependency.package.startsWith(`${this.url}/${this.prefix}/`)) continue;
+                const path = dependency.package.replace(`${this.url}/${this.prefix}/`, '');
+                if (path.startsWith('@id')){
+                    deps.add(`${this.url}/_/${path}/`)
+                } else {
+                    for (let dep of this.target.externalDependencies) {
+                        if (!path.startsWith(dep)) continue;
+                        deps.add(`${this.url}/_/${dep}/`)
                     }
                 }
             }
@@ -236,55 +85,13 @@ export class TargetWebServer extends TargetServer {
         return {
             ...data,
             assets,
-            deps
+            deps: Array.from(deps).map(x => ({
+                baseURI: x,
+                path: ''
+            }))
         };
     }
 
-    async getServer(app) {
-        const config = await this.getConfig();
-        const server = await createServer({
-            ...config as any,
-            server: {
-                hmr: this.target.flags.production ? false : {
-                    server: app.server,
-                    path: this.wsPrefix,
-                },
-                ws: this.target.flags.production ? false : undefined,
-                // origin: 'http://127.0.0.1:9000',
-                fs: {
-                    strict: false
-                },
-                headers: {
-                    'Service-Worker-Allowed': '/'
-
-                    // 'access-control-allow-origin': '*'
-                },
-                allowedHosts: [
-                    this.target.https?.host,
-                    ...this.target.reactions.map(x => x.https?.host)
-                ].filter(x => x)
-            },
-        });
-        this.target.log(`Start dev server`);
-        this.enhanceWebSocket(server);
-        return server;
-    }
-
-    /**
-     * Emit event on ws and proxies events from dependent dev-servers
-     */
-    enhanceWebSocket(server) {
-        const emitChange = server.ws.send;
-        server.ws.send = payload => {
-            // if (this.target.isExcluded("")) return;
-            this.target.log('change')
-            this.target.dispatchEvent(new ChangeEvent(payload, this.target.packageJson.name));
-        };
-        this.target.addEventListener('change', (e: ChangeEvent) => {
-            this.target.log('change')
-            emitChange.call(server.ws, e.payload);
-        });
-    }
 
 
     resolveByReferrer(req, file) {
@@ -300,7 +107,7 @@ export class TargetWebServer extends TargetServer {
         }
     }
 
-    resolvePath(file, req) {
+    resolvePath(file: string, req: FastifyRequest) {
         if (file === '/') file = '';
         const entry = this.target.entries.find(x => x.name === '.' + file);
         if (entry){
@@ -310,8 +117,14 @@ export class TargetWebServer extends TargetServer {
         return this.resolveByReferrer(req, file);
     }
 
+    async register(app: FastifyInstance){
+        app.all(`${this.base}*`, (request, reply) => {
+            if (request.url.startsWith(this.base + this.viteBuilder.wsPrefix)) return ;
+            return this.handle(app, request, reply);
+        });
+    }
 }
-
+export type Bundle = Record<string, string | Uint8Array>;
 export type BundleJson = {
     assets: Asset[];
     deps: {
