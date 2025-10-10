@@ -21,6 +21,7 @@
 	],
 	"dependencies": {
 		"@cmmn/core": "workspace:~",
+		"@cmmn/sync": "workspace:~",
 		"@libp2p/peer-id": "5.1.0",
 		"@waku/sdk": "^0.0.30",
 		"libp2p": "2.8.2",
@@ -30,7 +31,6 @@
 	},
 	"devDependencies": {
 		"@cmmn/tools": "workspace:~",
-		"@cmmn/sync": "workspace:~",
 		"@libp2p/bootstrap": "11.0.32",
 		"@libp2p/floodsub": "10.1.31",
 		"@libp2p/identify": "3.0.27",
