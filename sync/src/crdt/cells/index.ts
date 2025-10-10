@@ -3,3 +3,4 @@ export {list, type List} from "./list";
 export {map, type Map} from "./map";
 export {text, type Text} from "./text";
 export {lww} from "./lww";
+export {type Infer} from "./types";

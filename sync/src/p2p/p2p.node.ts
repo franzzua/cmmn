@@ -1,11 +1,9 @@
 import {cell, Fn, ObservableSet} from '@cmmn/core';
 import type { Libp2p, PeerId, PubSub } from '@libp2p/interface';
-import {LoroProtocol} from "./loro.protocol";
 
 export abstract class P2PNode implements AsyncDisposable {
 	protected p2p: Libp2p<LibP2PServices>;
-	private readonly init = this.initP2P();
-	loroProtocol: LoroProtocol = new LoroProtocol(this.init)
+	public readonly init = this.initP2P();
 	abstract createLibp2p(): Promise<Libp2p>;
 	private accessor _peers = new ObservableSet<PeerId>();
 

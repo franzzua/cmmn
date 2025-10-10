@@ -1,6 +1,5 @@
-import { VersionVector } from 'loro-crdt/bundler';
-import { Serializer } from './serializer';
-import { Deserializer } from './deserializer';
+import { Serializer } from '../p2p/serializer';
+import { Deserializer } from '../p2p/deserializer';
 
 
 export type LoroUpdateMessage = {

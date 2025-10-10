@@ -4,6 +4,7 @@ import {crc32} from "node:zlib";
 import fs, {readFile} from "node:fs/promises";
 import {wasm} from "./plugins/wasm";
 import {swcMinifyPlugin} from "./plugins/minify";
+import path, {dirname, relative} from "node:path";
 
 export class RolldownDependencyBuilder {
     constructor(private externals: string[],
@@ -11,7 +12,8 @@ export class RolldownDependencyBuilder {
                 private minify: boolean = false) {
     }
 
-    async getFileContent(target: string){
+    async getFileContent(target: string, isModule: boolean){
+        if (isModule) return `export * from '${target}';`
         const pkg = await import(target);
         const keys = Object.keys(pkg).filter(x => x !== 'default');
         return [
@@ -21,12 +23,12 @@ export class RolldownDependencyBuilder {
         ].join('\n');
     }
 
-    dir = './node_modules/.cmmn';
+    dir = path.join(process.cwd(), './node_modules/.cmmn');
 
-    async getEntry(target: string): Promise<AsyncDisposable & Record<string, string>>{
+    async getEntry(target: string, isModule: boolean): Promise<AsyncDisposable & Record<string, string>>{
         const id = crc32(target + new Date() + Math.random());
         const file = `${this.dir}/.${id}.js`;
-        const content = await this.getFileContent(target);
+        const content = await this.getFileContent(target, isModule);
         await fs.mkdir(this.dir, { recursive: true });
         await fs.writeFile(file, content, 'utf-8');
         return {
@@ -49,17 +51,16 @@ export class RolldownDependencyBuilder {
     async build(target: string, isModule: boolean): Promise<Record<string, string | Uint8Array>> {
         const {build} = await import("rolldown");
         const {esmExternalRequirePlugin} = await import("rolldown/experimental");
-        await using input = isModule ? this.getModuleEntry(target) : await this.getEntry(target);
-        const chunkBase = target.split('/').pop() + '/@_/'
+        await using input = await this.getEntry(target, isModule);
+        const chunkBase = target.split('/').pop() + '/@_'
         try {
             const result = await build({
                 input,
                 write: false,
                 output: {
                     format: 'esm',
-                    chunkFileNames: chunk =>  chunkBase + chunk.name + '.js',
-                    minify: false,
-                    sourcemap: this.minify ? false : "inline",
+                    chunkFileNames: chunk =>  chunkBase+ '/' + chunk.name + '.js',
+                    assetFileNames: asset =>  chunkBase+ '/' + asset.name + '.js',
                 },
                 experimental: {
 
@@ -80,6 +81,33 @@ export class RolldownDependencyBuilder {
                 },
                 treeshake: true,
                 plugins: [
+                    {
+                        name: 'wasm',
+                        async load(id, importer) {
+                            if (!/\.wasm$/.test(id)) return null;
+                            const fileId = Math.random().toString(36).substring(2) + '.wasm';
+                            this.emitFile({
+                                type: 'asset',
+                                source: await this.fs.readFile(id),
+                                name: 'Rollup WASM Asset',
+                                fileName: '/'+fileId
+                            });
+                            return [
+                                `const url = new URL('./${fileId}', import.meta.url);`,
+                                `const ab = await fetch(url).then(x => x.arrayBuffer())`,
+                                `export default new WebAssembly.Module(ab);`
+                            ].join('\n');
+                        },
+                        // transform(code, id){
+                        //     if (!/\.wasm$/.test(id)) return null;
+                        //     return {
+                        //         map: {
+                        //             mappings: ''
+                        //         },
+                        //         code:
+                        //     }
+                        // }
+                    },
                     wasm({
                         emitAsset: true,
                         assetName: `${target}/{name}`

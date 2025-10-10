@@ -1,4 +1,4 @@
-export function updateMovableList<T>(list: IMovableList<T>, value: T[]) {
+export function updateMovableList<T>(list: IMovableList<T>, value: ReadonlyArray<T>) {
 	for (let i = 0, j = 0; i < value.length || j < list.length;) {
 		const state = list.toArray();
 		console.log([...state.slice(0, j), '|', ...state.slice(j)], '->', [...value.slice(0, i), '|', ...value.slice(i)]);

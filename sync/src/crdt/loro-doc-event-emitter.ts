@@ -1,5 +1,5 @@
 import { EventEmitter } from '@cmmn/core';
-import type { LoroDoc, LoroEventBatch, Subscription } from 'loro-crdt/bundler';
+import type { LoroDoc, LoroEventBatch, Subscription } from 'loro-crdt';
 
 export class LoroDocEventEmitter extends EventEmitter<{
 	change: { event: LoroEventBatch; diff: Uint8Array };

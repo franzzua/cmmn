@@ -24,7 +24,7 @@
 		"@libp2p/peer-id": "5.1.0",
 		"@waku/sdk": "^0.0.30",
 		"libp2p": "2.8.2",
-		"loro-crdt": "1.5.3",
+		"loro-crdt": "1.7.3",
 		"multiformats": "^13.3.1",
 		"seqproto": "^0.2.3"
 	},

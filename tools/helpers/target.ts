@@ -1,4 +1,4 @@
-import {getDependencyOrder} from "./getProjects.js";
+import {getOrderedPackages} from "./getProjects.js";
 import path, {join, relative, resolve} from "node:path";
 import fs from "node:fs";
 import {fileURLToPath} from "node:url";
@@ -43,7 +43,7 @@ export class Target extends EventTarget {
             return [new Target(resolve(rootDir, flags.workspace), flags, [])];
         }
         const result = new Map();
-        for await (let project of getDependencyOrder(rootDir)) {
+        for await (let project of getOrderedPackages(rootDir)) {
             const depProjects = project.deps.map(x => result.get(x));
             result.set(project.root, new Target(project.root, flags, depProjects));
         }

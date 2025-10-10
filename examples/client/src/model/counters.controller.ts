@@ -33,6 +33,10 @@ export class CountersController {
 	private get doc(){
 		return this.docQuery.result.getModel({
 			counters: CRDT.list(CRDT.counter),
+			tasks: CRDT.list({
+				title: CRDT.text,
+				description: CRDT.text
+			})
 		})
 	}
 
@@ -45,10 +49,14 @@ export class CountersController {
 	public get counters(){
 		return this.doc.counters;
 	}
+	@cell()
+	public get tasks(){
+		return this.doc.tasks;
+	}
 
 	@bind()
 	public add(){
-		this.counters.push();
+		this.doc.tasks.push();
 	}
 
 	@cell()
@@ -64,7 +72,7 @@ export class CountersController {
 	}
 
 	get isActive(){
-		return this.room.peers.size > 0;
+		return this.room?.peers.size > 0;
 	}
 
 }

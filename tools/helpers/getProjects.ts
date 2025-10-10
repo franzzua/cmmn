@@ -1,7 +1,7 @@
 import {getPackages, Package} from "@manypkg/get-packages";
 import {PackageJSON} from "@manypkg/tools/src/Tool";
 
-export async function *getDependencyOrder(rootDir: string): AsyncGenerator<{
+export async function *getOrderedPackages(rootDir: string): AsyncGenerator<{
     root: string;
     deps: string[];
 }> {
