@@ -6,7 +6,6 @@ import {EventEmitter, EventEmitterBase} from "../event-emitter";
 export type ICellOptions<T, TKey = T> = {
 	compare?: (a: TKey, b: TKey) => boolean;
 	compareKey?: (value: T) => TKey;
-	filter?: (a: T) => boolean;
 	tap?: (a: T) => void;
 	onExternal?: (a: T) => void;
 	startValue?: T;
@@ -26,7 +25,6 @@ export class Cell<T = unknown, TKey = T> extends BaseCell<T> {
 		}
 		if (this.value !== undefined) {
 			// !function || options.startValue !== undefined
-			this.handleFilterError(this.value);
 			if (options.startValue === undefined) {
 				// startValue -> update -> tap
 				this.options.tap?.(this.value);
@@ -50,35 +48,14 @@ export class Cell<T = unknown, TKey = T> extends BaseCell<T> {
 		super.disactive();
 	}
 
-	public setInternal(value: T) {
-		if (this.handleFilterError(value)) {
-			return;
-		}
-		super.setInternal(value);
-	}
-
 	public set(value: T) {
 		super.set(value);
 		this.options.onExternal?.(value);
 	}
 
-	protected update(value: T, error?: Error) {
-		super.update(value, error);
+	protected update(value: T) {
+		super.update(value);
 		this.options.tap?.(value);
-	}
-
-	public changeOptions(options: ICellOptions<T, TKey>) {
-		if (this.options === options) return;
-		this.options = options;
-		this.handleFilterError(this.value);
-	}
-
-	private handleFilterError(value: T): boolean {
-		if (this.options.filter && !this.options.filter(value)) {
-			this.setError(new CellFilterError(value, this.options.filter, this));
-			return true;
-		}
-		return false;
 	}
 
 	protected compare(value: T): boolean {

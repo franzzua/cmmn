@@ -60,25 +60,19 @@ export class BaseCell<T = unknown>
 		this.update(this.value); // e.g. adding a new element to ObservableMap
 	};
 
-	public setError(error: Error) {
-		this.update(undefined, error);
-	}
-
 	/**
 	 * Called when only one of the changes has occurred:
 	 *  - cell value changed;
 	 *  - OR the content of the cell value has changed;
 	 *  - OR an error has occurred.
 	 */
-	protected update(value: T, error?: Error) {
-		this.error = error;
+	protected update(value: T) {
 		const oldValue = this.value;
 		this.value = value;
 		if (this.isActive) {
 			this.isActual = true;
 		}
-		if (error) this.emit('error', error);
-		else this.notifyChange(value, oldValue);
+		this.notifyChange(value, oldValue);
 		if (this.reactions) {
 			for (const reaction of this.reactions) {
 				reaction.isActual = false;

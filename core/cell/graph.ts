@@ -37,21 +37,10 @@ export class Graph {
 		cell.dependencies = null;
 		const prevCell = Graph.CurrentCell;
 		Graph.CurrentCell = cell;
-		let value;
-		let error;
-		try {
-			cell.isPulling = true;
-			value = cell.pull();
-		} catch (e) {
-			error = e;
-		} finally {
-			cell.isPulling = false;
-		}
-		if (error) {
-			cell.setError(error);
-		} else {
-			cell.setInternal(value);
-		}
+		cell.isPulling = true;
+		const value = cell.pull();
+		cell.isPulling = false;
+		cell.setInternal(value);
 		Graph.CurrentCell = prevCell;
 		if (oldDependencies) {
 			for (const oldDependency of oldDependencies) {
