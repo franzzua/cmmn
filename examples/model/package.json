@@ -19,6 +19,7 @@
 		"@libp2p/tcp": "10.1.8",
 		"@libp2p/webrtc": "5.2.9",
 		"@multiformats/multiaddr": "^12.0.0",
+		"multiformats": "13.4.1",
 		"libp2p": "2.8.2"
 	},
 	"dependencies": {

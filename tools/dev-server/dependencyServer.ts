@@ -61,7 +61,8 @@ export class DependencyServer {
                 let param = req.params['*'];
                 res.header('Access-Control-Allow-Origin', '*');
                 res.header('Content-Type', mime.lookup(param) || 'text/javascript');
-                return await this.getAsset(param);
+                const data = await this.getAsset(param);
+                return data;
             } catch (e) {
                 console.error(e);
                 res.statusCode = 404;
@@ -85,7 +86,8 @@ export class DependencyServer {
             const end = +performance.now();
             this.target.log(`^Wbundle ^R${pkg} ^Wfor ^R${((end - start) / 1000).toFixed(2)}s`)
         }
-        return this.cache.get(pkg)[path] ?? this.cache.get(pkg)['@_/'+path];
+        const cached = this.cache.get(pkg)
+        return cached[path] ?? cached['@_/'+path];
     }
 
     async getBundle(pkg: string){

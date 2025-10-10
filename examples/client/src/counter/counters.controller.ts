@@ -56,7 +56,7 @@ export class CountersController {
 
 	@bind()
 	public add(){
-		this.doc.tasks.push();
+		this.doc.counters.push();
 	}
 
 	@cell()

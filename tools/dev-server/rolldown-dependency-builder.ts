@@ -81,33 +81,6 @@ export class RolldownDependencyBuilder {
                 },
                 treeshake: true,
                 plugins: [
-                    {
-                        name: 'wasm',
-                        async load(id, importer) {
-                            if (!/\.wasm$/.test(id)) return null;
-                            const fileId = Math.random().toString(36).substring(2) + '.wasm';
-                            this.emitFile({
-                                type: 'asset',
-                                source: await this.fs.readFile(id),
-                                name: 'Rollup WASM Asset',
-                                fileName: '/'+fileId
-                            });
-                            return [
-                                `const url = new URL('./${fileId}', import.meta.url);`,
-                                `const ab = await fetch(url).then(x => x.arrayBuffer())`,
-                                `export default new WebAssembly.Module(ab);`
-                            ].join('\n');
-                        },
-                        // transform(code, id){
-                        //     if (!/\.wasm$/.test(id)) return null;
-                        //     return {
-                        //         map: {
-                        //             mappings: ''
-                        //         },
-                        //         code:
-                        //     }
-                        // }
-                    },
                     wasm({
                         emitAsset: true,
                         assetName: `${target}/{name}`
@@ -141,7 +114,7 @@ export class RolldownDependencyBuilder {
             return Object.fromEntries([
                 ...result.output
                     .filter(x => x.type == "chunk")
-                    .map(x => [(x.name === 'index' ? '' : x.fileName.replace(chunkBase, '@_/')), x.code]),
+                    .map(x => [(x.name === 'index' ? '' : x.fileName.replace(chunkBase, '@_')), x.code]),
                 ...result.output
                     .filter(x => x.type !== "chunk")
                     .map(x => ['@_/'+x.fileName, x.source])

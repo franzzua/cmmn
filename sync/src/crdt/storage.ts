@@ -12,5 +12,3 @@ export abstract class Storage<T> {
 export abstract class StorageProvider {
 	abstract getStorage<T>(name: string): Storage<T>;
 }
-
-console.log(StorageProvider);

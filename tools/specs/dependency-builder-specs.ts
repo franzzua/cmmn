@@ -15,7 +15,7 @@ describe('dependencyBuilder', async function dependencyBuilder(){
         await using file = await createTemporaryFile(text);
         const builder = new DependencyBuilderSpecs([], '/@base');
         const res = await builder.build(file.path, true);
-        expect(res['/']).toMatch(/export \{.*a.*}/);
+        expect(res['']).toMatch(/export \{.*a.*}/);
     });
     await test('external', async function external(){
         const text = 'export const a = 1';
@@ -23,8 +23,8 @@ describe('dependencyBuilder', async function dependencyBuilder(){
         await using fileB = await createTemporaryFile(`import { a } from '${fileA.fileName}'; export const b = a + 1;`);
         const builder = new DependencyBuilderSpecs([fileA.fileName], '/@base');
         const res = await builder.build(fileB.path, true);
-        expect(res['/']).toMatch(/export \{.*b.*}/);
-        expect(res['/']).toMatch(/import \{.*a.*} from "\/@base/);
+        expect(res['']).toMatch(/export \{.*b.*}/);
+        expect(res['']).toMatch(/import \{.*a.*} from "\/@base/);
     });
     await test('wasm', async function wasm(){
         await using wasm = await createTemporaryFile('0ABCF1', 'wasm')
@@ -34,13 +34,13 @@ describe('dependencyBuilder', async function dependencyBuilder(){
         `);
         const builder = new DependencyBuilderSpecs([], '/@base');
         const res = await builder.build(file.path, true);
-        expect(res['/']).not.toBeNull();
+        expect(res['']).not.toBeUndefined();
     })
 
     await test('loro-crdt', async function wasm(){
         const builder = new DependencyBuilderSpecs([], '/@base');
         const res = await builder.build('loro-crdt', true);
-        expect(res['/']).not.toBeNull();
+        expect(res['']).not.toBeUndefined();
     })
 
     await test('commonjs', async function commonjs(){
@@ -51,10 +51,10 @@ describe('dependencyBuilder', async function dependencyBuilder(){
         `, 'cjs');
         const builder = new DependencyBuilderSpecs([], 'base');
         const res = await builder.build(file.path, false);
-        expect(res['/']).not.toBeNull();
-        expect(res['/']).toMatch(/export \{.*a.*}/);
-        expect(res['/']).toMatch(/export \{.*c.*}/);
-        expect(res['/']).toMatch(/export \{.*default.*}/);
+        expect(res['']).not.toBeNull();
+        expect(res['']).toMatch(/export \{.*a.*}/);
+        expect(res['']).toMatch(/export \{.*c.*}/);
+        expect(res['']).toMatch(/export \{.*default.*}/);
     })
 
     await test('commonjs-dynamic-require', async function commonjsRequire(){
@@ -69,9 +69,9 @@ describe('dependencyBuilder', async function dependencyBuilder(){
         `, 'cjs');
         const builder = new DependencyBuilderSpecs([a.fileName], '/@base');
         const res = await builder.build(b.path, false);
-        expect(res['/']).not.toBeNull();
-        expect(res['/']).not.toContain('A_EXPORT_CONST')
-        expect(res['/']).toMatch(/import.*\/@base/);
+        expect(res['']).not.toBeUndefined();
+        expect(res['']).not.toContain('A_EXPORT_CONST')
+        expect(res['']).toMatch(/import.*\/@base/);
     })
 });
 
