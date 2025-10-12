@@ -1,12 +1,12 @@
-import { expect, suite, test } from '@cmmn/tools/test';
+import {describe, expect, test} from '@cmmn/tools/test';
 import { AsyncCell } from '../../cell/async-cell';
 import { Fn, ResolvablePromise } from '../../index';
 import { Cell } from '../../cell/cell.js';
 import { BaseCell } from '../../cell/base-cell';
 
-@suite
+@describe()
 export class AsyncCellSpec {
-	@test
+	@test()
 	async AsyncGeneratorTest() {
 		const gen = new MockGenerator<number>();
 		gen.Next(7);
@@ -20,7 +20,7 @@ export class AsyncCellSpec {
 		expect(cell.get().result).toEqual(10);
 	}
 
-	@test
+	@test()
 	async PromiseTest() {
 		const asyncCell = new AsyncCell(() =>
 			Fn.asyncDelay(30).then(() => 'hello world'),
@@ -30,7 +30,7 @@ export class AsyncCellSpec {
 		expect(asyncCell.get().result).toEqual('hello world');
 	}
 
-	@test
+	@test()
 	async generatorWithDeps() {
 		const baseCell = new BaseCell(1);
 		const cell = new AsyncCell<number>(() =>
@@ -52,7 +52,7 @@ export class AsyncCellSpec {
 		expect(cell.get().result).toEqual(2);
 	}
 
-	@test
+	@test()
 	async race() {
 		const delay = new Cell(0);
 		const asyncCell = new AsyncCell(async () => {

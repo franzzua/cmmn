@@ -1,56 +1,7 @@
-import {InitMessageData} from "./types";
+import {InitMessageData} from "../src/types";
+import {StorageInfo} from "./storage.info";
+
 declare var self: ServiceWorkerGlobalScope;
-
-export class StorageInfo {
-	private dbName = '@cmmn/service-worker/worker-storage';
-	private storageStore = 'storages';
-	private db = new Promise<IDBDatabase>((resolve, reject) => {
-		const request = self.indexedDB.open(this.dbName, 1);
-		request.addEventListener("success", (e: any) => resolve(e.target.result), {
-			once: true,
-		});
-		request.addEventListener("error", reject, {once: true});
-		request.addEventListener("blocked", reject, {once: true});
-		request.addEventListener(
-			"upgradeneeded",
-			(e: any) => {
-				const db = e.target.result;
-				if (!db.objectStoreNames.contains(this.storageStore)) {
-					db.createObjectStore(this.storageStore);
-				}
-			},
-			{once: true}
-		);
-	});
-
-	private request<T>(
-		mode: IDBTransactionMode,
-		req: (store: IDBObjectStore) => IDBRequest<T>
-	): Promise<T> {
-		return this.db.then(db => new Promise<T>((resolve, reject) => {
-			const transaction = db.transaction(this.storageStore, mode);
-			transaction.onabort = reject;
-			const store = transaction.objectStore(this.storageStore);
-			const request = req(store);
-			request.onerror = reject;
-			request.onsuccess = function () {
-				resolve(this.result);
-			};
-			transaction.commit?.();
-		}));
-	}
-	async load(){
-		return await this.request('readonly', x => x.getAll());
-	}
-
-	async save(store: string, data: any){
-		await this.request('readwrite', x => x.put(data, store));
-	}
-
-	async clear() {
-		await new Promise(r => self.indexedDB.deleteDatabase(this.dbName).addEventListener('success', r));
-	}
-}
 
 export class SwStorage {
 	private static instances = new Map<string, SwStorage>();
@@ -85,6 +36,12 @@ export class SwStorage {
 		this.instances.clear();
 		await this.info.clear();
 	}
+
+	static async update() {
+		for (let [key, storage] of this.instances) {
+			await storage.checkUpdate();
+		}
+	}
 	private readonly name = `main:${this.baseURI}`;
 	private readonly cloneName = `clone:${this.baseURI}`;
 	private readonly bundleUrl = new URL(`${this.baseURI}@_/bundle.json`, self.origin);
@@ -106,15 +63,6 @@ export class SwStorage {
 	public async clear() {
 		await caches.delete(this.name);
 		await caches.delete(this.cloneName).catch();
-	}
-
-	private checkIntervalId: number | undefined;
-	public setCheckInterval(checkInterval = 30_000) {
-		this.checkIntervalId && clearInterval(this.checkIntervalId);
-		this.checkIntervalId = setInterval(
-			() => this.checkUpdate(),
-			checkInterval
-		) as any;
 	}
 
 	async checkUpdate(force = false) {
@@ -164,10 +112,8 @@ export class SwStorage {
 		}
 	}
 
-	async load() {
-		if (this.bundleJson){
-			// TODO: check expiration and update json
-		} else {
+	async load(force: boolean = false) {
+		if (force || !this.bundleJson){
 			this.bundleJson = await fetch(this.bundleUrl).then(async x => {
 				if (x.ok) {
 					return await x.json();
@@ -200,6 +146,7 @@ export class SwStorage {
 				if (hash == asset.hash)
 					continue;
 			}
+			if (!matched && asset.optional) continue;
 			updated = true;
 			const result = await this.fetchRetry(request);
 			const clone = new Response(result.body, result);
@@ -257,23 +204,28 @@ export class SwStorage {
 	}
 
 	fetch(request: Request) {
-		if (request.mode == "navigate" && this.bundleJson.publicPath){
+		if (this.bundleJson.publicPath){
 			const path = new URL(request.url).pathname;
 			if(path.startsWith(this.bundleJson.publicPath)){
 				const rest = path.substring(this.bundleJson.publicPath.length);
-				for (let proxy of this.bundleJson.proxy) {
-					if (rest.match(new RegExp(proxy.regex))){
-						const url = new URL(this.baseURI + proxy.replace, self.origin);
-						return this.getFromCacheOrFetch(new Request(url));
-					}
+				request = new Request(new URL(this.baseURI + rest, self.origin));
+			}
+
+		}
+		if(!request.url.startsWith(this.baseURI) && request.url !== this.baseURI.substring(0, this.baseURI.length - 1))
+			return;
+
+		if(this.bundleJson.proxy){
+			const path = new URL(request.url).pathname;
+			const rest = path.substring(this.baseURI.length);
+			for (let proxy of this.bundleJson.proxy) {
+				if (rest.match(new RegExp(proxy.regex))){
+					const url = new URL(this.baseURI + proxy.replace, self.origin);
+					return this.getFromCacheOrFetch(new Request(url));
 				}
 			}
 		}
-		if (request.cache == "reload"){
-
-		}
-		if(request.url.startsWith(this.baseURI) || request.url == this.baseURI.substring(0, this.baseURI.length - 1))
-			return this.getFromCacheOrFetch(request);
+		return this.getFromCacheOrFetch(request);
 	}
 }
 
@@ -281,4 +233,5 @@ export type Asset = {
 	path: string;
 	hash: string;
 	platforms?: string[];
+	optional?: boolean;
 }

@@ -1,4 +1,4 @@
-import type { BaseCell } from './base-cell.js';
+import type { BaseCell } from './base-cell';
 
 export class Graph {
 	public static CurrentCell: BaseCell;

@@ -22,4 +22,5 @@ export type Asset = {
 	path: string;
 	hash: string;
 	size: number;
+	optional?: boolean;
 }

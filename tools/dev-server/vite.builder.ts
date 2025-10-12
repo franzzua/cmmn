@@ -16,6 +16,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import {swcMinifyPlugin} from "./plugins/minify";
 import {OutputAsset, OutputChunk, RollupOutput} from "rollup";
 import {dirname} from "node:path";
+import builtinModules from "builtin-modules";
 
 export class ViteBuilder {
 	readonly wsPrefix = '/@ws';
@@ -45,14 +46,14 @@ export class ViteBuilder {
 			html: {},
 			base: this.base + '/',
 			build: {
-				target: 'chrome89',
+				target: 'baseline-widely-available',
 				emptyOutDir: false,
 				rollupOptions: {
 					external: [
 						...(this.resolver ? [] : this.target.externalDependencies.map(x =>
 						    new RegExp(`^${x}`.replace('/', '\\/'))
 						)),
-						// ...builtinModules,
+						...builtinModules,
 						'fsevents',
 						/@id/g,
 					],
@@ -112,7 +113,9 @@ export class ViteBuilder {
 	async getBundleConfig(): Promise<InlineConfig>{
 		const config = await this.getConfig();
 		config.build.lib = {
-			entry: Object.fromEntries(this.target.entries.map(x => [x.name, x.source])) as any,
+			entry: Object.fromEntries(this.target.entries
+				.filter(x => !x.isExcluded)
+				.map(x => [x.name, x.source])) as any,
 			fileName: (format, entryName) => {
 				if (entryName == '.') entryName = 'index';
 				return `${entryName.replace(/^[./]*/, '')}.js`;

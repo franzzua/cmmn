@@ -63,7 +63,8 @@ export class TargetWebServer extends TargetServer {
             assets.push({
                 path: file,
                 hash: info.mtimeMs.toString(36),
-                size: info.size
+                size: info.size,
+                optional: true
             });
         }
         const deps = new Set<string>();

@@ -1,6 +1,5 @@
 import {BaseCell, Subscriber} from './base-cell';
 import {Fn} from "../helpers";
-import {subscribe} from "node:diagnostics_channel";
 import {EventEmitter, EventEmitterBase} from "../event-emitter";
 
 export type ICellOptions<T, TKey = T> = {

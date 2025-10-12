@@ -1,8 +1,6 @@
-import {SwStorage, type Asset} from './src/sw-storage';
-import {ServiceWorkerAction} from './src/types';
+import {SwStorage, type Asset} from './sw-storage';
+import {ServiceWorkerAction} from '../src/types';
 declare var self: ServiceWorkerGlobalScope;
-
-export {SwStorage, type Asset};
 
 self.addEventListener('install', (event) => {
 	// event.waitUntil(caches.delete('root').catch())
@@ -46,3 +44,7 @@ self.addEventListener('message', async (event) => {
 		console.error(e);
 	}
 });
+
+setInterval(() => {
+	SwStorage.update();
+})

@@ -10,7 +10,7 @@
 	},
 	"exports": {
 		"./client": "./client.ts",
-		"./worker": "./worker.ts"
+		"./worker": "./worker/index.ts"
 	},
 	"type": "module",
 	"dependencies": {

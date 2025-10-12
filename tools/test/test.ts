@@ -2,7 +2,7 @@ import * as t from "node:test";
 import * as assert from "node:assert";
 import { expect } from "expect";
 
-export function suite<TClass extends new (ctx: t.SuiteContext) => (BaseTest | unknown)>(
+function _suite<TClass extends new (ctx: t.SuiteContext) => (BaseTest | unknown)>(
     target: TClass,
     context: ClassDecoratorContext<TClass>
 ){
@@ -15,14 +15,29 @@ export function suite<TClass extends new (ctx: t.SuiteContext) => (BaseTest | un
     });
 }
 
-export function test<TClass, TValue extends (this: TClass) => unknown>(
+function _test<TClass, TValue extends (this: TClass) => unknown>(
     method: TValue,
     context: ClassMethodDecoratorContext<TClass, TValue>
 ){
     context.addInitializer(function (this: TClass) {
-        t.test(context.name.toString(), method.bind(this))
+        return t.test(context.name.toString(), method.bind(this))
     });
 }
+export const test: (
+    (() => typeof _test) & typeof _test
+) = ((target, ctx)=> {
+    if (ctx == undefined)
+        return _test;
+    return _test(target, ctx);
+}) as any;
+export const suite: (
+    (() => typeof _suite) & typeof _suite
+) = ((target, ctx)=> {
+    if (ctx == undefined)
+        return _suite;
+    return _suite(target, ctx);
+}) as any;
+export const describe = suite;
 
 export { assert, expect };
 export { mock, type SuiteContext, type TestContext } from "node:test";

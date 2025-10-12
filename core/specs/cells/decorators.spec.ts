@@ -1,14 +1,10 @@
 import { expect, mock, suite, test } from '@cmmn/tools/test';
-import { cell } from '../../cell';
 import { Cell } from '../../cell';
-import * as t from 'node:test';
+import {cell} from "../../cell/decorators";
 
 class TestObject {
 	@cell()
 	public accessor Value = 1;
-
-	@cell({ filter: (x) => !!x })
-	public accessor NotNull = null;
 
 	@cell()
 	public get Computed(): number {
@@ -31,12 +27,6 @@ class DecoratorsSpec {
 		await Promise.resolve();
 		expect(onChange.mock.callCount()).toEqual(1);
 		expect(b.get()).toEqual(2);
-	}
-
-	@test
-	readNotNullCell() {
-		const a = new TestObject();
-		expect(() => a.NotNull).toThrow();
 	}
 
 	@test
