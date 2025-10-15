@@ -1,22 +1,21 @@
-import {TargetServer} from "./targetServer.js";
 import {DependencyServer} from "./dependencyServer.js";
 import {Resolver} from "./resolver";
 import {TargetRunner} from "./target-runnner.js";
 import {TargetWebServer} from "./target-web-server";
-import {Target} from "../helpers/target";
+import {Target} from "../model/target";
 import {FastifyInstance, FastifyRequest} from "fastify";
 
 export class DevServer {
     prefix = '_';
     rootTarget: Target = this.targets.at(-1);
-    resolver = new Resolver(this);
+    resolver = new Resolver(this.targets);
     targetServers = this.targets.map(t => {
         if (t.packageJson.bin){
             return new TargetRunner(t, this.prefix, this.resolver);
         }
         return new TargetWebServer(t, this.prefix, this.resolver);
     }).filter(x => x != null);
-    depServer: DependencyServer = new DependencyServer(this.targets, this.rootTarget.flags.production ? 'production' : 'development');
+    depServer: DependencyServer = new DependencyServer(this.targets);
     get isBundler(){
         return this.rootTarget.flags.production;
     }
@@ -33,9 +32,9 @@ export class DevServer {
 
     async register(app: FastifyInstance) {
         app.addHook('preHandler', async (req, res) => {
-            this.depServer.url = `${req.headers.protocol ?? req.protocol}://${req.headers.host ?? req.host}`
+            this.resolver.url = `${req.headers.protocol ?? req.protocol}://${req.headers.host ?? req.host}`
             for (let targetServer of this.targetServers) {
-                targetServer.url = this.depServer.url;
+                targetServer.url = this.resolver.url;
             }
         })
         await this.depServer.register(app);
@@ -48,7 +47,7 @@ export class DevServer {
         });
         if (this.isBundler){
             app.get('/_/sw.js', (req, res) => {
-                const worker = this.resolver.resolveId("@cmmn/service-worker/worker", null, null);
+                const worker = this.resolver.resolveId("@cmmn/service-worker/worker");
                 res.header('Service-Worker-Allowed', '/')
                     .type('application/javascript')
                     .send(`import "${worker.id}"`);

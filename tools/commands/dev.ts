@@ -1,13 +1,13 @@
-import {Target} from "../helpers/target";
 import {fastify} from "fastify";
 import {fastifyCaching} from "@fastify/caching";
-import {DevServer} from "../dev-server/dev-server";
-import {Flags} from "../helpers/flags";
+import {Flags} from "../model/flags";
 import {fastifyCompress} from "../helpers/fastify-compress";
+import {Monorepo} from "../model/monorepo";
+import {DevServer} from "../servers/dev-server";
 
 export async function dev(flags: Flags) {
-    const targets = await Target.readTargets(process.cwd(), flags);
-    const devServer = new DevServer(targets);
+    const monorepo = await Monorepo.load(process.cwd());
+    const devServer = new DevServer(monorepo);
 
     const app = fastify({
         rewriteUrl: devServer.rewriteUrl,
@@ -25,7 +25,7 @@ export async function dev(flags: Flags) {
 
     await app.listen({
         host: '0.0.0.0',
-        port: +(targets.at(-1).packageJson.config?.port ?? 9000),
+        port: +(monorepo.root.packageJson.config?.port ?? 9000),
     });
 
     console.log('listen:\n', app.addresses().map(x => `\t${x.address}:${x.port}`).join('\n'))

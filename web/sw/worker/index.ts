@@ -1,4 +1,4 @@
-import {SwStorage, type Asset} from './sw-storage';
+import {SwStorage, type Asset, LoadEvent} from './sw-storage';
 import {ServiceWorkerAction} from '../src/types';
 declare var self: ServiceWorkerGlobalScope;
 
@@ -32,7 +32,13 @@ self.addEventListener('message', async (event) => {
 			// 	storage.checkUpdate(event.data.force);
 			// 	break;
 			case 'init':
-				const storage = await SwStorage.get(event.data);
+				const storage = await SwStorage.getOrCreate(event.data);
+                self.addEventListener(LoadEvent.eventName, (e: LoadEvent)=> {
+                    event.source?.postMessage({
+                        action: 'progress',
+                        progress: e.asset.size / SwStorage.totalSize
+                    });
+                })
 				await storage.load();
 				self.clients.claim();
 				event.source?.postMessage({
@@ -45,6 +51,6 @@ self.addEventListener('message', async (event) => {
 	}
 });
 
-setInterval(() => {
-	SwStorage.update();
-})
+// setInterval(() => {
+// 	SwStorage.update();
+// }, 60_000)

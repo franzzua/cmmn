@@ -398,6 +398,7 @@ __metadata:
     "@multiformats/multiaddr": "npm:^12.0.0"
     iter-tools: "npm:^7.5.3"
     libp2p: "npm:2.8.2"
+    multiformats: "npm:13.4.1"
   languageName: unknown
   linkType: soft
 
@@ -488,6 +489,7 @@ __metadata:
   resolution: "@cmmn/sync@workspace:sync"
   dependencies:
     "@cmmn/core": "workspace:~"
+    "@cmmn/sync": "workspace:~"
     "@cmmn/tools": "workspace:~"
     "@libp2p/bootstrap": "npm:11.0.32"
     "@libp2p/floodsub": "npm:10.1.31"
@@ -6932,6 +6934,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"multiformats@npm:13.4.1, multiformats@npm:^13.0.0, multiformats@npm:^13.0.1, multiformats@npm:^13.1.0, multiformats@npm:^13.3.1, multiformats@npm:^13.3.6, multiformats@npm:^13.4.0":
+  version: 13.4.1
+  resolution: "multiformats@npm:13.4.1"
+  checksum: 10c0/ed3be7a421f579a0c36464b6faac7948e84c9985bc5d62d6bdb5a96d0fbfd7979d7e7d5f6735125f7cc17e3afa2778893e3444c98d6e564027862f3f0755eae8
+  languageName: node
+  linkType: hard
+
 "multiformats@npm:^11.0.0, multiformats@npm:^11.0.2":
   version: 11.0.2
   resolution: "multiformats@npm:11.0.2"
@@ -6943,13 +6952,6 @@ __metadata:
   version: 12.1.3
   resolution: "multiformats@npm:12.1.3"
   checksum: 10c0/abf4f601d4a262965a231b070a10071dc61f8a85c4ab48f021089333be33f0be72c4fdb498a7c0172278d5c3cb540cb1402cb8a7d5f4f1042651a508b5f05e4e
-  languageName: node
-  linkType: hard
-
-"multiformats@npm:^13.0.0, multiformats@npm:^13.0.1, multiformats@npm:^13.1.0, multiformats@npm:^13.3.1, multiformats@npm:^13.3.6, multiformats@npm:^13.4.0":
-  version: 13.4.1
-  resolution: "multiformats@npm:13.4.1"
-  checksum: 10c0/ed3be7a421f579a0c36464b6faac7948e84c9985bc5d62d6bdb5a96d0fbfd7979d7e7d5f6735125f7cc17e3afa2778893e3444c98d6e564027862f3f0755eae8
   languageName: node
   linkType: hard
 

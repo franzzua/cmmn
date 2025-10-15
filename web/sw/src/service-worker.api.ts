@@ -41,6 +41,10 @@ export class ServiceWorkerApi {
 					case 'init':
 						resolve();
 						break;
+                    case 'progress':
+                        console.log(data.progress);
+                        globalThis.dispatchEvent(new ProgressEvent(data.progress));
+                        break;
 					case 'update':
 						console.log('update');
 						break;
@@ -104,3 +108,9 @@ type BeforeInstallPromptEvent = Event & {
 	 */
 	prompt(): Promise<void>;
 };
+
+export class ProgressEvent extends Event {
+    constructor(public readonly progress: number) {
+        super('progress');
+    }
+}

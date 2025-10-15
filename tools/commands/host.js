@@ -1,4 +1,4 @@
-import {Target} from "../helpers/target";
+import {Target} from "../model/target.js";
 import fs from "node:fs/promises";
 
 export async function host(...flags) {

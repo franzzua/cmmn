@@ -1,4 +1,4 @@
-import {Target} from "../helpers/target";
+import {Target} from "../model/target.js";
 import fs from "node:fs/promises";
 import {exec} from "node:child_process";
 

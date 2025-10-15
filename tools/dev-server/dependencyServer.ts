@@ -4,17 +4,17 @@ import fs from "node:fs/promises";
 import mime from "mime-types";
 import {RolldownDependencyBuilder} from "./rolldown-dependency-builder";
 import {getHash} from "./asset-collection";
-import {Target} from "../helpers/target";
+import {Target} from "../model/target";
 import {FastifyInstance} from "fastify";
+import {BundleJsonBuilder} from "./bundle.json.builder";
 
 export class DependencyServer {
     base = '/_/@id'
-    url: string;
     target: Target;
     optimizeDeps: string[];
     builder: RolldownDependencyBuilder;
 
-    constructor(targets: Target[], mode: "development"|"production") {
+    constructor(targets: Target[]) {
         this.target = targets.at(-1);
         this.optimizeDeps = [...new Set([
             ...targets.flatMap(t => t.externalDependencies),
@@ -22,20 +22,6 @@ export class DependencyServer {
             // '@react-refresh'
         ])].filter(x => targets.every(y => y.packageJson.name !== x));
         this.builder = new RolldownDependencyBuilder(this.optimizeDeps, this.base, this.target.flags.minify);
-    }
-
-    resolveId(id: string, importer, options) {
-        if (id.startsWith(`${this.base}`))
-            return {
-                id: `${this.url}${id}`,
-                external: true
-            };
-        if (this.optimizeDeps.some(x => id.startsWith(x))) {
-            return {
-                id: `${this.url}${this.base}/${id}`,
-                external: true
-            };
-        }
     }
 
     async getPackageJSON(pkg: string) {
@@ -87,27 +73,35 @@ export class DependencyServer {
             this.target.log(`^Wbundle ^R${pkg} ^Wfor ^R${((end - start) / 1000).toFixed(2)}s`)
         }
         const cached = this.cache.get(pkg)
-        return cached[path] ?? cached['@_/'+path];
+        return cached[path];
     }
 
     async getBundle(pkg: string){
         const pkgJSON = await this.getPackageJSON(pkg);
         const isModule = pkgJSON.type === 'module' || pkgJSON.module;
-        const items = await this.builder.build(pkg, isModule).catch(console.error);
-        if (!items) return {};
-        const bundle = {
+        const bundle = await this.builder.build(pkg, isModule).catch(console.error);
+        if (!bundle) return {};
+        const bundleJson = {
             assets: [],
-            deps: []
+            deps: [...new Set(bundle.flatMap(output => output.deps))]
+                .filter(x => x.package.startsWith('http'))
+                .map(x => ({
+                    baseURI: x.package,
+                    path: x.path,
+                })),
         };
-        for (let key in items){
-            bundle.assets.push({
-                path: key,
-                size: items[key].length,
-                hash: await getHash(items[key])
-            })
+        const result = {} as Record<string, string | Uint8Array>;
+        for (let output of bundle){
+            bundleJson.assets.push({
+                path: output.fileName,
+                size: output.data.length,
+                hash: await getHash(output.data)
+            });
+            result[output.fileName.startsWith('@_/')
+                ? output.fileName.substring(3)
+                : output.fileName] = output.data;
         }
-        items['@_/bundle.json'] = JSON.stringify(bundle);
-        this.cache.set(pkg, items);
-        return items;
+        result['bundle.json'] = JSON.stringify(bundleJson);
+        this.cache.set(pkg, result);
     }
 }

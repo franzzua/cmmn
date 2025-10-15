@@ -1,6 +1,6 @@
 import {TargetServer} from "./targetServer.js";
 import {exec, spawn} from "node:child_process";
-import {ChangeEvent} from "../helpers/target";
+import {ChangeEvent} from "../model/target.js";
 import {Watcher} from "../helpers/watcher.js";
 
 export class TargetRunner extends TargetServer {

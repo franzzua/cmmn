@@ -1,4 +1,5 @@
 export class Flags {
+    static Current: Flags = new Flags([]);
     args: string[];
     watch: boolean;
     minify: boolean;
@@ -19,6 +20,7 @@ export class Flags {
         if (this.workspace?.startsWith('--')){
             this.workspace = undefined;
         }
+        Flags.Current = this;
     }
 
     get(arg) {

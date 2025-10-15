@@ -13,7 +13,8 @@
   },
   "include": [
     "**/*.tsx",
-    "**/*.ts"
+    "**/*.ts",
+    "jsx-runtime.js"
   ],
   "exclude": [
     "dist",

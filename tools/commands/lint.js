@@ -1,4 +1,4 @@
-import {Target} from "../helpers/target";
+import {Target} from "../model/target.js";
 import {spawn} from "node:child_process";
 import {stat, link, rm} from "node:fs/promises";
 import {join, resolve} from "node:path";
@@ -6,7 +6,7 @@ import {join, resolve} from "node:path";
 const rootDir = process.cwd();
 
 /**
- * @param flags {import("../helpers/flags.ts").Flags}
+ * @param flags {import("../model/flags.ts").Flags}
  * @returns {Promise<import('@swc/types').Config>}
  */
 export async function lint(flags) {

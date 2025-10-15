@@ -1,9 +1,9 @@
 import {execSync, spawn} from "node:child_process";
 import {getPackages} from "@manypkg/get-packages";
-import {Target} from "../helpers/target";
+import {Target} from "../model/target";
 import fs from "node:fs/promises";
 import {join, resolve} from "node:path";
-import {Flags} from "../helpers/flags";
+import {Flags} from "../model/flags";
 import * as process from "node:process";
 
 export async function publish(flags: Flags){

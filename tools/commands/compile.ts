@@ -1,28 +1,31 @@
 import path, {dirname, join, relative} from "node:path";
 import {transformFile} from "@swc/core";
-import {Target} from "../helpers/target.js";
-import {Flags} from "../helpers/flags";
+import {Target} from "../model/target.js";
+import {Flags} from "../model/flags";
 import {FileChangeEvent, Watcher} from "../helpers/watcher";
 import events from "node:events";
 import glob from "fast-glob";
 import {mkdir, writeFile} from "node:fs/promises";
 import {createWriteStream} from "node:fs";
+import {Monorepo} from "../model/monorepo";
 
 const rootDir = process.cwd();
 
 export async function compile(flags: Flags) {
-	const targets = await Target.readTargets(rootDir, flags);
-	events.setMaxListeners(Math.max(targets.length * 2, events.defaultMaxListeners));
+	const monorepo = await Monorepo.load(rootDir);
+	events.setMaxListeners(Math.max(monorepo.packs.length * 2, events.defaultMaxListeners));
 	const watcher = flags.watch ? new Watcher() : null;
-	for (const target of targets) {
-		if (target.tsConfig.include?.length === 0)
+	for (const pack of monorepo.packs) {
+        if (!(pack instanceof Target))
+            continue;
+		if (pack.tsConfig.include?.length === 0)
 			continue;
-		await compileFiles(target);
+		await compileFiles(pack);
 		if (watcher) {
-			watcher.watchTarget(target);
-			target.addEventListener('file', (e: FileChangeEvent) => {
-				target.log(`changed: ^W${e.files.join(', ')}`);
-				compileFiles(target, e.files.map(f => path.join(target.rootDir, f)));
+			watcher.watchTarget(pack);
+			pack.addEventListener('file', (e: FileChangeEvent) => {
+				pack.log(`changed: ^W${e.files.join(', ')}`);
+				compileFiles(pack, e.files.map(f => path.join(pack.rootDir, f)));
 			});
 		}
 	}

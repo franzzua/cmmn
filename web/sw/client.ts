@@ -1,4 +1,4 @@
-import {ServiceWorkerApi} from "./src/service-worker.api";
+import {ServiceWorkerApi, type ProgressEvent} from "./src/service-worker.api";
 
 export { ServiceWorkerApi } from "./src/service-worker.api";
 
@@ -10,3 +10,9 @@ console.log(document.head.baseURI)
 await api.init({
 	baseURI: document.head.baseURI,
 });
+
+export default api;
+
+export {
+    type ProgressEvent
+}

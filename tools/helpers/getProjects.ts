@@ -8,7 +8,10 @@ export async function *getOrderedPackages(rootDir: string): AsyncGenerator<{
     const packages = await getPackages(rootDir);
     const monorepo = new Monorepo(packages.packages);
     yield * monorepo.getTargets();
-    yield { root: rootDir, deps: packages.packages.map(x => x.dir)};
+    yield {
+        root: rootDir,
+        deps: packages.packages.map(x => x.dir)
+    };
 }
 
 class Monorepo{

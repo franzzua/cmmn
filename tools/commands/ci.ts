@@ -1,7 +1,7 @@
 import {getPackages} from "@manypkg/get-packages";
 import fs from "node:fs/promises";
 import {join} from "node:path";
-import {Flags} from "../helpers/flags";
+import {Flags} from "../model/flags";
 
 export async function clean(flags: Flags){
     const packages = await getPackages(process.cwd())

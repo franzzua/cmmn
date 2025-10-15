@@ -6,6 +6,7 @@ import {Asset, getAssets} from "./asset-collection";
 import {readdir, readFile, stat} from "node:fs/promises";
 import fs from "fs";
 import {Output, ViteBuilder} from "./vite.builder";
+import {BundleJsonBuilder} from "./bundle.json.builder";
 
 export class TargetWebServer extends TargetServer {
 
@@ -31,65 +32,23 @@ export class TargetWebServer extends TargetServer {
     }
     async getBundle(){
         const bundle = await this.viteBuilder.getBundle();
+        const bundleJsonBuilder = new BundleJsonBuilder(this.target, this.url)
+        const bundleJson = await bundleJsonBuilder.getBundleJson(bundle);
+        for (let dep of bundleJson.deps) {
+            const target = this.resolver.getTarget(dep.baseURI.substring(this.url.length + 3));
+            if (target){
+                dep.baseURI = `${this.url}/${this.prefix}/${target.target.packageJson.name}/`;
+                dep.path = target.path;
+            }
+        }
         const result: Bundle = {
-            '@_/bundle.json': await this.getBundleJson().then(JSON.stringify)
+            '@_/bundle.json': JSON.stringify(bundleJson)
         };
         for (let output of bundle) {
             const entry = this.target.entries.find(x => x.relative == './'+output.fileName);
             result[entry?.output ?? output.fileName] = output.data;
         }
         return result;
-    }
-    async getBundleJson(): Promise<BundleJson> {
-        const bundle = await this.viteBuilder.getBundle();
-        const data = {
-            publicPath: this.target.publicPath,
-            proxy: this.target.proxy.map(x => ({
-                regex: x.regex.source,
-                replace: this.target.getEntry("."+x.replace)?.output
-            }))
-        };
-        const assets = await getAssets(bundle);
-        for (let asset of assets) {
-            const entry = this.target.entries.find(x => x.relative == './'+asset.path);
-            if (entry){
-                asset.path = entry.output;
-            }
-        }
-        for (let file of await readdir(this.target.publicDir, {
-            recursive: true
-        }).catch(() => [])){
-            const info = await stat(path.join(this.target.publicDir, file));
-            assets.push({
-                path: file,
-                hash: info.mtimeMs.toString(36),
-                size: info.size,
-                optional: true
-            });
-        }
-        const deps = new Set<string>();
-        for (let output of bundle) {
-            for (let dependency of output.deps) {
-                if (!dependency.package.startsWith(`${this.url}/${this.prefix}/`)) continue;
-                const path = dependency.package.replace(`${this.url}/${this.prefix}/`, '');
-                if (path.startsWith('@id')){
-                    deps.add(`${this.url}/_/${path}/`)
-                } else {
-                    for (let dep of this.target.externalDependencies) {
-                        if (!path.startsWith(dep)) continue;
-                        deps.add(`${this.url}/_/${dep}/`)
-                    }
-                }
-            }
-        }
-        return {
-            ...data,
-            assets,
-            deps: Array.from(deps).map(x => ({
-                baseURI: x,
-                path: ''
-            }))
-        };
     }
 
 

@@ -1,4 +1,4 @@
-import {Target} from "./target";
+import {Target} from "../model/target";
 import events from "node:events";
 import {watch} from "node:fs/promises"
 import {throttle} from "throttle-debounce";
@@ -30,11 +30,4 @@ export class Watcher {
 	[Symbol.dispose](){
 		this.abort.abort();
 	}
-}
-
-export class FileChangeEvent extends Event{
-	constructor(public files: string[]) {
-		super('file');
-	}
-
 }

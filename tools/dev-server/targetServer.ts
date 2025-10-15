@@ -1,4 +1,4 @@
-import {Target} from "../helpers/target";
+import {Target} from "../model/target";
 import {Resolver} from "./resolver";
 import {FastifyInstance, FastifyRequest} from "fastify";
 
@@ -8,22 +8,6 @@ export abstract class TargetServer {
     url: string;
 
     constructor(protected target: Target, protected prefix: string, protected resolver: Resolver) {
-    }
-    resolveId = (id: string, importer: string, options) => {
-        const path = id.match(new RegExp(`^\/?${this.target.packageJson.name}(?<path>.*)$`))?.groups.path;
-        if (path === undefined)
-            return null;
-        const entry = this.target.getEntry("." + path);
-        if (!entry) {
-            this.target.error(`Entry not found for path: ${path}`);
-            return
-        }
-        const relative = this.target.flags.production ? entry.output : entry.relative.substring(2);
-        const resolvedId = `${this.url}${this.base}/${relative}`;
-        return {
-            id: resolvedId,
-            external: true
-        };
     }
 
     abstract register(app: FastifyInstance): Promise<void>

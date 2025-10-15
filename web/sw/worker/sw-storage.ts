@@ -6,13 +6,24 @@ declare var self: ServiceWorkerGlobalScope;
 export class SwStorage {
 	private static instances = new Map<string, SwStorage>();
 	private static info = new StorageInfo();
-	public static async get(data: InitMessageData){
+    static get totalSize(){
+        let res = 0;
+        for (let [,instance] of this.instances) {
+            res += instance.size;
+        }
+        return res;
+    }
+	public static async getOrCreate(data: InitMessageData){
 		let storage = this.instances.get(data.baseURI);
 		if (!storage) {
 			this.instances.set(data.baseURI, storage = new SwStorage(data.baseURI, data.bundleJson));
+            await storage.loadBundleJson();
 		}
 		return storage;
 	}
+    private static get(data: InitMessageData){
+        return this.instances.get(data.baseURI);
+    }
 	static fetch(request: Request) {
 		for (let [key, storage] of this.instances) {
 			const response = storage.fetch(request);
@@ -24,7 +35,7 @@ export class SwStorage {
 		if(globalThis.isInitialized) return;
 		const json = await this.info.load();
 		for (let data of json) {
-			const storage = await this.get(data);
+			const storage = await this.getOrCreate(data);
 			await storage.load();
 		}
 		globalThis.isInitialized = true;
@@ -47,8 +58,8 @@ export class SwStorage {
 	private readonly bundleUrl = new URL(`${this.baseURI}@_/bundle.json`, self.origin);
 	private readonly cache: Promise<Cache> = caches.open(this.name);
 	protected platforms = new Set<string>();
+    public size = 0;
 
-	loading: Promise<void>;
 	constructor(private readonly baseURI: string, private bundleJson: {
 		assets: Asset[];
 		deps: any[];
@@ -112,21 +123,36 @@ export class SwStorage {
 		}
 	}
 
-	async load(force: boolean = false) {
-		if (force || !this.bundleJson){
-			this.bundleJson = await fetch(this.bundleUrl).then(async x => {
-				if (x.ok) {
-					return await x.json();
-				}
-				console.error(this.bundleUrl.href, await x.text());
-				return null;
-			});
-			await this.save({
-				bundleJson: this.bundleJson,
-				baseURI: this.baseURI
-			});
-		}
+    async loadBundleJson(force: boolean = false) {
+        if (!(force || !this.bundleJson)) {
+            return;
+        }
+        this.bundleJson = await fetch(this.bundleUrl).then(async x => {
+            if (x.ok) {
+                return await x.json();
+            }
+            console.error(this.bundleUrl.href, await x.text());
+            return null;
+        });
+        await this.save({
+            bundleJson: this.bundleJson,
+            baseURI: this.baseURI
+        });
+        for (let dep of this.bundleJson.deps) {
+            await SwStorage.getOrCreate(dep);
+        }
+        this.size = this.bundleJson.assets
+            .filter(x => !x.optional)
+            .map(x => x.size)
+            .reduce((acc, x) => acc + x, 0);
+    }
+
+    isLoaded = false;
+    async load(force: boolean = false) {
+        if (this.isLoaded) return;
+        await this.loadBundleJson(force);
 		await this.loadAssets(await this.cache);
+        this.isLoaded = true;
 		await this.loadDeps();
 	}
 
@@ -148,7 +174,10 @@ export class SwStorage {
 			}
 			if (!matched && asset.optional) continue;
 			updated = true;
+            self.dispatchEvent(new LoadEvent(asset));
 			const result = await this.fetchRetry(request);
+            if(!result.ok)
+                throw new Error(`Failed to fetch ${request.url}: ${result.status} ${await result.text()}`);
 			const clone = new Response(result.body, result);
 			clone.headers.append(this.hashHeader, asset.hash);
 			await cache.put(request, clone);
@@ -166,19 +195,18 @@ export class SwStorage {
 
 	private async loadDeps(){
 		for (let dep of this.bundleJson.deps) {
-			const storage = await SwStorage.get(dep);
+			const storage = await SwStorage.getOrCreate(dep);
 			await storage.load();
 		}
 	}
 
 	private fetchRetry(request: Request, counter = 0): Promise<Response> {
-		return fetch(request).catch((e) => {
-			if (counter < 3) {
-				return this.fetchRetry(request, counter + 1);
-			} else {
-				throw e;
-			}
-		});
+		return fetch(request).then((res) => {
+            if (res.ok || counter > 3) {
+                return res;
+            }
+            return this.fetchRetry(request, counter + 1);
+        });
 	}
 
 	async getFromCache(request: Request) {
@@ -216,16 +244,22 @@ export class SwStorage {
 			return;
 
 		if(this.bundleJson.proxy){
-			const path = new URL(request.url).pathname;
-			const rest = path.substring(this.baseURI.length);
+			const rest = request.url.substring(this.baseURI.length);
 			for (let proxy of this.bundleJson.proxy) {
 				if (rest.match(new RegExp(proxy.regex))){
 					const url = new URL(this.baseURI + proxy.replace, self.origin);
-					return this.getFromCacheOrFetch(new Request(url));
+                    request = new Request(url);
 				}
 			}
 		}
-		return this.getFromCacheOrFetch(request);
+		return this.getFromCacheOrFetchAndPut(request);
+	}
+}
+
+export class LoadEvent extends Event {
+    static eventName = 'load'
+	constructor(public readonly asset: Asset) {
+		super(LoadEvent.eventName);
 	}
 }
 
@@ -234,4 +268,5 @@ export type Asset = {
 	hash: string;
 	platforms?: string[];
 	optional?: boolean;
+    size: number;
 }

@@ -9,7 +9,9 @@
 	"scripts": {
 		"run": "node --env-file=.env --import @cmmn/tools/import ./src/index.ts"
 	},
-	"config": {},
+	"config": {
+      "server": true
+    },
 	"dependencies": {
 		"@cmmn/examples-common": "workspace:~",
 		"@cmmn/server": "workspace:~",

@@ -5,6 +5,7 @@ import fs, {readFile} from "node:fs/promises";
 import {wasm} from "./plugins/wasm";
 import {swcMinifyPlugin} from "./plugins/minify";
 import path, {dirname, relative} from "node:path";
+import {Output} from "./vite.builder";
 
 export class RolldownDependencyBuilder {
     constructor(private externals: string[],
@@ -48,19 +49,19 @@ export class RolldownDependencyBuilder {
         }
     }
 
-    async build(target: string, isModule: boolean): Promise<Record<string, string | Uint8Array>> {
+    async build(target: string, isModule: boolean): Promise<Output[]> {
         const {build} = await import("rolldown");
         const {esmExternalRequirePlugin} = await import("rolldown/experimental");
         await using input = await this.getEntry(target, isModule);
-        const chunkBase = target.split('/').pop() + '/@_'
+        // const chunkBase = target.split('/').pop() + '/@_'
         try {
             const result = await build({
                 input,
                 write: false,
                 output: {
                     format: 'esm',
-                    chunkFileNames: chunk =>  chunkBase+ '/' + chunk.name + '.js',
-                    assetFileNames: asset =>  chunkBase+ '/' + asset.name + '.js',
+                    chunkFileNames: chunk =>  '@_/' + chunk.name + '.js',
+                    assetFileNames: asset =>  '@_/' + asset.name + '.js',
                 },
                 experimental: {
 
@@ -111,14 +112,27 @@ export class RolldownDependencyBuilder {
                     ...(this.minify ? [swcMinifyPlugin()] : [])
                 ]
             });
-            return Object.fromEntries([
-                ...result.output
-                    .filter(x => x.type == "chunk")
-                    .map(x => [(x.name === 'index' ? '' : x.fileName.replace(chunkBase, '@_')), x.code]),
-                ...result.output
-                    .filter(x => x.type !== "chunk")
-                    .map(x => ['@_/'+x.fileName, x.source])
-            ]);
+            return result.output.map(x => {
+                return {
+                    fileName: x.name == 'index' ? '' : x.type == 'asset' ? '@_/' + x.fileName : x.fileName,
+                    data:  x.type == "asset" ? x.source : x.code,
+                    deps: x.type == "asset" ? [] : [
+                        ...x.imports,
+                        ...x.dynamicImports
+                    ].map(path => ({
+                        package: path,
+                        path: ''
+                    }))
+                } as Output
+            });
+            // return Object.fromEntries([
+            //     ...result.output
+            //         .filter(x => x.type == "chunk")
+            //         .map(x => [(x.name === 'index' ? '' : x.fileName.replace(chunkBase, '@_')), x.code]),
+            //     ...result.output
+            //         .filter(x => x.type !== "chunk")
+            //         .map(x => ['@_/'+x.fileName, x.source])
+            // ]);
         } finally {
             // await entryPoints[Symbol.asyncDispose]();
         }

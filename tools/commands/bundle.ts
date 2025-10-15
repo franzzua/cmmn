@@ -1,6 +1,6 @@
-import {Target} from "../helpers/target";
+import {Target} from "../model/target";
 import {Terminal} from "../helpers/terminal.js";
-import {Flags} from "../helpers/flags";
+import {Flags} from "../model/flags";
 import path, {dirname, join} from "node:path";
 import {cp, mkdir, stat, writeFile} from "node:fs/promises";
 import {ViteBuilder} from "../dev-server/vite.builder";

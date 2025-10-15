@@ -3,11 +3,11 @@ import terminalKit from "terminal-kit";
 export class Terminal {
     term = terminalKit.terminal;
     /**
-     * @type {import("./flags.ts").Flags}
+     * @type {import("../model/flags.ts").Flags}
      */
     flags;
     /**
-     * @type {import("./target").Target[]}
+     * @type {import("../model/target.js").Target[]}
      */
     targets;
 

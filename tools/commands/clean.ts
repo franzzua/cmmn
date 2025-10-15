@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import {join} from "node:path";
-import {Flags} from "../helpers/flags";
-import {Target} from "../helpers/target";
+import {Flags} from "../model/flags";
+import {Target} from "../model/target";
 import * as process from "node:process";
 
 export async function clean(flags: Flags){
