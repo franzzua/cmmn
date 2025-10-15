@@ -1,5 +1,7 @@
 import {type Cryptor, P2PRepository} from "@cmmn/sync";
 import {singleton} from "@cmmn/core";
+import api from "@cmmn/examples-server?resolve";
+// const api = '/_/@cmmn/examples-server/';
 
 @singleton()
 export class CounterRepository extends P2PRepository {
@@ -9,8 +11,7 @@ export class CounterRepository extends P2PRepository {
 
 	async getKey(uri: string) {
 		try {
-			const url = import.meta.resolve('/example/react');
-			const {algo, key} = await fetch(`${url}/api/auth/key/${uri}`).then(x => x.json());
+			const {algo, key} = await fetch(`${api}/api/auth/key/${uri}`).then(x => x.json());
 			return {
 				key: await crypto.subtle.importKey('jwk', key, algo, true, ['decrypt', 'encrypt']),
 				algo: algo as AesGcmParams

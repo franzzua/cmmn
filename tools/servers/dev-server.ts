@@ -9,7 +9,7 @@ import {PackServer} from "./pack-server";
 import {RolldownBundler} from "../bundlers/rolldown-bundler";
 import {Flags} from "../model/flags";
 import {ViteBundler} from "../bundlers/vite.bundler";
-import mime from "mime-types";
+import {TargetRunner} from "./target-runnner";
 
 export class DevServer {
     prefix = '/_/';
@@ -19,22 +19,22 @@ export class DevServer {
         this.monorepo.packs.map(pack => [pack, this.createServer(pack)])
     );
 
-    private createServer(pack: Pack): PackServer{
+    private createServer(pack: Pack): PackServer {
         if (pack instanceof Target) {
-            // if (t.packageJson.bin) {
-            //     return new TargetRunner(t, this.prefix, this.resolver);
-            // }
-            if (Flags.Current.production){
+            if (pack.packageJson.bin) {
+                return new TargetRunner(pack);
+            }
+            if (Flags.Current.production) {
                 const bundler = new ViteBundler(pack, this.resolver);
-                return new BundleServer(bundler);
+                return new BundleServer(pack, bundler);
             }
             return new ViteDevelopmentServer(pack, this.resolver, this.rootTarget);
         }
         const bundler = new RolldownBundler(pack, this.resolver);
-        return new BundleServer(bundler);
+        return new BundleServer(pack, bundler);
     }
 
-    get isBundler(){
+    get isBundler() {
         return this.rootTarget.flags.production;
     }
 
@@ -42,37 +42,37 @@ export class DevServer {
     }
 
     rewriteUrl = (req: FastifyRequest) => {
-        let url = req.url;
-        return url;
+        if (req.url.includes('@ws'))
+            return req.url;
+        const [path, query] = req.url.split('?');
+        const resolved = this.resolver.resolvePath(path, null, {
+            attributes: {
+                resolve: query?.includes('resolve') ? true : undefined,
+            }
+        });
+        if (resolved) {
+            return resolved.pack.publicPath + '/' + resolved.path + (query ? '?' + query : '');
+        }
+        return req.url;
     }
 
     async register(app: FastifyInstance) {
-        app.addHook('preHandler', async (req, res) => {
-            const url = `${req.headers.protocol ?? req.protocol}://${req.headers.host ?? req.host}`
-            this.resolver.basePath = url;
-        })
         for (let targetServer of this.targetServers.values()) {
-            if (targetServer instanceof ViteDevelopmentServer) {
-                await targetServer.init(app.server);
-            }
+            await targetServer.register(app);
         }
-        app.get('*', async (req, res) => {
-            const path = req.url.split('?')[0];
-            const resolved = this.resolver.resolvePath(path);
-            if (!resolved) {
-                this.rootTarget.error(`Can't resolve ${path}`);
-                return res.status(404).send('Not found');
-            }
-            const server = this.targetServers.get(resolved.pack);
-            const mimeType = mime.lookup(resolved.path);
-            res.type(mimeType);
-            return await server.handle(resolved.path, req, res);
+        app.addHook('preHandler', async (request, reply) => {
+            if (request.url.endsWith('?resolve'))
+                return reply.type('application/javascript')
+                    .send(`export default ${JSON.stringify(request.url.split('?')[0])}`);
+        })
+        app.addHook('preHandler', async (req, res) => {
+            this.resolver.basePath = `${req.headers.protocol ?? req.protocol}://${req.headers.host ?? req.host}`;
         })
         app.addHook('onError', (req, res, error) => {
             this.rootTarget.error(`${req.url}: ${error}`);
             res.status(422).send('Failed to process request');
         });
-        if (this.isBundler){
+        if (this.isBundler) {
             app.get('/_/sw.js', (req, res) => {
                 const worker = this.resolver.resolveId("@cmmn/service-worker/worker");
                 res.header('Service-Worker-Allowed', '/')

@@ -1,19 +1,20 @@
 import ts from "typescript";
 import path, {resolve, relative} from 'node:path';
 import fs from "node:fs";
-import {tsResolvePlugin} from "../helpers/ts-resolve-plugin.js";
 import {Flags} from "../model/flags";
 import * as process from "node:process";
 import {Target} from "../model/target";
 import events from "node:events";
-import {FileChangeEvent, Watcher} from "../helpers/watcher";
+import {Watcher} from "../helpers/watcher";
+import {Monorepo} from "../model/monorepo";
+import {FileChangeEvent} from "../model/pack";
 const rootDir = process.cwd();
 
 export async function typings(flags: Flags) {
-    const targets = await Target.readTargets(rootDir, flags);
-    events.setMaxListeners(Math.max(targets.length * 2, events.defaultMaxListeners));
+    const monorepo = await Monorepo.load(rootDir);
+    events.setMaxListeners(Math.max(monorepo.targets.length * 2, events.defaultMaxListeners));
     const watcher = flags.watch ? new Watcher() : null;
-    for (const target of targets) {
+    for (const target of monorepo.targets) {
         if (target.tsConfig.include?.length === 0)
             continue;
         generateTypings(target);

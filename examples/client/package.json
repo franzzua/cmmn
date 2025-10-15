@@ -12,7 +12,7 @@
 	},
 	"config": {
 		"proxy": {
-			"^[^.]*$": ""
+			"^[^.@]*$": ""
 		},
 		"publicPath": "/example/react"
 	},
@@ -27,11 +27,11 @@
 	"dependencies": {
 		"@cmmn/core": "workspace:~",
 		"@cmmn/examples-common": "workspace:~",
-        "@cmmn/examples-model": "workspace:~",
-        "@cmmn/examples-server": "workspace:~",
+		"@cmmn/examples-model": "workspace:~",
+		"@cmmn/examples-server": "workspace:~",
 		"@cmmn/examples-ui-lib": "workspace:~",
-        "@cmmn/service-worker": "workspace:~",
-        "@cmmn/react": "workspace:~",
+		"@cmmn/react": "workspace:~",
+		"@cmmn/service-worker": "workspace:~",
 		"@cmmn/sync": "workspace:~",
 		"@cmmn/tools": "workspace:~",
 		"@cmmn/uhtml": "workspace:~",

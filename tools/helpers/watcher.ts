@@ -2,6 +2,7 @@ import {Target} from "../model/target";
 import events from "node:events";
 import {watch} from "node:fs/promises"
 import {throttle} from "throttle-debounce";
+import {FileChangeEvent} from "../model/pack";
 
 export class Watcher {
 	abort = new AbortController();

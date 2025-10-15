@@ -96,7 +96,8 @@ export class RolldownBundler implements IBundler{
                 const prefix = 'builtin:esm-external-require-';
                 if (id.startsWith(prefix)){
                     const resolved = this.resolver.resolveId(id.substring(prefix.length), null, null)
-                    return `export * from "${resolved}"`;
+                    if (resolved)
+                        return `export * from "${resolved.id}"`;
                 }
             }
         };

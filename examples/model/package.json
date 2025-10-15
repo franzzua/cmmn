@@ -13,17 +13,17 @@
 	},
 	"devDependencies": {
 		"@chainsafe/libp2p-gossipsub": "14.1.0",
-        "@chainsafe/libp2p-noise": "16.1.0",
-        "@chainsafe/libp2p-yamux": "7.0.1",
+		"@chainsafe/libp2p-noise": "16.1.0",
+		"@chainsafe/libp2p-yamux": "7.0.1",
 		"@libp2p/circuit-relay-v2": "3.2.8",
 		"@libp2p/dcutr": "2.0.27",
 		"@libp2p/tcp": "10.1.8",
-        "@libp2p/webrtc": "5.2.9",
-        "@libp2p/websockets": "9.2.8",
+		"@libp2p/webrtc": "5.2.9",
+		"@libp2p/websockets": "9.2.8",
 		"@multiformats/multiaddr": "^12.0.0",
+		"iter-tools": "^7.5.3",
 		"libp2p": "2.8.2",
-		"multiformats": "13.4.1",
-        "iter-tools": "^7.5.3"
+		"multiformats": "13.4.1"
 	},
 	"dependencies": {
 		"@cmmn/core": "workspace:~",

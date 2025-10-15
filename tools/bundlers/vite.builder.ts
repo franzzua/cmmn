@@ -72,10 +72,11 @@ export class ViteBuilder {
             name: "cmmn:html-base-tag",
             enforce: 'pre',
             transformIndexHtml: (_, config: IndexHtmlTransformContext) => {
+                const dir = this.target.flags.production ? '' : dirname(config.path);
                 const result: HtmlTagDescriptor[] = [
                     {
                         tag: "base",
-                        attrs: {href: `${this.target.publicPath}/`},
+                        attrs: {href: `${this.target.publicPath}${dir}/`},
                         children: '/** injected **/'
                     }
                 ];

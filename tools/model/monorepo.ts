@@ -16,7 +16,7 @@ export class Monorepo {
         root.init();
     }
 
-    get Targets(){
+    get targets(){
         return Array.from(this.packs.values()).filter(x => x instanceof Target) as Target[];
     }
 

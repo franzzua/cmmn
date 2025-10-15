@@ -1,13 +1,14 @@
-import path, {dirname, join, relative} from "node:path";
+import path, {dirname, join} from "node:path";
 import {transformFile} from "@swc/core";
 import {Target} from "../model/target.js";
 import {Flags} from "../model/flags";
-import {FileChangeEvent, Watcher} from "../helpers/watcher";
+import {Watcher} from "../helpers/watcher";
 import events from "node:events";
 import glob from "fast-glob";
 import {mkdir, writeFile} from "node:fs/promises";
 import {createWriteStream} from "node:fs";
 import {Monorepo} from "../model/monorepo";
+import {FileChangeEvent} from "../model/pack";
 
 const rootDir = process.cwd();
 
@@ -15,9 +16,7 @@ export async function compile(flags: Flags) {
 	const monorepo = await Monorepo.load(rootDir);
 	events.setMaxListeners(Math.max(monorepo.packs.length * 2, events.defaultMaxListeners));
 	const watcher = flags.watch ? new Watcher() : null;
-	for (const pack of monorepo.packs) {
-        if (!(pack instanceof Target))
-            continue;
+	for (const pack of monorepo.targets) {
 		if (pack.tsConfig.include?.length === 0)
 			continue;
 		await compileFiles(pack);
@@ -31,7 +30,6 @@ export async function compile(flags: Flags) {
 	}
 }
 
-const sourceMapDataUrl = `data:application/json;charset=utf-8;base64,`;
 const sourceMapComment = `\n//# sourceMappingURL=`;
 
 async function compileFiles(target: Target, filenames: string[] = null): Promise<void> {

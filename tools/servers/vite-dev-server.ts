@@ -3,29 +3,36 @@ import {HttpServer} from "vite";
 import {ChangeEvent} from "../model/pack";
 import {Resolver} from "../model/resolver";
 import {createServer, ViteDevServer} from "vite";
-import {FastifyReply, FastifyRequest} from "fastify";
+import {FastifyInstance, FastifyReply, FastifyRequest} from "fastify";
 import {PackServer} from "./pack-server";
 import {ViteBuilder} from "../bundlers/vite.builder";
 
-export class ViteDevelopmentServer implements PackServer{
+export class ViteDevelopmentServer extends PackServer{
     readonly wsPrefix = '/@ws';
     private viteBuilder = new ViteBuilder(this.target, this.resolver)
     constructor(private target: Target,
                 private resolver: Resolver,
                 private rootTarget: Target) {
+        super(target);
     }
 
-    async init(server: HttpServer) {
-        this.devServer = await this.createServer(server);
-    }
 
-    async handle(path: string, request: FastifyRequest, reply: FastifyReply){
+    protected async handle(request: FastifyRequest, reply: FastifyReply){
+        if (request.url.startsWith(this.pack.publicPath + '/'+this.wsPrefix)) return ;
+
+        reply.type(this.getMimeType(request.url));
+        if (request.url.endsWith('?resolve')){
+            return reply
+                .type('application/javascript')
+                .send(`export default ${JSON.stringify(request.url.split('?')[0])}`);
+        }
+        const devServer = await (this.devServerRequest ??= this.createServer(request.server.server));
         return new Promise<string | Uint8Array>(resolve => {
-            this.devServer.middlewares(request.raw, reply.raw, resolve);
+            devServer.middlewares(request.raw, reply.raw, resolve);
         });
     }
 
-    private devServer: ViteDevServer;
+    private devServerRequest: Promise<ViteDevServer>;
 
     private async createServer(server: HttpServer) {
         const config = await this.viteBuilder.getConfig();

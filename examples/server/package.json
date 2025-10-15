@@ -10,8 +10,8 @@
 		"run": "node --env-file=.env --import @cmmn/tools/import ./src/index.ts"
 	},
 	"config": {
-      "server": true
-    },
+		"server": true
+	},
 	"dependencies": {
 		"@cmmn/examples-common": "workspace:~",
 		"@cmmn/server": "workspace:~",

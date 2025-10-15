@@ -18,7 +18,7 @@ export class Bundle {
 
     async getPublicAsset(id: string){
         if (!(this.pack instanceof Target) || !this.pack.publicDir) {
-            return [];
+            return undefined;
         }
         return readFile(path.join(this.pack.publicDir, id))
     }

@@ -21,13 +21,13 @@ export class Resolver {
         return this.resolveInPack(pack.pack, pack.path, importer, options);
     }
 
-    public resolvePath(path: string){
+    public resolvePath(path: string, importer: string = null, options = null){
         const pack = this.getPack(path);
         if (!pack) return undefined;
-        return this.resolveWithProxy(pack.pack, pack.path) ?? pack;
+        return this.resolveWithProxy(pack.pack, pack.path, importer, options) ?? pack;
     }
 
-    private resolveWithProxy(pack: Pack, path: string){
+    private resolveWithProxy(pack: Pack, path: string, importer: string = null, options: any = null){
         if (pack instanceof Target) {
             for (let proxy of pack.proxy) {
                 if (path.match(proxy.regex)) {
@@ -36,7 +36,7 @@ export class Resolver {
                 }
             }
         }
-        return this.resolveInPack(pack, path);
+        return this.resolveInPack(pack, path, importer, options);
     }
 
     public resolveInPack(pack: Pack, id: string, importer: string = null, options: any = null){
@@ -81,7 +81,7 @@ export class Resolver {
                 return { pack, path: id.substring(pack.rootDir.length + 1) };
             } else if (id == pack.publicPath) {
                 return { pack, path: '' };
-            } else if (id.startsWith(pack.publicPath)) {
+            } else if (id.startsWith(pack.publicPath + '/')) {
                 return { pack, path: id.substring(pack.publicPath.length + 1) };
             }
         }
