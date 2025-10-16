@@ -10,14 +10,17 @@ import {RolldownBundler} from "../bundlers/rolldown-bundler";
 import {Flags} from "../model/flags";
 import {ViteBundler} from "../bundlers/vite.bundler";
 import {TargetRunner} from "./target-runnner";
+import {createBundler} from "../bundlers/createBundler";
 
 export class DevServer {
-    prefix = '/_/';
     rootTarget: Target = this.monorepo.root;
-    resolver = new Resolver(this.monorepo.packs);
     targetServers = new Map<Pack, PackServer>(
         this.monorepo.packs.map(pack => [pack, this.createServer(pack)])
     );
+
+    get resolver() {
+        return this.monorepo.resolver
+    }
 
     private createServer(pack: Pack): PackServer {
         if (pack instanceof Target) {
@@ -25,17 +28,17 @@ export class DevServer {
                 return new TargetRunner(pack);
             }
             if (Flags.Current.production) {
-                const bundler = new ViteBundler(pack, this.resolver);
+                const bundler = createBundler(pack, this.resolver);
                 return new BundleServer(pack, bundler);
             }
             return new ViteDevelopmentServer(pack, this.resolver, this.rootTarget);
         }
-        const bundler = new RolldownBundler(pack, this.resolver);
+        const bundler = createBundler(pack, this.resolver);
         return new BundleServer(pack, bundler);
     }
 
     get isBundler() {
-        return this.rootTarget.flags.production;
+        return Flags.Current.production;
     }
 
     constructor(private monorepo: Monorepo) {
@@ -61,22 +64,23 @@ export class DevServer {
             await targetServer.register(app);
         }
         app.addHook('preHandler', async (request, reply) => {
+
             if (request.url.endsWith('?resolve'))
                 return reply.type('application/javascript')
                     .send(`export default ${JSON.stringify(request.url.split('?')[0])}`);
         })
+
         app.addHook('preHandler', async (req, res) => {
             this.resolver.basePath = `${req.headers.protocol ?? req.protocol}://${req.headers.host ?? req.host}`;
-        })
+        });
         app.addHook('onError', (req, res, error) => {
             this.rootTarget.error(`${req.url}: ${error}`);
             res.status(422).send('Failed to process request');
         });
         if (this.isBundler) {
-            app.get('/_/sw.js', (req, res) => {
+            app.get('/_sw.js', (req, res) => {
                 const worker = this.resolver.resolveId("@cmmn/service-worker/worker");
-                res.header('Service-Worker-Allowed', '/')
-                    .type('application/javascript')
+                res.type('application/javascript')
                     .send(`import "${worker.id}"`);
             })
         }

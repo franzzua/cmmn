@@ -5,10 +5,12 @@ import {Monorepo} from "../model/monorepo";
 import {Resolver} from "../model/resolver";
 import {ViteBundler} from "../bundlers/vite.bundler";
 import {Target} from "../model/target";
+import {Flags} from "../model/flags";
 
 describe('vite-bundler', async function target() {
+    Flags.Current = new Flags(['--prod']);
 	const monorepo = await Monorepo.load(process.cwd());
-    const resolver = new Resolver(monorepo.packs, '@base');
+    const resolver = new Resolver(monorepo.packs);
 	async function getBundle(pkg: string){
 		const target = monorepo.get(pkg) as Target;
 		const viteBuilder = new ViteBundler(target, resolver);
@@ -25,9 +27,27 @@ describe('vite-bundler', async function target() {
 
 	await test('@cmmn/examples-client', async function () {
 		const bundle = await getBundle('@cmmn/examples-client');
-        const assets = bundle.fileNames();
+        const json = await bundle.getBundleJson();
         // expect(assets).toContain('index.js')
-        expect(assets).toContain('index.html')
+        expect(json.baseURI).toEqual('/example/react');
+        const index = json.assets.find(x => x.path == 'src/index.html');
+        const regex = new RegExp(index.regex);
+        expect('').toMatch(regex)
+        expect('/dashboard').toMatch(regex)
+        expect('@vite').not.toMatch(regex)
+        expect('index.js').not.toMatch(regex)
+        const allDeps = new Map<string, Set<string>>();
+        for (let asset of json.assets) {
+            for (let pack in asset.deps) {
+                if (!allDeps.has(pack))
+                    allDeps.set(pack, new Set());
+                asset.deps[pack].forEach(x => allDeps.get(pack).add(x))
+            }
+        }
+        expect(allDeps.get('/_/@cmmn/ui')).toHaveLength(1);
+        expect(allDeps.get('/_/@cmmn/sync')).toHaveLength(2);
+        expect(allDeps.get('/_/@cmmn/service-worker')).toHaveLength(1);
+        expect(allDeps.get('/example/react').size).toBeGreaterThan(1);
         // expect(assets).toContain('manifest.json')
         // expect(assets).toContain('icon.svg')
         // const deps = new Set(bundle.deps.map(x => x.baseURI.substring(baseUrl.length)));

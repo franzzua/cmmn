@@ -10,6 +10,7 @@
 		"run": "node --import @cmmn/tools/import ./src/index.ts"
 	},
 	"config": {
+		"server": true,
 		"host": "network.example.cmmn.local"
 	},
 	"devDependencies": {

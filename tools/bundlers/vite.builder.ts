@@ -19,7 +19,7 @@ export class ViteBuilder {
         return {
             root: this.target.rootDir,
             logLevel: 'silent',
-            mode: this.target.flags.production ? "production" : 'debug',
+            mode: Flags.Current.production ? "production" : 'debug',
             optimizeDeps: {
                 noDiscovery: true,
                 include: []

@@ -1,21 +1,24 @@
 {
-	"name": "@cmmn/service-worker",
-	"version": "3.0.0-d3",
-	"description": "",
-	"publishConfig": {
-		"access": "public"
-	},
-	"repository": {
-		"url": "https://github.com/franzzua/cmmn/tree/master/ui"
-	},
-	"exports": {
-		"./client": "./client.ts",
-		"./worker": "./worker/index.ts"
-	},
-	"type": "module",
-	"dependencies": {
-		"@cmmn/core": "workspace:~"
-	},
-	"author": "",
-	"license": "ISC"
+  "name": "@cmmn/service-worker",
+  "version": "3.0.0-d3",
+  "description": "",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "url": "https://github.com/franzzua/cmmn/tree/master/ui"
+  },
+  "exports": {
+    "./client": "./client.ts",
+    "./worker": "./worker/index.ts"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@cmmn/tools": "workspace:~"
+  },
+  "dependencies": {
+    "@cmmn/core": "workspace:~"
+  },
+  "author": "",
+  "license": "ISC"
 }

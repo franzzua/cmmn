@@ -18,9 +18,3 @@ async function getAsset(output: Output): Promise<Asset> {
 		size: output.data.length,
 	}
 }
-export type Asset = {
-	path: string;
-	hash: string;
-	size: number;
-	optional?: boolean;
-}

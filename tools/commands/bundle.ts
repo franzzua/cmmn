@@ -4,16 +4,26 @@ import {dirname, join} from "node:path";
 import {cp, mkdir, writeFile} from "node:fs/promises";
 import {Monorepo} from "../model/monorepo";
 import {ViteBundler} from "../bundlers/vite.bundler";
+import {createBundler} from "../bundlers/createBundler";
+import {Target} from "../model/target";
 
 export async function bundle(flags: Flags) {
 	const monorepo = await Monorepo.load(process.cwd());
 	const term = new Terminal(flags, monorepo.packs);
-	for (let target of monorepo.targets) {
-        const vite = new ViteBundler(target, null);
-        const bundle = await vite.bundle();
+	for (let pack of monorepo.packs.values()) {
+        if (!flags.deploy && !(pack instanceof Target))
+            continue;
+        if (pack.isServer)
+            continue;
+        const outDir = flags.deploy
+            ? join(monorepo.root.rootDir, flags.out, pack.publicPath)
+            : join(pack.rootDir, 'dist/bundle');
+        console.log(outDir);
+        const bundler = createBundler(pack, flags.deploy ? monorepo.resolver : null);
+        const bundle = await bundler.bundle();
         let size = 0;
         for (let file of bundle.fileNames()) {
-            const path = join(target.rootDir, 'dist/bundle', file);
+            const path = join(outDir, file);
             const dir = dirname(path);
             await mkdir(dir, {recursive: true});
             const data = bundle.get(file);
@@ -21,13 +31,18 @@ export async function bundle(flags: Flags) {
             size += data.length;
             // term.term.yellow(`\t\t${file}\n`)
         }
-        term.setData(target, {
+        if (flags.deploy) {
+            const manifest = await bundle.getBundleJson();
+            await writeFile(join(outDir, 'bundle.json'), JSON.stringify(manifest, null, 2));
+        }
+        term.setData(pack, {
             state: 'ok',
             size: size
         });
-        await cp(target.publicDir, join(target.rootDir, 'dist/bundle/'), {
-            recursive: true
-        }).catch(() => {});
+        if (pack instanceof Target)
+            await cp(pack.publicDir, outDir, {
+                recursive: true
+            }).catch(() => {});
 	}
 }
 

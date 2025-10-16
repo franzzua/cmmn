@@ -1,4 +1,6 @@
-export class StorageInfo {
+import type {BundleJson} from "@cmmn/tools";
+
+export class BundleJsonStorage implements IBundleJsonStorage {
 	private dbName = '@cmmn/service-worker/worker-storage';
 	private storageStore = 'storages';
 	private db = new Promise<IDBDatabase>((resolve, reject) => {
@@ -37,15 +39,20 @@ export class StorageInfo {
 		}));
 	}
 
-	async load() {
+	async getAll(): Promise<BundleJson[]> {
 		return await this.request('readonly', x => x.getAll());
 	}
 
-	async save(store: string, data: any) {
-		await this.request('readwrite', x => x.put(data, store));
+	async save(json: BundleJson) {
+		await this.request('readwrite', x => x.put(json, json.baseURI));
 	}
 
 	async clear() {
 		await new Promise(r => self.indexedDB.deleteDatabase(this.dbName).addEventListener('success', r));
 	}
+}
+
+export interface IBundleJsonStorage {
+    getAll(): Promise<BundleJson[]>;
+    save(data: BundleJson): Promise<void>;
 }

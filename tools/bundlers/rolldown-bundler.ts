@@ -11,7 +11,6 @@ import {BuildOptions} from "rolldown";
 import {esmExternalRequirePlugin} from "rolldown/experimental";
 import {IBundler} from "./types";
 import {Plugin} from "rolldown";
-
 export class RolldownBundler implements IBundler{
     constructor(private pack: Pack,
                 private resolver: Resolver) {
@@ -46,6 +45,10 @@ export class RolldownBundler implements IBundler{
             }
         };
         for (let entry of this.pack.entries) {
+            if (entry.source.match(/\.(d\.ts|css|scss|sass|less|styl|pcss|postcss|html)$/))
+                continue;
+            if(entry.source.includes('*')) // TODO: read all files
+                continue;
             const id = crc32(entry.name + new Date() + Math.random());
             const file = `${this.dir}/.${id}.js`;
             const content = await this.getFileContent(entry);
@@ -79,7 +82,7 @@ export class RolldownBundler implements IBundler{
             optimization: {
                 inlineConst: Flags.Current.minify,
             },
-            // treeshake: true,
+            treeshake: true,
             plugins: [...this.getPlugins()]
         }
     }
@@ -119,12 +122,19 @@ export class RolldownBundler implements IBundler{
     }
 
     async bundle(): Promise<Bundle> {
-        const {build} = await import("rolldown");
         await using input = await this.getInputs();
+        if (Object.keys(input).length == 0)
+            return new Bundle(this.pack, []);
+        const {build} = await import("rolldown");
         const config = this.getConfig();
         const result = await build({
             ...config,
             input
+        }).catch(err => {
+            this.pack.error(err.message);
+            return {
+                output: []
+            };
         });
         const outputs = result.output.map(x => ({
             fileName: x.fileName,
@@ -133,10 +143,10 @@ export class RolldownBundler implements IBundler{
             deps: x.type == "asset" ? [] : [
                 ...x.imports,
                 ...x.dynamicImports
-            ].map(path => ({
-                package: path,
-                path: ''
-            }))
+            ].map(path => this.resolver.getPack(path) ?? {
+                pack: this.pack,
+                path: path
+            })
         } as Output));
         return new Bundle(this.pack, outputs);
     }

@@ -21,7 +21,6 @@
 		"@libp2p/webrtc": "5.2.9",
 		"@libp2p/websockets": "9.2.8",
 		"@multiformats/multiaddr": "^12.0.0",
-		"iter-tools": "^7.5.3",
 		"libp2p": "2.8.2",
 		"multiformats": "13.4.1"
 	},

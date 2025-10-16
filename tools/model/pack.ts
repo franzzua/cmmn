@@ -65,7 +65,9 @@ export class Pack extends EventTarget{
             });
         }
     }
-
+    public get isServer(){
+        return !!this.packageJson.config?.server;
+    }
     public get name(){
         return this.packageJson.name;
     }
@@ -87,9 +89,21 @@ export class Pack extends EventTarget{
         if (this.packageJson.exports && typeof this.packageJson.exports == "object") {
             const result = [] as Entry[];
             for (let item in this.packageJson.exports) {
-                const importFile = this.packageJson.exports[item].require ??
+                if (!item.startsWith('.')){
+                    const importFile = this.packageJson.exports.default ??
+                        this.packageJson.exports.require ??
+                        this.packageJson.exports.import;
+
+                    if (!importFile || !(typeof importFile === "string")) {
+                        this.error(`Failed to read entry '${item}' in ${this.packageJson.name}`)
+                        continue;
+                    }
+                    result.push(this.createEntry('.', importFile));
+                    break;
+                }
+                const importFile = this.packageJson.exports[item].default ??
                     this.packageJson.exports[item].import ??
-                    this.packageJson.exports[item].default ?? this.packageJson.exports[item];
+                    this.packageJson.exports[item].require ?? this.packageJson.exports[item];
                 if (!importFile || !(typeof importFile === "string")) {
                     this.error(`Failed to read entry '${item}' in ${this.packageJson.name}`)
                     continue;
@@ -102,7 +116,7 @@ export class Pack extends EventTarget{
             ?? this.packageJson.main
             ?? this.packageJson.browser
             ?? this.packageJson.exports as string
-        return this._entries = [this.createEntry('.', entry)];
+        return this._entries = entry ? [this.createEntry('.', entry)] : [];
     }
 
     /**

@@ -46,10 +46,10 @@ export class ViteBundler extends ViteBuilder implements IBundler {
                 deps: x.type == "asset" ? [] : [
                     ...x.imports,
                     ...x.dynamicImports
-                ].map(path => ({
-                    package: path,
-                    path: ''
-                }))
+                ].map(path => path.replace(/^(\.\.\/)+/,'/')).map(path => this.resolver.getPack(path) ?? {
+                    pack: this.target,
+                    path: path
+                })
             } as Output
         });
         return new Bundle(this.target, outputs);

@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import {Plugin} from "vite";
+import {dirname, resolve} from "node:path";
 
 export function wasm(options: {
 	emitAsset?: boolean
@@ -7,23 +8,36 @@ export function wasm(options: {
 } = {}): Plugin{
 	return {
 		name: 'wasm',
+        resolveId(id, importer){
+            if (!/\.wasm$/.test(id)) return null;
+            const name = id.split('/').pop();
+            const moduleInfo = this.getModuleInfo(importer);
+            // @ts-ignore
+            moduleInfo.dynamicallyImportedIds.push(name);
+            moduleInfo.importedIds.push(name);
+            return resolve(dirname(importer), id);
+        },
 		async load(id) {
 			if (!/\.wasm$/.test(id)) return null;
 			const name = id.split('/').pop();
+            let url =`new URL("./${name}?no-inline", import.meta.url)`;
 			if (options.emitAsset) {
-				this.emitFile({
+                const referenceId = this.emitFile({
 					type: 'asset',
 					source: await (this.fs ?? fs).readFile(id),
 					name: options.assetName?.replace('{name}', name) ?? 'WASM Asset',
-					fileName: name
+					fileName: name,
+                    importedBy: 'lalala'
 				});
+                url = `import.meta.ROLLUP_FILE_URL_${referenceId}`;
 			}
 			return {
 				map: {
 					mappings: ''
 				},
+
 				code: [
-					`const url = new URL('./${name}?no-inline', import.meta.url);`,
+					`const url = ${url};`,
 					`const ab = await fetch(url).then(x => x.arrayBuffer())`,
 					`export default new WebAssembly.Module(ab);`
 				].join('\n')

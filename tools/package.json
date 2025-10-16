@@ -19,11 +19,15 @@
 		"dev:prod": "cd .. && node --import @cmmn/tools/import ./tools/bin.ts dev --prod"
 	},
 	"exports": {
+		".": "./index.ts",
 		"./tsconfig.json": "./helpers/tsconfig.json",
 		"./import": "./node/register.js",
 		"./import-dev": "./node/register-dev.js",
 		"./test": "./test/test.ts",
 		"./swcrc": "./.swcrc"
+	},
+	"config": {
+		"server": true
 	},
 	"files": [
 		"dist",
@@ -37,6 +41,7 @@
 		"@fastify/express": "4.0.2",
 		"@fastify/http-proxy": "11.3.0",
 		"@manypkg/get-packages": "^2.2.2",
+		"@rollup/plugin-wasm": "6.2.2",
 		"@schemastore/package": "0.0.10",
 		"@swc-node/register": "1.10.9",
 		"@swc/core": "1.13.5",

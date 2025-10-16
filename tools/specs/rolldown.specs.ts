@@ -10,6 +10,7 @@ import {Pack} from "../model/pack";
 import {Resolver} from "../model/resolver";
 import {exists, existsSync} from "node:fs";
 import {JSONSchemaForNPMPackageJsonFiles} from "@schemastore/package";
+import {BundleJson} from "../model/bundle";
 
 describe('rolldown', async function dependencyBuilder(){
 
@@ -53,10 +54,19 @@ describe('rolldown', async function dependencyBuilder(){
     await test('loro-crdt', async function wasm(){
         const pack = await Pack.read('loro-crdt');
         const builder = new RolldownBundler(pack, new Resolver([pack]));
-        const res = await builder.bundle();
-        expect(res.get('index.js')).not.toBeUndefined();
-        const wasm = res.fileNames().find(x => x.endsWith('.wasm'));
-        expect(res.get(wasm)).not.toBeUndefined();
+        const bundle = await builder.bundle();
+        expect(bundle.get('index.js')).not.toBeUndefined();
+        const wasm = bundle.fileNames().find(x => x.endsWith('.wasm'));
+        expect(bundle.get(wasm)).not.toBeUndefined();
+        const json = await bundle.getBundleJson();
+        const deps = new Set([...getAssetsTree(json, 'index.js')].map(x => x.path));
+        expect(deps.size).toEqual(4);
+        function *getAssetsTree(json: BundleJson, start: string){
+            const asset = json.assets.find(x => x.path === start);
+            for (let dep of asset.deps['.'] ?? [])
+                yield * getAssetsTree(json, dep);
+            yield asset;
+        }
     })
 
     await test('external-pack', async function wasm(){
@@ -80,6 +90,13 @@ describe('rolldown', async function dependencyBuilder(){
             if(res.get(fileName).toString().match(/import *.*from.*"react"/))
                 return;
         }
+    })
+
+    await test('uuidv7', async function wasm(){
+        const uuidv7 = await Pack.read('uuidv7');
+        const builder = new RolldownBundler(uuidv7, new Resolver([]));
+        const res = await builder.bundle();
+        expect(res.fileNames()).toEqual(['index.js']);
     })
 
     await test('commonjs', async function commonjs(){

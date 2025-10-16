@@ -18,6 +18,9 @@
 	"devDependencies": {
 		"@cmmn/tools": "workspace:~"
 	},
+	"config": {
+		"server": true
+	},
 	"type": "module",
 	"module": "./index.ts",
 	"author": "",

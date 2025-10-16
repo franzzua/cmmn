@@ -1,11 +1,10 @@
-import {Monorepo} from "./monorepo";
 import {Pack} from "./pack";
 import {Flags} from "./flags";
 import {Target} from "./target";
 
 export class Resolver {
-    constructor(private readonly packs: Pack[],
-                public basePath = '') {
+    basePath: string = '';
+    constructor(private readonly packs: Pack[]) {
     }
 
     /**
@@ -70,6 +69,8 @@ export class Resolver {
     }
 
     public getPack(id: string): { pack: Pack, path: string } | undefined{
+        if (id.startsWith(this.basePath))
+            id = id.substring(this.basePath.length);
         for (const pack of this.packs) {
             if (pack.name == id) {
                 return { pack, path: '' };

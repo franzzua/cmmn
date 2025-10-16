@@ -1,75 +1,21 @@
-import {InitMessageData} from "../src/types";
-import {StorageInfo} from "./storage.info";
+import type {Asset} from "@cmmn/tools"
 
 declare var self: ServiceWorkerGlobalScope;
 
 export class SwStorage {
-	private static instances = new Map<string, SwStorage>();
-	private static info = new StorageInfo();
-    static get totalSize(){
-        let res = 0;
-        for (let [,instance] of this.instances) {
-            res += instance.size;
-        }
-        return res;
-    }
-	public static async getOrCreate(data: InitMessageData){
-		let storage = this.instances.get(data.baseURI);
-		if (!storage) {
-			this.instances.set(data.baseURI, storage = new SwStorage(data.baseURI, data.bundleJson));
-            await storage.loadBundleJson();
-		}
-		return storage;
-	}
-    private static get(data: InitMessageData){
-        return this.instances.get(data.baseURI);
-    }
-	static fetch(request: Request) {
-		for (let [key, storage] of this.instances) {
-			const response = storage.fetch(request);
-			if (response) return response;
-		}
-		return fetch(request);
-	}
-	static async init(){
-		if(globalThis.isInitialized) return;
-		const json = await this.info.load();
-		for (let data of json) {
-			const storage = await this.getOrCreate(data);
-			await storage.load();
-		}
-		globalThis.isInitialized = true;
-	}
-	static async clear(){
-		for (let [key, storage] of this.instances) {
-			await storage.clear();
-		}
-		this.instances.clear();
-		await this.info.clear();
-	}
-
-	static async update() {
-		for (let [key, storage] of this.instances) {
-			await storage.checkUpdate();
-		}
-	}
-	private readonly name = `main:${this.baseURI}`;
-	private readonly cloneName = `clone:${this.baseURI}`;
-	private readonly bundleUrl = new URL(`${this.baseURI}@_/bundle.json`, self.origin);
+	private readonly name = `main:${this.uri}`;
+	private readonly cloneName = `clone:${this.uri}`;
 	private readonly cache: Promise<Cache> = caches.open(this.name);
-	protected platforms = new Set<string>();
-    public size = 0;
+	// protected platforms = new Set<string>();
+    // public size = 0;
 
-	constructor(private readonly baseURI: string, private bundleJson: {
-		assets: Asset[];
-		deps: any[];
-		proxy: Array<{regex: string; replace: string;}>;
-		publicPath: string;
-	}, private hashHeader: string = 'sw-hash') {
+	constructor(public readonly uri: string,
+                private assets: ReadonlyArray<Asset>,
+                private hashHeader: string = 'sw-hash') {
 	}
-	save(data: any){
-		return SwStorage.info.save(this.baseURI, data);
-	}
+	// save(data: any){
+	// 	return SwStorage.info.save(this.baseURI, data);
+	// }
 
 	public async clear() {
 		await caches.delete(this.name);
@@ -123,50 +69,19 @@ export class SwStorage {
 		}
 	}
 
-    async loadBundleJson(force: boolean = false) {
-        if (!(force || !this.bundleJson)) {
-            return;
-        }
-        this.bundleJson = await fetch(this.bundleUrl).then(async x => {
-            if (x.ok) {
-                return await x.json();
-            }
-            console.error(this.bundleUrl.href, await x.text());
-            return null;
-        });
-        await this.save({
-            bundleJson: this.bundleJson,
-            baseURI: this.baseURI
-        });
-        for (let dep of this.bundleJson.deps) {
-            await SwStorage.getOrCreate(dep);
-        }
-        this.size = this.bundleJson.assets
-            .filter(x => !x.optional)
-            .map(x => x.size)
-            .reduce((acc, x) => acc + x, 0);
-    }
-
-    isLoaded = false;
     async load(force: boolean = false) {
-        if (this.isLoaded) return;
-        await this.loadBundleJson(force);
 		await this.loadAssets(await this.cache);
-        this.isLoaded = true;
-		await this.loadDeps();
 	}
 
 	protected async loadAssets(cache: Cache) {
 		let updated = false;
-		const cacheKeys = new Set((await cache.keys()).map(x => x.url));
-		for (let asset of this.bundleJson.assets) {
-			if (asset.platforms && asset.platforms.every(p => !this.platforms.has(p)))
-				continue;
-			let url = `${this.baseURI}${asset.path}`;
-			if(url.endsWith('/')) url = url.substring(0, url.length - 1);
-			const request = new Request(url);
-			cacheKeys.delete(request.url);
-			const matched = await cache.match(request);
+		const unprocessedKeys = new Set((await cache.keys()).map(x => x.url));
+		for (let asset of this.assets) {
+			// if (asset.platforms && asset.platforms.every(p => !this.platforms.has(p)))
+			// 	continue;
+			const request = this.getAssetRequest(asset);
+			unprocessedKeys.delete(request.url);
+			const matched = await this.getFromCache(request);
 			if (matched){
 				const hash = await this.getHash(matched);
 				if (hash == asset.hash)
@@ -174,7 +89,7 @@ export class SwStorage {
 			}
 			if (!matched && asset.optional) continue;
 			updated = true;
-            self.dispatchEvent(new LoadEvent(asset));
+            self.dispatchEvent(new AssetLoadEvent(asset));
 			const result = await this.fetchRetry(request);
             if(!result.ok)
                 throw new Error(`Failed to fetch ${request.url}: ${result.status} ${await result.text()}`);
@@ -183,21 +98,15 @@ export class SwStorage {
 			await cache.put(request, clone);
 		}
 		// remove old requests
-		for (let cacheKey of cacheKeys) {
+		for (let cacheKey of unprocessedKeys) {
 			await cache.delete(cacheKey);
 			updated = true;
 		}
 		return updated;
 	}
-	async getHash(response: Response){
-		return response.headers.get(this.hashHeader);
-	}
 
-	private async loadDeps(){
-		for (let dep of this.bundleJson.deps) {
-			const storage = await SwStorage.getOrCreate(dep);
-			await storage.load();
-		}
+	private async getHash(response: Response){
+		return response.headers.get(this.hashHeader);
 	}
 
 	private fetchRetry(request: Request, counter = 0): Promise<Response> {
@@ -223,50 +132,45 @@ export class SwStorage {
 
 
 	async getFromCacheOrFetchAndPut(request: Request) {
+        const asset = this.assets.find(x => `${self.origin}${this.uri}/${x.path}` == request.url);
+        if (asset){
+            request = this.getAssetRequest(asset);
+        }
 		const cached = await this.getFromCache(request);
 		if (cached) return cached;
 		const cache = await this.cache;
-		const result = await fetch(request);
-		await cache.put(request, result.clone());
+		const result = await this.fetchRetry(request);
+        const clone = result.clone();
+        if (asset){
+            clone.headers.append(this.hashHeader, asset.hash);
+        }
+		await cache.put(request, clone);
 		return result.clone();
 	}
 
-	fetch(request: Request) {
-		if (this.bundleJson.publicPath){
-			const path = new URL(request.url).pathname;
-			if(path.startsWith(this.bundleJson.publicPath)){
-				const rest = path.substring(this.bundleJson.publicPath.length);
-				request = new Request(new URL(this.baseURI + rest, self.origin));
-			}
+    getAssetRequest(asset: Asset): Request {
+        let url = `${this.uri}/${asset.path}`;
+        if(url.endsWith('/')) url = url.substring(0, url.length - 1);
+        return new Request(url);
+    }
 
-		}
-		if(!request.url.startsWith(this.baseURI) && request.url !== this.baseURI.substring(0, this.baseURI.length - 1))
+	fetch(request: Request) {
+		if(!request.url.startsWith(this.uri + '/') && request.url !== this.uri)
 			return;
 
-		if(this.bundleJson.proxy){
-			const rest = request.url.substring(this.baseURI.length);
-			for (let proxy of this.bundleJson.proxy) {
-				if (rest.match(new RegExp(proxy.regex))){
-					const url = new URL(this.baseURI + proxy.replace, self.origin);
-                    request = new Request(url);
-				}
-			}
-		}
+        for (let asset of this.assets) {
+            const rest = request.url.substring(this.uri.length);
+            if (asset.regex && rest.match(new RegExp(asset.regex))){
+                request = this.getAssetRequest(asset);
+            }
+        }
 		return this.getFromCacheOrFetchAndPut(request);
 	}
 }
 
-export class LoadEvent extends Event {
-    static eventName = 'load'
+export class AssetLoadEvent extends Event {
+    static eventName = 'asset-load'
 	constructor(public readonly asset: Asset) {
-		super(LoadEvent.eventName);
+		super(AssetLoadEvent.eventName);
 	}
-}
-
-export type Asset = {
-	path: string;
-	hash: string;
-	platforms?: string[];
-	optional?: boolean;
-    size: number;
 }

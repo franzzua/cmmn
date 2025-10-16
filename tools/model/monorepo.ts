@@ -2,9 +2,13 @@ import {getPackages, Packages} from "@manypkg/get-packages";
 import {JSONSchemaForNPMPackageJsonFiles} from "@schemastore/package";
 import {Pack} from "./pack";
 import {Target} from "./target";
+import {Resolver} from "./resolver";
+import {Flags} from "./flags";
 
 export class Monorepo {
-    public static async load(rootDir: string): Promise<Monorepo> {
+    public static async load(rootDir: string, flags?: string[]): Promise<Monorepo> {
+        if (flags)
+            Flags.Current = new Flags(flags);
         const monorepoPackages = await getPackages(rootDir);
         const monorepo = new MonorepoInternal(monorepoPackages);
         await monorepo.load();
@@ -23,6 +27,9 @@ export class Monorepo {
     get(id: string) {
         return this.packsMap.get(id);
     }
+
+    public resolver = new Resolver(this.packs);
+
 }
 
 class MonorepoInternal {
@@ -47,9 +54,11 @@ class MonorepoInternal {
         if(pkg) {
             const pack = new Target(pkg.dir, pkg.packageJson)
             this.packs.set(name, pack);
-            for (let [name, version] of Object.entries(pack.dependencies)) {
-                if (this.packs.has(name)) continue;
-                await this.export(name, version);
+            if(!pack.isServer) {
+                for (let [name, version] of Object.entries(pack.dependencies)) {
+                    if (this.packs.has(name)) continue;
+                    await this.export(name, version);
+                }
             }
             return pack;
         } else {

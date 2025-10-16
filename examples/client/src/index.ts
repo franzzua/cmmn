@@ -2,7 +2,7 @@ import {type ProgressEvent} from "@cmmn/service-worker/client";
 
 if(process.env.NODE_ENV === 'production'){
     await using animation = await runLoadingAnimation();
-	// await import('@cmmn/service-worker/client');
+	await import('@cmmn/service-worker/client');
 }
 export default await import("./app");
 
