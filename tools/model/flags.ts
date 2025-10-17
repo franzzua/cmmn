@@ -13,7 +13,7 @@ export class Flags {
         ? this.args[this.args.indexOf('-out') + 1]
         : '.out';
 
-    constructor(private args: string[]) {
+    constructor(public args: string[]) {
         this.command = args[0];
         this.watch = args.includes('--watch');
         this.minify = args.includes('--minify');
