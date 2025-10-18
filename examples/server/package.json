@@ -1,6 +1,6 @@
 {
 	"name": "@cmmn/examples-server",
-	"version": "3.0.0-E",
+	"version": "3.0.0-E1",
 	"description": "",
 	"private": true,
 	"type": "module",
@@ -14,8 +14,8 @@
 	},
 	"dependencies": {
 		"@cmmn/examples-common": "workspace:~",
-        "@cmmn/server": "workspace:~",
-        "@cmmn/core": "workspace:~",
+		"@cmmn/server": "workspace:~",
+		"@cmmn/core": "workspace:~",
 		"fastify": "5.6.1"
 	}
 }

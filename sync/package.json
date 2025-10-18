@@ -1,6 +1,6 @@
 {
 	"name": "@cmmn/sync",
-	"version": "3.0.0-E",
+	"version": "3.0.0-E1",
 	"description": "collaborative with loro-crdt",
 	"publishConfig": {
 		"access": "public"
