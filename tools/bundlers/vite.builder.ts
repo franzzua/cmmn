@@ -99,14 +99,14 @@ export class ViteBuilder {
             enforce: 'pre',
             resolveId: (id, importer, options) => {
                 if (id.endsWith('?resolve')){
-                    const resolved = this.resolver.resolveId(id.split('?')[0], importer, {
+                    const resolved = this.resolver?.resolveId(id.split('?')[0], importer, {
                         ...options,
                         attributes: {
                             ...options.attributes,
                             resolve: true,
                         }
                     });
-                    return resolved ? resolved.id + '?resolve' : null;
+                    return resolved ? resolved.id + '?resolve' : id;
                 }
             },
             load: (id) => {

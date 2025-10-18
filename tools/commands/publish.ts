@@ -5,9 +5,11 @@ import fs from "node:fs/promises";
 import {join, resolve} from "node:path";
 import {Flags} from "../model/flags";
 import * as process from "node:process";
+import {Monorepo} from "../model/monorepo";
 
 export async function publish(flags: Flags){
-    for (const target of await Target.readTargets(process.cwd(), flags)) {
+    const monorepo = await Monorepo.load(process.cwd());
+    for (const target of monorepo.targets) {
         if (target.packageJson.private)
             continue;
         const content = await target.getPublishPackageJson();

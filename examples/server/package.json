@@ -14,7 +14,8 @@
 	},
 	"dependencies": {
 		"@cmmn/examples-common": "workspace:~",
-		"@cmmn/server": "workspace:~",
+        "@cmmn/server": "workspace:~",
+        "@cmmn/core": "workspace:~",
 		"fastify": "5.6.1"
 	}
 }

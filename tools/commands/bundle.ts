@@ -19,14 +19,16 @@ export async function bundle(flags: Flags) {
         });
     }
 	for (let pack of monorepo.packs.values()) {
-        if (!flags.deploy && !(pack instanceof Target))
+        if (flags.workspace && !(
+            pack.name.match(new RegExp(flags.workspace))
+            || pack.name == flags.workspace
+        ))
             continue;
-        if (pack.isServer)
+        if (!flags.deploy && !(pack instanceof Target))
             continue;
         const outDir = flags.deploy
             ? join(outRoot, pack.publicPath)
             : join(pack.rootDir, 'dist/bundle');
-        console.log(outDir);
         const bundler = createBundler(pack, flags.deploy ? monorepo.resolver : null);
         const bundle = await bundler.bundle();
         let size = 0;
