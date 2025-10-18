@@ -2,37 +2,24 @@ import {JSONSchemaForNPMPackageJsonFiles} from "@schemastore/package";
 import {dirname, join, resolve} from "node:path";
 import {Flags} from "./flags";
 import terminalKit from "terminal-kit";
-import {fileURLToPath} from "node:url";
-import {readFile} from "node:fs/promises";
+import {readFile, stat} from "node:fs/promises";
 
 export class Pack extends EventTarget{
-    static async read(id: string, version?: string) {
-        const resolved = this.resolvePackagePath(id);
-        const startDir = dirname(fileURLToPath(resolved));
-        const { dir, json } = await this.readNearestPackageJson(startDir, id);
-        return new Pack(dir, json);
-    }
-
-    private static resolvePackagePath(name: string){
-        try {
-            return import.meta.resolve(name + '/package.json');
-        }catch (e){
-            return import.meta.resolve(name);
-        }
-    }
-
-    private static async readNearestPackageJson(dir: string, name: string): Promise<{
-        json: JSONSchemaForNPMPackageJsonFiles,
-        dir: string,
-    }> {
+    static async read(id: string, version?: string, dir = process.cwd()) {
         while (dir) {
             try {
-                const json = JSON.parse(await readFile(join(dir, 'package.json'), {encoding: 'utf-8'})) as JSONSchemaForNPMPackageJsonFiles;
-                if (json.name == name)
-                    return {json, dir};
-            } catch (e) {
+                const pkgDir = join(dir, 'node_modules', id);
+                if (await stat(pkgDir)) {
+                    const json = JSON.parse(await readFile(join(dir, "package.json"), {encoding: 'utf-8'})) as JSONSchemaForNPMPackageJsonFiles;
+                    // TODO: check version
+                    // if (version && json.version !== version)
+                    //     dir = dirname(dir);
+                    // else
+                    return new Pack(pkgDir, json);
+                }
+            } catch {
+                dir = dirname(dir);
             }
-            dir = resolve(dir, '..');
         }
     }
 

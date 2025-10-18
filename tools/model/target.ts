@@ -99,7 +99,7 @@ export class Target extends Pack {
             const typings = entry.isTypeScript ? './' + join('./dist/typings', relative(this.rootDir, entry.source.replace(/\.ts$/, '.d.ts'))) : undefined;
             const bundle = `./dist/bundle/${entry.output}`;
             if (packageJson.exports) {
-                packageJson.exports[entry.name] = {default: bundle, typings};
+                packageJson.exports[entry.name ? "./" + entry.name : "."] = {default: bundle, typings};
             } else {
                 packageJson.main = bundle;
                 packageJson.typings = typings;
