@@ -55,7 +55,7 @@ async function compileFiles(target: Target, filenames: string[] = null): Promise
 		writer.write(sourceMapComment);
 		writer.write(outFile.split('/').pop()+'.map');
 		writer.end();
-		await new Promise(r => writer.on('finish', r));
+		await new Promise<void>(r => writer.on('finish', r));
 		await writeFile(outFile + '.map', result.map);
 	}
 	const duration = performance.now() - time;

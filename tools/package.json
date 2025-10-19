@@ -43,7 +43,6 @@
 		"@manypkg/get-packages": "^2.2.2",
 		"@rollup/plugin-wasm": "6.2.2",
 		"@schemastore/package": "0.0.10",
-		"@swc-node/register": "1.10.9",
 		"@swc/core": "1.13.5",
 		"@swc/helpers": "0.5.17",
 		"@types/node": "22.18.9",
@@ -70,6 +69,10 @@
 	"gitHead": "2755b333808bf97f1d9454601c2a2c9a88e4a021",
 	"stableVersion": "3.0.0-alpha-2",
 	"devDependencies": {
+		"@swc-node/register": "1.10.9",
 		"vite-bundle-analyzer": "^1.2.3"
+	},
+	"peerDependencies": {
+		"@swc-node/register": "*"
 	}
 }

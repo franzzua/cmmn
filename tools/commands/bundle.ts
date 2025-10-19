@@ -6,63 +6,112 @@ import {Monorepo} from "../model/monorepo";
 import {createBundler} from "../bundlers/createBundler";
 import {Target} from "../model/target";
 import {gzipSync, brotliCompressSync} from "node:zlib";
+import {Pack} from "../model/pack";
+import {Bundle} from "../model/bundle";
+import {Resolver} from "../model/resolver";
 
 export async function bundle(flags: Flags) {
 	const monorepo = await Monorepo.load(process.cwd());
-	const term = new Terminal(flags, monorepo.packs);
-    const outRoot = flags.deploy
-        ? join(monorepo.root.rootDir, flags.out, 'web')
-        : '';
-    if(flags.deploy) {
-        await rm(outRoot, {recursive: true, force: true}).catch(err => {
-            console.error(err);
-        });
-    }
-	for (let pack of monorepo.packs.values()) {
-        if (flags.workspace && !(
-            pack.name.match(new RegExp(flags.workspace))
-            || pack.name == flags.workspace
+    const term = new Terminal(Flags.Current, monorepo.packs);
+    for (let pack of monorepo.packs.values()) {
+        if (Flags.Current.workspace && (
+            !pack.name.match(new RegExp(Flags.Current.workspace))
+            || pack.name == Flags.Current.workspace
         ))
             continue;
-        if (!flags.deploy && !(pack instanceof Target))
+        const runnner = flags.deploy
+            ? new DeployCommandRunnner(pack, monorepo.resolver)
+            : new BundleCommandRunner(pack);
+        if (!runnner.shouldWrite())
             continue;
-        const outDir = flags.deploy
-            ? join(outRoot, pack.publicPath)
-            : join(pack.rootDir, 'dist/bundle');
-        const bundler = createBundler(pack, flags.deploy ? monorepo.resolver : null);
-        const bundle = await bundler.bundle();
-        let size = 0;
-        for (let file of bundle.fileNames()) {
-            const path = join(outDir, file);
-            const dir = dirname(path);
-            await mkdir(dir, {recursive: true});
-            const data = bundle.get(file);
-            await writeFileWithSidecar(path, data);
-            size += data.length;
-            // term.term.yellow(`\t\t${file}\n`)
+        try {
+            const size = await runnner.write();
+            term.setData(pack, {
+                state: 'ok',
+                size: size
+            });
+        }catch (e){
+            pack.error(e);
         }
-        if (flags.deploy) {
-            const manifest = await bundle.getBundleJson();
-            await writeFileWithSidecar(join(outDir, 'bundle.json'), JSON.stringify(manifest, null, 2));
-            if (pack.name === '@cmmn/service-worker'){
-                await writeFileWithSidecar(join(outRoot, '_sw.js'), bundle.get('worker.js'))
-            }
-        }
-        term.setData(pack, {
-            state: 'ok',
-            size: size
-        });
-        if (pack instanceof Target)
-            await cp(pack.publicDir, outDir, {
-                recursive: true
-            }).catch(() => {});
-	}
+    }
 }
 
-async function writeFileWithSidecar(path, data){
-    await writeFile(path, data);
-    if (Flags.Current.args.includes('--gzip'))
-        await writeFile(path+'.gz', gzipSync(data));
-    if (Flags.Current.args.includes('--brotli'))
-        await writeFile(path+'.br', brotliCompressSync(data));
+class BundleCommandRunner {
+    protected bundler = createBundler(this.pack, null);
+    constructor(protected pack: Pack){
+    }
+    async write(){
+        const bundle = await this.bundler.bundle();
+        return await this.writeBundle(bundle);
+    }
+
+    protected async writeBundle(bundle: Bundle){
+        await rm(this.outDir, {recursive: true, force: true}).catch(err => {
+            console.error(err);
+        });
+        let size = 0;
+        for (let file of bundle.fileNames()) {
+            const path = join(this.outDir, file);
+            const data = bundle.get(file);
+            await this.writeFile(path, data);
+            size += data.length;
+        }
+
+        if (this.pack instanceof Target && this.pack.publicDir)
+            await cp(this.pack.publicDir, this.outDir, {
+                recursive: true
+            }).catch(() => {});
+        return size;
+    }
+
+    public shouldWrite(): boolean {
+        return (this.pack instanceof Target);
+    }
+
+
+    protected get outDir(){
+        return join(this.pack.rootDir, 'dist/bundle');
+    }
+
+    protected async writeFile(path: string, data: string | Uint8Array){
+        const dir = dirname(path);
+        await mkdir(dir, {recursive: true});
+        await writeFile(path, data);
+    }
+}
+
+class DeployCommandRunnner extends BundleCommandRunner {
+    get outRoot() { return  join(process.cwd(), Flags.Current.out, 'web') ;}
+
+    constructor(pack: Pack, resolver: Resolver) {
+        super(pack);
+        this.bundler = createBundler(pack, pack.isServer ? null : resolver);
+    }
+
+    protected async writeBundle(bundle: Bundle): Promise<number> {
+        const size = await super.writeBundle(bundle);
+
+        const manifest = await bundle.getBundleJson();
+        await this.writeFile(join(this.outDir, 'bundle.json'), JSON.stringify(manifest, null, 2));
+        if (this.pack.name === '@cmmn/service-worker'){
+            await this.writeFile(join(this.outRoot, '_sw.js'), bundle.get('worker.js'))
+        }
+        return size;
+    }
+
+    public shouldWrite(): boolean {
+        return true;
+    }
+
+    protected get outDir(){
+        return join(this.outRoot, this.pack.publicPath);
+    }
+
+    protected async writeFile(path, data){
+        await super.writeFile(path, data);
+        if (Flags.Current.args.includes('--gzip'))
+            await writeFile(path+'.gz', gzipSync(data));
+        if (Flags.Current.args.includes('--brotli'))
+            await writeFile(path+'.br', brotliCompressSync(data));
+    }
 }
