@@ -1,6 +1,6 @@
 {
 	"name": "@cmmn/examples-model",
-	"version": "3.0.0-E3",
+	"version": "3.0.0",
 	"description": "",
 	"private": true,
 	"scripts": {
