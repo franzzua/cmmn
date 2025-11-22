@@ -1,8 +1,7 @@
 ## Core level libraries and extensions
 
-* [Serialization via messagepack](./serialize/index.ts)
 * [Dependency injection container](./di/index.ts)
-* [Datetime wrappers](./helpers/utc.ts) - luxon not included
+* [Signal-like state manager](./cell/index.ts)
 * [Array](./helpers/Array.ts)
 * [Map](./helpers/map.ts)
 * [EventEmitter](event-emitter/index.ts)
