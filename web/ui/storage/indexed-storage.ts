@@ -1,13 +1,13 @@
-import {Storage, StorageProvider} from "@cmmn/sync/storage";
+import type {Storage, StorageProvider} from "@cmmn/sync/storage";
 import {scoped} from "@cmmn/core";
 
 @scoped()
-class IndexedStorageProvider extends StorageProvider {
+class IndexedStorageProvider implements StorageProvider {
 	getStorage<T>(name: string): Storage<T> {
 		return new IndexedStorage(name);
 	}
 }
-export class IndexedStorage<T> extends Storage<T> {
+export class IndexedStorage<T> implements Storage<T> {
 	static Provider = IndexedStorageProvider;
 
 	private db = new Promise<IDBDatabase>((resolve, reject) => {
@@ -30,7 +30,6 @@ export class IndexedStorage<T> extends Storage<T> {
 	});
 
 	constructor(protected name: string) {
-		super();
 	}
 
 	private request<T>(

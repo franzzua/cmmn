@@ -1,16 +1,17 @@
 import { describe, test } from "node:test";
-import { RolldownDependencyBuilder } from "../dev-server/rolldown-dependency-builder";
 import {fileURLToPath} from "node:url";
 import path, {dirname, join} from "node:path";
-import fs, { writeFile, rm } from "node:fs/promises";
+import fs from "node:fs/promises";
 import {expect} from "expect";
-import * as crypto from "node:crypto";
 import {RolldownBundler} from "../bundlers/rolldown-bundler";
 import {Pack} from "../model/pack";
 import {Resolver} from "../model/resolver";
-import {exists, existsSync} from "node:fs";
+import {existsSync} from "node:fs";
 import {JSONSchemaForNPMPackageJsonFiles} from "@schemastore/package";
 import {BundleJson} from "../model/bundle";
+import {Flags} from "../model/flags";
+
+const flags = new Flags([]);
 
 describe('rolldown', async function dependencyBuilder(){
 
@@ -18,7 +19,7 @@ describe('rolldown', async function dependencyBuilder(){
         await using pack = await TemporaryPack.create({
             '.': 'export const a = 1'
         });
-        const builder = new RolldownBundler(pack, new Resolver([pack]));
+        const builder = new RolldownBundler(pack, new Resolver([pack], flags), flags);
         const res = await builder.bundle();
         expect(res.fileNames()).toEqual(['index.js']);
         expect(res.get('index.js')).toMatch(/export \{.*a.*}/);
@@ -28,7 +29,7 @@ describe('rolldown', async function dependencyBuilder(){
             './a': 'export const a = 1',
             '.': `import { a } from './a'; export const b = a + 1;`
         });
-        const builder = new RolldownBundler(pack, new Resolver([pack]));
+        const builder = new RolldownBundler(pack, new Resolver([pack], flags), flags);
         const res = await builder.bundle();
         expect(res.fileNames()).toContain('index.js');
         expect(res.fileNames()).toContain('a.js');
@@ -42,18 +43,18 @@ describe('rolldown', async function dependencyBuilder(){
         }, {
             './x.wasm': '0ABCF1'
         });
-        const builder = new RolldownBundler(pack, new Resolver([pack]));
+        const builder = new RolldownBundler(pack, new Resolver([pack], flags), flags);
         const res = await builder.bundle();
         expect(res.fileNames()).toContain('index.js');
         expect(res.fileNames()).toContain('x.wasm');
         expect(res.get('x.wasm').toString()).toEqual('0ABCF1');
-        expect(res.get('index.js')).toMatch(/new URL\("\.\/x\.wasm/);
+        expect(res.get('index.js')).toContain("new URL(\"x.wasm\"");
         expect(res.get('index.js')).toMatch(/export \{.*wasm.*}/);
     })
 
     await test('loro-crdt', async function wasm(){
         const pack = await Pack.read('loro-crdt');
-        const builder = new RolldownBundler(pack, new Resolver([pack]));
+        const builder = new RolldownBundler(pack, new Resolver([pack], flags), flags);
         const bundle = await builder.bundle();
         expect(bundle.get('index.js')).not.toBeUndefined();
         const wasm = bundle.fileNames().find(x => x.endsWith('.wasm'));
@@ -76,15 +77,15 @@ describe('rolldown', async function dependencyBuilder(){
         await using external = await TemporaryPack.create({
             '.': 'export const a = 1'
         }, {}, true, '@test/external');
-        const builder = new RolldownBundler(pack, new Resolver([pack, external], "@base"));
+        const builder = new RolldownBundler(pack, new Resolver([pack, external], flags), flags);
         const res = await builder.bundle();
-        expect(res.get('a.js')).toContain('import { a } from "@base/_/@test/external/index.js"');
+        expect(res.get('a.js')).toContain('import { a } from "/_/@test/external/index.js"');
     })
 
     await test('react', async function wasm(){
         const react = await Pack.read('react');
         const reactDOM = await Pack.read('react-dom');
-        const builder = new RolldownBundler(reactDOM, new Resolver([react, reactDOM]));
+        const builder = new RolldownBundler(reactDOM, new Resolver([react, reactDOM], flags), flags);
         const res = await builder.bundle();
         for (let fileName of res.fileNames()) {
             if(res.get(fileName).toString().match(/import *.*from.*"react"/))
@@ -94,7 +95,7 @@ describe('rolldown', async function dependencyBuilder(){
 
     await test('uuidv7', async function wasm(){
         const uuidv7 = await Pack.read('uuidv7');
-        const builder = new RolldownBundler(uuidv7, new Resolver([]));
+        const builder = new RolldownBundler(uuidv7, new Resolver([], flags), flags);
         const res = await builder.bundle();
         expect(res.fileNames()).toEqual(['index.js']);
     })
@@ -105,7 +106,7 @@ describe('rolldown', async function dependencyBuilder(){
         exports.a = 1;
         module.exports.c = 3;`
         }, { }, false);
-        const builder = new RolldownBundler(pack, new Resolver([pack]));
+        const builder = new RolldownBundler(pack, new Resolver([pack], flags), flags);
         const res = await builder.bundle();
         expect(res.get('index.js')).toMatch(/export \{.*a.*}/);
         expect(res.get('index.js')).toMatch(/export \{.*c.*}/);
@@ -127,7 +128,7 @@ describe('rolldown', async function dependencyBuilder(){
             './a': a,
             './b': b,
         }, { }, false);
-        const builder = new RolldownBundler(pack, new Resolver([pack]));
+        const builder = new RolldownBundler(pack, new Resolver([pack], flags), flags);
         const res = await builder.bundle();
         expect(res.get('b.js')).not.toContain('A_EXPORT_CONST')
         expect(res.get('b.js')).toMatch(/export.*\{.*a.*}/);

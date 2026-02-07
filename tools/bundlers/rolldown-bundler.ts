@@ -13,7 +13,8 @@ import {IBundler} from "./types";
 import {Plugin} from "rolldown";
 export class RolldownBundler implements IBundler{
     constructor(private pack: Pack,
-                private resolver: Resolver) {
+                private resolver: Resolver,
+                private flags: Flags) {
     }
 
     private async getFileContent(entry: Entry) {
@@ -68,7 +69,7 @@ export class RolldownBundler implements IBundler{
                 // assetFileNames: asset =>  '@_/' + asset.name + '.js',
             },
             define: {
-                'process.env.NODE_ENV': Flags.Current.production ? '"production"' : '"development"'
+                'process.env.NODE_ENV': this.flags.production ? '"production"' : '"development"'
             },
             experimental: {},
             platform: 'browser',
@@ -80,7 +81,7 @@ export class RolldownBundler implements IBundler{
                 ],
             },
             optimization: {
-                inlineConst: Flags.Current.minify,
+                inlineConst: this.flags.minify,
             },
             treeshake: true,
             plugins: [...this.getPlugins()]
@@ -117,7 +118,7 @@ export class RolldownBundler implements IBundler{
         yield esmExternalRequirePlugin({
             external: this.resolver.getPackNames().filter(x => x !== this.pack.name),
         });
-        if (Flags.Current.minify)
+        if (this.flags.minify)
             yield swcMinifyPlugin() as any;
     }
 

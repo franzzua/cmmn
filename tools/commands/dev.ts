@@ -6,12 +6,12 @@ import {Monorepo} from "../model/monorepo";
 import {DevServer} from "../servers/dev-server";
 
 export async function dev(flags: Flags) {
-    const monorepo = await Monorepo.load(process.cwd());
+    const monorepo = await Monorepo.load(flags);
     const devServer = new DevServer(monorepo);
 
-    const app = fastify({
+    const app: any = fastify({
         rewriteUrl: devServer.rewriteUrl,
-    });
+    } as any);
 
     if (flags.minify){
         fastifyCompress(app);

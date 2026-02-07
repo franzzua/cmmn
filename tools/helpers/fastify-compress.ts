@@ -17,7 +17,7 @@ export function fastifyCompress(app: FastifyInstance, options: FastifyCompressOp
 		for (const encoding of options.encodings) {
 			if (!encoders[encoding] || !request.headers["accept-encoding"].includes(encoding)) continue;
 			reply.header('content-encoding', encoding);
-			return Readable.from(payload).pipe(encoders[encoding]());
+			return Readable.from(payload).pipe(encoders[encoding]() as any);
 		}
 	});
 }

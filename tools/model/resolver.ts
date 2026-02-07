@@ -4,7 +4,7 @@ import {Target} from "./target";
 
 export class Resolver {
     basePath: string = '';
-    constructor(private readonly packs: Pack[]) {
+    constructor(private readonly packs: Pack[], private flags: Flags) {
     }
 
     /**
@@ -53,7 +53,7 @@ export class Resolver {
         if (!entry) {
             return;
         }
-        const resolved = (!Flags.Current.production && pack instanceof Target)
+        const resolved = (!this.flags.production && pack instanceof Target)
             ? entry.relative : entry.output;
         return {
             external: "absolute" as boolean | "absolute" | "relative",

@@ -1,14 +1,14 @@
 import {describe, test} from "node:test";
-import {createBundler, Monorepo} from "@cmmn/tools"
+import {Flags, Monorepo} from "@cmmn/tools"
 import {expect} from "@cmmn/tools/test";
 import {BundleLoader} from "../worker/bundle-loader";
 
 describe("sw-bundle", async () => {
-    const monorepo = await Monorepo.load(process.cwd(), ['--prod']);
+    const monorepo = await Monorepo.load(new Flags(['--prod']));
 
     const loader = new BundleLoader(async p => {
         const pack = monorepo.packs.find(x => x.publicPath == p);
-        const bundler = createBundler(pack, monorepo.resolver)
+        const bundler = monorepo.createBundler(pack)
         const bundle = await bundler.bundle();
         return await bundle.getBundleJson();
     })

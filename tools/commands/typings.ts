@@ -8,10 +8,9 @@ import events from "node:events";
 import {Watcher} from "../helpers/watcher";
 import {Monorepo} from "../model/monorepo";
 import {FileChangeEvent} from "../model/pack";
-const rootDir = process.cwd();
 
 export async function typings(flags: Flags) {
-    const monorepo = await Monorepo.load(rootDir);
+    const monorepo = await Monorepo.load(flags);
     events.setMaxListeners(Math.max(monorepo.targets.length * 2, events.defaultMaxListeners));
     const watcher = flags.watch ? new Watcher() : null;
     for (const target of monorepo.targets) {

@@ -1,6 +1,6 @@
-import {ServiceWorkerApi, type ProgressEvent} from "./src/service-worker.api";
+import {ServiceWorkerApi, type ProgressEvent} from "../src/service-worker.api";
 
-export { ServiceWorkerApi } from "./src/service-worker.api";
+export { ServiceWorkerApi } from "../src/service-worker.api";
 
 const api = globalThis.swApi = new ServiceWorkerApi({
 	path: "/_sw.js",

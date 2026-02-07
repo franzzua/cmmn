@@ -1,19 +1,15 @@
 import {describe, test} from "node:test";
 import {expect} from "expect";
-import {BundleJsonBuilder} from "../dev-server/bundle.json.builder";
 import {Monorepo} from "../model/monorepo";
-import {Resolver} from "../model/resolver";
-import {ViteBundler} from "../bundlers/vite.bundler";
 import {Target} from "../model/target";
 import {Flags} from "../model/flags";
 
 describe('vite-bundler', async function target() {
-    Flags.Current = new Flags(['--prod']);
-	const monorepo = await Monorepo.load(process.cwd());
-    const resolver = new Resolver(monorepo.packs);
+    const flags = new Flags(['--prod']);
+	const monorepo = await Monorepo.load(flags);
 	async function getBundle(pkg: string){
 		const target = monorepo.get(pkg) as Target;
-		const viteBuilder = new ViteBundler(target, resolver);
+		const viteBuilder = monorepo.createBundler(target);
 		return await viteBuilder.bundle();
 	}
 	await test('@cmmn/core', async function () {
@@ -30,7 +26,7 @@ describe('vite-bundler', async function target() {
         const json = await bundle.getBundleJson();
         // expect(assets).toContain('index.js')
         expect(json.baseURI).toEqual('/example/react');
-        const index = json.assets.find(x => x.path == 'src/index.html');
+        const index = json.assets.find(x => x.path == 'index.html');
         const regex = new RegExp(index.regex);
         expect('').toMatch(regex)
         expect('/dashboard').toMatch(regex)
@@ -44,10 +40,10 @@ describe('vite-bundler', async function target() {
                 asset.deps[pack].forEach(x => allDeps.get(pack).add(x))
             }
         }
-        expect(allDeps.get('/_/@cmmn/ui')).toHaveLength(1);
-        expect(allDeps.get('/_/@cmmn/sync')).toHaveLength(2);
-        expect(allDeps.get('/_/@cmmn/service-worker')).toHaveLength(1);
-        expect(allDeps.get('/example/react').size).toBeGreaterThan(1);
+        expect(allDeps.get('/_/@cmmn/ui').size).toBe(1);
+        expect(allDeps.get('/_/@cmmn/sync').size).toBe(2);
+        expect(allDeps.get('/_/@cmmn/service-worker').size).toBe(1);
+        expect(allDeps.get('.').size).toBeGreaterThan(1);
         // expect(assets).toContain('manifest.json')
         // expect(assets).toContain('icon.svg')
         // const deps = new Set(bundle.deps.map(x => x.baseURI.substring(baseUrl.length)));

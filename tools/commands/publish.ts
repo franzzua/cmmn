@@ -8,7 +8,7 @@ import * as process from "node:process";
 import {Monorepo} from "../model/monorepo";
 
 export async function publish(flags: Flags){
-    const monorepo = await Monorepo.load(process.cwd());
+    const monorepo = await Monorepo.load(flags);
     for (const target of monorepo.targets) {
         if (target.packageJson.private)
             continue;

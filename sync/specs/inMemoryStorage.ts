@@ -1,8 +1,8 @@
-import { Storage, StorageProvider } from '../src/crdt/storage';
+import type { Storage, StorageProvider } from '../src/crdt/storage';
 import { scoped } from '@cmmn/core';
 
 @scoped()
-export class InMemoryStorage<T> extends Storage<T> {
+export class InMemoryStorage<T> implements Storage<T> {
 	static Provider: StorageProvider = {
 		getStorage<T>(name: string): Storage<T> {
 			return new InMemoryStorage();

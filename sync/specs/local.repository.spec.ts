@@ -3,11 +3,10 @@ import { InMemoryP2PNode } from './inMemoryP2PNode';
 import { expect } from '@cmmn/tools/test';
 import {CRDT, P2PNode } from '../src';
 import {Cell, Container, di, Fn} from '@cmmn/core';
-import { P2PRepository } from '../src';
-import { StorageProvider } from '../src';
 import { InMemoryStorage } from './inMemoryStorage';
-import {Repository} from "../src/crdt/repository";
-import {BroadcastLoroProtocol} from "../src/local/BroadcastLoroProtocol";
+import {Repository} from "../src";
+import {BroadcastLoroProtocol} from "../src";
+import {StorageProvider} from "../src/crdt/storage";
 
 describe('local-repo', () => {
 	let contexts: Container[] = [];

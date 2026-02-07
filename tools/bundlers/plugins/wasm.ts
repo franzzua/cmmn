@@ -14,6 +14,7 @@ export function wasm(options: {
             const moduleInfo = this.getModuleInfo(importer);
             // @ts-ignore
             moduleInfo.dynamicallyImportedIds.push(name);
+            // @ts-ignore
             moduleInfo.importedIds.push(name);
             return resolve(dirname(importer), id);
         },
@@ -27,7 +28,6 @@ export function wasm(options: {
 					source: await (this.fs ?? fs).readFile(id),
 					name: options.assetName?.replace('{name}', name) ?? 'WASM Asset',
 					fileName: name,
-                    importedBy: 'lalala'
 				});
                 url = `import.meta.ROLLUP_FILE_URL_${referenceId}`;
 			}

@@ -10,10 +10,8 @@ import {createWriteStream} from "node:fs";
 import {Monorepo} from "../model/monorepo";
 import {FileChangeEvent} from "../model/pack";
 
-const rootDir = process.cwd();
-
 export async function compile(flags: Flags) {
-	const monorepo = await Monorepo.load(rootDir);
+	const monorepo = await Monorepo.load(flags);
 	events.setMaxListeners(Math.max(monorepo.packs.length * 2, events.defaultMaxListeners));
 	const watcher = flags.watch ? new Watcher() : null;
 	for (const pack of monorepo.targets) {

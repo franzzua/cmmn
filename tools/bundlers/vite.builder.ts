@@ -11,7 +11,8 @@ import {Flags} from "../model/flags";
 
 export class ViteBuilder {
     constructor(protected readonly target: Target,
-                protected readonly resolver: Resolver) {
+                protected readonly resolver: Resolver,
+                protected readonly flags: Flags) {
 
     }
 
@@ -19,7 +20,7 @@ export class ViteBuilder {
         return {
             root: this.target.rootDir,
             logLevel: 'silent',
-            mode: Flags.Current.production ? "production" : 'debug',
+            mode: this.flags.production ? "production" : 'debug',
             optimizeDeps: {
                 noDiscovery: true,
                 include: []
@@ -27,7 +28,7 @@ export class ViteBuilder {
             define: {
                 process: {
                     env: {
-                        NODE_ENV: Flags.Current.production ? 'production' : 'development'
+                        NODE_ENV: this.flags.production ? 'production' : 'development'
                     }
                 }
             },

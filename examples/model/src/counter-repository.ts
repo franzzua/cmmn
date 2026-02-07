@@ -11,7 +11,10 @@ export class CounterRepository extends P2PRepository {
 
 	async getKey(uri: string) {
 		try {
-			const {algo, key} = await fetch(`${api}/api/auth/key/${uri}`).then(x => x.json());
+			const {algo, key} = await fetch(`${api}/api/auth/key/${uri}`)
+                .then(x => x.json()) as {
+                algo, key
+            };
 			return {
 				key: await crypto.subtle.importKey('jwk', key, algo, true, ['decrypt', 'encrypt']),
 				algo: algo as AesGcmParams

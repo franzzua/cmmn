@@ -1,8 +1,8 @@
 import { Monorepo } from "./model/monorepo";
-import { createBundler } from "./bundlers/createBundler";
 import type { BundleJson, Asset } from "./model/bundle";
+import { Flags } from "./model/flags";
 
 export {
-    Monorepo, createBundler,
+    Monorepo, Flags,
     type BundleJson, type Asset
 }

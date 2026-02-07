@@ -9,7 +9,7 @@
 		"url": "https://github.com/franzzua/cmmn/tree/master/ui"
 	},
 	"exports": {
-		"./client": "./client.ts",
+		"./client": "./client/index.ts",
 		"./worker": "./worker/index.ts"
 	},
 	"type": "module",

@@ -4,8 +4,8 @@ import {expect} from "expect";
 import {Flags} from "../model/flags";
 
 describe('monorepo', async () => {
-    Flags.Current = new Flags(['--prod']);
-    const monorepo = await Monorepo.load(process.cwd());
+    const flags = new Flags(['--prod']);
+    const monorepo = await Monorepo.load(flags);
     await test('root', async () => {
         expect(monorepo.root.name).toBe('@cmmn/framework');
         expect(monorepo.root.entries).toHaveLength(1);

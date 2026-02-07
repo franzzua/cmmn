@@ -10,11 +10,11 @@ class Evalutator {
 		this.c = c;
 	}
 
-	@cell({ filter: (x) => x != null })
+	@cell()
 	public accessor a: number;
-	@cell({ filter: (x) => x != null })
+	@cell()
 	public accessor b: number;
-	@cell({ filter: (x) => x != null })
+	@cell()
 	public accessor c: number;
 
 	@cell()

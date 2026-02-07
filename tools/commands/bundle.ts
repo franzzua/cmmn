@@ -1,27 +1,25 @@
-import {Terminal} from "../helpers/terminal.js";
 import {Flags} from "../model/flags";
 import {dirname, join} from "node:path";
 import {cp, mkdir, writeFile, link, rm} from "node:fs/promises";
 import {Monorepo} from "../model/monorepo";
-import {createBundler} from "../bundlers/createBundler";
 import {Target} from "../model/target";
 import {gzipSync, brotliCompressSync} from "node:zlib";
 import {Pack} from "../model/pack";
 import {Bundle} from "../model/bundle";
-import {Resolver} from "../model/resolver";
+import {Terminal} from "../helpers/terminal";
 
 export async function bundle(flags: Flags) {
-	const monorepo = await Monorepo.load(process.cwd());
-    const term = new Terminal(Flags.Current, monorepo.packs);
+	const monorepo = await Monorepo.load(flags);
+    const term = new Terminal(monorepo.flags, monorepo.packs);
     for (let pack of monorepo.packs.values()) {
-        if (Flags.Current.workspace && (
-            !pack.name.match(new RegExp(Flags.Current.workspace))
-            || pack.name == Flags.Current.workspace
+        if (flags.workspace && (
+            !pack.name.match(new RegExp(flags.workspace))
+            || pack.name == flags.workspace
         ))
             continue;
         const runnner = flags.deploy
-            ? new DeployCommandRunnner(pack, monorepo.resolver)
-            : new BundleCommandRunner(pack);
+            ? new DeployCommandRunnner(pack, monorepo)
+            : new BundleCommandRunner(pack, monorepo);
         if (!runnner.shouldWrite())
             continue;
         try {
@@ -37,11 +35,13 @@ export async function bundle(flags: Flags) {
 }
 
 class BundleCommandRunner {
-    protected bundler = createBundler(this.pack, null);
-    constructor(protected pack: Pack){
+    constructor(protected pack: Pack, protected monorepo: Monorepo){
     }
+    get flags(){ return this.monorepo.flags; }
+
     async write(){
-        const bundle = await this.bundler.bundle();
+        const bundler = this.monorepo.createBundler(this.pack);
+        const bundle = await bundler.bundle();
         return await this.writeBundle(bundle);
     }
 
@@ -81,11 +81,10 @@ class BundleCommandRunner {
 }
 
 class DeployCommandRunnner extends BundleCommandRunner {
-    get outRoot() { return  join(process.cwd(), Flags.Current.out, 'web') ;}
+    get outRoot() { return  join(process.cwd(), this.flags.out, 'web') ;}
 
-    constructor(pack: Pack, resolver: Resolver) {
-        super(pack);
-        this.bundler = createBundler(pack, pack.isServer ? null : resolver);
+    constructor(pack: Pack, monorepo: Monorepo) {
+        super(pack, monorepo);
     }
 
     protected async writeBundle(bundle: Bundle): Promise<number> {
@@ -109,9 +108,9 @@ class DeployCommandRunnner extends BundleCommandRunner {
 
     protected async writeFile(path, data){
         await super.writeFile(path, data);
-        if (Flags.Current.args.includes('--gzip'))
+        if (this.flags.args.includes('--gzip'))
             await writeFile(path+'.gz', gzipSync(data));
-        if (Flags.Current.args.includes('--brotli'))
+        if (this.flags.args.includes('--brotli'))
             await writeFile(path+'.br', brotliCompressSync(data));
     }
 }

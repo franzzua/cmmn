@@ -26,8 +26,7 @@
     "useDefineForClassFields": false,
     "stripInternal": true,
     "lib": [
-      "ESNext",
-      "Decorators",
+      "ES2024",
       "WebWorker"
     ],
     "types": [

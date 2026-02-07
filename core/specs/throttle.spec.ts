@@ -95,6 +95,5 @@ describe('throttle', (ctx) => {
 		assert.equal(new Set(p).size, 1);
 		assert.equal(await p[0], 1);
 		await Fn.asyncDelay(20);
-		console.log(a.increment[Symbol.metadata]);
 	});
 });

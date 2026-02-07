@@ -78,11 +78,11 @@ export class TargetRunner extends PackServer {
         const cp = spawn(command, params, {
             env: {
                 ...process.env,
-                PORT: this.port
+                PORT: this.port.toString()
             },
             cwd: this.pack.rootDir,
             stdio: 'pipe'
-        });
+        }) as any;
         cp.stderr!.pipe(process.stderr);
         cp.stdout!.pipe(process.stdout);
         await new Promise<void>(res => (cp.stdout!.on('data', e => {

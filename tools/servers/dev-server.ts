@@ -1,16 +1,12 @@
 import {Target} from "../model/target";
 import {FastifyInstance, FastifyRequest} from "fastify";
 import {Monorepo} from "../model/monorepo";
-import {Resolver} from "../model/resolver";
 import {BundleServer} from "./bundle-server";
 import {ViteDevelopmentServer} from "./vite-dev-server";
 import {Pack} from "../model/pack";
 import {PackServer} from "./pack-server";
-import {RolldownBundler} from "../bundlers/rolldown-bundler";
 import {Flags} from "../model/flags";
-import {ViteBundler} from "../bundlers/vite.bundler";
 import {TargetRunner} from "./target-runnner";
-import {createBundler} from "../bundlers/createBundler";
 
 export class DevServer {
     rootTarget: Target = this.monorepo.root;
@@ -28,12 +24,12 @@ export class DevServer {
                 return new TargetRunner(pack);
             }
             if (Flags.Current.production) {
-                const bundler = createBundler(pack, this.resolver);
+                const bundler = this.monorepo.createBundler(pack);
                 return new BundleServer(pack, bundler);
             }
-            return new ViteDevelopmentServer(pack, this.resolver, this.rootTarget);
+            return new ViteDevelopmentServer(pack, this.monorepo);
         }
-        const bundler = createBundler(pack, this.resolver);
+        const bundler = this.monorepo.createBundler(pack);
         return new BundleServer(pack, bundler);
     }
 

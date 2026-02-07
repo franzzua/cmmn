@@ -4,20 +4,23 @@ import {Pack} from "./pack";
 import {Target} from "./target";
 import {Resolver} from "./resolver";
 import {Flags} from "./flags";
+import {Terminal} from "../helpers/terminal";
+import {ViteBundler} from "../bundlers/vite.bundler";
+import {RolldownBundler} from "../bundlers/rolldown-bundler";
 
 export class Monorepo {
-    public static async load(rootDir: string, flags?: string[]): Promise<Monorepo> {
-        if (flags)
-            Flags.Current = new Flags(flags);
+    public static async load(flags: Flags = new Flags([]), rootDir: string = process.cwd()): Promise<Monorepo> {
         const monorepoPackages = await getPackages(rootDir);
-        const monorepo = new MonorepoInternal(monorepoPackages);
+        const monorepo = new MonorepoLoader(monorepoPackages);
         await monorepo.load();
-        return new Monorepo(monorepo.root as Target, monorepo.packs);
+        return new Monorepo(monorepo.root as Target, monorepo.packs, flags);
     }
     public readonly packs = Array.from(this.packsMap.values()) as Pack[];
-    private constructor(readonly root: Target, private packsMap: Map<string,Pack>) {
-        this.packs.forEach(x => x.init());
-        root.init();
+    private constructor(readonly root: Target,
+                        private readonly packsMap: Map<string,Pack>,
+                        readonly flags: Flags) {
+        this.packs.forEach(x => x.init(flags, this.packsMap));
+        root.init(flags, this.packsMap);
     }
 
     get targets(){
@@ -28,11 +31,16 @@ export class Monorepo {
         return this.packsMap.get(id);
     }
 
-    public resolver = new Resolver(this.packs);
+    public readonly resolver = new Resolver(this.packs, this.flags);
 
+    public createBundler(pack: Pack){
+        if (pack instanceof Target)
+            return new ViteBundler(pack, this.resolver, this.flags);
+        return new RolldownBundler(pack, this.resolver, this.flags)
+    }
 }
 
-class MonorepoInternal {
+class MonorepoLoader {
 
     packs = new Map<string, Pack>();
     root: Pack;
@@ -55,7 +63,7 @@ class MonorepoInternal {
             const pack = new Target(pkg.dir, pkg.packageJson)
             this.packs.set(name, pack);
             if(!pack.isServer) {
-                for (let [name, version] of Object.entries(pack.dependencies)) {
+                for (let [name, version] of pack.getAllDependencies()) {
                     if (this.packs.has(name)) continue;
                     await this.export(name, version);
                 }

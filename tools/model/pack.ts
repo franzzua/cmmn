@@ -10,7 +10,7 @@ export class Pack extends EventTarget{
             try {
                 const pkgDir = join(dir, 'node_modules', id);
                 if (await stat(pkgDir)) {
-                    const json = JSON.parse(await readFile(join(dir, "package.json"), {encoding: 'utf-8'})) as JSONSchemaForNPMPackageJsonFiles;
+                    const json = JSON.parse(await readFile(join(pkgDir, "package.json"), {encoding: 'utf-8'})) as JSONSchemaForNPMPackageJsonFiles;
                     // TODO: check version
                     // if (version && json.version !== version)
                     //     dir = dirname(dir);
@@ -23,12 +23,9 @@ export class Pack extends EventTarget{
         }
     }
 
-    private static Instances = new Map<string, Pack>();
-    public get dependencies(){
-        return {
-            ...(this.packageJson.dependencies ?? {}),
-            ...(Flags.Current.production ? {} : this.packageJson.devDependencies ?? {}),
-        };
+    public *getAllDependencies(){
+        yield * Object.entries(this.packageJson.dependencies ?? {});
+        yield * Object.entries(this.packageJson.devDependencies ?? {});
     }
     deps: Pack[];
     reactions: Pack[] = [];
@@ -36,10 +33,12 @@ export class Pack extends EventTarget{
     constructor(public readonly rootDir,
                 public readonly packageJson: JSONSchemaForNPMPackageJsonFiles) {
         super();
-        Pack.Instances.set(this.name, this);
     }
-    public init(){
-        this.deps = Object.keys(this.dependencies).map(x => Pack.Instances.get(x)).filter(x => !!x) as Pack[];
+    public init(flags: Flags, packsMap: Map<string, Pack>){
+        const deps = Object.keys(this.packageJson.dependencies ?? {});
+        if (!flags.production)
+            deps.push(...Object.keys(this.packageJson.devDependencies ?? {}));
+        this.deps = deps.map(x => packsMap.get(x)).filter(x => !!x) as Pack[];
         this.deps.forEach(x => x.reactions.push(this));
         for (let dep of this.deps) {
             dep.addEventListener('change', (e: ChangeEvent) => {
@@ -77,10 +76,8 @@ export class Pack extends EventTarget{
             const result = [] as Entry[];
             for (let item in this.packageJson.exports) {
                 if (!item.startsWith('.')){
-                    const importFile = this.packageJson.exports.default ??
-                        this.packageJson.exports.require ??
-                        this.packageJson.exports.import;
-
+                    const exports = this.packageJson.exports as any;
+                    const importFile = exports.default ?? exports.require ?? exports.import;
                     if (!importFile || !(typeof importFile === "string")) {
                         this.error(`Failed to read entry '${item}' in ${this.packageJson.name}`)
                         continue;

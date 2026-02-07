@@ -6,13 +6,13 @@ import {createServer, ViteDevServer} from "vite";
 import {FastifyInstance, FastifyReply, FastifyRequest} from "fastify";
 import {PackServer} from "./pack-server";
 import {ViteBuilder} from "../bundlers/vite.builder";
+import {Monorepo} from "../model/monorepo";
 
 export class ViteDevelopmentServer extends PackServer{
     readonly wsPrefix = '/@ws';
-    private viteBuilder = new ViteBuilder(this.target, this.resolver)
+    private viteBuilder = new ViteBuilder(this.target, this.monorepo.resolver, this.monorepo.flags)
     constructor(private target: Target,
-                private resolver: Resolver,
-                private rootTarget: Target) {
+                private monorepo: Monorepo) {
         super(target);
     }
 
@@ -48,7 +48,7 @@ export class ViteDevelopmentServer extends PackServer{
                     strict: false
                 },
                 allowedHosts: [
-                    this.rootTarget.https?.host,
+                    this.monorepo.root.https?.host,
                     this.target.https?.host,
                     ...this.target.reactions.map(x => x instanceof Target ? x.https?.host : '')
                 ].filter(x => x)

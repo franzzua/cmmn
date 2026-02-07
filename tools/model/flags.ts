@@ -1,19 +1,19 @@
 
 export class Flags {
     static Current: Flags = new Flags([]);
-    watch: boolean;
-    minify: boolean;
-    workspace: string;
-    unsafe: boolean;
-    version: string;
-    command: string;
-    production: boolean;
-    deploy = this.args.includes('--deploy');
+    watch?: boolean;
+    minify?: boolean;
+    workspace?: string;
+    unsafe?: boolean;
+    version?: string;
+    command?: string;
+    production?: boolean;
+    deploy? = this.args.includes('--deploy');
     out = this.args.includes('-out')
         ? this.args[this.args.indexOf('-out') + 1]
         : '.out';
 
-    constructor(public args: string[]) {
+    constructor(public args?: string[]) {
         this.command = args[0];
         this.watch = args.includes('--watch');
         this.minify = args.includes('--minify');
