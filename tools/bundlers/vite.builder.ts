@@ -39,7 +39,7 @@ export class ViteBuilder {
                 emptyOutDir: false,
                 rollupOptions: {
                     external: [
-                        ...(this.resolver ? [] : this.target.externalDependencies.map(x =>
+                        ...(this.resolver ? [] : Array.from(this.target.deps.keys()).map(x =>
                             new RegExp(`^${x}`.replace('/', '\\/'))
                         )),
                         ...builtinModules,
@@ -49,7 +49,7 @@ export class ViteBuilder {
                 },
                 write: false,
                 minify: false,
-                sourcemap: this.target.flags.minify ? false : 'inline',
+                sourcemap: this.flags.minify ? false : 'inline',
                 commonjsOptions: {
                     transformMixedEsModules: true
                 },
@@ -73,7 +73,7 @@ export class ViteBuilder {
             name: "cmmn:html-base-tag",
             enforce: 'pre',
             transformIndexHtml: (_, config: IndexHtmlTransformContext) => {
-                const dir = this.target.flags.production ? '' : dirname(config.path);
+                const dir = this.flags.production ? '' : dirname(config.path);
                 const result: HtmlTagDescriptor[] = [
                     {
                         tag: "base",
@@ -81,7 +81,7 @@ export class ViteBuilder {
                         children: '/** injected **/'
                     }
                 ];
-                if (this.target.flags.production) {
+                if (this.flags.production) {
                     result.push({
                         tag: "link",
                         attrs: {
@@ -93,7 +93,7 @@ export class ViteBuilder {
                 return result;
             },
         }
-        if (this.target.flags.minify)
+        if (this.flags.minify)
             yield swcMinifyPlugin();
         yield {
             name: "url-resolver",

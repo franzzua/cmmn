@@ -9,16 +9,9 @@ import {Entry, Pack} from "./pack";
 
 export class Target extends Pack {
     public readonly publicDir = join(this.rootDir, 'public');
-    flags = Flags.Current;
+
     get publicPath(): string | undefined {
         return this.packageJson.config?.publicPath as string ?? super.publicPath;
-    }
-
-    get externalDependencies() {
-        return [
-            ...Object.keys(this.packageJson.dependencies ?? {}),
-            ...Object.keys(this.flags.production ? {} : this.packageJson.devDependencies ?? {}),
-        ]
     }
 
     _tsConfig: TypescriptConfig;
@@ -63,20 +56,6 @@ export class Target extends Pack {
                 ...this.swcConfigBase.jsc,
                 baseUrl: this.rootDir,
                 paths: tsConfig.compilerOptions?.paths,
-                minify: this.flags.minify ? {
-                    compress: {
-                        booleans_as_integers: true,
-                        ecma: 2020
-                    },
-                    mangle: {
-                        topLevel: true
-                    },
-                    ecma: '2020',
-                    format: {
-                        comments: false,
-                        asciiOnly: true
-                    }
-                } : undefined,
             },
             module: {
                 type: 'es6',

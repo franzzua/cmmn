@@ -28,8 +28,8 @@ export async function bundle(flags: Flags) {
                 state: 'ok',
                 size: size
             });
-        }catch (e){
-            pack.error(e);
+        } catch (e){
+            pack.error(e.message + e.stack);
         }
     }
 }

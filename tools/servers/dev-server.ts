@@ -23,7 +23,7 @@ export class DevServer {
             if (pack.packageJson.bin) {
                 return new TargetRunner(pack);
             }
-            if (Flags.Current.production) {
+            if (this.monorepo.flags.production) {
                 const bundler = this.monorepo.createBundler(pack);
                 return new BundleServer(pack, bundler);
             }
@@ -34,7 +34,7 @@ export class DevServer {
     }
 
     get isBundler() {
-        return Flags.Current.production;
+        return this.monorepo.flags.production;
     }
 
     constructor(private monorepo: Monorepo) {

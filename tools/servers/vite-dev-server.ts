@@ -39,11 +39,11 @@ export class ViteDevelopmentServer extends PackServer{
         const viteServer = await createServer({
             ...config as any,
             server: {
-                hmr: this.target.flags.production ? false : {
+                hmr: this.monorepo.flags.production ? false : {
                     server: server,
                     path: this.wsPrefix,
                 },
-                ws: this.target.flags.production ? false : undefined,
+                ws: this.monorepo.flags.production ? false : undefined,
                 fs: {
                     strict: false
                 },

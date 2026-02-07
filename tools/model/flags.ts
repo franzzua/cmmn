@@ -25,7 +25,6 @@ export class Flags {
         if (this.workspace?.startsWith('--')){
             this.workspace = undefined;
         }
-        Flags.Current = this;
     }
 
     get(arg) {

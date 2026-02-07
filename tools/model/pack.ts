@@ -23,9 +23,10 @@ export class Pack extends EventTarget{
         }
     }
 
-    public *getAllDependencies(){
+    public *getAllDependencies(prod: boolean){
         yield * Object.entries(this.packageJson.dependencies ?? {});
-        yield * Object.entries(this.packageJson.devDependencies ?? {});
+        if (!prod)
+            yield * Object.entries(this.packageJson.devDependencies ?? {});
     }
     deps: Pack[];
     reactions: Pack[] = [];

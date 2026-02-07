@@ -12,13 +12,13 @@ export class Monorepo {
     public static async load(flags: Flags = new Flags([]), rootDir: string = process.cwd()): Promise<Monorepo> {
         const monorepoPackages = await getPackages(rootDir);
         const monorepo = new MonorepoLoader(monorepoPackages);
-        await monorepo.load();
+        await monorepo.load(flags.production);
         return new Monorepo(monorepo.root as Target, monorepo.packs, flags);
     }
     public readonly packs = Array.from(this.packsMap.values()) as Pack[];
     private constructor(readonly root: Target,
                         private readonly packsMap: Map<string,Pack>,
-                        readonly flags: Flags) {
+                        public readonly flags: Flags) {
         this.packs.forEach(x => x.init(flags, this.packsMap));
         root.init(flags, this.packsMap);
     }
@@ -48,24 +48,25 @@ class MonorepoLoader {
     constructor(private readonly packages: Packages) {
     }
 
-    async load(){
+    async load(prod: boolean){
         for (let p of this.packages.packages) {
-            await this.export(p.packageJson.name, p.packageJson.version);
+            await this.export(p.packageJson.name, p.packageJson.version, prod);
         }
-        this.root = await this.export(this.packages.rootPackage.packageJson.name, this.packages.rootPackage.packageJson.version);
+        this.root = await this.export(this.packages.rootPackage.packageJson.name,
+            this.packages.rootPackage.packageJson.version, prod);
         return Array.from(this.packs.values());
     }
 
-    private async export(name: string, version: string){
+    private async export(name: string, version: string, prod: boolean){
         if (this.packs.has(name)) return this.packs.get(name);
         const pkg = this.getPackage(name);
         if(pkg) {
             const pack = new Target(pkg.dir, pkg.packageJson)
             this.packs.set(name, pack);
             if(!pack.isServer) {
-                for (let [name, version] of pack.getAllDependencies()) {
+                for (let [name, version] of pack.getAllDependencies(prod)) {
                     if (this.packs.has(name)) continue;
-                    await this.export(name, version);
+                    await this.export(name, version, prod);
                 }
             }
             return pack;
