@@ -1,6 +1,6 @@
 {
 	"name": "@cmmn/react",
-	"version": "3.0.0",
+	"version": "3.0.0-alpha-1",
 	"description": "",
 	"publishConfig": {
 		"access": "public"
@@ -9,17 +9,14 @@
 		"url": "https://github.com/franzzua/cmmn/tree/master/ui"
 	},
 	"type": "module",
-	"module": "./index.ts",
-	"scripts": {
-		"bundle": "cmmn bundle --watch",
-		"build": "cmmn compile -b --watch"
-	},
 	"exports": {
-		".": "./index.ts",
-		"./jsx-runtime": "./jsx-runtime.js"
-	},
-	"devDependencies": {
-		"@cmmn/tools": "workspace:~"
+		".": {
+			"default": "./dist/bundle/index.js",
+			"typings": "./dist/typings/index.d.ts"
+		},
+		"./jsx-runtime": {
+			"default": "./dist/bundle/jsx-runtime.js"
+		}
 	},
 	"dependencies": {
 		"@cmmn/core": "workspace:~",
