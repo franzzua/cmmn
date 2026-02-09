@@ -63,11 +63,9 @@ class MonorepoLoader {
         if(pkg) {
             const pack = new Target(pkg.dir, pkg.packageJson)
             this.packs.set(name, pack);
-            if(!pack.isServer) {
-                for (let [name, version] of pack.getAllDependencies(prod)) {
-                    if (this.packs.has(name)) continue;
-                    await this.export(name, version, prod);
-                }
+            for (let [name, version] of pack.getAllDependencies(prod)) {
+                if (this.packs.has(name)) continue;
+                await this.export(name, version, prod);
             }
             return pack;
         } else {

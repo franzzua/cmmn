@@ -147,16 +147,16 @@ class EventCell<T> extends BaseCell<T> {
 		super(null);
 	}
 
-	unsusbscribe;
+	private unsubscriber: () => void;
 
 	active() {
-		this.unsusbscribe = this.subscriber.subscribe((e) => this.set(e));
+		this.unsubscriber = this.subscriber.subscribe((e) => this.set(e));
 		super.active();
 	}
 
 	protected disactive() {
 		super.disactive();
-		this.unsusbscribe?.();
+		this.unsubscriber?.();
 		this.value = null;
 	}
 }

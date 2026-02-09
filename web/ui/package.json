@@ -1,6 +1,6 @@
 {
 	"name": "@cmmn/ui",
-	"version": "3.0.0",
+	"version": "3.0.0-alpha-1",
 	"description": "",
 	"publishConfig": {
 		"access": "public"
@@ -9,15 +9,15 @@
 		"url": "https://github.com/franzzua/cmmn/tree/master/ui"
 	},
 	"type": "module",
-	"module": "./index.ts",
 	"dependencies": {
 		"@cmmn/core": "workspace:~",
 		"@cmmn/sync": "workspace:~"
 	},
-	"devDependencies": {
-		"@types/route-parser": "^0",
-		"route-parser": "0.0.5"
-	},
 	"author": "",
-	"license": "ISC"
+	"license": "ISC",
+	"main": "./dist/bundle/index.js",
+	"typings": "./dist/typings/index.d.ts",
+	"files": [
+		"dist"
+	]
 }

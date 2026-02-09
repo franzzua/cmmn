@@ -20,7 +20,7 @@ npm install @cmmn/core
 ## Quick Start
 
 ```typescript
-import { Cell, di, inject, singleton } from '@cmmn/core';
+import { Cell, di, inject, singleton, throttle, pipe, ObservableList } from '@cmmn/core';
 
 // Dependency Injection
 @singleton()
@@ -28,12 +28,31 @@ class DatabaseService {
   connect() {
     console.log('Connected to database');
   }
+
+  [Symbol.dispose]() {
+    console.log('Database connection closed');
+  }
 }
 
 // Observable Cells
 const counter = new Cell(0);
-counter.subscribe(value => console.log('Count:', value));
+counter.on('change', ({ value }) => console.log('Count:', value));
 counter.value = 1; // Logs: Count: 1
+
+// Utility Functions
+const result = pipe(
+  (a: number, b: number) => a + b,
+  (x) => x.toFixed(),
+  (a) => +a + 5
+)(3, 2); // Result: 103
+
+// Throttling
+class Service {
+  @throttled(100)
+  async process(data: string) {
+    return data.toUpperCase();
+  }
+}
 ```
 
 ## API Reference
@@ -42,16 +61,23 @@ counter.value = 1; // Logs: Count: 1
 
 ```typescript
 // Define a service
+import {container} from "tsyringe";
+
 @singleton()
 class UserService {
-  getUsers() {
-    return ['Alice', 'Bob'];
-  }
+    private db = resolve(DatabaseService);
+    
+    getUsers() {
+        return ['Alice', 'Bob'];
+    }
+
+    [Symbol.dispose]() {
+        console.log('UserService disposed');
+    }
 }
 
 // Register and inject
-const container = new Container();
-container.register(UserService);
+using const container = new Container();
 
 const userService = container.resolve(UserService);
 ```
@@ -63,7 +89,7 @@ Cells are reactive value containers that automatically notify subscribers of cha
 ```typescript
 // Basic cell
 const name = new Cell('John');
-name.subscribe(value => console.log('Name changed:', value));
+name.on('change', ({ value }) => console.log('Name changed:', value));
 
 // Computed cell
 const greeting = new Cell(() => `Hello, ${name.value}!`);
@@ -99,6 +125,49 @@ emitter.on('message', (data) => {
 });
 
 emitter.emit('message', 'Hello World!');
+```
+
+### Utility Functions
+
+```typescript
+// Functional programming with pipe
+const result = pipe(
+  (a: number, b: number) => a + b,
+  (x) => x.toFixed(),
+  (a) => +a + 5
+)(3, 2); // Result: 103
+
+// Throttle and debounce
+const throttledFn = throttle((data: string) => {
+  console.log('Processing:', data);
+}, 100);
+
+const debouncedFn = debounce(() => {
+  console.log('Search triggered');
+}, 300);
+
+// Array utilities
+const numbers = [1, 2, 3, 4, 5];
+const sum = sum(numbers); // 15
+const filtered = distinct(numbers); // [1, 2, 3, 4, 5]
+const grouped = groupBy(numbers, n => n % 2); // {1: [1, 3, 5], 0: [2, 4]}
+```
+
+### Decorators
+
+```typescript
+class ApiService {
+  @throttled(1000)
+  async fetchData(url: string) {
+    const response = await fetch(url);
+    return response.json();
+  }
+
+  @debounced(300)
+  search(query: string) {
+    // Perform search
+  }
+}
 ```
 
 ## Scripts

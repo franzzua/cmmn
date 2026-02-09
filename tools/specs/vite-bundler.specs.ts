@@ -20,6 +20,12 @@ describe('vite-bundler', async function target() {
         const bundle = await getBundle('@cmmn/sync');
         expect(bundle.fileNames()).toEqual(['index.js', 'storage.js']);
     });
+    await test('@cmmn/server', async function () {
+        const bundle = await getBundle('@cmmn/server');
+        expect(bundle.fileNames()).toEqual(['index.js']);
+        const json = await bundle.getBundleJson();
+        expect(json.assets[0].size).toBeLessThan(1024*1024);
+    });
 
 	await test('@cmmn/examples-client', async function () {
 		const bundle = await getBundle('@cmmn/examples-client');

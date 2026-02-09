@@ -21,7 +21,6 @@ export class App extends Component {
 	private accessor ctrl;
 	private counters;
 
-
 	// @inject(Store) store!: Store;
 	@inject(ApiToken) api!: Api;
 
