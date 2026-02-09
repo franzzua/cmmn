@@ -9,6 +9,8 @@ import {Bundle} from "../model/bundle";
 import {Terminal} from "../helpers/terminal";
 
 export async function bundle(flags: Flags) {
+    if (flags.deploy)
+        Pack.ImportPrefix = '/_/';
 	const monorepo = await Monorepo.load(flags);
     const term = new Terminal(monorepo.flags, monorepo.packs);
     for (let pack of monorepo.packs.values()) {

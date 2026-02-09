@@ -4,8 +4,10 @@ import {Flags} from "../model/flags";
 import {fastifyCompress} from "../helpers/fastify-compress";
 import {Monorepo} from "../model/monorepo";
 import {DevServer} from "../servers/dev-server";
+import {Pack} from "../model/pack";
 
 export async function dev(flags: Flags) {
+    Pack.ImportPrefix = '/_/';
     const monorepo = await Monorepo.load(flags);
     const devServer = new DevServer(monorepo);
 

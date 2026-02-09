@@ -4,7 +4,7 @@ import {Flags} from "./flags";
 import terminalKit from "terminal-kit";
 import {readFile, stat} from "node:fs/promises";
 
-export class Pack extends EventTarget{
+export class Pack extends EventTarget {
     static async read(id: string, version?: string, dir = process.cwd()) {
         while (dir) {
             try {
@@ -23,11 +23,12 @@ export class Pack extends EventTarget{
         }
     }
 
-    public *getAllDependencies(prod: boolean){
-        yield * Object.entries(this.packageJson.dependencies ?? {});
+    public* getAllDependencies(prod: boolean) {
+        yield* Object.entries(this.packageJson.dependencies ?? {});
         if (!prod)
-            yield * Object.entries(this.packageJson.devDependencies ?? {});
+            yield* Object.entries(this.packageJson.devDependencies ?? {});
     }
+
     deps: Pack[];
     reactions: Pack[] = [];
 
@@ -35,7 +36,8 @@ export class Pack extends EventTarget{
                 public readonly packageJson: JSONSchemaForNPMPackageJsonFiles) {
         super();
     }
-    public init(flags: Flags, packsMap: Map<string, Pack>){
+
+    public init(flags: Flags, packsMap: Map<string, Pack>) {
         const deps = Object.keys(this.packageJson.dependencies ?? {});
         if (!flags.production)
             deps.push(...Object.keys(this.packageJson.devDependencies ?? {}));
@@ -52,14 +54,17 @@ export class Pack extends EventTarget{
             });
         }
     }
-    public get isServer(){
+
+    public get isServer() {
         return !!this.packageJson.config?.server;
     }
-    public get name(){
+
+    public get name() {
         return this.packageJson.name;
     }
 
     term;
+
     log(text) {
         this.term ??= new terminalKit.Terminal();
         this.term.blue(this.packageJson.name);
@@ -76,7 +81,7 @@ export class Pack extends EventTarget{
         if (this.packageJson.exports && typeof this.packageJson.exports == "object") {
             const result = [] as Entry[];
             for (let item in this.packageJson.exports) {
-                if (!item.startsWith('.')){
+                if (!item.startsWith('.')) {
                     const exports = this.packageJson.exports as any;
                     const importFile = exports.default ?? exports.require ?? exports.import;
                     if (!importFile || !(typeof importFile === "string")) {
@@ -137,8 +142,12 @@ export class Pack extends EventTarget{
         return `${entryName}.${outExt}`;
     }
 
-    get publicPath(): string{
-        return `/_/${this.name}`;
+    static ImportPrefix: string = undefined;
+
+    get publicPath(): string {
+        if (Pack.ImportPrefix)
+            return `${Pack.ImportPrefix}${this.name}`;
+        return this.name;
     }
 
 }
@@ -152,7 +161,8 @@ export class ChangeEvent extends Event {
         this.payload = payload;
     }
 }
-export class FileChangeEvent extends Event{
+
+export class FileChangeEvent extends Event {
     constructor(public files: string[]) {
         super('file');
     }
