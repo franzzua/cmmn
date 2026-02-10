@@ -39,8 +39,8 @@ export class ViteBuilder {
                 emptyOutDir: false,
                 rollupOptions: {
                     external: [
-                        ...(this.resolver ? [] : Array.from(this.target.deps.keys()).map(x =>
-                            new RegExp(`^${x}`.replace('/', '\\/'))
+                        ...(this.resolver ? [] : this.target.deps.map(x =>
+                            new RegExp(`^${x.name}`.replace('/', '\\/'))
                         )),
                         ...builtinModules,
                         'fsevents',

@@ -16,7 +16,7 @@ describe('vite-bundler', async function target() {
 		const bundle = await getBundle('@cmmn/core');
         expect(bundle.fileNames()).toEqual(['index.js']);
         const content = bundle.get('index.js');
-        expect(content).not.toContain('from \'/_/');
+        expect(content).toContain('import { uuidv7 } from \'uuidv7\'');
 	});
     await test('@cmmn/sync', async function () {
         const bundle = await getBundle('@cmmn/sync');

@@ -4,7 +4,6 @@ import {Pack} from "./pack";
 import {Target} from "./target";
 import {Resolver} from "./resolver";
 import {Flags} from "./flags";
-import {Terminal} from "../helpers/terminal";
 import {ViteBundler} from "../bundlers/vite.bundler";
 import {RolldownBundler} from "../bundlers/rolldown-bundler";
 
@@ -19,6 +18,8 @@ export class Monorepo {
     private constructor(readonly root: Target,
                         private readonly packsMap: Map<string,Pack>,
                         public readonly flags: Flags) {
+        if (flags.deploy)
+            this.resolver = new Resolver(this.packs, this.flags);
         this.packs.forEach(x => x.init(flags, this.packsMap));
         root.init(flags, this.packsMap);
     }
@@ -31,7 +32,7 @@ export class Monorepo {
         return this.packsMap.get(id);
     }
 
-    public readonly resolver = new Resolver(this.packs, this.flags);
+    public readonly resolver: Resolver | undefined;
 
     public createBundler(pack: Pack){
         if (pack instanceof Target)

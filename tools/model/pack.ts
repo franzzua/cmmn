@@ -142,12 +142,10 @@ export class Pack extends EventTarget {
         return `${entryName}.${outExt}`;
     }
 
-    static ImportPrefix: string = undefined;
+    private static ImportPrefix: string = '/_/';
 
     get publicPath(): string {
-        if (Pack.ImportPrefix)
-            return `${Pack.ImportPrefix}${this.name}`;
-        return this.name;
+        return `${Pack.ImportPrefix}${this.name}`;
     }
 
 }
