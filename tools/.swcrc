@@ -14,7 +14,10 @@
             "useDefineForClassFields": false
         },
         "target": "esnext",
-        "externalHelpers": true
+        "externalHelpers": true,
+        "experimental": {
+            "keepImportAttributes": true
+        }
     },
     "sourceMaps": "inline"
 }

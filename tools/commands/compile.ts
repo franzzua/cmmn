@@ -5,7 +5,7 @@ import {Flags} from "../model/flags";
 import {Watcher} from "../helpers/watcher";
 import events from "node:events";
 import glob from "fast-glob";
-import {mkdir, writeFile} from "node:fs/promises";
+import {cp, mkdir, writeFile} from "node:fs/promises";
 import {createWriteStream} from "node:fs";
 import {Monorepo} from "../model/monorepo";
 import {FileChangeEvent} from "../model/pack";
@@ -28,6 +28,7 @@ export async function compile(flags: Flags) {
 	}
 }
 
+
 const sourceMapComment = `\n//# sourceMappingURL=`;
 
 async function compileFiles(target: Target, filenames: string[] = null): Promise<void> {
@@ -36,25 +37,30 @@ async function compileFiles(target: Target, filenames: string[] = null): Promise
 		`${target.rootDir}/${d}/**/*`,
 		`${target.rootDir}/${d}`,
 	]);
-	const files = filenames ?? await glob(target.rootDir + '/**/*.[tj]s?(x)', {
+    const globs = (target.tsConfig.include ?? ['/**/*.[tj]s?(x)']).map(x => target.rootDir + x);
+	const files = filenames ?? await glob(globs, {
 		ignore
 	});
 	const time = performance.now();
 	const outDir = join(target.rootDir, 'dist/esm');
 	for (let file of files) {
-		const result = await transformFile(file, swcOptions);
 		const outFile = outDir + file.substring(target.rootDir.length).replace(/\.ts(x?)$/,'.js$1');
 		await mkdir(dirname(outFile), { recursive: true});
-		const writer = createWriteStream(outFile, { encoding: 'utf8' });
-		// const sourceMaps = JSON.parse(result.map)
-		// sourceMaps.sources = sourceMaps.sources.map(s => relative(outFile, s))
-		// result.map = JSON.stringify(sourceMaps);
-		writer.write(result.code);
-		writer.write(sourceMapComment);
-		writer.write(outFile.split('/').pop()+'.map');
-		writer.end();
-		await new Promise<void>(r => writer.on('finish', r));
-		await writeFile(outFile + '.map', result.map);
+        if (file.match(/\.[jt]sx?/g)) {
+            const writer = createWriteStream(outFile, {encoding: 'utf8'});
+            // const sourceMaps = JSON.parse(result.map)
+            // sourceMaps.sources = sourceMaps.sources.map(s => relative(outFile, s))
+            // result.map = JSON.stringify(sourceMaps);
+            const result = await transformFile(file, swcOptions);
+            writer.write(result.code);
+            writer.write(sourceMapComment);
+            writer.write(outFile.split('/').pop() + '.map');
+            writer.end();
+            await new Promise<void>(r => writer.on('finish', r));
+            await writeFile(outFile + '.map', result.map);
+        } else {
+            await cp(file, outFile);
+        }
 	}
 	const duration = performance.now() - time;
 	target.log(`compiled for ^W${duration.toFixed(0)}ms ^w ${files.length} files`);
