@@ -1,9 +1,9 @@
 import {component, Component} from "@cmmn/react";
 import {ReactNode} from "react";
 import {bind, resolve} from "@cmmn/core";
-import {DraggableTarget} from "./draggable.target";
-import {DraggableContext} from "./draggable.context";
-import {DraggableClone} from "./draggable.clone";
+import {DraggableTarget} from "./draggable.target.tsx";
+import {DraggableContext} from "./draggable.context.tsx";
+import {DraggableClone} from "./draggable.clone.tsx";
 
 @component()
 export class Draggable extends Component<{ children: ReactNode }> {

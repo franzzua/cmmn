@@ -1,12 +1,12 @@
-import {Target} from "../model/target";
+import {Target} from "../model/target.ts";
 import {FastifyInstance, FastifyRequest} from "fastify";
-import {Monorepo} from "../model/monorepo";
-import {BundleServer} from "./bundle-server";
-import {ViteDevelopmentServer} from "./vite-dev-server";
-import {Pack} from "../model/pack";
-import {PackServer} from "./pack-server";
-import {Flags} from "../model/flags";
-import {TargetRunner} from "./target-runnner";
+import {Monorepo} from "../model/monorepo.ts";
+import {BundleServer} from "./bundle-server.ts";
+import {ViteDevelopmentServer} from "./vite-dev-server.ts";
+import {Pack} from "../model/pack.ts";
+import {PackServer} from "./pack-server.ts";
+import {Flags} from "../model/flags.ts";
+import {TargetRunner} from "./target-runnner.ts";
 
 export class DevServer {
     rootTarget: Target = this.monorepo.root;

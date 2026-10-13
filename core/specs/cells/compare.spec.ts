@@ -1,6 +1,6 @@
 import { expect, mock, suite, test } from '@cmmn/tools/test';
-import { Cell } from '../../cell/cell.js';
-import { Graph } from '../../cell/graph';
+import { Cell } from '../../cell/cell.ts';
+import { Graph } from '../../cell/graph.ts';
 
 @suite
 export class CompareSpec {

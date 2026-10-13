@@ -1,12 +1,12 @@
-import {Target} from "../model/target";
+import {Target} from "../model/target.ts";
 import {HttpServer} from "vite";
-import {ChangeEvent} from "../model/pack";
-import {Resolver} from "../model/resolver";
+import {ChangeEvent} from "../model/pack.ts";
+import {Resolver} from "../model/resolver.ts";
 import {createServer, ViteDevServer} from "vite";
 import {FastifyInstance, FastifyReply, FastifyRequest} from "fastify";
-import {PackServer} from "./pack-server";
-import {ViteBuilder} from "../bundlers/vite.builder";
-import {Monorepo} from "../model/monorepo";
+import {PackServer} from "./pack-server.ts";
+import {ViteBuilder} from "../bundlers/vite.builder.ts";
+import {Monorepo} from "../model/monorepo.ts";
 
 export class ViteDevelopmentServer extends PackServer{
     readonly wsPrefix = '/@ws';

@@ -1,2 +1,2 @@
-export * from "./indexed-storage";
-export * from "./stored";
+export * from "./indexed-storage.ts";
+export * from "./stored.ts";

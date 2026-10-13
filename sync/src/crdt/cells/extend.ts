@@ -1,4 +1,4 @@
-import {Scheme} from "./types";
+import {Scheme} from "./types.ts";
 import {Container, LoroCounter, LoroDoc} from 'loro-crdt';
 
 export function extend<

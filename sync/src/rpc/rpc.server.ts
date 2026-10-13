@@ -1,6 +1,6 @@
 import { Container, inject, scoped } from '@cmmn/core';
-import { Transport } from '../transport/transport';
-import { RpcMessage, RpcService } from './types';
+import { Transport } from '../transport/transport.ts';
+import { RpcMessage, RpcService } from './types.ts';
 
 @scoped()
 export class RpcServer {

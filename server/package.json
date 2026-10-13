@@ -3,13 +3,19 @@
 	"version": "3.0.0-alpha-6",
 	"description": "server libs for building rest api",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"bundle": "vite build"
 	},
 	"repository": {
 		"url": "https://github.com/franzzua/cmmn/tree/master/server"
 	},
 	"publishConfig": {
-		"access": "public"
+		"access": "public",
+		"exports": {
+			".": {
+				"types": "./dist/typings/index.d.ts",
+				"default": "./dist/bundle/index.js"
+			}
+		}
 	},
 	"dependencies": {
 		"@cmmn/core": "workspace:~",
@@ -22,8 +28,19 @@
 		"server": true
 	},
 	"type": "module",
-	"module": "./index.ts",
 	"author": "",
 	"license": "ISC",
-	"gitHead": "2755b333808bf97f1d9454601c2a2c9a88e4a021"
+	"gitHead": "2755b333808bf97f1d9454601c2a2c9a88e4a021",
+	"exports": {
+		".": {
+			"types": "./index.ts",
+			"default": "./dist/esm/index.js"
+		}
+	},
+	"files": [
+		"dist/bundle/**",
+		"dist/typings/**",
+		"!dist/typings/specs/**",
+		"!dist/typings/perf/**"
+	]
 }

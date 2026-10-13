@@ -1,6 +1,6 @@
 import { expect, suite, test } from '@cmmn/tools/test';
-import { Graph } from '../../cell/graph.js';
-import { Cell } from '../../cell/cell.js';
+import { Graph } from '../../cell/graph.ts';
+import { Cell } from '../../cell/cell.ts';
 
 const noop = () => {};
 

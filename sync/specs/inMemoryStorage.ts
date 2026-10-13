@@ -1,4 +1,4 @@
-import type { Storage, StorageProvider } from '../src/crdt/storage';
+import type { Storage, StorageProvider } from '../src/crdt/storage.ts';
 import { scoped } from '@cmmn/core';
 
 @scoped()

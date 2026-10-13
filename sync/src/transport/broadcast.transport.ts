@@ -1,4 +1,4 @@
-import { Transport, TransportChannel } from './transport';
+import { Transport, TransportChannel } from './transport.ts';
 import { EventEmitter, EventEmitterBase, scoped } from '@cmmn/core';
 
 declare const BroadcastChannel: EventTarget &

@@ -1,0 +1,31 @@
+{
+	"compilerOptions": {
+		"module": "esnext",
+		"moduleResolution": "bundler",
+		"target": "ES2022",
+		"lib": ["ES2024", "WebWorker"],
+		"types": ["vite/client", "node"],
+		"strict": false,
+		"composite": true,
+		"declaration": true,
+		"sourceMap": true,
+		"rootDir": "${configDir}",
+		"outDir": "${configDir}/dist/esm",
+		"declarationDir": "${configDir}/dist/typings",
+		"tsBuildInfoFile": "${configDir}/dist/tsconfig.tsbuildinfo",
+		"allowImportingTsExtensions": true,
+		"rewriteRelativeImportExtensions": true,
+		"experimentalDecorators": false,
+		"useDefineForClassFields": false,
+		"isolatedModules": true,
+		"allowJs": true,
+		"checkJs": false,
+		"skipLibCheck": true,
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"forceConsistentCasingInFileNames": true,
+		"stripInternal": true
+	},
+	"include": ["${configDir}/**/*"],
+	"exclude": ["${configDir}/dist", "${configDir}/node_modules", "${configDir}/vite.config.ts"]
+}

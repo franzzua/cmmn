@@ -2,9 +2,9 @@ import type {
 	AccessorDecorator,
 	FieldDecorator,
 	InjectionToken
-} from "./types";
-import {Container} from "./container";
-import {resolve} from "./index";
+} from "./types.ts";
+import {Container} from "./container.ts";
+import {resolve} from "./index.ts";
 
 export const injectLazy = <T, This>(dep: () => InjectionToken<T>): AccessorDecorator<This, T> & FieldDecorator<This, T> => {
 	return ((

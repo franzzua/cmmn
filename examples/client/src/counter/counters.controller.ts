@@ -1,6 +1,6 @@
 import {AsyncCell, bind, Cell, cell, getOrAdd, inject, resolve, scoped} from "@cmmn/core";
 import {CounterRepository, CounterModel} from "@cmmn/examples-model";
-import {DraggableContext} from "../draggable/draggable.context";
+import {DraggableContext} from "../draggable/draggable.context.tsx";
 import {CRDT} from "@cmmn/sync";
 
 @scoped()

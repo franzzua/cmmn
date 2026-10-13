@@ -1,4 +1,4 @@
-import {FetchQuery} from "./fetchQuery";
+import {FetchQuery} from "./fetchQuery.ts";
 import {di} from "@cmmn/core";
 import api from '@cmmn/examples-server?resolve';
 

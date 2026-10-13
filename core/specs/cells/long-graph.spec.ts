@@ -1,7 +1,7 @@
 import { expect, suite, test } from '@cmmn/tools/test';
-import { cell } from '../../cell/decorators';
-import { Graph } from '../../cell/graph';
-import { Cell } from '../../cell/cell';
+import { cell } from '../../cell/decorators.ts';
+import { Graph } from '../../cell/graph.ts';
+import { Cell } from '../../cell/cell.ts';
 
 class Evalutator {
 	constructor(a: number, b: number, c: number) {

@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import { expect } from '@cmmn/tools/test';
-import { BaseCell, Cell } from '../../cell';
+import { BaseCell, Cell } from '../../cell/index.ts';
 
 describe('cell-select', () => {
 	test('object', () => {

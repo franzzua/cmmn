@@ -1,4 +1,4 @@
-import { type Component } from './component';
+import { type Component } from './component.ts';
 
 const waitForAttach = new Set<Component>();
 const waitForDetach = new Set<Component>();

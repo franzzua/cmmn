@@ -1,6 +1,6 @@
 import { ForwardRefRenderFunction, useMemo } from 'react';
 import { Cell } from '@cmmn/core';
-import {useCell} from "./useCell";
+import {useCell} from "./useCell.ts";
 
 export function celled<T, P>(
 	component: ForwardRefRenderFunction<T, P>,

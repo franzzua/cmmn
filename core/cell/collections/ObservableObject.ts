@@ -1,7 +1,7 @@
-import { compare, type DeepPartial, Fn } from '../../helpers';
-import { EventEmitter } from '../../event-emitter';
-import { BaseCell } from '../base-cell';
-import { ObservableMap } from './ObservableMap';
+import { compare, type DeepPartial, Fn } from '../../helpers/index.ts';
+import { EventEmitter } from '../../event-emitter/index.ts';
+import { BaseCell } from '../base-cell.ts';
+import { ObservableMap } from './ObservableMap.ts';
 
 @BaseCell.like()
 export class ObservableObject<T> extends EventEmitter<{

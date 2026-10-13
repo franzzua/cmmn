@@ -1,12 +1,12 @@
 import { after, afterEach, beforeEach, describe, mock, test } from 'node:test';
-import { InMemoryP2PNode } from './inMemoryP2PNode';
+import { InMemoryP2PNode } from './inMemoryP2PNode.ts';
 import { expect } from '@cmmn/tools/test';
-import {CRDT, P2PNode } from '../src';
+import {CRDT, P2PNode } from '../src/index.ts';
 import {Cell, Container, di, Fn} from '@cmmn/core';
-import { InMemoryStorage } from './inMemoryStorage';
-import {Repository} from "../src";
-import {BroadcastLoroProtocol} from "../src";
-import {StorageProvider} from "../src/crdt/storage";
+import { InMemoryStorage } from './inMemoryStorage.ts';
+import {Repository} from "../src/index.ts";
+import {BroadcastLoroProtocol} from "../src/index.ts";
+import {StorageProvider} from "../src/crdt/storage.ts";
 
 describe('local-repo', () => {
 	let contexts: Container[] = [];

@@ -1,5 +1,5 @@
 import { expect, mock, suite, test } from '@cmmn/tools/test';
-import { ObservableSet } from '../../cell';
+import { ObservableSet } from '../../cell/index.ts';
 
 @suite
 class ObservableSetSpec {

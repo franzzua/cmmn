@@ -1,9 +1,9 @@
 import {FastifyInstance, FastifyReply, FastifyRequest} from "fastify";
-import {Bundle} from "../model/bundle";
-import {PackServer} from "./pack-server";
-import {IBundler} from "../bundlers/types";
+import {Bundle} from "../model/bundle.ts";
+import {PackServer} from "./pack-server.ts";
+import {IBundler} from "../bundlers/types.ts";
 import mime from "mime-types";
-import {Pack} from "../model/pack";
+import {Pack} from "../model/pack.ts";
 
 export class BundleServer extends PackServer {
 

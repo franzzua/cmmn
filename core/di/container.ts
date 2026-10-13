@@ -1,4 +1,4 @@
-import type {ConstructorOf, Factory, InjectionToken} from './types';
+import type {ConstructorOf, Factory, InjectionToken} from './types.ts';
 
 export class Container {
 	readonly #parent: Container

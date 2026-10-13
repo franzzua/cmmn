@@ -1,5 +1,5 @@
-import { LoroMessage } from "../crdt/loro.message";
-import {LoroProtocol} from "../crdt/loroProtocol";
+import { LoroMessage } from "../crdt/loro.message.ts";
+import {LoroProtocol} from "../crdt/loroProtocol.ts";
 import {getOrAdd} from "@cmmn/core";
 
 export class BroadcastLoroProtocol extends LoroProtocol<string> implements AsyncDisposable {

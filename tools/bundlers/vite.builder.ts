@@ -1,13 +1,11 @@
-import {Target} from "../model/target";
-import {Resolver} from "../model/resolver";
+import {Target} from "../model/target.ts";
+import {Resolver} from "../model/resolver.ts";
 import {HtmlTagDescriptor, IndexHtmlTransformContext, InlineConfig, Plugin} from "vite";
 import builtinModules from "builtin-modules";
-import {wasm} from "./plugins/wasm";
-import swc from "unplugin-swc";
-import tsconfigPaths from "vite-tsconfig-paths";
+import {wasm} from "./plugins/wasm.ts";
+import {tscOutput} from "../vite/index.ts";
 import {dirname} from "node:path";
-import {swcMinifyPlugin} from "./plugins/minify";
-import {Flags} from "../model/flags";
+import {Flags} from "../model/flags.ts";
 
 export class ViteBuilder {
     constructor(protected readonly target: Target,
@@ -48,7 +46,7 @@ export class ViteBuilder {
                     ],
                 },
                 write: false,
-                minify: false,
+                minify: this.flags.minify,
                 sourcemap: this.flags.minify ? false : 'inline',
                 commonjsOptions: {
                     transformMixedEsModules: true
@@ -60,8 +58,7 @@ export class ViteBuilder {
 
     * getPlugins(): Generator<Plugin> {
         yield wasm();
-        yield swc.vite(this.target.swcConfig) as unknown as Plugin;
-        yield tsconfigPaths();
+        yield tscOutput();
         if (this.resolver) {
             yield {
                 name: this.target.packageJson.name + ':resolver',
@@ -93,8 +90,6 @@ export class ViteBuilder {
                 return result;
             },
         }
-        if (this.flags.minify)
-            yield swcMinifyPlugin();
         yield {
             name: "url-resolver",
             enforce: 'pre',
@@ -103,7 +98,7 @@ export class ViteBuilder {
                     const resolved = this.resolver?.resolveId(id.split('?')[0], importer, {
                         ...options,
                         attributes: {
-                            ...options.attributes,
+                            ...(options as {attributes?: Record<string, unknown>}).attributes,
                             resolve: true,
                         }
                     });

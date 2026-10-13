@@ -1,9 +1,9 @@
 import { describe, mock, test } from 'node:test';
-import { BroadcastTransport } from '../src/transport/broadcast.transport';
+import { BroadcastTransport } from '../src/transport/broadcast.transport.ts';
 import { di, Fn } from '@cmmn/core';
-import { Transport } from '../src/transport/transport';
+import { Transport } from '../src/transport/transport.ts';
 import { expect } from '@cmmn/tools/test';
-import { RpcClient, RpcServer } from '../src/rpc';
+import { RpcClient, RpcServer } from '../src/rpc/index.ts';
 
 describe('rpc', async () => {
 	await test('proxy', async () => {

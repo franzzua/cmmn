@@ -1,6 +1,6 @@
 import {LoroDoc, LoroText} from 'loro-crdt';
 import {BaseCell} from "@cmmn/core";
-import {extend, LoroDocExtensions} from "./extend";
+import {extend, LoroDocExtensions} from "./extend.ts";
 
 export class Text extends LoroText implements LoroDocExtensions<LoroText> {
 	protected constructor(

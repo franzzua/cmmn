@@ -1,5 +1,5 @@
-import {Cell, type ICellOptions} from './cell';
-import {BaseCell} from './base-cell';
+import {Cell, type ICellOptions} from './cell.ts';
+import {BaseCell} from './base-cell.ts';
 
 export type IAsyncCellOptions<T, TKey = T> = ICellOptions<AsyncResult<T>, TKey> & {
 	// throttle?: { time: number, leading: boolean, trailing: boolean }

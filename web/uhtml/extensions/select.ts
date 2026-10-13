@@ -1,6 +1,6 @@
 import { Cell } from '@cmmn/core';
-import { Component } from '../component/component';
-import { QuerySelectorCell } from './querySelectorCell';
+import { Component } from '../component/component.ts';
+import { QuerySelectorCell } from './querySelectorCell.ts';
 import { getOrAdd } from '@cmmn/core';
 
 export const propertySymbol = Symbol('selectors');

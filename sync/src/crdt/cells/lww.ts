@@ -1,5 +1,5 @@
 import {LoroDoc, Container} from 'loro-crdt';
-import {LWWValue} from "./types";
+import {LWWValue} from "./types.ts";
 
 export function lww<T>(doc: LoroDoc, id: string): LWWValue<T> {
 	const rootMap = doc.getMap('root');

@@ -1,4 +1,4 @@
-import {useInjectedFrom} from "./useInjected";
+import {useInjectedFrom} from "./useInjected.ts";
 import {
 	ReactNode,
 	useContext,
@@ -6,9 +6,9 @@ import {
 	useMemo,
 	Component as ReactComponent,
 } from "react";
-import {useCell} from "./useCell";
-import {Props} from "./props";
-import {DIContext} from "./di.context";
+import {useCell} from "./useCell.ts";
+import {Props} from "./props.ts";
+import {DIContext} from "./di.context.ts";
 import {Cell, di} from "@cmmn/core";
 
 

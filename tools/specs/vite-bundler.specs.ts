@@ -1,8 +1,8 @@
 import {describe, test} from "node:test";
 import {expect} from "expect";
-import {Monorepo} from "../model/monorepo";
-import {Target} from "../model/target";
-import {Flags} from "../model/flags";
+import {Monorepo} from "../model/monorepo.ts";
+import {Target} from "../model/target.ts";
+import {Flags} from "../model/flags.ts";
 
 describe('vite-bundler', async function target() {
     const flags = new Flags(['--prod']);

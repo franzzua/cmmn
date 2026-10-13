@@ -1,7 +1,7 @@
 ﻿import { FastifyInstance, HTTPMethods, fastify } from 'fastify';
-import { routes } from './decorators';
+import { routes } from './decorators.ts';
 import { Container } from '@cmmn/core';
-import { HttpError } from './http-error';
+import { HttpError } from './http-error.ts';
 
 export function registerRoutes(
 	app: FastifyInstance,

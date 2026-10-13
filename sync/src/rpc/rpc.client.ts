@@ -1,12 +1,11 @@
 import {
 	Container,
 	inject,
-	ResolvablePromise,
 	scoped,
 	uuid,
 } from '@cmmn/core';
-import {Transport} from '../transport/transport';
-import {RpcMessage, RpcService} from './types';
+import {Transport} from '../transport/transport.ts';
+import {RpcMessage, RpcService} from './types.ts';
 
 @scoped()
 export class RpcClient {
@@ -16,7 +15,7 @@ export class RpcClient {
 		rpc: RpcMessage;
 	}>;
 	private channel = this.transport.getChannel('rpc');
-	private answers: Record<string, ResolvablePromise<any>> = {};
+	private answers: Record<string, PromiseWithResolvers<any>> = {};
 
 	getProxy<T extends RpcService>(name: string): RPC<T> {
 		return new Proxy<RPC<T>>({} as RPC<T>, {
@@ -53,7 +52,7 @@ export class RpcClient {
 			method,
 			id,
 		});
-		return (this.answers[id] = new ResolvablePromise<T>());
+		return (this.answers[id] = Promise.withResolvers<T>()).promise;
 	}
 
 	static proxy<T extends RpcService>(

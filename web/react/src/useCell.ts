@@ -1,7 +1,7 @@
 import {ReactNode, useEffect, useMemo, useSyncExternalStore} from 'react';
 import {BaseCell, Cell, di, ICellOptions, InjectionToken} from '@cmmn/core';
-import {useInjectedFrom} from "./useInjected";
-import {Props} from "./props";
+import {useInjectedFrom} from "./useInjected.ts";
+import {Props} from "./props.ts";
 
 export function useCell<T>(
 	getter: (() => T) | BaseCell<T> | undefined,

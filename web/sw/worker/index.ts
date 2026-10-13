@@ -1,6 +1,6 @@
-import {AssetLoadEvent} from './sw-storage';
-import {ServiceWorkerAction} from '../src/types';
-import {ServiceWorkerCache} from "./service-worker-cache";
+import {AssetLoadEvent} from './sw-storage.ts';
+import {ServiceWorkerAction} from '../src/types.ts';
+import {ServiceWorkerCache} from "./service-worker-cache.ts";
 declare var self: ServiceWorkerGlobalScope;
 
 const cache = new ServiceWorkerCache();

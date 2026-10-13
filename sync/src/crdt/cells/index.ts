@@ -1,6 +1,6 @@
-export {counter, type Counter} from "./counter";
-export {list, type List} from "./list";
-export {map, type Map} from "./map";
-export {text, type Text} from "./text";
-export {lww} from "./lww";
-export {type Infer} from "./types";
+export {counter, type Counter} from "./counter.ts";
+export {list, type List} from "./list.ts";
+export {map, type Map} from "./map.ts";
+export {text, type Text} from "./text.ts";
+export {lww} from "./lww.ts";
+export {type Infer} from "./types.ts";

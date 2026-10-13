@@ -1,6 +1,6 @@
 import {component, Component} from "@cmmn/react";
 import {bind, resolve} from "@cmmn/core";
-import {DraggableContext} from "./draggable.context";
+import {DraggableContext} from "./draggable.context.tsx";
 import {ReactNode} from "react";
 
 @component()

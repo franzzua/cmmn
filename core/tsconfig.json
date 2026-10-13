@@ -1,11 +1,8 @@
 {
-	"extends": "@cmmn/tools/tsconfig.json",
-	"compilerOptions": {
-		"baseUrl": ".",
-		"rootDir": ".",
-		"paths": {
-			"@async-queue": ["./async-queue.ts"]
-		},
-	},
-	"exclude": ["dist", "node_modules"]
+	"extends": "../tsconfig.base.json",
+	"references": [
+		{
+			"path": "../tools"
+		}
+	]
 }

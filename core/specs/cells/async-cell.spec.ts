@@ -1,8 +1,8 @@
 import {describe, expect, test} from '@cmmn/tools/test';
-import { AsyncCell } from '../../cell/async-cell';
-import { Fn, ResolvablePromise } from '../../index';
-import { Cell } from '../../cell/cell.js';
-import { BaseCell } from '../../cell/base-cell';
+import { AsyncCell } from '../../cell/async-cell.ts';
+import { Fn } from '../../index.ts';
+import { Cell } from '../../cell/cell.ts';
+import { BaseCell } from '../../cell/base-cell.ts';
 
 @describe()
 export class AsyncCellSpec {
@@ -74,7 +74,7 @@ export class AsyncCellSpec {
 }
 
 class MockGenerator<T> {
-	private promise = new ResolvablePromise<T>();
+	private promise = Promise.withResolvers<T>();
 
 	public Next(value: T) {
 		this.promise.resolve(value);
@@ -82,9 +82,9 @@ class MockGenerator<T> {
 
 	public async *getValues() {
 		while (true) {
-			const res = await this.promise;
+			const res = await this.promise.promise;
 			yield res;
-			this.promise = new ResolvablePromise<T>();
+			this.promise = Promise.withResolvers<T>();
 		}
 	}
 }

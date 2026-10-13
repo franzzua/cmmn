@@ -4,8 +4,8 @@ import {
 	LoroMovableList
 } from 'loro-crdt';
 import {BaseCell} from "@cmmn/core";
-import {Infer, LWWValue, Scheme, Value} from "./types";
-import {extend, LoroDocExtensions} from "./extend";
+import {Infer, LWWValue, Scheme, Value} from "./types.ts";
+import {extend, LoroDocExtensions} from "./extend.ts";
 
 
 export abstract class Map<T extends Scheme> extends LoroMap<Record<string, T>>

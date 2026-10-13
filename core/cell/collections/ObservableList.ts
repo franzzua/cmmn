@@ -1,5 +1,5 @@
-import { EventEmitter } from '../../event-emitter';
-import { BaseCell } from '../base-cell';
+import { EventEmitter } from '../../event-emitter/index.ts';
+import { BaseCell } from '../base-cell.ts';
 
 
 @BaseCell.like()

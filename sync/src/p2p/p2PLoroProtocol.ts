@@ -1,6 +1,6 @@
-import {LoroMessage} from "../crdt/loro.message";
+import {LoroMessage} from "../crdt/loro.message.ts";
 import {bind, Fn} from "@cmmn/core";
-import {LoroProtocol} from "../crdt/loroProtocol";
+import {LoroProtocol} from "../crdt/loroProtocol.ts";
 import {PeerId, PubSub} from "@libp2p/interface";
 
 export class P2PLoroProtocol extends LoroProtocol implements AsyncDisposable {

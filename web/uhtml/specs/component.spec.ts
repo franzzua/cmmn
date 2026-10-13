@@ -3,7 +3,7 @@ import * as global from 'linkedom';
 import { describe, test, mock } from 'node:test';
 import * as assert from 'node:assert';
 import { bind } from '@cmmn/core';
-import {EventListener} from "../user-events/eventListener";
+import {EventListener} from "../user-events/eventListener.ts";
 
 const x = parseHTML(`<!doctype html><html lang="en"></html>`);
 Object.assign(globalThis, global);
@@ -15,7 +15,7 @@ globalThis.cancelAnimationFrame = (id) => clearTimeout(id);
 
 describe('component', async () => {
 	const { Component, component, property, html, svg } = await import(
-		'../index'
+		'../index.ts'
 	);
 
 	await test('hello-world', async () => {

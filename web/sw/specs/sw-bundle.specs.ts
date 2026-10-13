@@ -1,7 +1,7 @@
 import {describe, test} from "node:test";
 import {Flags, Monorepo} from "@cmmn/tools"
 import {expect} from "@cmmn/tools/test";
-import {BundleLoader} from "../worker/bundle-loader";
+import {BundleLoader} from "../worker/bundle-loader.ts";
 
 describe("sw-bundle", async () => {
     const monorepo = await Monorepo.load(new Flags(['--prod']));

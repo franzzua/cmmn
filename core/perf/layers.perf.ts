@@ -9,11 +9,11 @@
  *   prop4 = prev.prop3
  * Every cell is subscribed, then all 4 source cells are changed and the last layer is read.
  *
- * run: node --expose-gc --import @cmmn/tools/import core/perf/layers.perf.ts [layers...] [--runs=N]
+ * run: yarn build && yarn workspace @cmmn/core perf [layers...] [--runs=N]
  */
 import { atom, createStore, type PrimitiveAtom, type Atom } from 'jotai/vanilla';
-import { BaseCell, Cell } from '../cell';
-import { Graph } from '../cell/graph';
+import { BaseCell, Cell } from '../cell/index.ts';
+import { Graph } from '../cell/graph.ts';
 
 type Values = [number, number, number, number];
 type Report = { build: number; recalc: number; before: Values; after: Values };

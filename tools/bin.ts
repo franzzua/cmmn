@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import {Flags} from "./model/flags.js";
+import {Flags} from "./model/flags.ts";
 
 const flags = new Flags(process.argv.slice(2));
 

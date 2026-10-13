@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import { App } from './app';
+import { App } from './app.tsx';
 import {StorageProvider} from '@cmmn/sync/storage';
 import {IndexedStorage} from "@cmmn/ui";
 import {di} from "@cmmn/core";

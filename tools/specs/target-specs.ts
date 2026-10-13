@@ -1,9 +1,9 @@
 import {describe, test} from "node:test";
-import {Target} from "../model/target";
-import {Flags} from "../model/flags";
+import {Target} from "../model/target.ts";
+import {Flags} from "../model/flags.ts";
 import {expect} from "expect";
 import {fileURLToPath} from "node:url";
-import {Monorepo} from "../model/monorepo";
+import {Monorepo} from "../model/monorepo.ts";
 
 describe('target', async function target() {
     const monorepo = await Monorepo.load();

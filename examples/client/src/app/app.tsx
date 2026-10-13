@@ -1,5 +1,5 @@
 import {Component, component, ReactRouter, Scope} from "@cmmn/react";
-import {type Api, ApiToken} from "./api";
+import {type Api, ApiToken} from "./api.ts";
 import {bind, cell, inject} from "@cmmn/core";
 import type {FC} from "react";
 import {ButtonGreen as Button} from "@cmmn/examples-ui-lib/green-button";
@@ -11,7 +11,7 @@ const router = ReactRouter.fromTable({
 	},
 	counter: {
 		route: '/counter?id=:id',
-		loadFC: () => import("./counter.page").then(x => x.CounterPage as FC)
+		loadFC: () => import("./counter.page.tsx").then(x => x.CounterPage as FC)
 	}
 }, '/example/react');
 
@@ -26,8 +26,8 @@ export class App extends Component {
 
 	@bind()
 	async load(){
-		this.counters = await import('../counter');
-		this.ctrl = await import('../counter/counters.controller');
+		this.counters = await import('../counter/index.ts');
+		this.ctrl = await import('../counter/counters.controller.ts');
 	}
 
 	render() {

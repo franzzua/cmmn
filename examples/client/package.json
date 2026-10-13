@@ -4,7 +4,7 @@
 	"description": "",
 	"private": true,
 	"scripts": {
-		"bundle:prod": "cmmn bundle --prod -w ."
+		"bundle": "vite build"
 	},
 	"type": "module",
 	"exports": {
@@ -20,7 +20,6 @@
 		"@acab/ecsstatic": "^0.9.0",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
-		"@vitejs/plugin-react-swc": "3.8.0",
 		"less": "4.2.2"
 	},
 	"dependencies": {

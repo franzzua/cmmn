@@ -2,10 +2,10 @@ import {
     build,
     InlineConfig,
 } from "vite";
-import {RollupOutput} from "rollup";
-import {IBundler} from "./types";
-import {Bundle, Output} from "../model/bundle";
-import {ViteBuilder} from "./vite.builder";
+import type {RolldownOutput as RollupOutput} from "rolldown";
+import {IBundler} from "./types.ts";
+import {Bundle, Output} from "../model/bundle.ts";
+import {ViteBuilder} from "./vite.builder.ts";
 
 export class ViteBundler extends ViteBuilder implements IBundler {
 

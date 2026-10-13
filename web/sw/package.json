@@ -3,14 +3,30 @@
 	"version": "3.0.0-alpha-6",
 	"description": "",
 	"publishConfig": {
-		"access": "public"
+		"access": "public",
+		"exports": {
+			"./client": {
+				"types": "./dist/typings/client/index.d.ts",
+				"default": "./dist/bundle/client.js"
+			},
+			"./worker": {
+				"types": "./dist/typings/worker/index.d.ts",
+				"default": "./dist/bundle/worker.js"
+			}
+		}
 	},
 	"repository": {
 		"url": "https://github.com/franzzua/cmmn/tree/master/ui"
 	},
 	"exports": {
-		"./client": "./client/index.ts",
-		"./worker": "./worker/index.ts"
+		"./client": {
+			"types": "./client/index.ts",
+			"default": "./dist/esm/client/index.js"
+		},
+		"./worker": {
+			"types": "./worker/index.ts",
+			"default": "./dist/esm/worker/index.js"
+		}
 	},
 	"type": "module",
 	"devDependencies": {
@@ -20,5 +36,14 @@
 		"@cmmn/core": "workspace:~"
 	},
 	"author": "",
-	"license": "ISC"
+	"license": "ISC",
+	"files": [
+		"dist/bundle/**",
+		"dist/typings/**",
+		"!dist/typings/specs/**",
+		"!dist/typings/perf/**"
+	],
+	"scripts": {
+		"bundle": "vite build"
+	}
 }

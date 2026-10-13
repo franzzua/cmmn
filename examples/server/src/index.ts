@@ -1,7 +1,7 @@
 import { fastify } from "fastify";
 import process from "node:process";
-import "./ctrls/homeCtrl";
-import "./ctrls/authCtrl";
+import "./ctrls/homeCtrl.ts";
+import "./ctrls/authCtrl.ts";
 import {registerRoutes} from "@cmmn/server";
 import {di} from "@cmmn/core";
 

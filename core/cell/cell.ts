@@ -1,6 +1,6 @@
-import {BaseCell, Subscriber} from './base-cell';
-import {Fn} from "../helpers";
-import {EventEmitter, EventEmitterBase} from "../event-emitter";
+import {BaseCell, Subscriber} from './base-cell.ts';
+import {Fn} from "../helpers/index.ts";
+import {EventEmitter, EventEmitterBase} from "../event-emitter/index.ts";
 
 export type ICellOptions<T, TKey = T> = {
 	compare?: (a: TKey, b: TKey) => boolean;
@@ -147,16 +147,16 @@ class EventCell<T> extends BaseCell<T> {
 		super(null);
 	}
 
-	private unsubscriber: () => void;
+	private eventUnsubscriber: () => void;
 
 	active() {
-		this.unsubscriber = this.subscriber.subscribe((e) => this.set(e));
+		this.eventUnsubscriber = this.subscriber.subscribe((e) => this.set(e));
 		super.active();
 	}
 
 	protected disactive() {
 		super.disactive();
-		this.unsubscriber?.();
+		this.eventUnsubscriber?.();
 		this.value = null;
 	}
 }

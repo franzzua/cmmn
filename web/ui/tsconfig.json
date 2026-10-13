@@ -1,8 +1,16 @@
 {
-	"extends": "@cmmn/tools/tsconfig.json",
+	"extends": "../../tsconfig.base.json",
 	"compilerOptions": {
-		"baseUrl": ".",
-		"lib": ["DOM"]
+		"lib": [
+			"DOM"
+		]
 	},
-	"exclude": ["dist", "node_modules"]
+	"references": [
+		{
+			"path": "../../core"
+		},
+		{
+			"path": "../../sync"
+		}
+	]
 }

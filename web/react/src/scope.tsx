@@ -1,6 +1,6 @@
 import {InjectionToken} from "@cmmn/core";
 import {ReactNode, useContext, useMemo} from "react";
-import {DIContext} from "./di.context";
+import {DIContext} from "./di.context.ts";
 
 export type InjectionParams<T> = T extends InjectionToken<unknown, infer TArgs> ? (
 	TArgs extends [] ? T : [T, ...TArgs]

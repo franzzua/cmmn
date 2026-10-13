@@ -16,14 +16,12 @@
 		}
 	},
 	"scripts": {
-		"init": "yarn && cd tools && yarn run compile && cd .. && yarn",
-		"compile": "cmmn compile --watch",
-		"bundle": "cmmn bundle --watch",
-		"bundle:prod": "cmmn bundle --prod",
-		"typings": "cmmn typings --watch",
-		"prod": "cmmn bundle --prod",
-		"ci2": "cmmn compile && cmmn bundle && cmmn bundle --prod --minify",
-		"test": "node --test --import @cmmn/tools/import **/*.spec.ts",
+		"init": "yarn && yarn build",
+		"build": "tsc -b",
+		"compile": "tsc -b --watch",
+		"bundle": "tsc -b && yarn workspaces foreach -A -t run bundle",
+		"test": "tsc -b && node --test --test-timeout=20000 --test-force-exit \"**/dist/esm/**/*.spec.js\"",
+		"release": "yarn bundle && yarn workspaces foreach -A --no-private npm publish --tolerate-republish",
 		"publish": "wersion patch",
 		"dev": "cmmn dev",
 		"dev:prod": "cmmn dev --prod --minify"
@@ -41,8 +39,9 @@
 	"files": [],
 	"devDependencies": {
 		"@cmmn/tools": "workspace:~",
-		"typescript": "5.8.3"
+		"typescript": "7.0.2",
+		"vite": "8.3.4"
 	},
-	"packageManager": "yarn@4.5.1",
+	"packageManager": "yarn@4.18.1",
 	"stableVersion": "3.0.0-alpha-2"
 }

@@ -1,5 +1,5 @@
 import {describe, test} from "node:test";
-import {IMovableList, updateMovableList} from "../src/crdt/update-movable-list";
+import {IMovableList, updateMovableList} from "../src/crdt/update-movable-list.ts";
 import {expect} from "@cmmn/tools/test";
 
 describe('movable-list', () => {

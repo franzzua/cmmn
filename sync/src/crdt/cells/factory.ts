@@ -1,4 +1,4 @@
-import {Scheme, Infer} from "./types";
+import {Scheme, Infer} from "./types.ts";
 import {LoroDoc} from 'loro-crdt';
 
 export function factory<Model extends Scheme>(doc: LoroDoc, shape: Model, path = []): Infer<Model> {

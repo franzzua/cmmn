@@ -1,8 +1,8 @@
 import {LoroDoc, Subscription, VersionVector} from 'loro-crdt';
-import {LoroMessageType} from './loro.message';
+import {LoroMessageType} from './loro.message.ts';
 import {cell, Fn, ObservableSet} from "@cmmn/core";
-import {Cryptor} from "./cryptor";
-import {LoroProtocol} from "./loroProtocol";
+import {Cryptor} from "./cryptor.ts";
+import {LoroProtocol} from "./loroProtocol.ts";
 
 export class LoroRoom {
 

@@ -1,12 +1,12 @@
-import {Flags} from "../model/flags";
+import {Flags} from "../model/flags.ts";
 import {dirname, join} from "node:path";
 import {cp, mkdir, writeFile, link, rm} from "node:fs/promises";
-import {Monorepo} from "../model/monorepo";
-import {Target} from "../model/target";
+import {Monorepo} from "../model/monorepo.ts";
+import {Target} from "../model/target.ts";
 import {gzipSync, brotliCompressSync} from "node:zlib";
-import {Pack} from "../model/pack";
-import {Bundle} from "../model/bundle";
-import {Terminal} from "../helpers/terminal";
+import {Pack} from "../model/pack.ts";
+import {Bundle} from "../model/bundle.ts";
+import {Terminal} from "../helpers/terminal.js";
 
 export async function bundle(flags: Flags) {
     if (flags.deploy)

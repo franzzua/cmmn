@@ -22,9 +22,10 @@ The framework is organized into several workspaces:
 - **[`web`](./web)**: Web-specific packages.
   - `uhtml`: UI rendering and component base.
   - `ui`: UI components and helpers.
-- **[`tools`](./tools/readme.md)**: CLI and build tools.
-  - `cmmn compile`: SWC compiler wrapper.
-  - `cmmn bundle`: Vite-based bundler.
+- **[`tools`](./tools/readme.md)**: build helpers.
+  - `@cmmn/tools/vite`: Vite 8 configs for libraries and apps.
+  - `@cmmn/tools/test`: decorators for `node:test` specs.
+  - `cmmn dev`: development server.
 - **[`server`](./server)**: Server-side components and utilities.
 - **[`sync`](./sync)**: Synchronization primitives.
 
@@ -40,11 +41,16 @@ yarn install
 
 The root `package.json` provides several scripts to help you work with the project:
 
-- **`yarn init`**: Initialize the project (install dependencies, compile tools).
+TypeScript 7 (`tsc -b`) compiles every package to `dist/esm` with typings in `dist/typings`;
+Vite 8 bundles libraries and apps from that output into `dist/bundle`.
+
+- **`yarn init`**: Install dependencies and build everything.
+- **`yarn build`**: Typecheck and compile all packages (`tsc -b`).
+- **`yarn compile`**: The same in watch mode.
+- **`yarn bundle`**: Build, then bundle every package with a `bundle` script (`vite build`).
+- **`yarn test`**: Build, then run specs from `dist/esm` with `node --test`.
+- **`yarn release`**: Bundle and publish public packages.
 - **`yarn dev`**: Start the development server.
-- **`yarn compile`**: Run the compiler in watch mode.
-- **`yarn bundle`**: Run the bundler in watch mode.
-- **`yarn test`**: Run tests.
 
 ## Documentation
 

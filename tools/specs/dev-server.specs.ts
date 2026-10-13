@@ -1,6 +1,6 @@
 import {describe, test} from "node:test";
-import {Target} from "../model/target";
-import {Flags} from "../model/flags";
+import {Target} from "../model/target.ts";
+import {Flags} from "../model/flags.ts";
 import {expect} from "expect";
 import {DevServer} from "../dev-server/dev-server";
 import {BundleJson, TargetWebServer} from "../dev-server/target-web-server";

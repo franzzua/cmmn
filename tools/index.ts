@@ -1,6 +1,6 @@
-import { Monorepo } from "./model/monorepo";
-import type { BundleJson, Asset } from "./model/bundle";
-import { Flags } from "./model/flags";
+import { Monorepo } from "./model/monorepo.ts";
+import type { BundleJson, Asset } from "./model/bundle.ts";
+import { Flags } from "./model/flags.ts";
 
 export {
     Monorepo, Flags,

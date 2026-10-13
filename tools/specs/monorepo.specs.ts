@@ -1,7 +1,7 @@
 import {describe, test} from "node:test";
-import {Monorepo} from "../model/monorepo";
+import {Monorepo} from "../model/monorepo.ts";
 import {expect} from "expect";
-import {Flags} from "../model/flags";
+import {Flags} from "../model/flags.ts";
 
 describe('monorepo', async () => {
     const flags = new Flags(['--prod']);

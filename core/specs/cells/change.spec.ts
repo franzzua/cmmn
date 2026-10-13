@@ -1,6 +1,6 @@
 import { expect, suite, mock, test } from '@cmmn/tools/test';
-import { BaseCell } from '../../cell/base-cell.js';
-import { Graph } from '../../cell/graph';
+import { BaseCell } from '../../cell/base-cell.ts';
+import { Graph } from '../../cell/graph.ts';
 
 @suite
 class ChangeSpec {

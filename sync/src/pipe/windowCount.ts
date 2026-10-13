@@ -1,4 +1,4 @@
-import { Operator } from './index';
+import { Operator } from './index.ts';
 
 export function windowCount<T>(count: number): Operator<T, T[]> {
 	return async function* buffer(gen) {

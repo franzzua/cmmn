@@ -1,5 +1,5 @@
-import { BaseCell } from './base-cell';
-import { Cell } from './cell';
+import { BaseCell } from './base-cell.ts';
+import { Cell } from './cell.ts';
 
 const ArrayWriteKeys: Array<
 	Exclude<keyof Array<never>, keyof ReadonlyArray<never>>

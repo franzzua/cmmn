@@ -1,7 +1,7 @@
 import { EventEmitter, inject } from '@cmmn/core';
-import { Transport } from '../transport/transport';
+import { Transport } from '../transport/transport.ts';
 import { LoroDoc, LoroList } from 'loro-crdt';
-import { Team } from './team';
+import { Team } from './team.ts';
 
 export class Queue<T> extends EventEmitter<{
 	push: T;

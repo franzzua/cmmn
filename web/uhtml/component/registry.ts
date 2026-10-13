@@ -1,5 +1,5 @@
-import {Component} from "./component";
-import {IComponentOptions, toSnake} from "./decorators";
+import {Component} from "./component.ts";
+import {IComponentOptions, toSnake} from "./decorators.ts";
 import {InjectionToken} from "@cmmn/core";
 
 export class ComponentRegistry {

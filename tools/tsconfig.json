@@ -1,14 +1,12 @@
 {
-  "extends": "@cmmn/tools/tsconfig.json",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "allowJs": true
-  },
-  "exclude": [
-    "node_modules",
-    "dist",
-    "node",
-    "helpers/tsconfig.json",
-    ".swcrc"
-  ]
+	"extends": "../tsconfig.base.json",
+	"compilerOptions": {
+		"allowJs": true
+	},
+	"exclude": [
+		"${configDir}/dist",
+		"${configDir}/node_modules",
+		"${configDir}/node",
+		"${configDir}/specs"
+	]
 }

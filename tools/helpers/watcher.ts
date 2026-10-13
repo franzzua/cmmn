@@ -1,8 +1,8 @@
-import {Target} from "../model/target";
+import {Target} from "../model/target.ts";
 import events from "node:events";
 import {watch} from "node:fs/promises"
 import {throttle} from "throttle-debounce";
-import {FileChangeEvent} from "../model/pack";
+import {FileChangeEvent} from "../model/pack.ts";
 
 export class Watcher {
 	abort = new AbortController();

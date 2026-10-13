@@ -7,33 +7,59 @@
 		"url": "https://github.com/franzzua/cmmn/tree/master/tools"
 	},
 	"publishConfig": {
-		"access": "public"
+		"access": "public",
+		"exports": {
+			".": {
+				"types": "./dist/typings/index.d.ts",
+				"default": "./dist/esm/index.js"
+			},
+			"./import-dev": "./node/register-dev.js",
+			"./test": {
+				"types": "./dist/typings/test/test.d.ts",
+				"default": "./dist/esm/test/test.js"
+			},
+			"./vite": {
+				"types": "./dist/typings/vite/index.d.ts",
+				"default": "./dist/esm/vite/index.js"
+			},
+			"./vite/client": {
+				"types": "./vite/client.d.ts"
+			}
+		}
 	},
 	"bin": {
 		"cmmn": "dist/esm/bin.js"
 	},
 	"scripts": {
-		"compile": "node --import @cmmn/tools/import ./bin.ts compile -w .",
-		"compile:watch": "node --import @cmmn/tools/import ./bin.ts compile --watch -w .",
-		"dev": "cd .. && node --import @cmmn/tools/import ./tools/bin.ts dev --watch",
-		"dev:prod": "cd .. && node --import @cmmn/tools/import ./tools/bin.ts dev --prod"
+		"dev": "cd .. && node ./tools/dist/esm/bin.js dev --watch",
+		"dev:prod": "cd .. && node ./tools/dist/esm/bin.js dev --prod"
 	},
 	"exports": {
-		".": "./index.ts",
-		"./tsconfig.json": "./helpers/tsconfig.json",
-		"./import": "./node/register.js",
+		".": {
+			"types": "./index.ts",
+			"default": "./dist/esm/index.js"
+		},
 		"./import-dev": "./node/register-dev.js",
-		"./test": "./test/test.ts",
-		"./swcrc": "./.swcrc"
+		"./test": {
+			"types": "./test/test.ts",
+			"default": "./dist/esm/test/test.js"
+		},
+		"./vite": {
+			"types": "./vite/index.ts",
+			"default": "./dist/esm/vite/index.js"
+		},
+		"./vite/client": {
+			"types": "./vite/client.d.ts"
+		}
 	},
 	"config": {
 		"server": true
 	},
 	"files": [
-		"dist",
+		"dist/esm/**",
+		"dist/typings/**",
 		"node",
-		".swcrc",
-		"tsconfig.json"
+		"vite/client.d.ts"
 	],
 	"dependencies": {
 		"@biomejs/biome": "1.9.4",
@@ -43,12 +69,8 @@
 		"@manypkg/get-packages": "^2.2.2",
 		"@rollup/plugin-wasm": "6.2.2",
 		"@schemastore/package": "0.0.10",
-		"@swc/core": "1.13.5",
-		"@swc/helpers": "0.5.17",
-		"@swc-node/register": "1.11.1",
 		"@types/node": "22.18.9",
 		"@yarn-tool/resolve-package": "^2.0.12",
-		"@zerollup/ts-helpers": "1.7.18",
 		"builtin-modules": "^5.0.0",
 		"expect": "^29.7.0",
 		"fast-glob": "^3.3.3",
@@ -56,24 +78,17 @@
 		"http-proxy-middleware": "3.0.5",
 		"mime-types": "2.1.35",
 		"minimatch": "10.0.3",
-		"rolldown": "1.0.0-beta.42",
+		"rolldown": "1.2.13",
 		"terminal-kit": "^3.1.2",
 		"throttle-debounce": "5.0.2",
-		"typescript": "5.8.3",
 		"unplugin": "^2.1.2",
-		"unplugin-swc": "^1.5.1",
-		"vite": "7.1.9",
-		"vite-tsconfig-paths": "^5.1.4"
+		"vite": "8.3.4"
 	},
 	"author": "",
 	"license": "ISC",
 	"gitHead": "2755b333808bf97f1d9454601c2a2c9a88e4a021",
 	"stableVersion": "3.0.0-alpha-2",
 	"devDependencies": {
-		"@swc-node/register": "1.10.9",
 		"vite-bundle-analyzer": "^1.2.3"
-	},
-	"peerDependencies": {
-		"@swc-node/register": "*"
 	}
 }

@@ -1,7 +1,7 @@
-export { Cell, type ICellOptions, eventTargetSubscriber } from './cell';
-export { BaseCell, type Subscriber } from './base-cell';
-export { ObservableMap } from './collections/ObservableMap';
-export { ObservableList } from './collections/ObservableList';
-export { ObservableObject } from './collections/ObservableObject';
-export { ObservableSet } from './collections/ObservableSet';
-export { AsyncCell, type IAsyncCellOptions, type AsyncResult, type AsyncResultWrapper } from './async-cell';
+export { Cell, type ICellOptions, eventTargetSubscriber } from './cell.ts';
+export { BaseCell, type Subscriber } from './base-cell.ts';
+export { ObservableMap } from './collections/ObservableMap.ts';
+export { ObservableList } from './collections/ObservableList.ts';
+export { ObservableObject } from './collections/ObservableObject.ts';
+export { ObservableSet } from './collections/ObservableSet.ts';
+export { AsyncCell, type IAsyncCellOptions, type AsyncResult, type AsyncResultWrapper } from './async-cell.ts';

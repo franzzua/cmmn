@@ -1,6 +1,6 @@
-import { EventEmitter } from '../../event-emitter';
-import { BaseCell } from '../base-cell';
-import { ObservableSet } from './ObservableSet';
+import { EventEmitter } from '../../event-emitter/index.ts';
+import { BaseCell } from '../base-cell.ts';
+import { ObservableSet } from './ObservableSet.ts';
 
 @BaseCell.like()
 export class ObservableMap<K, V> extends Map<K, V> {

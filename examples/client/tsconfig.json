@@ -1,24 +1,52 @@
 {
-  "extends": "@cmmn/tools/tsconfig.json",
-  "compilerOptions": {
-    "lib": [
-      "dom",
-      "es2015.collection",
-      "esnext"
-    ],
-    "baseUrl": "./src",
-    "jsx": "react-jsx",
-    "jsxImportSource": "@cmmn/react"
-  },
-  "include": [
-    "**/*.tsx",
-    "**/*.ts",
-    "**/*.svg",
-    "**/*.less",
-    "**/*.html"
-  ],
-  "exclude": [
-    "dist",
-    "node_modules"
-  ]
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		"lib": [
+			"dom",
+			"es2015.collection",
+			"esnext"
+		],
+		"jsx": "react-jsx",
+		"jsxImportSource": "@cmmn/react",
+		"types": [
+			"vite/client",
+			"node",
+			"@cmmn/tools/vite/client"
+		]
+	},
+	"references": [
+		{
+			"path": "../../core"
+		},
+		{
+			"path": "../common"
+		},
+		{
+			"path": "../model"
+		},
+		{
+			"path": "../server"
+		},
+		{
+			"path": "../ui-lib"
+		},
+		{
+			"path": "../../web/react"
+		},
+		{
+			"path": "../../web/sw"
+		},
+		{
+			"path": "../../sync"
+		},
+		{
+			"path": "../../tools"
+		},
+		{
+			"path": "../../web/uhtml"
+		},
+		{
+			"path": "../../web/ui"
+		}
+	]
 }

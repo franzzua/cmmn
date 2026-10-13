@@ -1,5 +1,5 @@
 import {FastifyInstance, FastifyReply, FastifyRequest} from "fastify";
-import {Pack} from "../model/pack";
+import {Pack} from "../model/pack.ts";
 import mime from "mime-types";
 
 export abstract class PackServer {

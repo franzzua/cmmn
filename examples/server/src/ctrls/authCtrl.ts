@@ -2,8 +2,8 @@ import {ctrl, get} from "@cmmn/server";
 import {subtle} from "node:crypto";
 import process from "node:process";
 import fs from "node:fs/promises";
-import {KeyProvider} from "../key-provider";
-import {KeyStorage} from "../services/key-storage";
+import {KeyProvider} from "../key-provider.ts";
+import {KeyStorage} from "../services/key-storage.ts";
 
 
 const masterkey = 'MASTER_KEY';

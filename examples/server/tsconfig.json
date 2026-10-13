@@ -1,20 +1,27 @@
 {
-  "extends": "@cmmn/tools/tsconfig.json",
-  "compilerOptions": {
-    "lib": [
-      "dom",
-      "es2015.collection",
-      "esnext"
-    ],
-    "baseUrl": "./src",
-    "jsx": "react-jsx"
-  },
-  "include": [
-    "**/*.ts"
-  ],
-  "exclude": [
-    "dist",
-    "node_modules",
-    ".env"
-  ]
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		"lib": [
+			"dom",
+			"es2015.collection",
+			"esnext"
+		],
+		"jsx": "react-jsx"
+	},
+	"exclude": [
+		"${configDir}/dist",
+		"${configDir}/node_modules",
+		"${configDir}/.env"
+	],
+	"references": [
+		{
+			"path": "../../core"
+		},
+		{
+			"path": "../common"
+		},
+		{
+			"path": "../../server"
+		}
+	]
 }

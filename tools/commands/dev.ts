@@ -1,10 +1,10 @@
 import {fastify} from "fastify";
 import {fastifyCaching} from "@fastify/caching";
-import {Flags} from "../model/flags";
-import {fastifyCompress} from "../helpers/fastify-compress";
-import {Monorepo} from "../model/monorepo";
-import {DevServer} from "../servers/dev-server";
-import {Pack} from "../model/pack";
+import {Flags} from "../model/flags.ts";
+import {fastifyCompress} from "../helpers/fastify-compress.ts";
+import {Monorepo} from "../model/monorepo.ts";
+import {DevServer} from "../servers/dev-server.ts";
+import {Pack} from "../model/pack.ts";
 
 export async function dev(flags: Flags) {
     flags.deploy = true;

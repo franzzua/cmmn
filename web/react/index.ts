@@ -1,9 +1,9 @@
-export {useCell, useCelled} from './src/useCell';
-export {useInjected} from './src/useInjected';
-export {component, effect} from "./src/component";
-export {Component} from "./src/component";
-export {Scope} from "./src/scope";
-export {ReactRouter, type ReactRouteData} from "./src/react.router";
+export {useCell, useCelled} from './src/useCell.ts';
+export {useInjected} from './src/useInjected.ts';
+export {component, effect} from "./src/component.tsx";
+export {Component} from "./src/component.tsx";
+export {Scope} from "./src/scope.tsx";
+export {ReactRouter, type ReactRouteData} from "./src/react.router.tsx";
 export function cn(...args: Array<string | Record<string, any>>) {
 	return [...cnGenerator(args)].join(' ');
 }

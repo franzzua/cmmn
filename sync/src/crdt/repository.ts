@@ -1,8 +1,8 @@
-import {LoroDocCell} from './cells/loro-doc-cell';
+import {LoroDocCell} from './cells/loro-doc-cell.ts';
 import {type Storage, StorageProvider} from '@cmmn/sync/storage';
-import {LoroRoom} from "./loroRoom";
-import {Cryptor} from "./cryptor";
-import {LoroProtocol} from "./loroProtocol";
+import {LoroRoom} from "./loroRoom.ts";
+import {Cryptor} from "./cryptor.ts";
+import {LoroProtocol} from "./loroProtocol.ts";
 import {resolve} from "@cmmn/core";
 
 export class Repository implements AsyncDisposable {

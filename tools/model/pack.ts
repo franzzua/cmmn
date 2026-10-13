@@ -1,6 +1,6 @@
 import {JSONSchemaForNPMPackageJsonFiles} from "@schemastore/package";
 import {dirname, join, resolve} from "node:path";
-import {Flags} from "./flags";
+import {Flags} from "./flags.ts";
 import terminalKit from "terminal-kit";
 import {readFile, stat} from "node:fs/promises";
 
@@ -142,7 +142,7 @@ export class Pack extends EventTarget {
         return `${entryName}.${outExt}`;
     }
 
-    private static ImportPrefix: string = '/_/';
+    static ImportPrefix: string = '/_/';
 
     get publicPath(): string {
         return `${Pack.ImportPrefix}${this.name}`;

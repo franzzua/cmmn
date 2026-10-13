@@ -1,7 +1,7 @@
 import { expect, suite, test } from '@cmmn/tools/test';
-import { cell } from '../../cell/decorators.js';
-import { Cell } from '../../cell/cell.js';
-import { compare } from '../../helpers';
+import { cell } from '../../cell/decorators.ts';
+import { Cell } from '../../cell/cell.ts';
+import { compare } from '../../helpers/index.ts';
 
 function Throw(fn: Function, message: string) {
 	try {

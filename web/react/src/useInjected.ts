@@ -1,6 +1,6 @@
 import {Container, type InjectionToken} from "@cmmn/core";
 import {useMemo, useEffect, useContext} from "react";
-import {DIContext} from "./di.context";
+import {DIContext} from "./di.context.ts";
 
 export function useInjected<T, TArgs extends unknown[] = []>(token: InjectionToken<T, TArgs>, deps: TArgs = [] as TArgs): T {
 	const di = useContext(DIContext);

@@ -1,7 +1,7 @@
 import { bind, Container, inject, scoped } from '@cmmn/core';
-import { RPC } from '../rpc';
-import { Team } from './team';
-import { Queue } from './queue';
+import { RPC } from '../rpc/index.ts';
+import { Team } from './team.ts';
+import { Queue } from './queue.ts';
 
 @scoped()
 export class Broker {

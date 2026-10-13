@@ -1,11 +1,11 @@
 import {Cell, Fn} from '@cmmn/core';
 import { describe, test, mock } from 'node:test';
 import { expect } from '@cmmn/tools/test';
-import { InMemoryP2PNode } from './inMemoryP2PNode';
-import {CRDT, LoroDocCell} from "../src";
+import { InMemoryP2PNode } from './inMemoryP2PNode.ts';
+import {CRDT, LoroDocCell} from "../src/index.ts";
 import {LoroCounter} from "loro-crdt";
-import {Counter, List} from "../src/crdt/cells";
-import {Infer} from "../src/crdt/cells/types";
+import {Counter, List} from "../src/crdt/cells/index.ts";
+import {Infer} from "../src/crdt/cells/types.ts";
 
 describe('crdt', () => {
 	test('text', async function text() {

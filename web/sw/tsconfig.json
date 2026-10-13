@@ -1,8 +1,17 @@
 {
-	"extends": "@cmmn/tools/tsconfig.json",
+	"extends": "../../tsconfig.base.json",
 	"compilerOptions": {
-		"baseUrl": ".",
-		"lib": ["dom", "webworker"]
+		"lib": [
+			"dom",
+			"webworker"
+		]
 	},
-	"exclude": ["dist", "node_modules"]
+	"references": [
+		{
+			"path": "../../core"
+		},
+		{
+			"path": "../../tools"
+		}
+	]
 }

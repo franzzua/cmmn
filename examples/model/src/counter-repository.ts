@@ -43,7 +43,7 @@ export class SymmetricCryptor implements Cryptor {
 		return crypto.subtle.encrypt({
 			...algo,
 			iv
-		}, key, data)
+		}, key, data as Uint8Array<ArrayBuffer>)
 			.then(x => {
 				const result = new Uint8Array(x.byteLength + this.ivLength);
 				result.set(iv);
@@ -57,8 +57,8 @@ export class SymmetricCryptor implements Cryptor {
 
 	async decrypt(data: Uint8Array) {
 		const {key, algo} = await this.key;
-		const iv = new Uint8Array(data.buffer, 0, this.ivLength);
-		const encrypted = new Uint8Array(data.buffer, this.ivLength);
+		const iv = new Uint8Array(data.buffer as ArrayBuffer, 0, this.ivLength);
+		const encrypted = new Uint8Array(data.buffer as ArrayBuffer, this.ivLength);
 		return crypto.subtle.decrypt({ ...algo, iv }, key, encrypted).then(x => {
 			return new Uint8Array(x);
 		}).catch((e) => {
@@ -78,7 +78,7 @@ export class RSACryptor implements Cryptor {
 
 	async encrypt(data: Uint8Array) {
 		const {publicKey} = await this.key;
-		return crypto.subtle.encrypt(this.algo, publicKey, data)
+		return crypto.subtle.encrypt(this.algo, publicKey, data as Uint8Array<ArrayBuffer>)
 			.then(x => {
 				return new Uint8Array(x);
 			}).catch((e) => {
@@ -89,7 +89,7 @@ export class RSACryptor implements Cryptor {
 
 	async decrypt(data: Uint8Array) {
 		const {privateKey} = await this.key;
-		return crypto.subtle.decrypt(this.algo, privateKey, data).then(x => {
+		return crypto.subtle.decrypt(this.algo, privateKey, data as Uint8Array<ArrayBuffer>).then(x => {
 			return new Uint8Array(x);
 		}).catch((e) => {
 			console.error('Decrypt error:', e);

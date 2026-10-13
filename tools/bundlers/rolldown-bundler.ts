@@ -1,15 +1,14 @@
 import {crc32} from "node:zlib";
 import fs from "node:fs/promises";
-import {wasm} from "./plugins/wasm";
-import {swcMinifyPlugin} from "./plugins/minify";
+import {wasm} from "./plugins/wasm.ts";
 import path, {join} from "node:path";
-import {Bundle, Output} from "../model/bundle";
-import {Entry, Pack} from "../model/pack";
-import {Resolver} from "../model/resolver";
-import {Flags} from "../model/flags";
+import {Bundle, Output} from "../model/bundle.ts";
+import {Entry, Pack} from "../model/pack.ts";
+import {Resolver} from "../model/resolver.ts";
+import {Flags} from "../model/flags.ts";
 import {BuildOptions} from "rolldown";
-import {esmExternalRequirePlugin} from "rolldown/experimental";
-import {IBundler} from "./types";
+import {esmExternalRequirePlugin} from "rolldown/plugins";
+import {IBundler} from "./types.ts";
 import {Plugin} from "rolldown";
 export class RolldownBundler implements IBundler{
     constructor(private pack: Pack,
@@ -65,11 +64,14 @@ export class RolldownBundler implements IBundler{
             write: false,
             output: {
                 format: 'esm',
+                minify: this.flags.minify,
                 // chunkFileNames: chunk =>  '@_/' + chunk.name + '.js',
                 // assetFileNames: asset =>  '@_/' + asset.name + '.js',
             },
-            define: {
-                'process.env.NODE_ENV': this.flags.production ? '"production"' : '"development"'
+            transform: {
+                define: {
+                    'process.env.NODE_ENV': this.flags.production ? '"production"' : '"development"'
+                },
             },
             experimental: {},
             platform: 'browser',
@@ -118,8 +120,6 @@ export class RolldownBundler implements IBundler{
         yield esmExternalRequirePlugin({
             external: this.resolver.getPackNames().filter(x => x !== this.pack.name),
         });
-        if (this.flags.minify)
-            yield swcMinifyPlugin() as any;
     }
 
     async bundle(): Promise<Bundle> {

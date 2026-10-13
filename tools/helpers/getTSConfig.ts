@@ -1,24 +1,44 @@
-import ts, {CompilerOptions} from "typescript";
+import fs from "node:fs";
 import path from "node:path";
 import {fileURLToPath} from "node:url";
 
-export function getTSConfig(configPath: string) {
-	const result = ts.readConfigFile(configPath, ts.sys.readFile);
-	if (result.error) {
+/** tsconfig is JSON with comments and trailing commas */
+function readConfigFile(configPath: string) {
+	if (!fs.existsSync(configPath)) return null;
+	const text = fs.readFileSync(configPath, 'utf-8')
+		.replace(/("(?:\\.|[^"\\])*")|\/\/[^\n]*|\/\*[\s\S]*?\*\//g, (_, str) => str ?? '')
+		.replace(/,(\s*[}\]])/g, '$1');
+	try {
+		return JSON.parse(text);
+	} catch {
 		return null;
 	}
-	if (result.config.extends){
-		const extended = getTSConfig(path.resolve(path.dirname(configPath), result.config.extends)) ??
-			getTSConfig(fileURLToPath(import.meta.resolve(result.config.extends)));
-		const merged = merge([extended, result.config]);
-		return  merged;
+}
+
+export function getTSConfig(configPath: string) {
+	const config = readConfigFile(configPath);
+	if (!config) {
+		return null;
 	}
-	return result.config;
+	if (config.extends){
+		const extended = getTSConfig(path.resolve(path.dirname(configPath), config.extends)) ??
+			getTSConfig(fileURLToPath(import.meta.resolve(config.extends)));
+		return withoutConfigDir(merge([extended, config]));
+	}
+	return withoutConfigDir(config);
+}
+
+// include/exclude are used relative to the package dir
+function withoutConfigDir(config) {
+	for (const key of ['include', 'exclude']) {
+		config[key] = config[key]?.map((x: string) => x.replace(/^\$\{configDir\}\/?/, ''));
+	}
+	return config;
 }
 
 export type TypescriptConfig = {
 	extends?: string;
-	compilerOptions?: CompilerOptions;
+	compilerOptions?: Record<string, any>;
 	exclude?: string[];
 	include?: string[];
 	references?: Array<{ path: string; }>

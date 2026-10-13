@@ -1,8 +1,8 @@
 import {component, Component} from "@cmmn/react";
 import {resolve} from "@cmmn/core";
 import {Button} from "@cmmn/examples-ui-lib/button";
-import {Counter} from "./counter";
-import {CountersController} from "./counters.controller";
+import {Counter} from "./counter.tsx";
+import {CountersController} from "./counters.controller.ts";
 
 @component()
 export class Counters extends Component {

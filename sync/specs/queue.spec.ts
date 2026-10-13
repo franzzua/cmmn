@@ -1,10 +1,10 @@
 import { describe, test } from 'node:test';
-import { BroadcastTransport } from '../src/transport/broadcast.transport';
+import { BroadcastTransport } from '../src/transport/broadcast.transport.ts';
 import { di, Fn } from '@cmmn/core';
-import { Transport } from '../src/transport/transport';
+import { Transport } from '../src/transport/transport.ts';
 import { expect } from '@cmmn/tools/test';
-import { Team } from '../src/queue/team';
-import { Broker } from '../src/queue/broker';
+import { Team } from '../src/queue/team.ts';
+import { Broker } from '../src/queue/broker.ts';
 
 describe('queue', async () => {
 	await test('two', async () => {

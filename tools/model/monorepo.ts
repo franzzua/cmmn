@@ -1,11 +1,11 @@
 import {getPackages, Packages} from "@manypkg/get-packages";
 import {JSONSchemaForNPMPackageJsonFiles} from "@schemastore/package";
-import {Pack} from "./pack";
-import {Target} from "./target";
-import {Resolver} from "./resolver";
-import {Flags} from "./flags";
-import {ViteBundler} from "../bundlers/vite.bundler";
-import {RolldownBundler} from "../bundlers/rolldown-bundler";
+import {Pack} from "./pack.ts";
+import {Target} from "./target.ts";
+import {Resolver} from "./resolver.ts";
+import {Flags} from "./flags.ts";
+import {ViteBundler} from "../bundlers/vite.bundler.ts";
+import {RolldownBundler} from "../bundlers/rolldown-bundler.ts";
 
 export class Monorepo {
     public static async load(flags: Flags = new Flags([]), rootDir: string = process.cwd()): Promise<Monorepo> {

@@ -1,10 +1,10 @@
 import { after, afterEach, beforeEach, describe, mock, test } from 'node:test';
-import { InMemoryP2PNode } from './inMemoryP2PNode';
+import { InMemoryP2PNode } from './inMemoryP2PNode.ts';
 import { expect } from '@cmmn/tools/test';
-import {CRDT, P2PNode } from '../src';
+import {CRDT, P2PNode } from '../src/index.ts';
 import {Cell, Container, di, Fn} from '@cmmn/core';
-import { P2PRepository } from '../src';
-import { InMemoryStorage } from './inMemoryStorage';
+import { P2PRepository } from '../src/index.ts';
+import { InMemoryStorage } from './inMemoryStorage.ts';
 import {StorageProvider} from "@cmmn/sync/storage";
 
 describe('p2p-repo', () => {

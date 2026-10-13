@@ -1,6 +1,6 @@
 import { expect, mock, suite, test } from '@cmmn/tools/test';
-import { Cell } from '../../cell';
-import {cell} from "../../cell/decorators";
+import { Cell } from '../../cell/index.ts';
+import {cell} from "../../cell/decorators.ts";
 
 class TestObject {
 	@cell()

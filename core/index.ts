@@ -1,10 +1,11 @@
+import './helpers/symbol-metadata.ts';
+
 export {
 	minVal,
 	orderBy,
 	remove,
 	removeAll,
 	sum,
-	ResolvablePromise,
 	maxVal,
 	groupBy,
 	distinct,
@@ -22,7 +23,7 @@ export {
 	Lazy,
 	uuid,
 	pipe,
-} from './helpers';
+} from './helpers/index.ts';
 
 export {
 	Cell,
@@ -36,13 +37,13 @@ export {
 	AsyncCell,
 	type AsyncResult,
 	type AsyncResultWrapper
-} from './cell';
-export {cell} from "./cell/decorators";
+} from './cell/index.ts';
+export {cell} from "./cell/decorators.ts";
 
 export {
 	EventEmitterBase,
 	EventEmitter,
 	MergeListener,
-} from './event-emitter';
+} from './event-emitter/index.ts';
 
-export {di, factory, inject, injectLazy, singleton, resolve, scoped, Container, type InjectionToken} from './di';
+export {di, factory, inject, injectLazy, singleton, resolve, scoped, Container, type InjectionToken} from './di/index.ts';

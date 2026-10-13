@@ -1,4 +1,5 @@
-import { type BaseCell, Cell, type ICellOptions } from '../cell';
+import '../helpers/symbol-metadata.ts';
+import { type BaseCell, Cell, type ICellOptions } from '../cell/index.ts';
 
 type ClassAccessorDecorator<TClass, T> = (
 	initial: ClassAccessorDecoratorTarget<TClass, T>,

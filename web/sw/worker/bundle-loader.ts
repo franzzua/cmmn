@@ -1,5 +1,5 @@
-import {IBundleJsonStorage} from "./bundleJsonStorage";
-import {SwBundle} from "./sw-bundle";
+import {IBundleJsonStorage} from "./bundleJsonStorage.ts";
+import {SwBundle} from "./sw-bundle.ts";
 import type {BundleJson} from "@cmmn/tools";
 
 export class BundleLoader {

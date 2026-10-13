@@ -3,7 +3,7 @@ import {CounterModel} from "@cmmn/examples-model";
 import {css, } from "@acab/ecsstatic";
 import {Button} from "@cmmn/examples-ui-lib/button";
 import {cn, Component, component} from "@cmmn/react";
-import {DraggableContext} from "../draggable/draggable.context";
+import {DraggableContext} from "../draggable/draggable.context.tsx";
 
 @component()
 export class Counter extends Component<{ active: boolean; model: CounterModel;}> {

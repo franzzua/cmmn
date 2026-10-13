@@ -1,9 +1,9 @@
 import {LoroDoc} from 'loro-crdt';
-import {cell, EventEmitter, ResolvablePromise} from "@cmmn/core";
-import {Scheme, Infer} from "./types";
-import {LoroRoom} from "../loroRoom";
-import {factory} from "./factory";
-import {LoroProtocol} from "../loroProtocol";
+import {cell, EventEmitter} from "@cmmn/core";
+import {Scheme, Infer} from "./types.ts";
+import {LoroRoom} from "../loroRoom.ts";
+import {factory} from "./factory.ts";
+import {LoroProtocol} from "../loroProtocol.ts";
 
 export class LoroDocCell extends EventEmitter<{
 	snapshot: Uint8Array;
@@ -21,7 +21,7 @@ export class LoroDocCell extends EventEmitter<{
 	}
 
 	async [Symbol.asyncDispose]() {
-		await this.isSyncStarted;
+		await this.isSyncStarted.promise;
 		for (let disposable of this.disposables) {
 			await disposable[Symbol.asyncDispose]();
 		}
@@ -50,7 +50,7 @@ export class LoroDocCell extends EventEmitter<{
 		return factory(this.doc, shape, path);
 	}
 
-	private isSyncStarted = new ResolvablePromise();
+	private isSyncStarted = Promise.withResolvers<void>();
 	async sync(room: LoroRoom, ...protocols: LoroProtocol[]) {
 		this.room = room;
 		for (let protocol of protocols) {

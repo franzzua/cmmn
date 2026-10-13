@@ -1,4 +1,4 @@
-import { Operator } from './index';
+import { Operator } from './index.ts';
 
 export function pipe<T, U>(
 	ai: AsyncIterable<T>,

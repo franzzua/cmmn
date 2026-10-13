@@ -1,5 +1,5 @@
-import { Serializer } from '../p2p/serializer';
-import { Deserializer } from '../p2p/deserializer';
+import { Serializer } from '../p2p/serializer.ts';
+import { Deserializer } from '../p2p/deserializer.ts';
 
 
 export type LoroUpdateMessage = {

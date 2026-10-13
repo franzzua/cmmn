@@ -3,20 +3,34 @@
 	"version": "3.0.0-alpha-6",
 	"description": "",
 	"publishConfig": {
-		"access": "public"
+		"access": "public",
+		"exports": {
+			".": {
+				"types": "./dist/typings/index.d.ts",
+				"default": "./dist/bundle/index.js"
+			},
+			"./jsx-runtime": {
+				"types": "./dist/typings/jsx-runtime.d.ts",
+				"default": "./dist/bundle/jsx-runtime.js"
+			}
+		}
 	},
 	"repository": {
 		"url": "https://github.com/franzzua/cmmn/tree/master/ui"
 	},
 	"type": "module",
-	"module": "./index.ts",
 	"scripts": {
-		"bundle": "cmmn bundle --watch",
-		"build": "cmmn compile -b --watch"
+		"bundle": "vite build"
 	},
 	"exports": {
-		".": "./index.ts",
-		"./jsx-runtime": "./jsx-runtime.js"
+		".": {
+			"types": "./index.ts",
+			"default": "./dist/esm/index.js"
+		},
+		"./jsx-runtime": {
+			"types": "./jsx-runtime.js",
+			"default": "./dist/esm/jsx-runtime.js"
+		}
 	},
 	"devDependencies": {
 		"@cmmn/tools": "workspace:~"
@@ -27,9 +41,10 @@
 		"react": ">=17.0.0"
 	},
 	"files": [
-		"dist",
-		"jsx-runtime.d.ts",
-		"jsx-runtime.js"
+		"dist/bundle/**",
+		"dist/typings/**",
+		"!dist/typings/specs/**",
+		"!dist/typings/perf/**"
 	],
 	"author": "",
 	"license": "ISC",

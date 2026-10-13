@@ -1,4 +1,4 @@
-import {Container} from "./container";
+import {Container} from "./container.ts";
 
 export type ConstructorOf<T, TArgs extends unknown[] = []> = new (
 	...args: TArgs

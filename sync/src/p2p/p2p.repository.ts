@@ -1,7 +1,7 @@
 import {resolve} from '@cmmn/core';
-import {P2PNode} from './p2p.node';
-import {P2PLoroProtocol} from "./p2PLoroProtocol";
-import {Repository} from "../crdt/repository";
+import {P2PNode} from './p2p.node.ts';
+import {P2PLoroProtocol} from "./p2PLoroProtocol.ts";
+import {Repository} from "../crdt/repository.ts";
 
 export class P2PRepository extends Repository {
 	private readonly p2pNode = resolve(P2PNode);

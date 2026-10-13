@@ -1,5 +1,4 @@
 import { throttle as throttleOrig } from 'throttle-debounce';
-import { ResolvablePromise } from './resolvable.promise';
 
 export function throttle<
 	TResult,
@@ -77,12 +76,12 @@ export function getThrottler<
 	return (
 		fn: ThrottleFunc<TResult, TThis, TNewArgs>,
 	): ThrottledFunc<TResult, TThis, TArgs> => {
-		let promise: ResolvablePromise<Awaited<TResult>> | undefined;
+		let promise: PromiseWithResolvers<Awaited<TResult>> | undefined;
 		let allArgs: Array<TArgs> = [];
 		const orig = throttleOrig(
 			time,
 			async function () {
-				promise ??= new ResolvablePromise();
+				promise ??= Promise.withResolvers();
 				try {
 					const args: TNewArgs[] = options.select
 						? options.select.apply(this, allArgs)
@@ -105,7 +104,7 @@ export function getThrottler<
 			function (this: TThis, ...args: TArgs): Promise<Awaited<TResult>> {
 				allArgs.push(args);
 				orig.call(this);
-				return (promise ??= new ResolvablePromise());
+				return (promise ??= Promise.withResolvers()).promise;
 			},
 			{
 				[Symbol.dispose]() {

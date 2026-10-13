@@ -1,4 +1,4 @@
-import type { BaseCell } from './base-cell';
+import type { BaseCell } from './base-cell.ts';
 
 export class Graph {
 	public static CurrentCell: BaseCell;

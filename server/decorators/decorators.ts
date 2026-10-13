@@ -1,4 +1,5 @@
-﻿import { HTTPMethods } from 'fastify';
+﻿import '@cmmn/core'; // Symbol.metadata polyfill, routes are stored in decorator metadata
+import { HTTPMethods } from 'fastify';
 
 const routesSymbol = Symbol('routes');
 function getRoutes(metadata: DecoratorMetadata) {

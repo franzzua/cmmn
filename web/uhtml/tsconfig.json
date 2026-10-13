@@ -1,10 +1,19 @@
 {
-	"extends": "@cmmn/tools/tsconfig.json",
+	"extends": "../../tsconfig.base.json",
 	"compilerOptions": {
-		"baseUrl": ".",
 		"isolatedModules": false,
-		"lib": ["dom", "es2015.collection", "esnext"]
+		"lib": [
+			"dom",
+			"es2015.collection",
+			"esnext"
+		]
 	},
-	"include": ["**/*.ts"],
-	"exclude": ["dist", "node_modules"]
+	"references": [
+		{
+			"path": "../../core"
+		},
+		{
+			"path": "../../tools"
+		}
+	]
 }

@@ -1,6 +1,6 @@
-import { compare } from './compare';
-import { deepAssign } from './deepAssign';
-import { pipe } from './pipe';
+import { compare } from './compare.ts';
+import { deepAssign } from './deepAssign.ts';
+import { pipe } from './pipe.ts';
 
 export const Fn = {
 	I<T>(x: T): T {

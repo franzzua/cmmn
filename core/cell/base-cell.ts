@@ -1,6 +1,6 @@
-import { EventEmitter, EventEmitterBase } from '../event-emitter';
-import { Graph } from './graph';
-import { type Selector, selector } from './cell-selector';
+import { EventEmitter, EventEmitterBase } from '../event-emitter/index.ts';
+import { Graph } from './graph.ts';
+import { type Selector, selector } from './cell-selector.ts';
 
 export class BaseCell<T = unknown>
 	extends EventEmitter<{

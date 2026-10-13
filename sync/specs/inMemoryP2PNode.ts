@@ -1,4 +1,4 @@
-import { P2PNode } from '../src/p2p/p2p.node';
+import { P2PNode } from '../src/p2p/p2p.node.ts';
 import { Multiaddr } from '@multiformats/multiaddr';
 import { memory } from '@libp2p/memory';
 import { plaintext } from '@libp2p/plaintext';

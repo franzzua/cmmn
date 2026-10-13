@@ -3,13 +3,13 @@ import {fileURLToPath} from "node:url";
 import path, {dirname, join} from "node:path";
 import fs from "node:fs/promises";
 import {expect} from "expect";
-import {RolldownBundler} from "../bundlers/rolldown-bundler";
-import {Pack} from "../model/pack";
-import {Resolver} from "../model/resolver";
+import {RolldownBundler} from "../bundlers/rolldown-bundler.ts";
+import {Pack} from "../model/pack.ts";
+import {Resolver} from "../model/resolver.ts";
 import {existsSync} from "node:fs";
 import {JSONSchemaForNPMPackageJsonFiles} from "@schemastore/package";
-import {BundleJson} from "../model/bundle";
-import {Flags} from "../model/flags";
+import {BundleJson} from "../model/bundle.ts";
+import {Flags} from "../model/flags.ts";
 
 const flags = new Flags([]);
 

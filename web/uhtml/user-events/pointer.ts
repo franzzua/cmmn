@@ -1,7 +1,7 @@
 import {bind, Fn} from '@cmmn/core';
 import {Cell} from '@cmmn/core';
-import {BoundRectListener} from './boundRectListener';
-import {EventListener} from "./eventListener";
+import {BoundRectListener} from './boundRectListener.ts';
+import {EventListener} from "./eventListener.ts";
 
 export type RelativePointerEvent<TEvent = PointerEvent> = {
     event: TEvent;
@@ -121,17 +121,12 @@ export class PointerListener extends EventListener<PointerEvents> {
                     isStarted = false;
                 }
             },
-            {
-                Priority: Number.POSITIVE_INFINITY,
-            },
         );
     }
 
     @bind()
     private async directClickListener(downEvent: RelativePointerEvent) {
-        const upEvent = await this.onceAsync('up', {
-            Priority: Number.POSITIVE_INFINITY,
-        });
+        const upEvent = await this.onceAsync('up');
         if (upEvent.event.timeStamp - downEvent.event.timeStamp > 400) return;
         if (Math.abs(upEvent.event.x - downEvent.event.x) > 1) return;
         if (Math.abs(upEvent.event.y - downEvent.event.y) > 1) return;

@@ -1,4 +1,4 @@
-import {LoroJoinMessage, LoroMessage, LoroMessageType, LoroRequestMessage, LoroUpdateMessage} from "./loro.message";
+import {LoroJoinMessage, LoroMessage, LoroMessageType, LoroRequestMessage, LoroUpdateMessage} from "./loro.message.ts";
 import {EventEmitter} from "@cmmn/core";
 
 export abstract class LoroProtocol<PeerId = unknown> extends EventEmitter<{

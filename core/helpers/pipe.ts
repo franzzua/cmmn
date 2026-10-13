@@ -1,4 +1,4 @@
-import type { Func } from './throttle';
+import type { Func } from './throttle.ts';
 
 export function pipe<
 	TThis,

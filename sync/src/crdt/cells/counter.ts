@@ -1,6 +1,6 @@
 import {LoroCounter, LoroDoc} from 'loro-crdt';
 import {BaseCell} from "@cmmn/core";
-import {extend, Extension, LoroDocExtensions} from "./extend";
+import {extend, Extension, LoroDocExtensions} from "./extend.ts";
 
 export class Counter extends LoroCounter implements LoroDocExtensions<LoroCounter>{
 	protected constructor(

@@ -3,21 +3,39 @@
 	"version": "3.0.0-alpha-6",
 	"description": "collaborative with loro-crdt",
 	"publishConfig": {
-		"access": "public"
+		"access": "public",
+		"exports": {
+			".": {
+				"types": "./dist/typings/index.d.ts",
+				"default": "./dist/bundle/index.js"
+			},
+			"./storage": {
+				"types": "./dist/typings/src/crdt/storage.d.ts",
+				"default": "./dist/bundle/storage.js"
+			}
+		}
 	},
 	"repository": {
 		"url": "https://github.com/franzzua/cmmn/tree/master/sync"
 	},
 	"scripts": {
-		"bundle": "cmmn bundle -b --watch",
-		"build": "cmmn compile -b --watch"
+		"bundle": "vite build"
 	},
 	"exports": {
-		".": "./index.ts",
-		"./storage": "./src/crdt/storage.ts"
+		".": {
+			"types": "./index.ts",
+			"default": "./dist/esm/index.js"
+		},
+		"./storage": {
+			"types": "./src/crdt/storage.ts",
+			"default": "./dist/esm/src/crdt/storage.js"
+		}
 	},
 	"files": [
-		"dist"
+		"dist/bundle/**",
+		"dist/typings/**",
+		"!dist/typings/specs/**",
+		"!dist/typings/perf/**"
 	],
 	"dependencies": {
 		"@cmmn/core": "workspace:~",

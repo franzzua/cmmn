@@ -8,15 +8,14 @@ export {
 	remove,
 	removeAll,
 	sum,
-} from './Array';
-export { getOrAdd } from './map';
-export { AsyncQueue } from './async-queue';
-export { uuid } from './uuid';
-export { Fn } from './Fn';
-export { ResolvablePromise } from './resolvable.promise';
-export { Lazy } from './Lazy';
-export { compare } from './compare';
-export { throttle, throttled, debounce, debounced } from './throttle';
-export type { DeepPartial } from './deepAssign';
-export { bind } from './bind';
-export { pipe } from './pipe';
+} from './Array.ts';
+export { getOrAdd } from './map.ts';
+export { AsyncQueue } from './async-queue.ts';
+export { uuid } from './uuid.ts';
+export { Fn } from './Fn.ts';
+export { Lazy } from './Lazy.ts';
+export { compare } from './compare.ts';
+export { throttle, throttled, debounce, debounced } from './throttle.ts';
+export type { DeepPartial } from './deepAssign.ts';
+export { bind } from './bind.ts';
+export { pipe } from './pipe.ts';

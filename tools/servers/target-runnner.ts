@@ -1,9 +1,9 @@
 import { spawn} from "node:child_process";
-import {Watcher} from "../helpers/watcher.js";
-import {PackServer} from "./pack-server";
+import {Watcher} from "../helpers/watcher.ts";
+import {PackServer} from "./pack-server.ts";
 import {FastifyInstance, FastifyReply, FastifyRequest} from "fastify";
-import {ChangeEvent, FileChangeEvent} from "../model/pack";
-import {Target} from "../model/target";
+import {ChangeEvent, FileChangeEvent} from "../model/pack.ts";
+import {Target} from "../model/target.ts";
 import {createProxyMiddleware} from "http-proxy-middleware";
 import {IncomingMessage} from "node:http";
 import {Socket} from "node:net";

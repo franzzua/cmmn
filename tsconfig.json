@@ -1,5 +1,50 @@
 {
-  "extends": "@cmmn/tools/tsconfig.json",
-  "files": [],
-  "include": []
+	"files": [],
+	"references": [
+		{
+			"path": "./core"
+		},
+		{
+			"path": "./tools"
+		},
+		{
+			"path": "./server"
+		},
+		{
+			"path": "./sync"
+		},
+		{
+			"path": "./web/ui"
+		},
+		{
+			"path": "./web/react"
+		},
+		{
+			"path": "./web/sw"
+		},
+		{
+			"path": "./web/uhtml"
+		},
+		{
+			"path": "./examples/common"
+		},
+		{
+			"path": "./examples/ui-lib"
+		},
+		{
+			"path": "./examples/network"
+		},
+		{
+			"path": "./examples/server"
+		},
+		{
+			"path": "./examples/model"
+		},
+		{
+			"path": "./examples/client"
+		},
+		{
+			"path": "./examples/counter"
+		}
+	]
 }

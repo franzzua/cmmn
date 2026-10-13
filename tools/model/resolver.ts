@@ -1,6 +1,6 @@
-import {Pack} from "./pack";
-import {Flags} from "./flags";
-import {Target} from "./target";
+import {Pack} from "./pack.ts";
+import {Flags} from "./flags.ts";
+import {Target} from "./target.ts";
 
 export class Resolver {
     basePath: string = '';

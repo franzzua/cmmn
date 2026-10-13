@@ -3,13 +3,12 @@
 	"version": "3.0.0-alpha-6",
 	"description": "",
 	"private": true,
-	"scripts": {
-		"bundle:prod": "cmmn bundle --prod -w ."
-	},
 	"type": "module",
-	"module": "index.ts",
 	"exports": {
-		".": "./index.ts"
+		".": {
+			"types": "./index.ts",
+			"default": "./dist/esm/index.js"
+		}
 	},
 	"devDependencies": {
 		"@chainsafe/libp2p-gossipsub": "14.1.0",

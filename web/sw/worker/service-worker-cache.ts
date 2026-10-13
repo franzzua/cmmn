@@ -1,6 +1,6 @@
-import {SwStorage} from "./sw-storage";
-import {BundleJsonStorage} from "./bundleJsonStorage";
-import {BundleLoader} from "./bundle-loader";
+import {SwStorage} from "./sw-storage.ts";
+import {BundleJsonStorage} from "./bundleJsonStorage.ts";
+import {BundleLoader} from "./bundle-loader.ts";
 
 export class ServiceWorkerCache {
     private bundleJsonStorage = new BundleJsonStorage();

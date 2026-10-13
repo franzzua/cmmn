@@ -1,9 +1,9 @@
 import { test, mock, describe } from 'node:test';
 import * as assert from 'node:assert';
-import { debounce, throttle, throttled } from '../helpers';
-import { Fn } from '../helpers';
-import { EventEmitter } from '../event-emitter';
-import { getThrottler } from '../helpers/throttle';
+import { debounce, throttle, throttled } from '../helpers/index.ts';
+import { Fn } from '../helpers/index.ts';
+import { EventEmitter } from '../event-emitter/index.ts';
+import { getThrottler } from '../helpers/throttle.ts';
 import { expect } from '@cmmn/tools/test';
 
 describe('debounce', (ctx) => {

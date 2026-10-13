@@ -1,6 +1,6 @@
-import { Component } from './component';
+import { Component } from './component.ts';
 import {cell, Fn, ICellOptions} from '@cmmn/core';
-import {ComponentRegistry} from "./registry";
+import {ComponentRegistry} from "./registry.ts";
 
 export type IComponentOptions = {
 	name?: `${string}-${string}`;

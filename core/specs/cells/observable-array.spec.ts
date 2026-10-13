@@ -1,5 +1,5 @@
 import { expect, mock, suite, test } from '@cmmn/tools/test';
-import { ObservableArray } from '../../cell/collections/ObservableArray';
+import { ObservableArray } from '../../cell/collections/ObservableArray.ts';
 
 @suite
 class ObservableArraySpec {

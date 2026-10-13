@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, mock, test } from 'node:test';
-import { InMemoryP2PNode } from './inMemoryP2PNode';
-import { P2PNode } from '../src';
+import { InMemoryP2PNode } from './inMemoryP2PNode.ts';
+import { P2PNode } from '../src/index.ts';
 
 describe('p2p', () => {
 	let nodes: P2PNode[] = [];

@@ -5,10 +5,10 @@ import {
 	Container,
 } from 'loro-crdt';
 import {BaseCell} from "@cmmn/core";
-import {Factory, Infer, Scheme} from "./types";
-import {extend, LoroDocExtensions} from "./extend";
-import {factory} from "./factory";
-import {updateMovableList} from "../update-movable-list";
+import {Factory, Infer, Scheme} from "./types.ts";
+import {extend, LoroDocExtensions} from "./extend.ts";
+import {factory} from "./factory.ts";
+import {updateMovableList} from "../update-movable-list.ts";
 
 export abstract class List<T> extends LoroMovableList<T> implements LoroDocExtensions<LoroMovableList> {
 	protected constructor(

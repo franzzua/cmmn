@@ -1,8 +1,11 @@
 {
-	"extends": "@cmmn/tools/tsconfig.json",
-	"compilerOptions": {
-		"baseUrl": "."
-	},
-	"include": ["**/*.ts"],
-	"exclude": ["dist", "node_modules"]
+	"extends": "../tsconfig.base.json",
+	"references": [
+		{
+			"path": "../core"
+		},
+		{
+			"path": "../tools"
+		}
+	]
 }

@@ -1,5 +1,5 @@
-import { EventEmitterBase } from './eventEmitterBase';
-import { removeAll } from '../helpers';
+import { EventEmitterBase } from './eventEmitterBase.ts';
+import { removeAll } from '../helpers/index.ts';
 
 export class EventEmitter<TEvents> extends EventEmitterBase<TEvents>  implements Disposable {
 	// created on first subscription: most emitters (e.g. cells) never get listeners

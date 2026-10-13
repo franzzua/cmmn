@@ -1,5 +1,5 @@
-import {Entry, Pack} from "./pack";
-import {Target} from "./target";
+import {Entry, Pack} from "./pack.ts";
+import {Target} from "./target.ts";
 import {readFile} from "node:fs/promises";
 import path from "node:path";
 import {subtle} from "crypto";

@@ -1,1 +1,1 @@
-export {Draggable} from "./draggable";
+export {Draggable} from "./draggable.tsx";

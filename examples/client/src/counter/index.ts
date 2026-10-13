@@ -1,3 +1,3 @@
-export {Counters} from "./counters";
+export {Counters} from "./counters.tsx";
 
 // di.override(StorageProvider, IndexedStorage.Provider);

@@ -1,4 +1,4 @@
-import {InitMessageData, type ServiceWorkerAction} from "./types";
+import {InitMessageData, type ServiceWorkerAction} from "./types.ts";
 
 function getPlatform(){
 	if (CSS.supports('-webkit-touch-callout', 'none'))

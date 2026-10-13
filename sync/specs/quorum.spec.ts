@@ -1,9 +1,9 @@
 import { describe, test } from 'node:test';
-import { BroadcastTransport } from '../src/transport/broadcast.transport';
+import { BroadcastTransport } from '../src/transport/broadcast.transport.ts';
 import { di, Fn } from '@cmmn/core';
-import { Transport } from '../src/transport/transport';
+import { Transport } from '../src/transport/transport.ts';
 import { expect } from '@cmmn/tools/test';
-import { Team } from '../src/queue/team';
+import { Team } from '../src/queue/team.ts';
 
 describe('quorum', async () => {
 	await test('two', async () => {

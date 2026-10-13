@@ -5,17 +5,25 @@
 		"url": "https://github.com/franzzua/cmmn/tree/master/core"
 	},
 	"publishConfig": {
-		"access": "public"
+		"access": "public",
+		"exports": {
+			".": {
+				"types": "./dist/typings/index.d.ts",
+				"default": "./dist/bundle/index.js"
+			}
+		}
 	},
 	"description": "di, base extensions, useful functions",
 	"scripts": {
-		"typings": "cmmn typings --watch",
-		"bundle": "cmmn bundle",
-		"perf": "node --expose-gc --import @cmmn/tools/import ./perf/layers.perf.ts"
+		"perf": "node --expose-gc ./dist/esm/perf/layers.perf.js",
+		"bundle": "vite build"
 	},
 	"type": "module",
 	"exports": {
-		".": "./index.ts"
+		".": {
+			"types": "./index.ts",
+			"default": "./dist/esm/index.js"
+		}
 	},
 	"dependencies": {
 		"throttle-debounce": "5.0.2",
@@ -27,5 +35,11 @@
 		"jotai": "3.0.1"
 	},
 	"author": "",
-	"license": "ISC"
+	"license": "ISC",
+	"files": [
+		"dist/bundle/**",
+		"dist/typings/**",
+		"!dist/typings/specs/**",
+		"!dist/typings/perf/**"
+	]
 }

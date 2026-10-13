@@ -1,5 +1,5 @@
-import { EventEmitterBase } from './eventEmitterBase';
-import type { SubscriptionOptions } from './eventEmitter';
+import { EventEmitterBase } from './eventEmitterBase.ts';
+import type { SubscriptionOptions } from './eventEmitter.ts';
 
 export class MergeListener<
 	TEvents extends {

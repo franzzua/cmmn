@@ -4,10 +4,15 @@
 	"description": "",
 	"private": true,
 	"type": "module",
-	"main": "./index.ts",
 	"exports": {
-		"./button": "./button/button.tsx",
-		"./green-button": "./button-green/button.green.tsx"
+		"./button": {
+			"types": "./button/button.tsx",
+			"default": "./dist/esm/button/button.js"
+		},
+		"./green-button": {
+			"types": "./button-green/button.green.tsx",
+			"default": "./dist/esm/button-green/button.green.js"
+		}
 	},
 	"dependencies": {
 		"@cmmn/core": "workspace:~",
@@ -17,5 +22,8 @@
 		"@acab/ecsstatic": "^0.9.0",
 		"@cmmn/tools": "workspace:~",
 		"vite-plugin-css-injected-by-js": "^3.5.2"
+	},
+	"scripts": {
+		"bundle": "vite build"
 	}
 }

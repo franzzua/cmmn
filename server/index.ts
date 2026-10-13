@@ -6,5 +6,5 @@ export {
 	request,
 	type RouteOptions,
 	routes,
-} from './decorators/decorators';
-export { registerRoutes } from './decorators/routes';
+} from './decorators/decorators.ts';
+export { registerRoutes } from './decorators/routes.ts';

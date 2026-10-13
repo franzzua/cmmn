@@ -1,11 +1,8 @@
 import {join, relative} from "node:path";
-import fs from "node:fs";
-import {fileURLToPath} from "node:url";
-import {getTSConfig, TypescriptConfig} from "../helpers/getTSConfig.js";
-import {Flags} from "./flags";
-import {Config} from "@swc/core";
+import {getTSConfig, TypescriptConfig} from "../helpers/getTSConfig.ts";
+import {Flags} from "./flags.ts";
 import {minimatch} from 'minimatch';
-import {Entry, Pack} from "./pack";
+import {Entry, Pack} from "./pack.ts";
 
 export class Target extends Pack {
     public readonly publicDir = join(this.rootDir, 'public');
@@ -35,41 +32,6 @@ export class Target extends Pack {
         const exclude = this.tsConfig.exclude ?? ['dist', 'node_modules'];
         return exclude.some(check);
     }
-
-    get swcConfigPath(){
-        const local = join(this.rootDir, '.swcrc');
-        if (fs.existsSync(local))
-            return local;
-        return fileURLToPath(import.meta.resolve('@cmmn/tools/swcrc'));
-    }
-    swcConfigBase;
-
-    _swcConfig: Config;
-    get swcConfig(): Config {
-        this.swcConfigBase ??= JSON.parse(fs.readFileSync(this.swcConfigPath, {
-            encoding: 'utf-8'
-        }));
-        const tsConfig = this.tsConfig;
-        return this._swcConfig ??= {
-            ...this.swcConfigBase,
-            jsc: {
-                ...this.swcConfigBase.jsc,
-                baseUrl: this.rootDir,
-                paths: tsConfig.compilerOptions?.paths,
-            },
-            module: {
-                type: 'es6',
-                strict: true,
-                strictMode: false,
-
-                resolveFully: true
-            },
-            sourceMaps: true,
-            inlineSourcesContent: false
-        };
-    }
-
-
 
     async getPublishPackageJson() {
         const packageJson = JSON.parse(JSON.stringify(this.packageJson));

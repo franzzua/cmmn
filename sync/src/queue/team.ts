@@ -1,5 +1,5 @@
 import { EventEmitter, uuid, inject, scoped } from '@cmmn/core';
-import { Transport } from '../transport/transport';
+import { Transport } from '../transport/transport.ts';
 
 @scoped()
 export class Team

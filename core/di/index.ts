@@ -1,6 +1,6 @@
-import {Container} from './container';
-import type {ConstructorOf, InjectionToken} from './types';
-export {injectLazy, inject} from "./injectLazy";
+import {Container} from './container.ts';
+import type {ConstructorOf, InjectionToken} from './types.ts';
+export {injectLazy, inject} from "./injectLazy.ts";
 
 export function scoped<TClass extends ConstructorOf<unknown, any[]>>() {
 	return (target: ConstructorOf<unknown, any[]>, context: ClassDecoratorContext<TClass>) => {

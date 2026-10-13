@@ -1,5 +1,5 @@
 import { describe } from 'node:test';
-import { pipe } from '../helpers';
+import { pipe } from '../helpers/index.ts';
 import { expect } from '@cmmn/tools/test';
 
 describe('pipe', () => {

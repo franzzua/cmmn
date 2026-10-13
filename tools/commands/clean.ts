@@ -1,9 +1,9 @@
 import fs from "node:fs/promises";
 import {join} from "node:path";
-import {Flags} from "../model/flags";
-import {Target} from "../model/target";
+import {Flags} from "../model/flags.ts";
+import {Target} from "../model/target.ts";
 import * as process from "node:process";
-import {Monorepo} from "../model/monorepo";
+import {Monorepo} from "../model/monorepo.ts";
 
 export async function clean(flags: Flags){
     const monorepo = await Monorepo.load(flags);

@@ -4,9 +4,9 @@
 	"description": "",
 	"private": true,
 	"scripts": {
-		"bundle:prod": "cmmn bundle --prod",
 		"storybook": "storybook dev -p 6006",
-		"build-storybook": "storybook build"
+		"build-storybook": "storybook build",
+		"bundle": "vite build"
 	},
 	"type": "module",
 	"exports": {
@@ -20,6 +20,7 @@
 	},
 	"devDependencies": {
 		"@acab/ecsstatic": "0.9.0",
+		"@cmmn/tools": "workspace:~",
 		"@storybook/addon-essentials": "^8.6.12",
 		"@storybook/addon-interactions": "^8.6.12",
 		"@storybook/blocks": "^8.6.12",
