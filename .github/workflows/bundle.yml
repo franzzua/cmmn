@@ -1,5 +1,8 @@
-# Builds and publishes public packages to npm when a version tag (v*) is pushed.
+# Builds public packages and stages them on npm when a version tag (v*) is pushed.
 # Prerelease tags publish under their dist-tag: v3.0.0-beta-1 -> beta, v3.0.0-alpha-7 -> alpha.
+# Staged versions are published after approval with 2FA:
+#   yarn npm stage list
+#   yarn npm stage approve <stageId>
 
 name: Node.js Package
 
@@ -25,7 +28,7 @@ jobs:
             *-alpha*) echo "tag=alpha" >> "$GITHUB_OUTPUT" ;;
             *) echo "tag=latest" >> "$GITHUB_OUTPUT" ;;
           esac
-      - run: yarn release --tag ${{ steps.dist.outputs.tag }}
+      - run: yarn release --tag ${{ steps.dist.outputs.tag }} --staged
         env:
           # .yarnrc.yml publishes to the private registry by default
           YARN_NPM_PUBLISH_REGISTRY: https://registry.npmjs.org
