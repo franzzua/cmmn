@@ -1,24 +1,32 @@
-# This workflow will build packages and then publish them to npm on push to master
-# For more information see: https://help.github.com/actions/language-and-framework-guides/publishing-nodejs-packages
+# Builds and publishes public packages to npm when a version tag (v*) is pushed.
+# Prerelease tags publish under their dist-tag: v3.0.0-beta-1 -> beta, v3.0.0-alpha-7 -> alpha.
 
 name: Node.js Package
 
 on:
   push:
-    branches: [ master ]
+    tags: [ 'v*' ]
 
 jobs:
-  bootstrap:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-          registry-url: https://registry.npmjs.org/
-          scope: '@cmmn'
       - run: corepack enable
       - run: yarn install --immutable
-      - run: yarn release
+      - name: dist-tag
+        id: dist
+        run: |
+          case "$GITHUB_REF_NAME" in
+            *-beta*) echo "tag=beta" >> "$GITHUB_OUTPUT" ;;
+            *-alpha*) echo "tag=alpha" >> "$GITHUB_OUTPUT" ;;
+            *) echo "tag=latest" >> "$GITHUB_OUTPUT" ;;
+          esac
+      - run: yarn release --tag ${{ steps.dist.outputs.tag }}
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          # .yarnrc.yml publishes to the private registry by default
+          YARN_NPM_PUBLISH_REGISTRY: https://registry.npmjs.org
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

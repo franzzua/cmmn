@@ -21,7 +21,7 @@
 		"compile": "tsc -b --watch",
 		"bundle": "tsc -b && yarn workspaces foreach -A -t run bundle",
 		"test": "tsc -b && node --test --test-timeout=20000 --test-force-exit \"**/dist/esm/**/*.spec.js\"",
-		"release": "yarn bundle && yarn workspaces foreach -A --no-private npm publish --tolerate-republish",
+		"release": "yarn bundle && yarn workspaces foreach -A --no-private --topological npm publish --tolerate-republish",
 		"publish": "wersion patch",
 		"dev": "cmmn dev",
 		"dev:prod": "cmmn dev --prod --minify"
