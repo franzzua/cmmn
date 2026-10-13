@@ -293,6 +293,7 @@ __metadata:
   dependencies:
     "@cmmn/tools": "workspace:*"
     "@types/node": "npm:20.x.x"
+    jotai: "npm:3.0.1"
     throttle-debounce: "npm:5.0.2"
     uuidv7: "npm:1.0.2"
   languageName: unknown
@@ -507,6 +508,8 @@ __metadata:
     vite: "npm:7.1.9"
     vite-bundle-analyzer: "npm:^1.2.3"
     vite-tsconfig-paths: "npm:^5.1.4"
+  peerDependencies:
+    "@swc-node/register": "*"
   bin:
     cmmn: dist/esm/bin.js
   languageName: unknown
@@ -6370,6 +6373,21 @@ __metadata:
   version: 1.4.0
   resolution: "jju@npm:1.4.0"
   checksum: 10c0/f3f444557e4364cfc06b1abf8331bf3778b26c0c8552ca54429bc0092652172fdea26cbffe33e1017b303d5aa506f7ede8571857400efe459cb7439180e2acad
+  languageName: node
+  linkType: hard
+
+"jotai@npm:3.0.1":
+  version: 3.0.1
+  resolution: "jotai@npm:3.0.1"
+  peerDependencies:
+    "@types/react": ">=18.0.0"
+    react: ">=18.0.0"
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    react:
+      optional: true
+  checksum: 10c0/84b6adac2e3c8f7e8fd27c52f3206ceb1b22f9b46dfb81100b3765f652134399e91bfaee49a15e2e25083adf5638b8168aeb338234074e9c80955d51c231b456
   languageName: node
   linkType: hard
 

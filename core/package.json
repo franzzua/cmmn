@@ -10,7 +10,8 @@
 	"description": "di, base extensions, useful functions",
 	"scripts": {
 		"typings": "cmmn typings --watch",
-		"bundle": "cmmn bundle"
+		"bundle": "cmmn bundle",
+		"perf": "node --expose-gc --import @cmmn/tools/import ./perf/layers.perf.ts"
 	},
 	"type": "module",
 	"exports": {
@@ -22,7 +23,8 @@
 	},
 	"devDependencies": {
 		"@cmmn/tools": "workspace:*",
-		"@types/node": "20.x.x"
+		"@types/node": "20.x.x",
+		"jotai": "3.0.1"
 	},
 	"author": "",
 	"license": "ISC"
