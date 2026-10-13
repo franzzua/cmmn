@@ -86,7 +86,8 @@ export class BaseCell<T = unknown>
 	}
 
 	protected notifyChange(value: T, oldValue: T) {
-		this.emit('change', { value, oldValue });
+		// don't allocate the event when nobody listens
+		if (this.listeners?.has('change')) this.emit('change', { value, oldValue });
 		if (this.isActive && value !== oldValue) {
 			this.unsubscriber?.();
 			this.unsubscriber = this.subscribeValue(value);
@@ -142,7 +143,7 @@ export class BaseCell<T = unknown>
 		this.reactions.delete(cell);
 		if (!this.reactions.size) {
 			this.reactions = null;
-			if (this.isActive && !this.listeners.get('change')?.length)
+			if (this.isActive && !this.listeners?.get('change')?.length)
 				this.disactive();
 		}
 	}
@@ -178,7 +179,9 @@ export class BaseCell<T = unknown>
 	}
 
 	protected getSubscriber(value: T): Subscriber<T> {
-		if (!value || !value.constructor) return;
+		// primitives can't be cell-like: skip walking their prototype chain
+		if (!value || (typeof value !== 'object' && typeof value !== 'function')) return;
+		if (!value.constructor) return;
 		return BaseCell.likeCells.get(value.constructor) ?? this.getSubscriber(value['__proto__']);
 	}
 

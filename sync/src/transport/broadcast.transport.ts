@@ -73,7 +73,7 @@ export class EventTargetTransportChannel<T>
 		const result = this.factory();
 		result.addEventListener('close', () => {
 			this.target = undefined;
-			if (this.listeners.get('message')?.length) {
+			if (this.listeners?.get('message')?.length) {
 				this.subscribe('message');
 			}
 		});

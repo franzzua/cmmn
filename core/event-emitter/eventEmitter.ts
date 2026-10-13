@@ -2,13 +2,14 @@ import { EventEmitterBase } from './eventEmitterBase';
 import { removeAll } from '../helpers';
 
 export class EventEmitter<TEvents> extends EventEmitterBase<TEvents>  implements Disposable {
-	protected listeners = new Map<
+	// created on first subscription: most emitters (e.g. cells) never get listeners
+	protected listeners?: Map<
 		keyof TEvents,
 		Array<{
 			listener: (data) => void;
 			options: SubscriptionOptions;
 		}>
-	>();
+	>;
 
 	public on<
 		TEventName extends keyof TEvents,
@@ -18,6 +19,7 @@ export class EventEmitter<TEvents> extends EventEmitterBase<TEvents>  implements
 		listener: (data: TEvents[TEventName]) => void,
 		options?: TSubscriptionOptions,
 	) {
+		this.listeners ??= new Map();
 		if (!this.listeners.has(eventName)) {
 			this.listeners.set(eventName, []);
 			this.subscribe(eventName);
@@ -40,10 +42,10 @@ export class EventEmitter<TEvents> extends EventEmitterBase<TEvents>  implements
 		eventName: TEventName,
 		listener: (data: TEvents[TEventName]) => void,
 	) {
-		const set = this.listeners.get(eventName) ?? [];
+		const set = this.listeners?.get(eventName) ?? [];
 		removeAll(set, (x) => x.listener === listener);
 		if (set.length === 0) {
-			this.listeners.delete(eventName);
+			this.listeners?.delete(eventName);
 			this.unsubscribe(eventName);
 		}
 	}
@@ -56,7 +58,7 @@ export class EventEmitter<TEvents> extends EventEmitterBase<TEvents>  implements
 		eventName: TEventName,
 		data?: TEvents[TEventName],
 	) {
-		const arr = this.listeners.get(eventName);
+		const arr = this.listeners?.get(eventName);
 		if (!arr) return;
 		for (let x of arr) {
 			x.listener(data);
@@ -65,6 +67,7 @@ export class EventEmitter<TEvents> extends EventEmitterBase<TEvents>  implements
 
 	public [Symbol.dispose]() {
 		this.emit(Symbol.dispose as keyof TEvents);
+		if (!this.listeners) return;
 		for (const [key, value] of this.listeners) {
 			for (const listener of value) {
 				this.off(key, listener.listener);
